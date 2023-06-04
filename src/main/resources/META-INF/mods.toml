@@ -1,0 +1,10 @@
+modLoader="kotlinforforge"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="resourcify"
+version="${version}"
+displayName="Resourcify"
+authors="DeDiamondPro"
+description="In-game resource pack browser"

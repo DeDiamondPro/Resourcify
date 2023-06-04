@@ -1,0 +1,18 @@
+[
+  {
+	"modid": "${id}",
+	"name": "${name}",
+	"description": "In-game resource pack browser",
+	"version": "${version}",
+	"mcversion": "${mcVersionStr}",
+	"url": "https://modrinth.com/mod/resourcify",
+	"updateUrl": "https://modrinth.com/mod/resourcify",
+	"authorList": [
+	  "DeDiamondPro"
+	],
+	"credits": "",
+	"logoFile": "icon.png",
+	"screenshots": [],
+	"dependencies": []
+  }
+]

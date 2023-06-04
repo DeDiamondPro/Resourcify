@@ -1,0 +1,21 @@
+/*
+ * Copyright (C) 2023 DeDiamondPro. - All Rights Reserved
+ */
+
+package dev.dediamondpro.resourcify.mixins;
+
+import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import net.minecraft.client.gui.ParentElement;
+import net.minecraft.client.gui.screen.pack.PackScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(ParentElement.class)
+public interface ParentElementMixin  {
+    @Inject(method = "mouseClicked", at = @At("HEAD"))
+    default void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        if (this instanceof PackScreen) ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button);
+    }
+}

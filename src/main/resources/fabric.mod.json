@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "name": "${name}",
+  "version": "${version}",
+  "description": "In-game resource pack browser",
+  "authors": [
+    "DeDiamondPro"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/resourcify",
+    "sources": "https://github.com/DeDiamondPro/Resourcify",
+    "issues": "https://github.com/DeDiamondPro/Resourcify/issues"
+  },
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.dediamondpro.resourcify.Resourcify"
+      }
+    ]
+  },
+  "mixins": [
+    "mixins.${id}.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/XtAuqsJWby"
+      }
+    }
+  },
+  "icon": "icon.png",
+  "license": "All Rights Reserved",
+  "environment": "client",
+  "depends": {
+    "fabric-language-kotlin": ">=1.6.4+kotlin.1.5.30",
+    "fabricloader": ">=0.12.0",
+    "fabric-api-base": "*",
+    "minecraft": "${mcVersionStr}",
+    "java": ">=${java}"
+  }
+}
