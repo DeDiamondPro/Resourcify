@@ -23,9 +23,9 @@ abstract class BackgroundScreen(
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         //#if MC>=12000
         //$$ renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
-        //#elseif MC>=11900 && FABRIC==1
+        //#elseif MC>=11904 && FABRIC==1
         //$$ renderBackgroundTexture(matrixStack.toMC())
-        //#elseif MC>=11900 && FORGE==1
+        //#elseif MC>=11904 && FORGE==1
         //$$ renderDirtBackground(matrixStack.toMC())
         //#elseif MC>=11600
         //$$ renderDirtBackground(0)

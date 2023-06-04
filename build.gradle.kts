@@ -179,6 +179,7 @@ tasks {
 
 fun getMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
+        "1.19" -> "1.19.0-2"
         in listOf("1.8.9", "1.12.2", "1.19.4", "1.20") -> project.platform.mcVersionStr
         else -> project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
     }

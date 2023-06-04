@@ -23,7 +23,6 @@ object UpdateChecker {
     private var updateCheck: CompletableFuture<Pair<Version, VersionFile>?>? = null
 
     fun startUpdateCheck() {
-        println("Starting update check")
         updateCheck = CompletableFuture.supplyAsync { checkForUpdates() }
     }
 
