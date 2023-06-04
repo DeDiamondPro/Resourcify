@@ -12,7 +12,7 @@ pluginManagement {
         maven("https://repo.essential.gg/repository/maven-public")
     }
     plugins {
-        val egtVersion = "0.1.11"
+        val egtVersion = "0.1.15"
         id("gg.essential.multi-version.root") version egtVersion
     }
 }
@@ -32,6 +32,7 @@ listOf(
     "1.18.1-forge",
     "1.18.1-fabric",
     "1.19.0-fabric",
+    "1.19.2-forge",
     "1.19.4-forge",
     "1.19.4-fabric",
     "1.20.0-fabric"
