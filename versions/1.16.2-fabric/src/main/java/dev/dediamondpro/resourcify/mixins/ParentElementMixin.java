@@ -4,6 +4,8 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+//#if FABRIC==1
+
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
 import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.screen.pack.PackScreen;
@@ -23,3 +25,5 @@ public interface ParentElementMixin {
         ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button);
     }
 }
+
+//#endif
