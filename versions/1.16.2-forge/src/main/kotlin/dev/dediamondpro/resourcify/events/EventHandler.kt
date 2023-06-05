@@ -8,6 +8,7 @@ package dev.dediamondpro.resourcify.events
 
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition
 import net.minecraft.client.gui.screen.PackScreen
+import net.minecraft.util.text.TranslationTextComponent
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.EventPriority
@@ -21,7 +22,10 @@ object EventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onMouseClicked(event: GuiScreenEvent.MouseClickedEvent.Pre) {
-        if (event.gui is PackScreen) ResourcePackAddition.onMouseClick(event.mouseX, event.mouseY, event.button)
+        if (event.gui !is PackScreen) return
+        val title = (event.gui.title as TranslationTextComponent).key
+        if (title != "resourcePack.title") return
+        ResourcePackAddition.onMouseClick(event.mouseX, event.mouseY, event.button)
     }
 }
 //#endif

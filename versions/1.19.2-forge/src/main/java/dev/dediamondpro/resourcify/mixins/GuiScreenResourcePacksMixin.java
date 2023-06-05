@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
 import gg.essential.universal.UMatrixStack;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 class GuiScreenResourcePacksMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci){
-        String title = ((TranslatableComponent) ((PackSelectionScreen) (Object) this).getTitle()).getKey();
+        String title = ((TranslatableContents) ((PackSelectionScreen) (Object) this).getTitle().getContents()).getKey();
         if (!title.equals("resourcePack.title")) return;
         ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrixStack));
     }

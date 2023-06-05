@@ -4,22 +4,23 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
 import gg.essential.universal.UMatrixStack;
-import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PackSelectionScreen.class)
+@Mixin(PackScreen.class)
 class GuiScreenResourcePacksMixin {
+
     @Inject(method = "render", at = @At("TAIL"))
-    private void drawScreen(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci){
-        String title = ((TranslatableComponent) ((PackSelectionScreen) (Object) this).getTitle()).getKey();
+    private void drawScreen(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        String title = ((TranslatableTextContent) ((PackScreen) (Object) this).getTitle().getContent()).getKey();
         if (!title.equals("resourcePack.title")) return;
-        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrixStack));
+        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrices));
     }
 }
