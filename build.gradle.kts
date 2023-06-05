@@ -114,7 +114,7 @@ tasks.processResources {
                 "java" to java,
                 "java_level" to compatLevel,
                 "version" to mod_version,
-                "mcVersionStr" to if (getMcVersionStr() == "1.20") "1.20.x" else getMcVersionStr()
+                "mcVersionStr" to getInternalMcVersionStr()
             )
         )
     }
@@ -179,8 +179,19 @@ tasks {
 
 fun getMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
-        in listOf("1.19", "1.19.2") -> "1.19.0-1.19.2"
+        "1.19.2" -> "1.19.0-1.19.2"
         in listOf("1.8.9", "1.12.2", "1.19.4", "1.20") -> project.platform.mcVersionStr
-        else -> project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
+        else -> "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
+    }
+}
+
+fun getInternalMcVersionStr(): String {
+    return when (project.platform.mcVersionStr) {
+        in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
+        else -> {
+            val dots = project.platform.mcVersionStr.count { it == '.' }
+            if (dots == 1) "${project.platform.mcVersionStr}.x"
+            else "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
+        }
     }
 }
