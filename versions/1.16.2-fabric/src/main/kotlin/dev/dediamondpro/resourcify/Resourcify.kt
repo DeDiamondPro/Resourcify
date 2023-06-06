@@ -15,7 +15,7 @@ object Resourcify : ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register {
             if (done) return@register
             UpdateChecker.displayScreenIfNeeded()
-            done = false
+            done = true
         }
     }
 }

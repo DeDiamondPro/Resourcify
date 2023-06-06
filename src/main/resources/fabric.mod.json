@@ -38,6 +38,8 @@
     "fabricloader": ">=0.12.0",
     "fabric-api-base": "*",
     "minecraft": "${mcVersionStr}",
-    "java": ">=${java}"
+    "java": ">=${java}",
+    "elementa": "590+markdown",
+    "universalcraft": "*"
   }
 }

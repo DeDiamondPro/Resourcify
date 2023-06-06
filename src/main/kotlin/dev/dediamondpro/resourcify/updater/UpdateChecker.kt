@@ -47,7 +47,7 @@ object UpdateChecker {
                 URLDecoder.decode(
                     this::class.java.protectionDomain.codeSource.location.file,
                     StandardCharsets.UTF_8.name()
-                )
+                ).removePrefix("file:").split(".jar")[0] + ".jar"
             )
             val checksum = Utils.getSha1(modFile) ?: return null
             val response: Map<String, Version> = URL("https://api.modrinth.com/v2/version_files/update")
