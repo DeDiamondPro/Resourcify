@@ -23,10 +23,12 @@ object UpdateChecker {
     private var updateCheck: CompletableFuture<Pair<Version, VersionFile>?>? = null
 
     fun startUpdateCheck() {
+        if (!Config.INSTANCE.checkForUpdates) return
         updateCheck = CompletableFuture.supplyAsync { checkForUpdates() }
     }
 
     fun displayScreenIfNeeded() {
+        if (!Config.INSTANCE.checkForUpdates) return
         updateCheck?.let {
             if (it.isDone) {
                 val data = it.get()
@@ -56,7 +58,8 @@ object UpdateChecker {
             val file = version.files.firstOrNull { it.primary } ?: version.files.firstOrNull() ?: return null
             if (checksum == file.hashes.sha1 || Config.INSTANCE.ignoredVersions.contains(file.hashes.sha1)) return null
             return version to file
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
             return null
         }
     }

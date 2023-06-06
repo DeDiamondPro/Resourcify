@@ -1,0 +1,2 @@
+net.minecraft.resources.IResourceManager net.minecraft.client.resources.IResourceManager
+net.minecraft.resources.SimpleReloadableResourceManager net.minecraft.client.resources.SimpleReloadableResourceManager

@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 @Serializable
-data class Config(var ignoredVersions: MutableList<String> = mutableListOf()) {
+data class Config(val checkForUpdates: Boolean = true, var ignoredVersions: MutableList<String> = mutableListOf()) {
 
     companion object {
         private val configFile = File("config/resourcify.json")
@@ -29,6 +29,7 @@ data class Config(var ignoredVersions: MutableList<String> = mutableListOf()) {
                 Config()
             }
         }
+
         fun save() {
             configFile.writeText(json.encodeToString(INSTANCE))
         }
