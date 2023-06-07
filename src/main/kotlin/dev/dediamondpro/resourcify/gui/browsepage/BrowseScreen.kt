@@ -44,18 +44,25 @@ class BrowseScreen : PaginatedScreen() {
         height = 100.percent()
     } childOf window
 
-    private val sideBoxScrollable = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
+    private val sideContainer = UIContainer().constrain {
         x = 0.pixels()
         y = 0.pixels()
         width = 160.pixels()
         height = 100.percent()
     } childOf contentBox
 
-    private val sideContainer = UIContainer().constrain {
+    private val sideBoxScrollable = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
+        x = 0.pixels()
+        y = 33.pixels()
+        width = 160.pixels()
+        height = 100.percent() - 37.pixels()
+    } childOf sideContainer
+
+    private val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
         x = 0.pixels()
         y = 0.pixels()
         width = 160.pixels()
-        height = ChildLocationSizeConstraint() + 4.pixels()
+        height = ChildLocationSizeConstraint()
     } childOf sideBoxScrollable
 
     private val mainBox = UIContainer().constrain {
@@ -105,19 +112,12 @@ class BrowseScreen : PaginatedScreen() {
             height = 29.pixels()
         } childOf sideContainer
 
-        val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
-            x = 0.pixels()
-            y = SiblingConstraint(padding = 4f)
-            width = 160.pixels()
-            height = ChildLocationSizeConstraint()
-        } childOf sideContainer
-
         val categoriesBox = UIContainer().constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
             height = ChildLocationSizeConstraint()
-        } childOf sideBox
+        } childOf categoryContainer
         Categories.getCategoriesByHeaderWhenLoaded { categoriesHeaders ->
             for ((header, categories) in categoriesHeaders) {
                 UIText(header.capitalizeAll()).constrain {
@@ -186,7 +186,7 @@ class BrowseScreen : PaginatedScreen() {
             y = SiblingConstraint()
             width = 100.percent()
             height = ChildLocationSizeConstraint()
-        } childOf sideBox
+        } childOf categoryContainer
         GameVersions.getVersionsWhenLoaded {
             UIText("Minecraft Versions").constrain {
                 x = 4.pixels()
