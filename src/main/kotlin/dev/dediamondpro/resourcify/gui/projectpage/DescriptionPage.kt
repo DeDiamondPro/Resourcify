@@ -19,15 +19,15 @@ class DescriptionPage(
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     init {
         constrain {
-            x = 0.pixels(alignOpposite = true)
+            x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
             height = ChildLocationSizeConstraint() + 8.pixels()
         }
         MarkdownComponent(project.body, disableSelection = true, imageCache = DummyCache).constrain {
-            x = 8.pixels()
-            y = 8.pixels()
-            width = 100.percent() - 16.pixels()
+            x = 6.pixels()
+            y = 6.pixels()
+            width = 100.percent() - 12.pixels()
         } childOf this
     }
 }

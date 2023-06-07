@@ -6,23 +6,21 @@ package dev.dediamondpro.resourcify.gui
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
-import gg.essential.universal.UKeyboard
-import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMinecraft
-import gg.essential.universal.UResolution
+import gg.essential.universal.*
+import net.minecraft.client.gui.GuiScreen
 import kotlin.math.floor
 
 //#if MC>=12000
 //$$ import net.minecraft.client.gui.DrawContext
 //#endif
 
-abstract class BackgroundScreen(
-    version: ElementaVersion,
-    enableRepeatKeys: Boolean = true,
-    drawDefaultBackground: Boolean = true,
-    restoreCurrentGuiOnClose: Boolean = false
-) : WindowScreen(version, enableRepeatKeys, drawDefaultBackground, restoreCurrentGuiOnClose) {
+abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, drawDefaultBackground = false) {
     private var defaultScale = -1
+
+    init {
+        currentScreen?.let { backScreens.add(it) }
+        forwardScreens.clear()
+    }
 
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         //#if MC>=12000
@@ -48,14 +46,34 @@ abstract class BackgroundScreen(
     }
 
     override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
-        if (restoreCurrentGuiOnClose && window.focusedComponent == null && keyCode == UKeyboard.KEY_ESCAPE) {
-            restorePreviousScreen()
+        if (window.focusedComponent == null && keyCode == UKeyboard.KEY_ESCAPE) {
+            goBack()
         } else {
             super.onKeyPressed(keyCode, typedChar, modifiers)
         }
     }
 
+    fun goBack() {
+        val backScreen = backScreens.removeLastOrNull()
+        if (backScreen is PaginatedScreen) forwardScreens.add(this)
+        else cleanUp()
+        displayScreen(backScreen)
+    }
+
+    fun goForward() {
+        val forwardScreen = forwardScreens.removeLastOrNull() ?: return
+        backScreens.add(this)
+        displayScreen(forwardScreen)
+    }
+
     companion object {
+        val backScreens: MutableList<GuiScreen> = mutableListOf()
+        val forwardScreens: MutableList<GuiScreen> = mutableListOf()
+
+        fun cleanUp() {
+            backScreens.clear()
+            forwardScreens.clear()
+        }
 
         private fun getGuiScale(defaultScale: Int): Int {
             val minScale = floor(UResolution.windowWidth / 692f).toInt()

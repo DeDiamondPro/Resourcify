@@ -6,8 +6,9 @@ package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
+import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
-import dev.dediamondpro.resourcify.gui.BackgroundScreen
+import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
 import dev.dediamondpro.resourcify.modrinth.Member
 import dev.dediamondpro.resourcify.modrinth.ProjectObject
@@ -15,7 +16,6 @@ import dev.dediamondpro.resourcify.modrinth.ProjectResponse
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.*
-import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
@@ -32,9 +32,7 @@ import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-class ProjectScreen(
-    private val projectLimited: ProjectObject
-) : BackgroundScreen(version = ElementaVersion.V2, drawDefaultBackground = false, restoreCurrentGuiOnClose = true) {
+class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen() {
     private val project = CompletableFuture.supplyAsync {
         URL("https://api.modrinth.com/v2/project/${projectLimited.slug}").getJson<ProjectResponse>()!!
     }
@@ -59,11 +57,11 @@ class ProjectScreen(
         height = ChildLocationSizeConstraint() + 4.pixels()
     } childOf scrollBox
 
-    private val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+    private val sideContainer = UIContainer().constrain {
         x = 0.pixels()
         y = 0.pixels()
         width = 160.pixels()
-        height = ChildBasedSizeConstraint() + 4.pixels()
+        height = ChildBasedSizeConstraint()
     } childOf contentBox
 
     private val mainBox = UIContainer().constrain {
@@ -84,7 +82,7 @@ class ProjectScreen(
             x = 0.pixels(alignOpposite = true)
             y = SiblingConstraint()
             width = 100.percent()
-            height = 32.pixels()
+            height = 29.pixels()
         } childOf mainBox
 
         versions.whenComplete { versions, _ ->
@@ -103,7 +101,7 @@ class ProjectScreen(
                 var progressBox: UIBlock? = null
                 var text: UIText? = null
                 val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
-                    x = 8.pixels(true)
+                    x = 6.pixels(true)
                     y = CenterConstraint()
                     width = basicWidthConstraint { (text?.getWidth() ?: 0f) + 8f }
                     height = 18.pixels()
@@ -152,7 +150,7 @@ class ProjectScreen(
         ).forEach { (text, page) ->
             if (text == "Gallery" && projectLimited.gallery.isEmpty()) return@forEach
             UIText("${ChatColor.BOLD}$text").constrain {
-                x = if (text == "Description") 8.pixels() else SiblingConstraint(padding = 8f)
+                x = if (text == "Description") 6.pixels() else SiblingConstraint(padding = 8f)
                 y = CenterConstraint()
             }.onMouseClick {
                 if (page == currentPage || !project.isDone || !versions.isDone || it.mouseButton != 0) return@onMouseClick
@@ -175,6 +173,19 @@ class ProjectScreen(
     }
 
     private fun sideBar() {
+        Paginator(this).constrain {
+            x = 0.pixels()
+            y = 0.pixels()
+            width = 160.pixels()
+            height = 29.pixels()
+        } childOf sideContainer
+
+        val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 160.pixels()
+            height = ChildBasedSizeConstraint() + 4.pixels()
+        } childOf sideContainer
         val bannerUrl = projectLimited.featuredGallery
         if (bannerUrl != null && !bannerUrl.endsWith(".webp")) UIImage.ofURL(bannerUrl, false).constrain {
             x = 0.pixels()
@@ -229,29 +240,33 @@ class ProjectScreen(
                 if (project.discordUrl != null) add("[Discord](${project.discordUrl})")
                 addAll(project.donationUrls.map { "[${it.platform}](${it.url})" })
             }
-            if (links.isNotEmpty()) Window.enqueueRenderOperation {
-                externalResourcesBox.constrain { y = SiblingConstraint(padding = 8f) }
-                UIText("External Resources:").constrain {
-                    x = 4.pixels()
-                    y = 0.pixels()
-                    color = Color.LIGHT_GRAY.toConstraint()
-                } childOf externalResourcesBox
-                MarkdownComponent(
-                    links.joinToString(" ● "),
-                    config = MarkdownConfig(
-                        paragraphConfig = ParagraphConfig(spaceBetweenLines = 1f),
-                        textConfig = TextConfig(
-                            color = Color.LIGHT_GRAY,
-                            shadowColor = Utils.getShadowColor(Color.LIGHT_GRAY),
-                            linkColor = Color.LIGHT_GRAY
-                        )
-                    ),
-                    disableSelection = true
-                ).constrain {
-                    x = 4.pixels()
-                    y = SiblingConstraint(padding = 2f)
-                    width = 100.percent() - 8.pixels()
-                } childOf externalResourcesBox
+            Window.enqueueRenderOperation {
+                if (links.isNotEmpty()) {
+                    externalResourcesBox.constrain { y = SiblingConstraint(padding = 8f) }
+                    UIText("External Resources:").constrain {
+                        x = 4.pixels()
+                        y = 0.pixels()
+                        color = Color.LIGHT_GRAY.toConstraint()
+                    } childOf externalResourcesBox
+                    MarkdownComponent(
+                        links.joinToString(" ● "),
+                        config = MarkdownConfig(
+                            paragraphConfig = ParagraphConfig(spaceBetweenLines = 1f),
+                            textConfig = TextConfig(
+                                color = Color.LIGHT_GRAY,
+                                shadowColor = Utils.getShadowColor(Color.LIGHT_GRAY),
+                                linkColor = Color.LIGHT_GRAY
+                            )
+                        ),
+                        disableSelection = true
+                    ).constrain {
+                        x = 4.pixels()
+                        y = SiblingConstraint(padding = 2f)
+                        width = 100.percent() - 8.pixels()
+                    } childOf externalResourcesBox
+                } else {
+                    sideBox.removeChild(externalResourcesBox)
+                }
             }
         }
         val membersBox = UIContainer().constrain {

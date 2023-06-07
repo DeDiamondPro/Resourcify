@@ -7,8 +7,9 @@ package dev.dediamondpro.resourcify.gui.browsepage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
+import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.DropDown
-import dev.dediamondpro.resourcify.gui.BackgroundScreen
+import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.browsepage.components.ResourceCard
 import dev.dediamondpro.resourcify.modrinth.Categories
 import dev.dediamondpro.resourcify.modrinth.GameVersions
@@ -17,7 +18,6 @@ import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.NetworkUtil
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJson
-import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
@@ -30,9 +30,7 @@ import java.awt.Color
 import java.util.concurrent.CompletableFuture
 import kotlin.math.ceil
 
-class BrowseScreen : BackgroundScreen(
-    version = ElementaVersion.V2, drawDefaultBackground = false, restoreCurrentGuiOnClose = true
-) {
+class BrowseScreen : PaginatedScreen() {
 
     private var offset = 0
     private val selectedCategories = mutableListOf<Categories>()
@@ -59,13 +57,6 @@ class BrowseScreen : BackgroundScreen(
         width = 160.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
     } childOf sideBoxScrollable
-
-    private val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
-        x = 0.pixels()
-        y = 0.pixels()
-        width = 160.pixels()
-        height = ChildLocationSizeConstraint()
-    } childOf sideContainer
 
     private val mainBox = UIContainer().constrain {
         x = 0.pixels(alignOpposite = true)
@@ -107,6 +98,20 @@ class BrowseScreen : BackgroundScreen(
     }
 
     private fun sideBar() {
+        Paginator(this).constrain {
+            x = 0.pixels()
+            y = 0.pixels()
+            width = 160.pixels()
+            height = 29.pixels()
+        } childOf sideContainer
+
+        val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 160.pixels()
+            height = ChildLocationSizeConstraint()
+        } childOf sideContainer
+
         val categoriesBox = UIContainer().constrain {
             x = 0.pixels()
             y = 0.pixels()

@@ -4,7 +4,6 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
-import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
@@ -15,6 +14,7 @@ import gg.essential.elementa.components.UIText
 import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
+import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
@@ -35,65 +35,65 @@ class VersionCard(val version: Version, val hashes: List<String>) : UIBlock(colo
     init {
         constrain {
             width = 100.percent()
-            height = ChildLocationSizeConstraint()
+            height = ChildBasedMaxSizeConstraint() + 8.pixels()
         }
         val versionInfo = UIContainer().constrain {
-            width = 45.percent() - 8.pixels()
-            height = ChildLocationSizeConstraint()
+            y = 6.pixels()
+            width = 45.percent() - 12.pixels()
+            height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
         UIText(version.name.trim()).constrain {
-            x = 4.pixels()
-            y = 4.pixels()
+            x = 6.pixels()
+            y = 0.pixels()
         } childOf versionInfo
         val infoHolder = UIContainer().constrain {
-            x = 4.pixels()
+            x = 6.pixels()
             y = SiblingConstraint(padding = 2f)
-            width = 45.percent() - 8.pixels()
+            width = 45.percent() - 12.pixels()
             height = ChildBasedMaxSizeConstraint()
         } childOf versionInfo
         UIText(version.versionType.formattedName).constrain {
             x = 0.pixels()
             y = 0.pixels()
             color = version.versionType.color.toConstraint()
-            textScale = 1.2.pixels()
         } childOf infoHolder
         UIText(version.versionNumber).constrain {
             x = SiblingConstraint(padding = 4f)
             y = 0.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
-            textScale = 1.2.pixels()
         } childOf infoHolder
 
-        UIText("Minecraft").constrain {
-            x = 45.percent
-            y = 4.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
-            textScale = 1.2.pixels()
-        } childOf this
-        UIWrappedText(GameVersions.formatVersions(version.gameVersions)).constrain {
-            x = 45.percent
-            y = SiblingConstraint(padding = 2f)
+        val mcVersionContainer = UIContainer().constrain {
+            x = 45.percent - 2.pixels()
+            y = 6.pixels()
             width = 15.percent() - 4.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
-            textScale = 1.2.pixels()
+            height = ChildBasedSizeConstraint(padding = 2f)
         } childOf this
+        UIText("Minecraft").constrain {
+            y = 0.pixels()
+            color = Color.LIGHT_GRAY.toConstraint()
+        } childOf mcVersionContainer
+        UIWrappedText(GameVersions.formatVersions(version.gameVersions)).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 2f)
+            width = 100.percent()
+            color = Color.LIGHT_GRAY.toConstraint()
+        } childOf mcVersionContainer
 
         val statsContainer = UIContainer().constrain {
-            x = 60.percent()
-            y = 0.pixels()
+            x = 60.percent() - 2.pixels()
+            y = 6.pixels()
             width = 40.percent() - 81.pixels()
-            height = ChildLocationSizeConstraint()
+            height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
         UIText("${nf.format(version.downloads)} downloads").constrain {
-            y = 4.pixels()
+            y = 0.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
-            textScale = 1.2.pixels()
         } childOf statsContainer
         val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.datePublished))
         UIText("Published on ${df.format(Date.from(instant))}").constrain {
             y = SiblingConstraint(padding = 2f)
             color = Color.LIGHT_GRAY.toConstraint()
-            textScale = 1.2.pixels()
         } childOf statsContainer
 
         downloadButton()
@@ -110,8 +110,8 @@ class VersionCard(val version: Version, val hashes: List<String>) : UIBlock(colo
         var progressBox: UIBlock? = null
         var text: UIText? = null
         val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
-            x = 4.pixels(true)
-            y = 4.pixels()
+            x = 6.pixels(true)
+            y = CenterConstraint()
             width = 73.pixels()
             height = 18.pixels()
         }.onMouseClick {
