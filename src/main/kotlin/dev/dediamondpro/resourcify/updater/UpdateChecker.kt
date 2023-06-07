@@ -81,7 +81,13 @@ object UpdateChecker {
     data class UpdateFormat(
         val hashes: List<String>,
         val algorithm: String = "sha1",
-        val loaders: List<String> = listOf("minecraft"),
+        val loaders: List<String> = listOf(
+            //#if FORGE == 1
+            "forge",
+            //#elseif FABRIC == 1
+            "fabric"
+            //#endif
+        ),
         @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
     )
 }
