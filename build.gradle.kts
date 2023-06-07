@@ -1,5 +1,18 @@
 /*
- * Copyright (C) 2023 DeDiamondPro. - All Rights Reserved
+ * This file is part of Resourcify
+ * Copyright (C) 2023 DeDiamondPro
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License Version 3
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 import com.matthewprenger.cursegradle.CurseArtifact
@@ -7,6 +20,7 @@ import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
 import gg.essential.gradle.util.*
+import org.gradle.configurationcache.extensions.capitalized
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -127,7 +141,7 @@ tasks.processResources {
 }
 
 tasks {
-    withType(Jar::class.java) {
+    withType<Jar> {
         if (project.platform.isFabric) {
             exclude("mcmod.info", "mods.toml")
         } else {
@@ -138,6 +152,8 @@ tasks {
                 exclude("mcmod.info")
             }
         }
+        from(rootProject.file("LICENSE"))
+        from(rootProject.file("LICENSE.LESSER"))
     }
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
@@ -209,17 +225,16 @@ tasks {
             changelogType = "markdown"
             relations(closureOf<CurseRelation> {
                 if (platform.isLegacyForge) {
-                    requiredDependency("forge")
+                    embeddedLibrary("essential-mod")
                 } else if (platform.isForge) {
-                    requiredDependency("forge")
                     requiredDependency("kotlin-for-forge")
                 } else {
-                    requiredDependency("fabric")
                     requiredDependency("fabric-api")
                     requiredDependency("fabric-language-kotlin")
                 }
             })
-            gameVersionStrings = getMcVersionList(true)
+            gameVersionStrings.addAll(getMcVersionList())
+            addGameVersion(platform.loaderStr.capitalize())
             releaseType = "release"
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
                 displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"
@@ -248,6 +263,7 @@ fun getMcVersionStr(): String {
 fun getInternalMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
+        "1.19.2" -> ">=1.19 <=1.19.2"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -256,7 +272,7 @@ fun getInternalMcVersionStr(): String {
     }
 }
 
-fun getMcVersionList(curseForge: Boolean = false): List<String> {
+fun getMcVersionList(): List<String> {
     return when (project.platform.mcVersionStr) {
         "1.8.9" -> listOf("1.8.9")
         "1.12.2" -> listOf("1.12.2")
@@ -265,7 +281,7 @@ fun getMcVersionList(curseForge: Boolean = false): List<String> {
         "1.18.1" -> listOf("1.18", "1.18.1", "1.18.2")
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
-        "1.20" -> if (curseForge) listOf("1.20-Snapshot") else listOf("1.20-rc1")
+        "1.20" -> listOf("1.20")
         else -> error("Unknown version")
     }
 }
