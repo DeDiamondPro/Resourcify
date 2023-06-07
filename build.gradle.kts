@@ -2,6 +2,10 @@
  * Copyright (C) 2023 DeDiamondPro. - All Rights Reserved
  */
 
+import com.matthewprenger.cursegradle.CurseArtifact
+import com.matthewprenger.cursegradle.CurseProject
+import com.matthewprenger.cursegradle.CurseRelation
+import com.matthewprenger.cursegradle.Options
 import gg.essential.gradle.util.*
 
 plugins {
@@ -11,6 +15,8 @@ plugins {
     id("gg.essential.defaults")
     id("com.github.johnrengelman.shadow")
     id("net.kyori.blossom")
+    id("com.modrinth.minotaur") version "2.7.5"
+    id("com.matthewprenger.cursegradle") version "1.4.0"
 }
 
 val mod_name: String by project
@@ -175,6 +181,60 @@ tasks {
         into("${project.rootDir}/jars")
     }
     clean { delete("${project.rootDir}/jars") }
+    modrinth {
+        token.set(System.getenv("MODRINTH_TOKEN"))
+        projectId.set("resourcify")
+        versionNumber.set(mod_version)
+        versionName.set("Resourcify $mod_version")
+        uploadFile.set(remapJar.get().archiveFile as Any)
+        gameVersions.addAll(getMcVersionList())
+        loaders.add(platform.loaderStr)
+        changelog.set(file("../../changelog.md").readText())
+        dependencies {
+            if (platform.isLegacyForge) {
+                embedded.project("essential")
+            } else if (platform.isForge) {
+                required.project("kotlin-for-forge")
+            } else {
+                required.project("fabric-api")
+                required.project("fabric-language-kotlin")
+            }
+        }
+    }
+    curseforge {
+        project(closureOf<CurseProject> {
+            apiKey = System.getenv("CURSEFORGE_TOKEN")
+            id = "870076"
+            changelog = file("../../changelog.md")
+            changelogType = "markdown"
+            relations(closureOf<CurseRelation> {
+                if (platform.isLegacyForge) {
+                    requiredDependency("forge")
+                } else if (platform.isForge) {
+                    requiredDependency("forge")
+                    requiredDependency("kotlin-for-forge")
+                } else {
+                    requiredDependency("fabric")
+                    requiredDependency("fabric-api")
+                    requiredDependency("fabric-language-kotlin")
+                }
+            })
+            gameVersionStrings = getMcVersionList(true)
+            releaseType = "release"
+            mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
+                displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"
+            })
+        })
+        options(closureOf<Options> {
+            javaVersionAutoDetect = false
+            javaIntegration = false
+            forgeGradleIntegration = false
+        })
+    }
+    register("publish") {
+        dependsOn(modrinth)
+        dependsOn(curseforge)
+    }
 }
 
 fun getMcVersionStr(): String {
@@ -193,5 +253,19 @@ fun getInternalMcVersionStr(): String {
             if (dots == 1) "${project.platform.mcVersionStr}.x"
             else "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
         }
+    }
+}
+
+fun getMcVersionList(curseForge: Boolean = false): List<String> {
+    return when (project.platform.mcVersionStr) {
+        "1.8.9" -> listOf("1.8.9")
+        "1.12.2" -> listOf("1.12.2")
+        "1.16.2" -> listOf("1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5")
+        "1.17.1" -> listOf("1.17", "1.17.1")
+        "1.18.1" -> listOf("1.18", "1.18.1", "1.18.2")
+        "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
+        "1.19.4" -> listOf("1.19.4")
+        "1.20" -> if (curseForge) listOf("1.20-Snapshot") else listOf("1.20-rc1")
+        else -> error("Unknown version")
     }
 }
