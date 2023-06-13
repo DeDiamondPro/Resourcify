@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.events
 
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraftforge.client.event.ScreenEvent
@@ -34,8 +35,11 @@ object EventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onMouseClicked(event: ScreenEvent.MouseClickedEvent.Pre) {
         if (event.screen !is PackSelectionScreen) return
-        val title = (event.screen.title as TranslatableComponent).key
-        if (title != "resourcePack.title") return
-        ResourcePackAddition.onMouseClick(event.mouseX, event.mouseY, event.button)
+        val type = ResourcePackAddition.getType((event.screen.title as TranslatableComponent).key) ?: return
+        ResourcePackAddition.onMouseClick(
+            event.mouseX, event.mouseY,
+            event.button, type,
+            (event.screen as PackScreenAccessor).directory
+        )
     }
 }

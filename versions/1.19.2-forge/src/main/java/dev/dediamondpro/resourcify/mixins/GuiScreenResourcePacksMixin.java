@@ -32,7 +32,7 @@ class GuiScreenResourcePacksMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci){
         String title = ((TranslatableContents) ((PackSelectionScreen) (Object) this).getTitle().getContents()).getKey();
-        if (!title.equals("resourcePack.title")) return;
+        if (ResourcePackAddition.INSTANCE.getType(title) == null) return;
         ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrixStack));
     }
 }

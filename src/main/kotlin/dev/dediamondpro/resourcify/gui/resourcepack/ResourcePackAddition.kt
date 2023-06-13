@@ -20,6 +20,9 @@ package dev.dediamondpro.resourcify.gui.resourcepack
 import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.MinecraftButton
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
+import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
+import dev.dediamondpro.resourcify.modrinth.ApiInfo
+import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.Icons
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.Window
@@ -30,33 +33,38 @@ import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.plus
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UScreen
+import java.io.File
 
 object ResourcePackAddition {
     private val window = Window(ElementaVersion.V2)
 
-    init {
-        val button = MinecraftButton().constrain {
-            x = CenterConstraint() + 194.pixels()
-            y = 10.pixels()
-            width = 20.pixels()
-            height = 20.pixels()
-        }.onMouseClick {
-            if (it.mouseButton != 0) return@onMouseClick
-            UScreen.displayScreen(BrowseScreen())
-        } childOf window
-        Icon(Icons.PLUS, true).constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-            width = 16.pixels()
-            height = 16.pixels()
-        } childOf button
-    }
+    private val button = MinecraftButton().constrain {
+        x = CenterConstraint() + 194.pixels()
+        y = 10.pixels()
+        width = 20.pixels()
+        height = 20.pixels()
+    } childOf window
+    private val icon = Icon(Icons.PLUS, true).constrain {
+        x = CenterConstraint()
+        y = CenterConstraint()
+        width = 16.pixels()
+        height = 16.pixels()
+    } childOf button
 
     fun onRender(matrix: UMatrixStack) {
         window.draw(matrix)
     }
 
-    fun onMouseClick(mouseX: Double, mouseY: Double, button: Int) {
-        window.mouseClick(mouseX, mouseY, button)
+    fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ApiInfo.ProjectType, folder: File) {
+        if (!this.button.isPointInside(mouseX.toFloat(), mouseY.toFloat()) || button != 0) return
+        UScreen.displayScreen(BrowseScreen(type, folder))
+    }
+
+    fun getType(title: String): ApiInfo.ProjectType? {
+        return when (title) {
+            "resourcePack.title" -> ApiInfo.ProjectType.RESOURCE_PACK
+            "dataPack.title" -> ApiInfo.ProjectType.DATA_PACK
+            else -> return null
+        }
     }
 }

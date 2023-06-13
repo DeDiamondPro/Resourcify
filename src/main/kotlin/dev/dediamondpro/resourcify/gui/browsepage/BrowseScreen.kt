@@ -24,11 +24,11 @@ import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.browsepage.components.ResourceCard
+import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.Categories
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.SearchResponse
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.NetworkUtil
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJson
 import gg.essential.elementa.components.*
@@ -40,10 +40,11 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UMatrixStack
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
+import java.io.File
 import java.util.concurrent.CompletableFuture
 import kotlin.math.ceil
 
-class BrowseScreen : PaginatedScreen() {
+class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFolder: File) : PaginatedScreen() {
 
     private var offset = 0
     private val selectedCategories = mutableListOf<Categories>()
@@ -131,7 +132,7 @@ class BrowseScreen : PaginatedScreen() {
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf categoryContainer
-        Categories.getCategoriesByHeaderWhenLoaded { categoriesHeaders ->
+        Categories.getCategoriesByHeaderWhenLoaded({ it.projectType == type.projectType }) { categoriesHeaders ->
             for ((header, categories) in categoriesHeaders) {
                 UIText(header.capitalizeAll()).constrain {
                     x = 4.pixels()
@@ -224,7 +225,7 @@ class BrowseScreen : PaginatedScreen() {
     }
 
     private fun header() {
-        searchBox = (UITextInput("Search resource packs...").constrain {
+        searchBox = (UITextInput("Search ${type.displayName}...").constrain {
             x = 6.pixels()
             y = CenterConstraint()
             width = 100.percent() - 89.pixels()
@@ -256,7 +257,7 @@ class BrowseScreen : PaginatedScreen() {
         fetchingFuture = CompletableFuture.runAsync {
             if (clear) offset = 0
             else offset += 20
-            val url = URIBuilder("https://api.modrinth.com/v2/search")
+            val url = URIBuilder("${ApiInfo.API}/search")
                 .setParameter("query", searchBox.getText())
                 .setParameter("facets", buildFacets())
                 .setParameter("limit", "20")
@@ -277,13 +278,13 @@ class BrowseScreen : PaginatedScreen() {
                         height = ChildBasedMaxSizeConstraint()
                     } childOf projectContainer
                     val constraint = MaxComponentConstraint(ChildLocationSizeConstraint() + 4.pixels())
-                    ResourceCard(projects[i * 2]).constrain {
+                    ResourceCard(projects[i * 2], type, downloadFolder).constrain {
                         x = 0.pixels()
                         y = 0.pixels()
                         width = 50.percent() - 2.pixels()
                         height = constraint
                     } childOf row
-                    if (projects.size > i * 2 + 1) ResourceCard(projects[i * 2 + 1]).constrain {
+                    if (projects.size > i * 2 + 1) ResourceCard(projects[i * 2 + 1], type, downloadFolder).constrain {
                         x = 0.pixels(true)
                         y = 0.pixels()
                         width = 50.percent() - 2.pixels()
@@ -298,7 +299,7 @@ class BrowseScreen : PaginatedScreen() {
     }
 
     private fun buildFacets(): String = buildString {
-        append("[[\"project_type:resourcepack\"]")
+        append("[${type.searchFacet}")
         if (selectedCategories.isNotEmpty()) append(",")
         append(selectedCategories.joinToString(",") { "[\"categories:'${it.name}'\"]" })
         versionDropDown?.selectedOptions?.let {
@@ -321,10 +322,5 @@ class BrowseScreen : PaginatedScreen() {
             loadPacks(false)
         }
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
-    }
-
-    override fun onScreenClose() {
-        super.onScreenClose()
-        NetworkUtil.clearCache()
     }
 }

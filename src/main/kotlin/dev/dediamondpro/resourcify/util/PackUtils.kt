@@ -17,16 +17,15 @@
 
 package dev.dediamondpro.resourcify.util
 
-import dev.dediamondpro.resourcify.platform.Platform
 import java.io.File
 
-object ResourcePackUtils {
+object PackUtils {
 
-    fun getPackHashes(): List<String> {
-        return getPackFiles().mapNotNull { Utils.getSha1(it) }
+    fun getPackHashes(directory: File): List<String> {
+        return getPackFiles(directory).mapNotNull { Utils.getSha1(it) }
     }
 
-    fun getPackFiles(directory: File = Platform.getResourcePackDirectory()): List<File> {
+    private fun getPackFiles(directory: File): List<File> {
         val files = directory.listFiles() ?: return emptyList()
         val packs = files.filter { it.isFile && it.extension == "zip"  }.toMutableList()
         files.filter { it.isDirectory }.forEach { packs.addAll(getPackFiles(it)) }

@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui
 
+import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
 import gg.essential.universal.*
@@ -86,6 +87,7 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, draw
         fun cleanUp() {
             backScreens.clear()
             forwardScreens.clear()
+            NetworkUtil.clearCache()
         }
 
         private fun getGuiScale(defaultScale: Int): Int {

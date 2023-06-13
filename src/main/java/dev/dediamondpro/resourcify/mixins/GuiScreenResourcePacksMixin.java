@@ -18,7 +18,9 @@
 package dev.dediamondpro.resourcify.mixins;
 
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
+import gg.essential.universal.UMinecraft;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +37,9 @@ public class GuiScreenResourcePacksMixin {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
     private void mouseClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
-        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, mouseButton);
+        ResourcePackAddition.INSTANCE.onMouseClick(
+                mouseX, mouseY, mouseButton, ApiInfo.ProjectType.RESOURCE_PACK,
+                UMinecraft.getMinecraft().getResourcePackRepository().getDirResourcepacks()
+        );
     }
 }

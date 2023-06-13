@@ -27,9 +27,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 
-class DescriptionPage(
-    project: ProjectResponse, versions: List<Version>? = null, hashes: List<String>? = null
-) : UIBlock(color = Color(0, 0, 0, 100)) {
+class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 100)) {
     init {
         constrain {
             x = 0.pixels()
@@ -37,7 +35,7 @@ class DescriptionPage(
             width = 100.percent()
             height = ChildLocationSizeConstraint() + 8.pixels()
         }
-        MarkdownComponent(project.body, disableSelection = true, imageCache = DummyCache).constrain {
+        MarkdownComponent(screen.project.get().body, disableSelection = true, imageCache = DummyCache).constrain {
             x = 6.pixels()
             y = 6.pixels()
             width = 100.percent() - 12.pixels()

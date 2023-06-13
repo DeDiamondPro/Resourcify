@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.mixins;
 //#if FABRIC==1
 
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.text.TranslatableText;
@@ -34,8 +35,9 @@ public interface ParentElementMixin {
     default void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (!(this instanceof PackScreen)) return;
         String title = ((TranslatableText) ((PackScreen) this).getTitle()).getKey();
-        if (!title.equals("resourcePack.title")) return;
-        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button);
+        ApiInfo.ProjectType type = ResourcePackAddition.INSTANCE.getType(title);
+        if (type == null) return;
+        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, type, ((PackScreenAccessor) this).getDirectory());
     }
 }
 

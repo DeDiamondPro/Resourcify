@@ -15,18 +15,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.platform
+package dev.dediamondpro.resourcify.mixins;
 
-import gg.essential.universal.UMinecraft
-import net.minecraft.SharedConstants
-import java.io.File
+import net.minecraft.client.gui.screen.pack.PackScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-object Platform {
-    fun getMcVersion(): String {
-       return SharedConstants.getGameVersion().name
-    }
+import java.nio.file.Path;
 
-    fun getResourcePackDirectory(): File {
-        return UMinecraft.getMinecraft().resourcePackDir.toFile()
-    }
+@Mixin(PackScreen.class)
+public interface PackScreenAccessor {
+
+    @Accessor("file")
+    Path getDirectory();
 }

@@ -28,7 +28,7 @@ import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
 
-class VersionsPage(project: ProjectResponse, versions: List<Version>, hashes: List<String>) : UIContainer() {
+class VersionsPage(screen: ProjectScreen) : UIContainer() {
     init {
         constrain {
             x = 0.pixels(alignOpposite = true)
@@ -36,8 +36,8 @@ class VersionsPage(project: ProjectResponse, versions: List<Version>, hashes: Li
             width = 100.percent()
             height = ChildBasedSizeConstraint()
         }
-        for (version in versions) {
-            VersionCard(version, hashes).constrain {
+        for (version in screen.versions.get()) {
+            VersionCard(version, screen.packHashes.get(), screen.downloadFolder).constrain {
                 x = 0.pixels()
                 y = SiblingConstraint(padding = 4f)
             } childOf this

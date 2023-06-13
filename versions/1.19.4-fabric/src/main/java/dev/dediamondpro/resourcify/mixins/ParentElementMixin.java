@@ -17,22 +17,28 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+//#if FABRIC==1
+
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
-import gg.essential.universal.UMatrixStack;
-import net.minecraft.client.gui.screen.PackScreen;
-import net.minecraft.util.text.TranslationTextComponent;
+import dev.dediamondpro.resourcify.modrinth.ApiInfo;
+import net.minecraft.client.gui.ParentElement;
+import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PackScreen.class)
-class GuiScreenResourcePacksMixin {
-    @Inject(method = "render", at = @At("TAIL"))
-    private void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        String title = ((TranslationTextComponent) ((PackScreen) (Object) this).getTitle()).getKey();
-        if (ResourcePackAddition.INSTANCE.getType(title) == null) return;
-        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrixStack));
+@Mixin(ParentElement.class)
+public interface ParentElementMixin {
+    @Inject(method = "mouseClicked", at = @At("HEAD"))
+    default void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        if (!(this instanceof PackScreen)) return;
+        String title = ((TranslatableTextContent) ((PackScreen) this).getTitle().getContent()).getKey();
+        ApiInfo.ProjectType type = ResourcePackAddition.INSTANCE.getType(title);
+        if (type == null) return;
+        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, type, ((PackScreenAccessor) this).getDirectory().toFile());
     }
 }
+
+//#endif

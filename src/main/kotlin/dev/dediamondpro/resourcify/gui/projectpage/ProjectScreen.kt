@@ -23,10 +23,7 @@ import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
-import dev.dediamondpro.resourcify.modrinth.Member
-import dev.dediamondpro.resourcify.modrinth.ProjectObject
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.modrinth.*
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
@@ -45,18 +42,24 @@ import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen() {
-    private val project = CompletableFuture.supplyAsync {
+class ProjectScreen(
+    private val projectLimited: ProjectObject,
+    val type: ApiInfo.ProjectType,
+    val downloadFolder: File
+) : PaginatedScreen() {
+    val project: CompletableFuture<ProjectResponse> = CompletableFuture.supplyAsync {
         URL("https://api.modrinth.com/v2/project/${projectLimited.slug}").getJson<ProjectResponse>()!!
     }
-    private val versions = CompletableFuture.supplyAsync {
+    val versions: CompletableFuture<List<Version>> = CompletableFuture.supplyAsync {
         URL("https://api.modrinth.com/v2/project/${projectLimited.slug}/version").getJson<List<Version>>()!!
     }
     private val members = CompletableFuture.supplyAsync {
         URL("https://api.modrinth.com/v2/project/${projectLimited.slug}/members").getJson<List<Member>>()!!
             .sortedBy { it.ordering }
     }
-    private val packHashes = CompletableFuture.supplyAsync { ResourcePackUtils.getPackHashes() }
+    val packHashes: CompletableFuture<List<String>> = CompletableFuture.supplyAsync {
+        PackUtils.getPackHashes(downloadFolder)
+    }
 
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
         width = 100.percent()
@@ -101,7 +104,7 @@ class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen
         versions.whenComplete { versions, _ ->
             if (versions == null) return@whenComplete
             val versionToDownload = versions.firstOrNull {
-                it.gameVersions.contains(Platform.getMcVersion())
+                it.gameVersions.contains(Platform.getMcVersion()) && it.loaders.contains(type.loader)
             } ?: return@whenComplete
             val fileToDownload = versionToDownload.files.firstOrNull {
                 it.primary
@@ -122,9 +125,7 @@ class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen
                     if (installed || it.mouseButton != 0) return@onMouseClick
                     if (DownloadManager.getProgress(url) == null) {
                         text?.setText("${ChatColor.BOLD}Installing...")
-                        DownloadManager.download(
-                            File(Platform.getResourcePackDirectory(), fileToDownload.fileName), url
-                        ) {
+                        DownloadManager.download(File(downloadFolder, fileToDownload.fileName), url) {
                             text?.setText("${ChatColor.BOLD}Installed")
                             installed = true
                         }
@@ -151,12 +152,10 @@ class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen
             }
         }
 
-        var currentPage: (ProjectResponse, List<Version>, List<String>) -> UIComponent = ::DescriptionPage
-        val loadedPages = mutableMapOf<(ProjectResponse, List<Version>, List<String>) -> UIComponent, UIComponent>()
-        project.whenComplete { projectResponse, _ ->
-            loadedPages[::DescriptionPage] = DescriptionPage(projectResponse) childOf mainBox
-        }
-        mapOf<String, (ProjectResponse, List<Version>, List<String>) -> UIComponent>(
+        var currentPage: (ProjectScreen) -> UIComponent = ::DescriptionPage
+        val loadedPages = mutableMapOf<(ProjectScreen) -> UIComponent, UIComponent>()
+        project.whenComplete { _, _ -> loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox }
+        mapOf<String, (ProjectScreen) -> UIComponent>(
             "Description" to ::DescriptionPage,
             "Gallery" to ::GalleryPage,
             "Versions" to ::VersionsPage
@@ -170,7 +169,7 @@ class ProjectScreen(private val projectLimited: ProjectObject) : PaginatedScreen
                 currentPage = page
                 loadedPages.forEach { page -> page.value.hide() }
                 loadedPages.getOrPut(page) {
-                    page(project.get(), versions.get(), packHashes.get()) childOf mainBox
+                    page(this@ProjectScreen) childOf mainBox
                 }.unhide()
             } childOf navigationBox
         }

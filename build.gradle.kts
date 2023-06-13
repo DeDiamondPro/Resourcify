@@ -29,7 +29,7 @@ plugins {
     id("gg.essential.defaults")
     id("com.github.johnrengelman.shadow")
     id("net.kyori.blossom")
-    id("com.modrinth.minotaur") version "2.7.5"
+    id("com.modrinth.minotaur") version "2.8.0"
     id("com.matthewprenger.cursegradle") version "1.4.0"
 }
 
@@ -201,7 +201,7 @@ tasks {
         token.set(System.getenv("MODRINTH_TOKEN"))
         projectId.set("resourcify")
         versionNumber.set(mod_version)
-        versionName.set("Resourcify $mod_version")
+        versionName.set("[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version")
         uploadFile.set(remapJar.get().archiveFile as Any)
         gameVersions.addAll(getMcVersionList())
         loaders.add(platform.loaderStr)
@@ -244,6 +244,8 @@ tasks {
             javaVersionAutoDetect = false
             javaIntegration = false
             forgeGradleIntegration = false
+            // TODO: remove when curseforge is finally approved
+            debug = true
         })
     }
     register("publish") {
@@ -255,8 +257,12 @@ tasks {
 fun getMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
         "1.19.2" -> "1.19.0-1.19.2"
-        in listOf("1.8.9", "1.12.2", "1.19.4", "1.20") -> project.platform.mcVersionStr
-        else -> "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
+        in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
+        else -> {
+            val dots = project.platform.mcVersionStr.count { it == '.' }
+            if (dots == 1) "${project.platform.mcVersionStr}.x"
+            else "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
+        }
     }
 }
 
@@ -281,7 +287,7 @@ fun getMcVersionList(): List<String> {
         "1.18.1" -> listOf("1.18", "1.18.1", "1.18.2")
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
-        "1.20" -> listOf("1.20")
+        "1.20" -> listOf("1.20", "1.20.1")
         else -> error("Unknown version")
     }
 }

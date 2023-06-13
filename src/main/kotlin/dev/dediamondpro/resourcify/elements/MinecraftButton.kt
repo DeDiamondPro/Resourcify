@@ -69,7 +69,11 @@ class MinecraftButton(text: String? = null) : UIContainer() {
         private var texture: ReleasedDynamicTexture? = null
 
         fun reloadTexture(resourceManager: IResourceManager) {
-            val resource = resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
+            val resource = try {
+                resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
+            } catch (e: Exception) {
+                return
+            }
             //#if MC >= 11900
             //$$ val stream = resource.get().inputStream
             //#else

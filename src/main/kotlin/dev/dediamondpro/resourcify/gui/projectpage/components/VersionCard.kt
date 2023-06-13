@@ -41,7 +41,9 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class VersionCard(val version: Version, val hashes: List<String>) : UIBlock(color = Color(0, 0, 0, 100)) {
+class VersionCard(
+    val version: Version, private val hashes: List<String>, private val downloadFolder: File
+) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
 
@@ -131,9 +133,7 @@ class VersionCard(val version: Version, val hashes: List<String>) : UIBlock(colo
             if (installed || it.mouseButton != 0) return@onMouseClick
             if (DownloadManager.getProgress(url) == null) {
                 text?.setText("${ChatColor.BOLD}Installing...")
-                DownloadManager.download(
-                    File(Platform.getResourcePackDirectory(), fileToDownload.fileName), url
-                ) {
+                DownloadManager.download(File(downloadFolder, fileToDownload.fileName), url) {
                     text?.setText("${ChatColor.BOLD}Installed")
                     installed = true
                 }

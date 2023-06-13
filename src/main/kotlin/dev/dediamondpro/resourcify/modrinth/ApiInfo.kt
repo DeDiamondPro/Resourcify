@@ -15,12 +15,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.platform
+package dev.dediamondpro.resourcify.modrinth
 
-import net.minecraft.util.SharedConstants
+object ApiInfo {
+    const val API = "https://api.modrinth.com/v2"
 
-object Platform {
-    fun getMcVersion(): String {
-       return SharedConstants.getVersion().name
+    enum class ProjectType(
+        val displayName: String,
+        val projectType: String,
+        val searchFacet: String,
+        val loader: String
+    ) {
+        RESOURCE_PACK(
+            "resource packs",
+            "resourcepack",
+            "[\"project_type:resourcepack\"]",
+            "minecraft"
+        ),
+        DATA_PACK(
+            "data packs",
+            "mod",
+            "[\"project_type:mod\"],[\"categories='datapack'\"]",
+            "datapack"
+        )
     }
 }

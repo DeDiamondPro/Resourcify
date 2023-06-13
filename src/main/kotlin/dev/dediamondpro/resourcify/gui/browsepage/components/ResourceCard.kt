@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.gui.browsepage.components
 
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
+import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ProjectObject
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.*
@@ -29,8 +30,9 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.UScreen
 import java.awt.Color
+import java.io.File
 
-class ResourceCard(project: ProjectObject) : UIBlock(color = Color(0, 0, 0, 100)) {
+class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFolder: File) : UIBlock(color = Color(0, 0, 0, 100)) {
 
     init {
         constrain {
@@ -38,7 +40,7 @@ class ResourceCard(project: ProjectObject) : UIBlock(color = Color(0, 0, 0, 100)
             y = 0.pixels()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            UScreen.displayScreen(ProjectScreen(project))
+            UScreen.displayScreen(ProjectScreen(project, type, downloadFolder))
         }
 
         val bannerHolder = UIBlock(color = project.color?.let { Color(it) } ?: Color.BLACK).constrain {

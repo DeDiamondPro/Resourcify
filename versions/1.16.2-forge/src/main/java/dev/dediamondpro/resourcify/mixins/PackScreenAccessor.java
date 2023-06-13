@@ -15,12 +15,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.platform
+package dev.dediamondpro.resourcify.mixins;
 
-import net.minecraft.util.SharedConstants
+import net.minecraft.client.gui.screen.PackScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-object Platform {
-    fun getMcVersion(): String {
-       return SharedConstants.getVersion().name
-    }
+import java.io.File;
+
+@Mixin(PackScreen.class)
+public interface PackScreenAccessor {
+
+    @Accessor("field_241817_w_")
+    File getDirectory();
 }

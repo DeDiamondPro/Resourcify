@@ -27,7 +27,7 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import kotlin.math.ceil
 
-class GalleryPage(project: ProjectResponse, versions: List<Version>, hashes: List<String>) : UIContainer() {
+class GalleryPage(screen: ProjectScreen) : UIContainer() {
     init {
         constrain {
             x = 0.pixels(alignOpposite = true)
@@ -36,7 +36,7 @@ class GalleryPage(project: ProjectResponse, versions: List<Version>, hashes: Lis
             height = ChildLocationSizeConstraint()
         }
 
-        val gallery = project.gallery.sortedBy { it.ordering }
+        val gallery = screen.project.get().gallery.sortedBy { it.ordering }
         for (i in 0 until ceil(gallery.size / 2f).toInt()) {
             val row = UIContainer().constrain {
                 x = 0.pixels()
