@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
 import gg.essential.universal.UMinecraft;
@@ -32,12 +32,12 @@ public class GuiScreenResourcePacksMixin {
 
     @Inject(method = "drawScreen", at = @At("TAIL"))
     private void drawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        ResourcePackAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get());
+        PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ApiInfo.ProjectType.RESOURCE_PACK);
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
     private void mouseClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
-        ResourcePackAddition.INSTANCE.onMouseClick(
+        PackScreensAddition.INSTANCE.onMouseClick(
                 mouseX, mouseY, mouseButton, ApiInfo.ProjectType.RESOURCE_PACK,
                 UMinecraft.getMinecraft().getResourcePackRepository().getDirResourcepacks()
         );

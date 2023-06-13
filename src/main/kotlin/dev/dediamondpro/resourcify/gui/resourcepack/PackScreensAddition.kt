@@ -20,9 +20,7 @@ package dev.dediamondpro.resourcify.gui.resourcepack
 import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.MinecraftButton
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
-import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.modrinth.ApiInfo
-import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.Icons
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.Window
@@ -35,7 +33,7 @@ import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UScreen
 import java.io.File
 
-object ResourcePackAddition {
+object PackScreensAddition {
     private val window = Window(ElementaVersion.V2)
 
     private val button = MinecraftButton().constrain {
@@ -51,7 +49,9 @@ object ResourcePackAddition {
         height = 16.pixels()
     } childOf button
 
-    fun onRender(matrix: UMatrixStack) {
+    fun onRender(matrix: UMatrixStack, type: ApiInfo.ProjectType) {
+        button.setX(type.plusX)
+        button.setY(type.plusY)
         window.draw(matrix)
     }
 

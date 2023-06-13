@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.DownloadManager
+import dev.dediamondpro.resourcify.util.capitalizeAll
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -84,8 +85,9 @@ class VersionCard(
             width = 15.percent() - 4.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } childOf this
-        UIText("Minecraft").constrain {
+        UIWrappedText(version.loaders.joinToString(", ") { it.capitalizeAll() }).constrain {
             y = 0.pixels()
+            width = 100.percent()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf mcVersionContainer
         UIWrappedText(GameVersions.formatVersions(version.gameVersions)).constrain {

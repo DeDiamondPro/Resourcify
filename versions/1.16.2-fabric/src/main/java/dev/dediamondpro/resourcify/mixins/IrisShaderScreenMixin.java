@@ -17,25 +17,33 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+//#if FABRIC == 1
+
 import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
-import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PackScreen.class)
-class GuiScreenResourcePacksMixin {
+import java.io.File;
 
-    @Inject(method = "render", at = @At("TAIL"))
-    private void drawScreen(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        String title = ((TranslatableTextContent) ((PackScreen) (Object) this).getTitle().getContent()).getKey();
-        ApiInfo.ProjectType type = ResourcePackAddition.INSTANCE.getType(title);
-        if (type == null) return;
-        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(matrices), type);
+@Pseudo
+@Mixin(targets = "net.coderbot.iris.gui.screen.ShaderPackScreen", remap = false)
+public class IrisShaderScreenMixin {
+    @Inject(method = "method_25394", at = @At("RETURN"))
+    void onRender(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(stack), ApiInfo.ProjectType.IRIS_SHADER);
+    }
+
+    @Inject(method = "method_25402", at = @At("HEAD"))
+    void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, ApiInfo.ProjectType.IRIS_SHADER, new File("./shaderpacks"));
     }
 }
+
+//#endif

@@ -42,7 +42,7 @@ class Paginator(screen: PaginatedScreen) : UIBlock(color = Color(0, 0, 0, 100)) 
             x = CenterConstraint()
             y = CenterConstraint()
         }.onMouseClick {
-            UScreen.displayScreen(PaginatedScreen.backScreens.findLast { it is GuiScreenResourcePacks })
+            UScreen.displayScreen(PaginatedScreen.backScreens.findLast { it !is PaginatedScreen })
             PaginatedScreen.cleanUp()
         } childOf this
         Icon(Icons.FORWARD, true, basicColorConstraint {

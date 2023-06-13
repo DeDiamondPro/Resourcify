@@ -17,6 +17,12 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
+import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.XConstraint
+import gg.essential.elementa.constraints.YConstraint
+import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.dsl.plus
+
 object ApiInfo {
     const val API = "https://api.modrinth.com/v2"
 
@@ -24,7 +30,9 @@ object ApiInfo {
         val displayName: String,
         val projectType: String,
         val searchFacet: String,
-        val loader: String
+        val loader: String,
+        val plusX: XConstraint = CenterConstraint() + 194.pixels(),
+        val plusY: YConstraint = 10.pixels()
     ) {
         RESOURCE_PACK(
             "resource packs",
@@ -35,8 +43,16 @@ object ApiInfo {
         DATA_PACK(
             "data packs",
             "mod",
-            "[\"project_type:mod\"],[\"categories='datapack'\"]",
+            "[\"project_type:mod\"],[\"categories=datapack\"]",
             "datapack"
+        ),
+        IRIS_SHADER(
+            "shaders",
+            "shader",
+            "[\"project_type:shader\"],[\"categories=iris\"]",
+            "iris",
+            CenterConstraint() + 144.pixels(),
+            6.pixels()
         )
     }
 }
