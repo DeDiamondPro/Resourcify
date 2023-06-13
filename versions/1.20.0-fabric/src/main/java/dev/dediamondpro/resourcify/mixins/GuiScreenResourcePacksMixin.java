@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
 import net.minecraft.client.gui.DrawContext;
@@ -34,8 +34,8 @@ class GuiScreenResourcePacksMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         String title = ((TranslatableTextContent) ((PackScreen) (Object) this).getTitle().getContent()).getKey();
-        ApiInfo.ProjectType type = ResourcePackAddition.INSTANCE.getType(title);
+        ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
-        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), type);
+        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), type);
     }
 }

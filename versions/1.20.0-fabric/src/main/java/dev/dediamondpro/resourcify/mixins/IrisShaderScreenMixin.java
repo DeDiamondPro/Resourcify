@@ -19,11 +19,10 @@ package dev.dediamondpro.resourcify.mixins;
 
 //#if FABRIC == 1
 
-import dev.dediamondpro.resourcify.gui.resourcepack.ResourcePackAddition;
+import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,12 +37,12 @@ import java.io.File;
 public class IrisShaderScreenMixin {
     @Inject(method = "method_25394", at = @At("RETURN"))
     void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        ResourcePackAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), ApiInfo.ProjectType.IRIS_SHADER);
+        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), ApiInfo.ProjectType.IRIS_SHADER);
     }
 
     @Inject(method = "method_25402", at = @At("HEAD"))
     void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        ResourcePackAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, ApiInfo.ProjectType.IRIS_SHADER, new File("./shaderpacks"));
+        PackScreensAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, ApiInfo.ProjectType.IRIS_SHADER, new File("./shaderpacks"));
     }
 }
 

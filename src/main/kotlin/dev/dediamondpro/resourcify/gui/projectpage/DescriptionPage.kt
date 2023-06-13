@@ -18,8 +18,6 @@
 package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.util.DummyCache
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.constraints.SiblingConstraint

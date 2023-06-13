@@ -27,7 +27,6 @@ import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
 import gg.essential.universal.UScreen
-import net.minecraft.client.gui.GuiScreenResourcePacks
 import java.awt.Color
 
 class Paginator(screen: PaginatedScreen) : UIBlock(color = Color(0, 0, 0, 100)) {

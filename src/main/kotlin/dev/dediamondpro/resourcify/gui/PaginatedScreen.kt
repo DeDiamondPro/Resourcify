@@ -20,7 +20,10 @@ package dev.dediamondpro.resourcify.gui
 import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
-import gg.essential.universal.*
+import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UMinecraft
+import gg.essential.universal.UResolution
 import net.minecraft.client.gui.GuiScreen
 import kotlin.math.floor
 

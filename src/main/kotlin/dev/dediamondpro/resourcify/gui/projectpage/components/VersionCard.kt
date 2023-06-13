@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.Version
-import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import gg.essential.elementa.components.UIBlock

@@ -19,8 +19,6 @@ package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.components.GalleryCard
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint

@@ -18,8 +18,6 @@
 package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint

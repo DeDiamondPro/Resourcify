@@ -20,8 +20,8 @@ package dev.dediamondpro.resourcify.gui.browsepage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
-import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.DropDown
+import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.browsepage.components.ResourceCard
 import dev.dediamondpro.resourcify.modrinth.ApiInfo

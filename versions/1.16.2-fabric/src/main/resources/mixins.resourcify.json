@@ -4,10 +4,10 @@
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "ReloadableResourceManagerMixin",
     "GuiScreenResourcePacksMixin",
-    "ParentElementMixin",
+    "IrisShaderScreenMixin",
     "PackScreenAccessor",
-    "IrisShaderScreenMixin"
+    "ParentElementMixin",
+    "ReloadableResourceManagerMixin"
   ]
 }
