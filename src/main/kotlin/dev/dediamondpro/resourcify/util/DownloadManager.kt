@@ -31,8 +31,8 @@ object DownloadManager {
     @get:Synchronized
     private val downloadsInProgress = mutableMapOf<URL, DownloadData>()
 
-    fun download(file: File, url: URL, callback: (() -> Unit)? = null) {
-        queuedDownloads[url] = QueuedDownload(file, callback)
+    fun download(file: File, sha512: String? = null, url: URL, callback: (() -> Unit)? = null) {
+        queuedDownloads[url] = QueuedDownload(file, sha512, callback)
         downloadNext()
     }
 
@@ -60,17 +60,22 @@ object DownloadManager {
         val queuedDownload = queuedDownloads.remove(url) ?: return
         downloadsInProgress[url] = DownloadData(CompletableFuture.runAsync {
             val con = url.setupConnection()
-            //while (downloadsInProgress[file] == null) {} // Wait for this to be inserted, if needed
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {
                 Files.copy(it!!, queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
+            queuedDownload.sha512?.let {
+                val hash = Utils.getSha512(queuedDownload.file)
+                if (hash == it) return@let
+                queuedDownload.file.delete()
+                error("Hash $hash does not match expected hash $hash!")
+            }
             queuedDownload.callback?.let { it() }
-        }.whenCompleteAsync { _, throwable ->
+        }.whenComplete { _, throwable ->
             if (throwable != null) {
                 println("Download of $url failed:")
                 throwable.printStackTrace()
-                return@whenCompleteAsync
+                return@whenComplete
             }
             downloadsInProgress.remove(url)
             downloadNext()
@@ -78,6 +83,6 @@ object DownloadManager {
     }
 }
 
-private data class QueuedDownload(val file: File, val callback: (() -> Unit)?)
+private data class QueuedDownload(val file: File, val sha512: String?, val callback: (() -> Unit)?)
 
 private data class DownloadData(val future: CompletableFuture<Void>, val file: File, var length: Int? = null)

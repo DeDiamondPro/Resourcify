@@ -64,12 +64,12 @@ object UpdateChecker {
                     StandardCharsets.UTF_8.name()
                 ).removePrefix("file:").split(".jar")[0] + ".jar"
             )
-            val checksum = Utils.getSha1(modFile) ?: return null
+            val checksum = Utils.getSha512(modFile) ?: return null
             val response: Map<String, Version> = URL("https://api.modrinth.com/v2/version_files/update")
                 .postAndGetJson(UpdateFormat(listOf(checksum))) ?: return null
             val version = response[checksum] ?: return null
             val file = version.files.firstOrNull { it.primary } ?: version.files.firstOrNull() ?: return null
-            if (checksum == file.hashes.sha1 || Config.INSTANCE.ignoredVersions.contains(file.hashes.sha1)) return null
+            if (checksum == file.hashes.sha512 || Config.INSTANCE.ignoredVersions.contains(file.hashes.sha512)) return null
             return version to file
         } catch (e: Exception) {
             e.printStackTrace()
@@ -80,12 +80,12 @@ object UpdateChecker {
     @Serializable
     data class UpdateFormat(
         val hashes: List<String>,
-        val algorithm: String = "sha1",
+        val algorithm: String = "sha512",
         val loaders: List<String> = listOf(
             //#if FORGE == 1
             "forge",
             //#elseif FABRIC == 1
-            "fabric"
+            //$$ "fabric"
             //#endif
         ),
         @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())

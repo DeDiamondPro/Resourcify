@@ -120,7 +120,7 @@ class VersionCard(
             it.primary
         } ?: version.files.firstOrNull() ?: return
         val url = URL(fileToDownload.url)
-        var installed = hashes.contains(fileToDownload.hashes.sha1)
+        var installed = hashes.contains(fileToDownload.hashes.sha512)
         val buttonText = if (installed) "${ChatColor.BOLD}Installed" else "${ChatColor.BOLD}Install"
 
         var progressBox: UIBlock? = null
@@ -134,7 +134,10 @@ class VersionCard(
             if (installed || it.mouseButton != 0) return@onMouseClick
             if (DownloadManager.getProgress(url) == null) {
                 text?.setText("${ChatColor.BOLD}Installing...")
-                DownloadManager.download(File(downloadFolder, fileToDownload.fileName), url) {
+                DownloadManager.download(
+                    File(downloadFolder, fileToDownload.fileName),
+                    fileToDownload.hashes.sha512, url
+                ) {
                     text?.setText("${ChatColor.BOLD}Installed")
                     installed = true
                 }

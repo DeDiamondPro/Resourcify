@@ -92,7 +92,7 @@ class UpdateGui(version: Version, file: VersionFile) : WindowScreen(ElementaVers
             width = MinConstraint((100.percent() boundTo window) - 4.pixels(), 600.pixels()) / 3 - 2.pixels()
             height = 20.pixels()
         }.onMouseClick {
-            Config.INSTANCE.ignoredVersions.add(file.hashes.sha1)
+            Config.INSTANCE.ignoredVersions.add(file.hashes.sha512)
             Config.save()
             displayScreen(null)
         } childOf buttonBox

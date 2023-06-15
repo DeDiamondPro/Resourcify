@@ -110,7 +110,7 @@ class ProjectScreen(
                 it.primary
             } ?: versionToDownload.files.firstOrNull() ?: return@whenComplete
             val url = URL(fileToDownload.url)
-            var installed = packHashes.get().contains(fileToDownload.hashes.sha1)
+            var installed = packHashes.get().contains(fileToDownload.hashes.sha512)
             val buttonText = if (installed) "${ChatColor.BOLD}Installed"
             else "${ChatColor.BOLD}Install ${versionToDownload.versionNumber}"
             Window.enqueueRenderOperation {
@@ -125,7 +125,10 @@ class ProjectScreen(
                     if (installed || it.mouseButton != 0) return@onMouseClick
                     if (DownloadManager.getProgress(url) == null) {
                         text?.setText("${ChatColor.BOLD}Installing...")
-                        DownloadManager.download(File(downloadFolder, fileToDownload.fileName), url) {
+                        DownloadManager.download(
+                            File(downloadFolder, fileToDownload.fileName),
+                            fileToDownload.hashes.sha512, url
+                        ) {
                             text?.setText("${ChatColor.BOLD}Installed")
                             installed = true
                         }
