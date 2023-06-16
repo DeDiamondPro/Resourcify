@@ -244,13 +244,12 @@ tasks {
             javaVersionAutoDetect = false
             javaIntegration = false
             forgeGradleIntegration = false
-            // TODO: remove when curseforge is finally approved
-            debug = true
         })
     }
     register("publish") {
         dependsOn(modrinth)
-        dependsOn(curseforge)
+        // TODO: add back when curseforge is finally approved
+        // dependsOn(curseforge)
     }
 }
 

@@ -68,7 +68,7 @@ object DownloadManager {
                 val hash = Utils.getSha512(queuedDownload.file)
                 if (hash == it) return@let
                 queuedDownload.file.delete()
-                error("Hash $hash does not match expected hash $hash!")
+                error("Hash $hash does not match expected hash $it!")
             }
             queuedDownload.callback?.let { it() }
         }.whenComplete { _, throwable ->
