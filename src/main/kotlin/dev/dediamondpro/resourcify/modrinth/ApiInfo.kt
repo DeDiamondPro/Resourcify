@@ -53,6 +53,13 @@ object ApiInfo {
             "iris",
             CenterConstraint() + 144.pixels(),
             6.pixels()
+        ),
+        OPTIFINE_SHADER(
+            "shaders",
+            "shader",
+            "[\"project_type:shader\"],[\"categories=optifine\"]",
+            "optifine",
+            plusX = 10.pixels(true)
         )
     }
 }

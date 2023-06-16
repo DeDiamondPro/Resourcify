@@ -81,6 +81,7 @@ class MinecraftButton(text: String? = null) : UIContainer() {
             //#endif
             val tex = UGraphics.getTexture(stream)
             tex.uploadTexture()
+            texture?.deleteGlTexture()
             texture = tex
         }
     }

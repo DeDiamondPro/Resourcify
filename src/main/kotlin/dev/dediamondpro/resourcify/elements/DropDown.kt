@@ -24,6 +24,7 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class DropDown(
@@ -34,6 +35,7 @@ class DropDown(
     private val placeHolder: String = ""
 ) : UIContainer() {
     private val selectionUpdateListeners = mutableListOf<(List<String>) -> Unit>()
+    private var canOpen = false
 
     private val box = UIBlock(color = Color(0, 0, 0, 200)).constrain {
         x = 0.pixels()
@@ -104,7 +106,7 @@ class DropDown(
         }
         var hidden = true
         box.onMouseClick {
-            if (!hidden || it.mouseButton != 0) return@onMouseClick
+            if (!hidden || it.mouseButton != 0 || !canOpen) return@onMouseClick
             expandContainer.setFloating(true)
             expandContainer.unhide()
             expandContainer.grabWindowFocus()
@@ -125,6 +127,11 @@ class DropDown(
     fun onSelectionUpdate(listener: (List<String>) -> Unit): DropDown {
         selectionUpdateListeners.add(listener)
         return this
+    }
+
+    override fun draw(matrixStack: UMatrixStack) {
+        super.draw(matrixStack)
+        canOpen = true
     }
 
     inner class DropDownElement(

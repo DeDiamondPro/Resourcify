@@ -20,7 +20,6 @@ import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
 import gg.essential.gradle.util.*
-import org.gradle.configurationcache.extensions.capitalized
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -82,13 +81,14 @@ dependencies {
     val elementaVersion = "590+markdown"
     val universalVersion = "269"
     val elementaPlatform: String? by project
+    val universalPlatform: String? by project
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         val fabricLanguageKotlinVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
         modImplementation("include"("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion")!!)
-        modImplementation("include"("gg.essential:universalcraft-${platform}:$universalVersion")!!)
+        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion")!!)
     } else if (platform.isForge) {
         val essentialPlatform: String? by project
         shade("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion") {
@@ -104,7 +104,7 @@ dependencies {
         } else {
             val kotlinForForgeVersion: String by project
             runtimeOnly("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
-            shade("gg.essential:universalcraft-${platform}:$universalVersion") {
+            shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
                 isTransitive = false
             }
         }
@@ -257,6 +257,7 @@ tasks {
 fun getMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
         "1.19.2" -> "1.19.0-1.19.2"
+        "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
@@ -284,7 +285,7 @@ fun getMcVersionList(): List<String> {
         "1.12.2" -> listOf("1.12.2")
         "1.16.2" -> listOf("1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5")
         "1.17.1" -> listOf("1.17", "1.17.1")
-        "1.18.1" -> listOf("1.18", "1.18.1", "1.18.2")
+        "1.18.2" -> if (platform.isFabric) listOf("1.18", "1.18.1", "1.18.2") else listOf("1.18.2")
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
         "1.20" -> listOf("1.20", "1.20.1")
