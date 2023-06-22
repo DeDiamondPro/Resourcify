@@ -55,9 +55,9 @@ base {
 tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 loom {
-    if (project.platform.isLegacyForge) launchConfigs.named("client") {
+    /*if (project.platform.isLegacyForge) launchConfigs.named("client") {
         arg("--tweakClass", "gg.essential.loader.stage0.EssentialSetupTweaker")
-    }
+    }*/
     if (project.platform.isForge) forge {
         mixinConfig("mixins.${mod_id}.json")
     }
@@ -79,7 +79,7 @@ val shade: Configuration by configurations.creating {
 
 dependencies {
     val elementaVersion = "590+markdown"
-    val universalVersion = "269"
+    val universalVersion = "277"
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
     if (platform.isFabric) {
@@ -197,7 +197,7 @@ tasks {
         into("${project.rootDir}/jars")
     }
     clean { delete("${project.rootDir}/jars") }
-    modrinth {
+    project.modrinth {
         token.set(System.getenv("MODRINTH_TOKEN"))
         projectId.set("resourcify")
         versionNumber.set(mod_version)
@@ -217,7 +217,7 @@ tasks {
             }
         }
     }
-    curseforge {
+    project.curseforge {
         project(closureOf<CurseProject> {
             apiKey = System.getenv("CURSEFORGE_TOKEN")
             id = "870076"
@@ -248,8 +248,7 @@ tasks {
     }
     register("publish") {
         dependsOn(modrinth)
-        // TODO: add back when curseforge is finally approved
-        // dependsOn(curseforge)
+        dependsOn(curseforge)
     }
 }
 
@@ -287,7 +286,7 @@ fun getMcVersionList(): List<String> {
         "1.18.2" -> if (platform.isFabric) listOf("1.18", "1.18.1", "1.18.2") else listOf("1.18.2")
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
-        "1.20" -> listOf("1.20", "1.20.1")
+        "1.20.1" -> listOf("1.20", "1.20.1")
         else -> error("Unknown version")
     }
 }

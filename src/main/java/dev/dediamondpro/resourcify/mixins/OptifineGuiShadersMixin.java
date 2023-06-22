@@ -28,7 +28,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//#if MC >= 11700
+//#if MC >= 12000
+//$$ import net.minecraft.client.gui.GuiGraphics;
+//#elseif MC >= 11700
 //$$ import com.mojang.blaze3d.vertex.PoseStack;
 //#elseif MC >= 11600
 //$$ import com.mojang.blaze3d.matrix.MatrixStack;
@@ -40,7 +42,9 @@ public class OptifineGuiShadersMixin {
 
     @Inject(
             method =
-                    //#if MC >= 11904
+                    //#if MC >= 12000
+                    //$$ "m_88315_",
+                    //#elseif MC >= 11904
                     //$$ "m_86412_",
                     //#elseif MC >= 11700
                     //$$ "m_6305_",
@@ -51,7 +55,9 @@ public class OptifineGuiShadersMixin {
                     //#endif
             at = @At("RETURN"), remap = false)
     void onDraw(
-            //#if MC >= 11700
+            //#if MC >= 12000
+            //$$ GuiGraphics drawContext,
+            //#elseif MC >= 11700
             //$$ PoseStack matrixStack,
             //#elseif MC >= 11600
             //$$ MatrixStack matrixStack,
@@ -61,6 +67,8 @@ public class OptifineGuiShadersMixin {
         PackScreensAddition.INSTANCE.onRender(
                 //#if MC < 11600
                 UMatrixStack.Compat.INSTANCE.get(),
+                //#elseif MC >= 12000
+                //$$ new UMatrixStack(drawContext.pose()),
                 //#else
                 //$$ new UMatrixStack(matrixStack),
                 //#endif
