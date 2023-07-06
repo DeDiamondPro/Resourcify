@@ -82,18 +82,15 @@ dependencies {
     val universalVersion = "277"
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
+    val essentialPlatform: String? by project
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         val fabricLanguageKotlinVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
-        modImplementation("include"("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion")!!)
+        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion")!!)
     } else if (platform.isForge) {
-        val essentialPlatform: String? by project
-        shade("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion") {
-            isTransitive = false
-        }
         compileOnly("gg.essential:essential-${essentialPlatform ?: platform}:4166+ge3c5b9d02")
         if (platform.isLegacyForge) {
             shade("gg.essential:loader-launchwrapper:1.1.3") {
@@ -108,6 +105,9 @@ dependencies {
                 isTransitive = false
             }
         }
+    }
+    shade("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion") {
+        isTransitive = false
     }
     shade("com.github.ben-manes.caffeine:caffeine:2.9.3")
     shade("com.twelvemonkeys.imageio:imageio-webp:3.9.4")
@@ -162,11 +162,9 @@ tasks {
         mergeServiceFiles()
         relocate("com.github.benmanes.caffeine", "dev.dediamondpro.resourcify.libs.caffeine")
         relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
-        if (platform.isForge) {
-            relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
-            if (!platform.isLegacyForge) {
-                relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
-            }
+        relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
+        if (platform.isForge && !platform.isLegacyForge) {
+            relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
     }
     remapJar {

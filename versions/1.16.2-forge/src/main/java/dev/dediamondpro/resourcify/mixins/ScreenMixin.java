@@ -38,7 +38,6 @@ class ScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
-        System.out.println(title);
         ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
         PackScreensAddition.INSTANCE.onRender(new UMatrixStack(matrixStack), type);

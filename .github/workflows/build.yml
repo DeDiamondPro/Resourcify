@@ -25,16 +25,16 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             **/loom-cache
             **/prebundled-jars
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-v2-
       - name: Chmod Gradle
         run: chmod +x ./gradlew
       - name: Build

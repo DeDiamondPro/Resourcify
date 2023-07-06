@@ -39,7 +39,6 @@
     "fabric-api-base": "*",
     "minecraft": "${mcVersionStr}",
     "java": ">=${java}",
-    "elementa": "590+markdown",
     "universalcraft": "*"
   }
 }
