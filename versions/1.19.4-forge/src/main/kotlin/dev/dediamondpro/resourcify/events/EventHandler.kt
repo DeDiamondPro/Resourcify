@@ -17,10 +17,8 @@
 
 package dev.dediamondpro.resourcify.events
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition
-import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import net.minecraft.client.gui.screens.packs.PackSelectionScreen
-import net.minecraft.network.chat.contents.TranslatableContents
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
+import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraftforge.client.event.ScreenEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.EventPriority
@@ -34,12 +32,12 @@ object EventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onMouseClicked(event: ScreenEvent.MouseButtonPressed.Pre) {
-        if (event.screen !is PackSelectionScreen) return
-        val type = PackScreensAddition.getType((event.screen.title.contents as TranslatableContents).key) ?: return
+        val title = Platform.getTranslateKey(event.screen)
+        val type = PackScreensAddition.getType(title) ?: return
         PackScreensAddition.onMouseClick(
             event.mouseX, event.mouseY,
             event.button, type,
-            (event.screen as PackScreenAccessor).directory.toFile()
+            type.getDirectory(event.screen)
         )
     }
 }

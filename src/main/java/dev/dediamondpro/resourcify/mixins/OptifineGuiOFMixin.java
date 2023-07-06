@@ -17,9 +17,9 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-//#if FORGE == 1
+//#if MC < 11600
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -27,39 +27,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//#if MC >= 11600
-//$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-//#endif
-
 import java.io.File;
 
 @Pseudo
 @Mixin(targets = "net.optifine.gui.GuiScreenOF", remap = false)
 public class OptifineGuiOFMixin {
 
-    @Inject(
-            method =
-                    //#if MC >= 11700
-                    //$$ "m_6375_",
-                    //#elseif MC >= 11600
-                    //$$ "func_231044_a_",
-                    //#else
-                    "func_73864_a",
-                    //#endif
-            at = @At("HEAD"), remap = false)
-    void onClick(
-            //#if MC < 11600
-            int mouseX, int mouseY,
-            //#else
-            //$$ double mouseX, double mouseY,
-            //#endif
-            int mouseButton,
-            //#if MC < 11600
-            CallbackInfo ci
-            //#else
-            //$$ CallbackInfoReturnable<Boolean> cir
-            //#endif
-    ) {
+    @Inject(method = "func_73864_a", at = @At("HEAD"), remap = false)
+    void onClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
         if (this instanceof OptifineGuiShadersAccessor) {
             PackScreensAddition.INSTANCE.onMouseClick(
                     mouseX, mouseY, mouseButton, ApiInfo.ProjectType.OPTIFINE_SHADER,

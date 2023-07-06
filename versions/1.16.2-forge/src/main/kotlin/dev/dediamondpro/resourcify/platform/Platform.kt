@@ -17,10 +17,29 @@
 
 package dev.dediamondpro.resourcify.platform
 
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.resources.I18n
 import net.minecraft.util.SharedConstants
+import net.minecraft.util.text.TranslationTextComponent
 
 object Platform {
     fun getMcVersion(): String {
-       return SharedConstants.getVersion().name
+        return SharedConstants.getVersion().name
+    }
+
+    fun getTranslateKey(screen: Screen): String {
+        //#if MC < 11900
+        val content = screen.title
+        //#else
+        //$$ val content = screen.title.content
+        //#endif
+        if (content !is TranslationTextComponent) {
+            val optifineTranslation = I18n.format("of.options.shadersTitle")
+            if (optifineTranslation != "of.options.shadersTitle" && optifineTranslation == screen.title.string) {
+                return "of.options.shadersTitle"
+            }
+            return screen.title.string
+        }
+        return content.key
     }
 }

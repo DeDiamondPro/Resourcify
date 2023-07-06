@@ -17,9 +17,9 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-//#if FORGE == 1
+//#if MC < 11600
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,52 +28,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//#if MC >= 12000
-//$$ import net.minecraft.client.gui.GuiGraphics;
-//#elseif MC >= 11700
-//$$ import com.mojang.blaze3d.vertex.PoseStack;
-//#elseif MC >= 11600
-//$$ import com.mojang.blaze3d.matrix.MatrixStack;
-//#endif
-
 @Pseudo
 @Mixin(targets = "net.optifine.shaders.gui.GuiShaders", remap = false)
 public class OptifineGuiShadersMixin {
 
-    @Inject(
-            method =
-                    //#if MC >= 12000
-                    //$$ "m_88315_",
-                    //#elseif MC >= 11904
-                    //$$ "m_86412_",
-                    //#elseif MC >= 11700
-                    //$$ "m_6305_",
-                    //#elseif MC >= 11600
-                    //$$ "func_230430_a_",
-                    //#else
-                    "func_73863_a",
-                    //#endif
-            at = @At("RETURN"), remap = false)
-    void onDraw(
-            //#if MC >= 12000
-            //$$ GuiGraphics drawContext,
-            //#elseif MC >= 11700
-            //$$ PoseStack matrixStack,
-            //#elseif MC >= 11600
-            //$$ MatrixStack matrixStack,
-            //#endif
-            int mouseX, int mouseY, float partialTicks, CallbackInfo ci
-    ) {
-        PackScreensAddition.INSTANCE.onRender(
-                //#if MC < 11600
-                UMatrixStack.Compat.INSTANCE.get(),
-                //#elseif MC >= 12000
-                //$$ new UMatrixStack(drawContext.pose()),
-                //#else
-                //$$ new UMatrixStack(matrixStack),
-                //#endif
-                ApiInfo.ProjectType.OPTIFINE_SHADER
-        );
+    @Inject(method = "func_73863_a", at = @At("RETURN"), remap = false)
+    void onDraw(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ApiInfo.ProjectType.OPTIFINE_SHADER);
     }
 }
 

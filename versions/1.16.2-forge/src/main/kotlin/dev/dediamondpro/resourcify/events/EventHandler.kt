@@ -19,10 +19,8 @@ package dev.dediamondpro.resourcify.events
 
 //#if FORGE==1
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition
-import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import net.minecraft.client.gui.screen.PackScreen
-import net.minecraft.util.text.TranslationTextComponent
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
+import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.EventPriority
@@ -36,12 +34,12 @@ object EventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onMouseClicked(event: GuiScreenEvent.MouseClickedEvent.Pre) {
-        if (event.gui !is PackScreen) return
-        val type = PackScreensAddition.getType((event.gui.title as TranslationTextComponent).key) ?: return
+        val title = Platform.getTranslateKey(event.gui)
+        val type = PackScreensAddition.getType(title) ?: return
         PackScreensAddition.onMouseClick(
             event.mouseX, event.mouseY,
             event.button, type,
-            (event.gui as PackScreenAccessor).directory
+            type.getDirectory(event.gui)
         )
     }
 }

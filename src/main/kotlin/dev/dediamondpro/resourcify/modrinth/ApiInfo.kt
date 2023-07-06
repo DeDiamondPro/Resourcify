@@ -23,6 +23,13 @@ import gg.essential.elementa.constraints.YConstraint
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.plus
 
+//#if MC >= 11600
+//$$ import net.minecraft.util.text.TranslationTextComponent
+//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+//$$ import net.minecraft.client.gui.screen.Screen
+//$$ import java.io.File
+//#endif
+
 object ApiInfo {
     const val API = "https://api.modrinth.com/v2"
 
@@ -60,6 +67,22 @@ object ApiInfo {
             "[\"project_type:shader\"],[\"categories=optifine\"]",
             "optifine",
             plusX = 10.pixels(true)
-        )
+        );
+
+        //#if MC >= 11600
+        //$$ fun getDirectory(screen: Screen): File {
+        //$$     return when(this) {
+        //$$         //#if MC < 11904
+        //$$         ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
+        //$$         ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
+        //$$         //#else
+        //$$         //$$ ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
+        //$$         //$$ ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
+        //$$         //#endif
+        //$$         ApiInfo.ProjectType.IRIS_SHADER -> File("./shaderpacks")
+        //$$         ApiInfo.ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
+        //$$     }
+        //$$ }
+        //#endif
     }
 }

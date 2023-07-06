@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.gui.resourcepack
+package dev.dediamondpro.resourcify.gui.pack
 
 import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.MinecraftButton
@@ -32,6 +32,11 @@ import gg.essential.elementa.dsl.plus
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UScreen
 import java.io.File
+//#if MC >= 11600
+//$$ import net.minecraft.util.text.TranslationTextComponent
+//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+//$$ import net.minecraft.client.gui.screen.Screen
+//#endif
 
 object PackScreensAddition {
     private val window = Window(ElementaVersion.V2)
@@ -64,7 +69,25 @@ object PackScreensAddition {
         return when (title) {
             "resourcePack.title" -> ApiInfo.ProjectType.RESOURCE_PACK
             "dataPack.title" -> ApiInfo.ProjectType.DATA_PACK
+            "of.options.shadersTitle" -> ApiInfo.ProjectType.OPTIFINE_SHADER
+            "options.iris.shaderPackSelection.title" -> ApiInfo.ProjectType.IRIS_SHADER
             else -> return null
         }
     }
+
+    //#if MC >= 11600
+    //$$ fun getDirectory(type: ApiInfo.ProjectType, screen: Screen): File {
+    //$$     return when(type) {
+    //$$         //#if MC < 11904
+    //$$         ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
+    //$$         ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
+    //$$         //#else
+    //$$         //$$ ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
+    //$$         //$$ ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
+    //$$         //#endif
+    //$$         ApiInfo.ProjectType.IRIS_SHADER -> File("./shaderpacks")
+    //$$         ApiInfo.ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
+    //$$     }
+    //$$ }
+    //#endif
 }

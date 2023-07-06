@@ -17,7 +17,9 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
+//#if MC < 11600
+
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import gg.essential.universal.UMatrixStack;
 import gg.essential.universal.UMinecraft;
@@ -43,3 +45,5 @@ public class GuiScreenResourcePacksMixin {
         );
     }
 }
+
+//#endif

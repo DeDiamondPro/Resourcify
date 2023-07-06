@@ -17,25 +17,30 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
-import dev.dediamondpro.resourcify.modrinth.ApiInfo;
-import gg.essential.universal.UMatrixStack;
-import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableTextContent;
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
+import dev.dediamondpro.resourcify.modrinth.ApiInfo;
+import dev.dediamondpro.resourcify.platform.Platform;
+import gg.essential.universal.UMatrixStack;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PackScreen.class)
-class GuiScreenResourcePacksMixin {
+@Mixin(Screen.class)
+class ScreenMixin {
+    @Shadow @Final protected Text title;
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void drawScreen(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        String title = ((TranslatableTextContent) ((PackScreen) (Object) this).getTitle().getContent()).getKey();
+    private void drawScreen(DrawContext context, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
         ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
-        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(matrices), type);
+        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), type);
     }
 }

@@ -17,33 +17,30 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-//#if FABRIC == 1
-
-import dev.dediamondpro.resourcify.gui.resourcepack.PackScreensAddition;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
 import dev.dediamondpro.resourcify.modrinth.ApiInfo;
+import dev.dediamondpro.resourcify.platform.Platform;
 import gg.essential.universal.UMatrixStack;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.ITextComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
+@Mixin(Screen.class)
+class ScreenMixin {
+    @Shadow @Final protected ITextComponent title;
 
-@Pseudo
-@Mixin(targets = "net.coderbot.iris.gui.screen.ShaderPackScreen", remap = false)
-public class IrisShaderScreenMixin {
-    @Inject(method = "method_25394", at = @At("RETURN"))
-    void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), ApiInfo.ProjectType.IRIS_SHADER);
-    }
-
-    @Inject(method = "method_25402", at = @At("HEAD"))
-    void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        PackScreensAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, ApiInfo.ProjectType.IRIS_SHADER, new File("./shaderpacks"));
+    @Inject(method = "render", at = @At("TAIL"))
+    private void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
+        System.out.println(title);
+        ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
+        if (type == null) return;
+        PackScreensAddition.INSTANCE.onRender(new UMatrixStack(matrixStack), type);
     }
 }
-
-//#endif
