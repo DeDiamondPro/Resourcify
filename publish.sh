@@ -28,4 +28,5 @@
 ./gradlew 1.19.2-fabric:publish
 ./gradlew 1.19.4-forge:publish
 ./gradlew 1.19.4-fabric:publish
-./gradlew 1.20.0-fabric:publish
+./gradlew 1.20.1-forge:publish
+./gradlew 1.20.1-fabric:publish
