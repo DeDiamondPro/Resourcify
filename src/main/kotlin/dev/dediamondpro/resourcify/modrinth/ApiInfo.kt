@@ -39,7 +39,8 @@ object ApiInfo {
         val searchFacet: String,
         val loader: String,
         val plusX: XConstraint = CenterConstraint() + 194.pixels(),
-        val plusY: YConstraint = 10.pixels()
+        val plusY: YConstraint = 10.pixels(),
+        val hasUpdateButton: Boolean = true
     ) {
         RESOURCE_PACK(
             "resource packs",
@@ -51,7 +52,8 @@ object ApiInfo {
             "data packs",
             "mod",
             "[\"project_type:mod\"],[\"categories=datapack\"]",
-            "datapack"
+            "datapack",
+            hasUpdateButton = false
         ),
         IRIS_SHADER(
             "shaders",

@@ -17,10 +17,19 @@
 
 package dev.dediamondpro.resourcify.platform
 
+import gg.essential.universal.UMinecraft
 import net.minecraftforge.common.ForgeVersion
 
 object Platform {
     fun getMcVersion(): String {
-       return ForgeVersion.mcVersion
+        return ForgeVersion.mcVersion
+    }
+
+    fun getSelectedResourcePacks(): List<String> {
+        return UMinecraft.getMinecraft().gameSettings.resourcePacks
+    }
+
+    fun setSelectedResourcePacks(packs: List<String>) {
+        UMinecraft.getMinecraft().gameSettings.resourcePacks = packs
     }
 }

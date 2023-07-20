@@ -18,6 +18,8 @@
 package dev.dediamondpro.resourcify.updater
 
 import dev.dediamondpro.resourcify.config.Config
+import dev.dediamondpro.resourcify.modrinth.ApiInfo
+import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.modrinth.VersionFile
 import dev.dediamondpro.resourcify.platform.Platform
@@ -65,8 +67,13 @@ object UpdateChecker {
                 ).removePrefix("file:").split(".jar")[0] + ".jar"
             )
             val checksum = Utils.getSha512(modFile) ?: return null
-            val response: Map<String, Version> = URL("https://api.modrinth.com/v2/version_files/update")
-                .postAndGetJson(UpdateFormat(listOf(checksum))) ?: return null
+            //#if FORGE == 1
+            val loader = "forge"
+            //#elseif FABRIC == 1
+            //$$ val loader = "fabric"
+            //#endif
+            val response: Map<String, Version> = URL("${ApiInfo.API}/version_files/update")
+                .postAndGetJson(ModrinthUpdateFormat(listOf(checksum), listOf(loader))) ?: return null
             val version = response[checksum] ?: return null
             val file = version.files.firstOrNull { it.primary } ?: version.files.firstOrNull() ?: return null
             if (checksum == file.hashes.sha512 || Config.INSTANCE.ignoredVersions.contains(file.hashes.sha512)) return null
@@ -76,18 +83,4 @@ object UpdateChecker {
             return null
         }
     }
-
-    @Serializable
-    data class UpdateFormat(
-        val hashes: List<String>,
-        val algorithm: String = "sha512",
-        val loaders: List<String> = listOf(
-            //#if FORGE == 1
-            "forge",
-            //#elseif FABRIC == 1
-            //$$ "fabric"
-            //#endif
-        ),
-        @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
-    )
 }

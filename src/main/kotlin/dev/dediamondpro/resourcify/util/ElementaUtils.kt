@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
+import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.DefaultLoadingImage
 import java.net.URL
@@ -34,3 +35,5 @@ fun UIImage.Companion.ofURL(
     if (!loadingImage) image.imageHeight = 0.5625f
     return image
 }
+
+fun UIComponent.isHidden(): Boolean = !parent.children.contains(this)

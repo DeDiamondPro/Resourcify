@@ -15,20 +15,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.util
+package dev.dediamondpro.resourcify.modrinth
 
-import java.io.File
+import dev.dediamondpro.resourcify.platform.Platform
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-object PackUtils {
-
-    fun getPackHashes(directory: File): List<String> {
-        return getPackFiles(directory).mapNotNull { Utils.getSha512(it) }
-    }
-
-    fun getPackFiles(directory: File): List<File> {
-        val files = directory.listFiles() ?: return emptyList()
-        val packs = files.filter { it.isFile && it.extension == "zip" }.toMutableList()
-        files.filter { it.isDirectory }.forEach { packs.addAll(getPackFiles(it)) }
-        return packs
-    }
-}
+@Serializable
+data class ModrinthUpdateFormat(
+    val hashes: List<String>,
+    val loaders: List<String>,
+    val algorithm: String = "sha512",
+    @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
+)

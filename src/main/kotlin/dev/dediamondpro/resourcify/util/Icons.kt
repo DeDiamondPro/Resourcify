@@ -24,4 +24,5 @@ object Icons {
     const val DROPDOWN = "$ASSET_LOCATION/dropdown.png"
     const val BACK = "$ASSET_LOCATION/back.png"
     const val FORWARD = "$ASSET_LOCATION/forward.png"
+    const val UPDATE = "$ASSET_LOCATION/update.png"
 }
