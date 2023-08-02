@@ -31,8 +31,12 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
+import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMinecraft
 import gg.essential.universal.UScreen
 import kotlinx.coroutines.future.await
+import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.GuiScreenResourcePacks
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -61,6 +65,8 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     private val cards = mutableListOf<UpdateCard>()
     private var topText: UIText? = null
     private var startSize = 0
+    private val selectedUpdates = mutableListOf<UpdateCard>()
+    private var reloadOnClose = false
 
     init {
         println(Platform.getSelectedResourcePacks())
@@ -85,7 +91,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
                     width = 73.pixels()
                     height = 100.percent()
                 }.onMouseClick {
-                    displayScreen(backScreens.findLast { it !is PaginatedScreen })
+                    closeGui()
                     cleanUp()
                 } childOf topBar
                 UIText("${ChatColor.BOLD}Close").constrain {
@@ -144,6 +150,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
                 })
 
                 updateAllButton.onMouseClick {
+                    if (startSize != 0) return@onMouseClick
                     startSize = cards.size
                     cards.forEach { it.downloadUpdate() }
                     updateText.setText("${ChatColor.BOLD}Updating...")
@@ -153,11 +160,39 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
         }
     }
 
+    fun registerSelectedUpdate(updateCard: UpdateCard) {
+        selectedUpdates.add(updateCard)
+        reloadOnClose = true
+    }
+
+    fun cancelSelectedUpdate(updateCard: UpdateCard) {
+        selectedUpdates.remove(updateCard)
+    }
+
     fun removeCard(updateCard: UpdateCard) {
         Window.enqueueRenderOperation {
             updateCard.hide()
             cards.remove(updateCard)
+            selectedUpdates.remove(updateCard)
             topText?.setText("${cards.size} update${if (cards.size == 1) "" else "s"} available!")
+        }
+    }
+
+    private fun closeGui() {
+        if (selectedUpdates.isNotEmpty()) return
+        if (reloadOnClose) {
+            UMinecraft.getMinecraft().gameSettings.saveOptions()
+            UMinecraft.getMinecraft().refreshResources()
+        }
+        displayScreen(GuiScreenResourcePacks(null))
+        cleanUp()
+    }
+
+    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
+        if (window.focusedComponent == null && keyCode == UKeyboard.KEY_ESCAPE) {
+            closeGui()
+        } else {
+            super.onKeyPressed(keyCode, typedChar, modifiers)
         }
     }
 

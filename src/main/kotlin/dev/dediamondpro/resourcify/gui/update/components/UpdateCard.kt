@@ -28,6 +28,7 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
+import gg.essential.universal.UMinecraft
 import java.awt.Color
 import java.io.File
 import java.net.URL
@@ -124,20 +125,29 @@ class UpdateCard(
 
     fun downloadUpdate() {
         if (DownloadManager.getProgress(updateUrl) == null) {
+            if (Platform.getSelectedResourcePacks().contains(file.name)) gui.registerSelectedUpdate(this)
             text?.setText("${ChatColor.BOLD}Updating...")
             DownloadManager.download(
                 File(file.parentFile, newFile.fileName),
                 newFile.hashes.sha512, updateUrl
             ) {
-                Platform.setSelectedResourcePacks(Platform.getSelectedResourcePacks().toMutableList().apply {
-                    remove(file.name)
-                    add(newFile.fileName)
-                })
+                val packs = Platform.getSelectedResourcePacks()
+                if (packs.contains(file.name)) {
+                    Window.enqueueRenderOperation {
+                        UMinecraft.getMinecraft().gameSettings.resourcePacks.remove(file.name)
+                        UMinecraft.getMinecraft().gameSettings.resourcePacks.add(newFile.fileName)
+                        UMinecraft.getMinecraft().gameSettings.saveOptions()
+                        UMinecraft.getMinecraft().refreshResources()
+                    }
+                    println(UMinecraft.getMinecraft().gameSettings.resourcePacks)
+                }
+                println(file)
                 file.delete()
                 gui.removeCard(this)
             }
             progressBox?.constraints?.width?.recalculate = true
         } else {
+            if (Platform.getSelectedResourcePacks().contains(file.name)) gui.cancelSelectedUpdate(this)
             DownloadManager.cancelDownload(updateUrl)
             text?.setText("${ChatColor.BOLD}Update")
         }
