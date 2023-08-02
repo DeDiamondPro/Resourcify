@@ -11,3 +11,5 @@ Resourcify allows you to browse all resource packs, data packs and shaders on mo
 Easily view the description, gallery and versions of a pack,<br>when you've found a pack you like you can easily install it with one click!
 
 </div>
+
+[<img src="https://www.bisecthosting.com/partners/custom-banners/793f80ea-c602-458b-968d-6a83df014fe4.webp" alt="https://bisecthosting.com/diamond" width=100%>](https://bisecthosting.com/diamond)
