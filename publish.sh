@@ -20,12 +20,11 @@
 ./gradlew 1.12.2-forge:publish
 ./gradlew 1.16.2-forge:publish
 ./gradlew 1.16.2-fabric:publish
-./gradlew 1.17.1-forge:publish
-./gradlew 1.17.1-fabric:publish
 ./gradlew 1.18.2-forge:publish
 ./gradlew 1.18.2-fabric:publish
 ./gradlew 1.19.2-forge:publish
 ./gradlew 1.19.2-fabric:publish
 ./gradlew 1.19.4-forge:publish
 ./gradlew 1.19.4-fabric:publish
-./gradlew 1.20.0-fabric:publish
+./gradlew 1.20.1-forge:publish
+./gradlew 1.20.1-fabric:publish
