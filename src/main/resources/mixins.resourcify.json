@@ -5,9 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "GuiScreenResourcePacksMixin",
+    "OptifineGuiOFMixin",
     "OptifineGuiShadersAccessor",
     "OptifineGuiShadersMixin",
-    "OptifineGuiOFMixin",
-    "ReloadableResourceManagerMixin"
+    "ReloadableResourceManagerMixin",
+    "AbstractResourcePackAccessor"
   ]
 }

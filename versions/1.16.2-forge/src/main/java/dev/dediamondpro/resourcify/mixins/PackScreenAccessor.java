@@ -18,8 +18,10 @@
 package dev.dediamondpro.resourcify.mixins;
 
 import net.minecraft.client.gui.screen.PackScreen;
+import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.io.File;
 
@@ -28,4 +30,11 @@ public interface PackScreenAccessor {
 
     @Accessor("field_241817_w_")
     File getDirectory();
+
+
+    @Invoker("func_238906_l_")
+    void refresh();
+
+    @Accessor("field_238888_r_")
+    Screen parentScreen();
 }

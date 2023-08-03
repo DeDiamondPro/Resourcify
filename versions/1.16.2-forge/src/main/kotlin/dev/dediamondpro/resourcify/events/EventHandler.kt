@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.events
 //#if FORGE==1
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.common.MinecraftForge
@@ -36,6 +37,7 @@ object EventHandler {
     fun onMouseClicked(event: GuiScreenEvent.MouseClickedEvent.Pre) {
         val title = Platform.getTranslateKey(event.gui)
         val type = PackScreensAddition.getType(title) ?: return
+        println((event.gui as PackScreenAccessor).parentScreen())
         PackScreensAddition.onMouseClick(
             event.mouseX, event.mouseY,
             event.button, type,

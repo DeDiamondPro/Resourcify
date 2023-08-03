@@ -25,7 +25,10 @@ import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
 import dev.dediamondpro.resourcify.modrinth.ProjectResponse
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.*
+import dev.dediamondpro.resourcify.util.PackUtils
+import dev.dediamondpro.resourcify.util.Utils
+import dev.dediamondpro.resourcify.util.getJson
+import dev.dediamondpro.resourcify.util.postAndGetJson
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
@@ -33,15 +36,15 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
-import gg.essential.universal.UScreen
-import kotlinx.coroutines.future.await
-import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.GuiScreenResourcePacks
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+
+//#if MC >= 11600
+//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+//#endif
 
 class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
     private val hashes = CompletableFuture.supplyAsync {
@@ -58,7 +61,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
             .build().toURL().getJson<List<ProjectResponse>>()!!
             .map { project -> project to updates.keys.first { it.projectId == project.id } }
             .sortedBy { (_, newVersion) ->
-                if (Platform.getSelectedResourcePacks().contains(hashes.get()[updates[newVersion]]!!.name)) 0
+                if (Platform.getSelectedResourcePacks().contains(hashes.get()[updates[newVersion]]!!)) 0
                 else 1
             }.toMap()
     }
@@ -67,6 +70,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
     private var reloadOnClose = false
+    private var closing = false
 
     init {
         println(Platform.getSelectedResourcePacks())
@@ -160,12 +164,12 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
         }
     }
 
-    fun registerSelectedUpdate(updateCard: UpdateCard) {
+    fun registerUpdate(updateCard: UpdateCard, reload: Boolean) {
         selectedUpdates.add(updateCard)
-        reloadOnClose = true
+        if (reload) reloadOnClose = true
     }
 
-    fun cancelSelectedUpdate(updateCard: UpdateCard) {
+    fun cancelUpdate(updateCard: UpdateCard) {
         selectedUpdates.remove(updateCard)
     }
 
@@ -179,12 +183,17 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     }
 
     private fun closeGui() {
-        if (selectedUpdates.isNotEmpty()) return
+        if (selectedUpdates.isNotEmpty() || closing) return
+        closing = true
         if (reloadOnClose) {
+            Platform.reloadResources()
             UMinecraft.getMinecraft().gameSettings.saveOptions()
-            UMinecraft.getMinecraft().refreshResources()
         }
-        displayScreen(GuiScreenResourcePacks(null))
+        val screen = backScreens.firstOrNull { it !is PaginatedScreen }
+        //#if MC >= 11600
+        //$$ (screen as PackScreenAccessor).refresh()
+        //#endif
+        displayScreen(screen)
         cleanUp()
     }
 
