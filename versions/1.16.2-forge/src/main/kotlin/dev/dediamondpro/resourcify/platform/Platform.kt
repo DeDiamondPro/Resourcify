@@ -17,18 +17,17 @@
 
 package dev.dediamondpro.resourcify.platform
 
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
+import dev.dediamondpro.resourcify.mixins.AbstractResourcePackAccessor
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.resources.I18n
-import net.minecraft.resources.ResourcePack
+import net.minecraft.resources.FilePack
 import net.minecraft.resources.ResourcePackInfo
 import net.minecraft.resources.ResourcePackList
 import net.minecraft.util.SharedConstants
 import net.minecraft.util.text.TranslationTextComponent
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 object Platform {
     fun getMcVersion(): String {
@@ -53,8 +52,8 @@ object Platform {
 
     fun getSelectedResourcePacks(): List<File> {
         return UMinecraft.getMinecraft().resourcePackList.enabledPacks.mapNotNull {
-            if (it.resourcePack !is ResourcePack) return@mapNotNull null
-            (it.resourcePack as ResourcePack).file
+            if (it.resourcePack !is FilePack) return@mapNotNull null
+            (it.resourcePack as AbstractResourcePackAccessor).file
         }
     }
 
@@ -64,9 +63,9 @@ object Platform {
 
     fun closeResourcePack(pack: File) {
         UMinecraft.getMinecraft().resourcePackList.allPacks.firstOrNull {
-            if (it.resourcePack !is ResourcePack) return@firstOrNull false
-            (it.resourcePack as ResourcePack).file == pack
-        }?.close()
+            if (it.resourcePack !is FilePack) return@firstOrNull false
+            (it.resourcePack as AbstractResourcePackAccessor).file == pack
+        }?.resourcePack?.close()
     }
 
     fun replaceResourcePack(oldPack: File, newPack: File) {
@@ -74,22 +73,26 @@ object Platform {
         repo.reloadPacksFromFinders()
         val packs = Lists.newArrayList(repo.enabledPacks)
         val old = repo.allPacks.firstOrNull {
-            if (it.resourcePack !is ResourcePack) return@firstOrNull false
-            (it.resourcePack as ResourcePack).file == oldPack
+            if (it.resourcePack !is FilePack) return@firstOrNull false
+            (it.resourcePack as AbstractResourcePackAccessor).file == oldPack
         }
         old?.let {
             packs.remove(it)
-            it.close()
+            it.resourcePack.close()
         }
         println(repo.allPacks.firstOrNull {
-            if (it.resourcePack !is ResourcePack) return@firstOrNull false
-            (it.resourcePack as ResourcePack).file == newPack
+            if (it.resourcePack !is FilePack) return@firstOrNull false
+            (it.resourcePack as AbstractResourcePackAccessor).file == newPack
         })
         packs.add(repo.allPacks.firstOrNull {
-            if (it.resourcePack !is ResourcePack) return@firstOrNull false
-            (it.resourcePack as ResourcePack).file == newPack
+            if (it.resourcePack !is FilePack) return@firstOrNull false
+            (it.resourcePack as AbstractResourcePackAccessor).file == newPack
         } ?: return)
+        //#if FORGE == 1 && MC == 11602
         repo.setEnabledPacks(packs.map { it.name })
+        //#else
+        //$$ repo.setEnabledProfiles(packs.map { it.name })
+        //#endif
 
         applyResources(repo)
         UMinecraft.getMinecraft().gameSettings.saveOptions()

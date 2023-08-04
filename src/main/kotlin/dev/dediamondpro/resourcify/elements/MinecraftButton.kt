@@ -30,7 +30,7 @@ import gg.essential.universal.utils.ReleasedDynamicTexture
 import net.minecraft.client.resources.IResourceManager
 import net.minecraft.util.ResourceLocation
 
-class MinecraftButton(text: String? = null) : UIContainer() {
+class MinecraftButton(private val text: String? = null) : UIContainer() {
     init {
         if (text != null) {
             UIText(text).constrain {
@@ -61,8 +61,8 @@ class MinecraftButton(text: String? = null) : UIContainer() {
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble()
             )
-            super.draw(matrixStack)
         }
+        super.draw(matrixStack)
     }
 
     companion object {

@@ -6,6 +6,8 @@
   "client": [
     "ScreenMixin",
     "PackScreenAccessor",
+    "AbstractResourcePackAccessor",
+    "ResourcePackOrganizerAccessor",
     "ReloadableResourceManagerMixin"
   ]
 }

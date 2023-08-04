@@ -133,11 +133,10 @@ class UpdateCard(
             ) {
                 if (Platform.getSelectedResourcePacks().contains(file)) Window.enqueueRenderOperation {
                     Platform.replaceResourcePack(file, downloadFile)
-                    if (!file.delete()) println("Failed to delete old resource pack file.")
                 } else {
                     Platform.closeResourcePack(file)
-                    if (!file.delete()) println("Failed to delete old resource pack file.")
                 }
+                if (!file.delete()) gui.packsToDelete.add(file)
                 gui.removeCard(this)
             }
             progressBox?.constraints?.width?.recalculate = true

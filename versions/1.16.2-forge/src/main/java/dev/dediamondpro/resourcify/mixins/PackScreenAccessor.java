@@ -31,10 +31,6 @@ public interface PackScreenAccessor {
     @Accessor("field_241817_w_")
     File getDirectory();
 
-
-    @Invoker("func_238906_l_")
-    void refresh();
-
     @Accessor("field_238888_r_")
-    Screen parentScreen();
+    Screen getParentScreen();
 }

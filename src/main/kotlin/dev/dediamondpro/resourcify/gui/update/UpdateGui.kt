@@ -36,6 +36,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
+import net.minecraft.client.gui.GuiScreenResourcePacks
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -44,6 +45,9 @@ import java.util.concurrent.CompletableFuture
 
 //#if MC >= 11600
 //$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+//#endif
+//#if MC >= 11904
+//$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
 class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
@@ -70,7 +74,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
     private var reloadOnClose = false
-    private var closing = false
+    val packsToDelete = mutableListOf<File>()
 
     init {
         println(Platform.getSelectedResourcePacks())
@@ -183,18 +187,31 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     }
 
     private fun closeGui() {
-        if (selectedUpdates.isNotEmpty() || closing) return
-        closing = true
+        if (selectedUpdates.isNotEmpty()) return
         if (reloadOnClose) {
             Platform.reloadResources()
             UMinecraft.getMinecraft().gameSettings.saveOptions()
         }
-        val screen = backScreens.firstOrNull { it !is PaginatedScreen }
-        //#if MC >= 11600
-        //$$ (screen as PackScreenAccessor).refresh()
-        //#endif
-        displayScreen(screen)
+        val screen = backScreens.firstOrNull { it is GuiScreenResourcePacks }
+        if (screen == null) {
+            displayScreen(null)
+        } else {
+            //#if MC >= 11904
+            //$$ if (reloadOnClose) {
+            //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
+            //$$ } else {
+            //$$     displayScreen(screen)
+            //$$ }
+            //#elseif MC >= 11600
+            //$$ displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
+            //#else
+            displayScreen(screen)
+            //#endif
+        }
         cleanUp()
+        packsToDelete.forEach {
+            if (!it.delete()) println("Failed to delete old resource pack file.")
+        }
     }
 
     override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
@@ -209,18 +226,18 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
         private val updateInfo = mutableMapOf<String, Version?>()
 
         fun getUpdates(type: ApiInfo.ProjectType, hashes: List<String>): Map<String, Version> {
-            fetchUpdates(type, hashes.filter { !updateInfo.containsKey(it) })
+            fetchUpdates(type, hashes.filter { !updateInfo.containsKey(it) }, hashes)
             return hashes.filter { updateInfo[it] != null }.associateWith { updateInfo[it]!! }
         }
 
-        private fun fetchUpdates(type: ApiInfo.ProjectType, hashes: List<String>) {
+        private fun fetchUpdates(type: ApiInfo.ProjectType, hashes: List<String>, allHashes: List<String>) {
             if (hashes.isEmpty()) return
             val data = ModrinthUpdateFormat(loaders = listOf(type.loader), hashes = hashes)
             val updates: Map<String, Version> =
                 URL("${ApiInfo.API}/version_files/update").postAndGetJson(data) ?: return
             hashes.forEach { hash ->
                 updateInfo[hash] = if (updates.containsKey(hash)) {
-                    if (hashes.contains(updates[hash]!!.primaryFile?.hashes?.sha512)) null else updates[hash]
+                    if (allHashes.contains(updates[hash]!!.primaryFile?.hashes?.sha512)) null else updates[hash]
                 } else {
                     null
                 }

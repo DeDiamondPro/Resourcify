@@ -37,7 +37,6 @@ object EventHandler {
     fun onMouseClicked(event: GuiScreenEvent.MouseClickedEvent.Pre) {
         val title = Platform.getTranslateKey(event.gui)
         val type = PackScreensAddition.getType(title) ?: return
-        println((event.gui as PackScreenAccessor).parentScreen())
         PackScreensAddition.onMouseClick(
             event.mouseX, event.mouseY,
             event.button, type,

@@ -34,7 +34,11 @@ import java.util.concurrent.Executor;
 
 @Mixin(SimpleReloadableResourceManager.class)
 public class ReloadableResourceManagerMixin {
+    //#if MC >= 11800
+    //$$ @Inject(method = "reload", at = @At("RETURN"))
+    //#else
     @Inject(method = "reloadResources", at = @At("RETURN"))
+    //#endif
     void onReload(Executor backgroundExecutor, Executor gameExecutor, CompletableFuture<Unit> waitingFor, List<IResourcePack> resourcePacks, CallbackInfoReturnable<IAsyncReloader> cir) {
         MinecraftButton.Companion.reloadTexture((IResourceManager) this);
     }
