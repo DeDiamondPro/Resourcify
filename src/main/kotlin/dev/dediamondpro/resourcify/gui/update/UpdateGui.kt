@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.gui.update
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
 import dev.dediamondpro.resourcify.modrinth.ProjectResponse
@@ -43,9 +44,6 @@ import java.io.File
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-//#if MC >= 11600
-//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-//#endif
 //#if MC >= 11904
 //$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
@@ -77,7 +75,6 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     val packsToDelete = mutableListOf<File>()
 
     init {
-        println(Platform.getSelectedResourcePacks())
         val checkingText = UIText("Checking for updates...").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
@@ -202,10 +199,8 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
             //$$ } else {
             //$$     displayScreen(screen)
             //$$ }
-            //#elseif MC >= 11600
-            //$$ displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
             //#else
-            displayScreen(screen)
+            displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
             //#endif
         }
         cleanUp()

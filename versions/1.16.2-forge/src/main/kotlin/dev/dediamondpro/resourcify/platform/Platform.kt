@@ -80,10 +80,6 @@ object Platform {
             packs.remove(it)
             it.resourcePack.close()
         }
-        println(repo.allPacks.firstOrNull {
-            if (it.resourcePack !is FilePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).file == newPack
-        })
         packs.add(repo.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
             (it.resourcePack as AbstractResourcePackAccessor).file == newPack

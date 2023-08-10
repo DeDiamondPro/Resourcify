@@ -4,11 +4,12 @@
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "AbstractResourcePackAccessor",
     "GuiScreenResourcePacksMixin",
     "OptifineGuiOFMixin",
     "OptifineGuiShadersAccessor",
     "OptifineGuiShadersMixin",
-    "ReloadableResourceManagerMixin",
-    "AbstractResourcePackAccessor"
+    "PackScreenAccessor",
+    "ReloadableResourceManagerMixin"
   ]
 }
