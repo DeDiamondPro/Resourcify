@@ -58,6 +58,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     }
     private val mods = CompletableFuture.supplyAsync {
         val updates = updates.get()
+        if (updates.isEmpty()) return@supplyAsync emptyMap()
         val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
         URIBuilder("${ApiInfo.API}/projects").setParameter("ids", idString)
             .build().toURL().getJson<List<ProjectResponse>>()!!
@@ -72,12 +73,35 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
     private var reloadOnClose = false
+    private var closing = false
     val packsToDelete = mutableListOf<File>()
 
+    private val stopCloseBox = UIBlock(color = Color(0, 0, 0, 150)).constrain {
+        x = 0.pixels()
+        y = 0.pixels()
+        width = 100.percent()
+        height = 100.percent()
+    }.onFocusLost {
+        hide(true)
+    }.onKeyType { _, keyCode ->
+        if (keyCode != UKeyboard.KEY_ESCAPE) return@onKeyType
+        hide(true)
+        releaseWindowFocus()
+    } childOf window
+
     init {
+        UIText("Please wait for updates to finish before closing this GUI.").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            textScale = 2.pixels()
+            color = Color.YELLOW.toConstraint()
+        } childOf stopCloseBox
+        stopCloseBox.hide(true)
+
         val checkingText = UIText("Checking for updates...").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
+            textScale = 2.pixels()
             color = Color.YELLOW.toConstraint()
         } childOf window
 
@@ -184,7 +208,15 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     }
 
     private fun closeGui() {
-        if (selectedUpdates.isNotEmpty()) return
+        if (closing) return
+        if (selectedUpdates.isNotEmpty()) {
+            Window.enqueueRenderOperation {
+                stopCloseBox.unhide(false)
+                stopCloseBox.grabWindowFocus()
+            }
+            return
+        }
+        closing = true // Prevent some button mashing issues
         if (reloadOnClose) {
             Platform.reloadResources()
             UMinecraft.getMinecraft().gameSettings.saveOptions()

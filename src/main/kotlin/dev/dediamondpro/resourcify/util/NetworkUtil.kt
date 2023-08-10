@@ -44,7 +44,10 @@ object NetworkUtil {
         .expireAfterAccess(5.minutes.toJavaDuration())
         .maximumWeight(100_000_000)
         .weigher<URL, ByteArray> { _, bytes -> bytes.size }
-        .build { it.getEncodedInputStream()?.use { stream -> stream.readBytes() } }
+        .build {
+            println(it)
+            it.getEncodedInputStream()?.use { stream -> stream.readBytes() }
+        }
 
     fun clearCache() {
         cache.invalidateAll()
