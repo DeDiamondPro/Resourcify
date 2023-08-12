@@ -1,13 +1,24 @@
 [versions]
+# Kotlin
 kotlin = "1.8.22"
-caffeine = "2.9.3"
-twelvemonkeys = "3.9.4"
+kotlin_serialization = "1.5.1"
+
+# Minecraft Libraries
 universal = "277"
 elementa = "590+markdown"
+
+# Caching
+caffeine = "2.9.3"
+
+# Image Dependencies
+twelvemonkeys = "3.9.4"
 
 [libraries]
 # Kotlin
 kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin_serialization_core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlin_serialization" }
+kotlin_serialization_json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin_serialization" }
 
 # Caching
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
@@ -26,7 +37,10 @@ kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [bundles]
 kotlin = [
-    "kotlin"
+    "kotlin",
+    "kotlin_reflect",
+    "kotlin_serialization_core",
+    "kotlin_serialization_json"
 ]
 twelvemonkeys = [
     "twelvemonkeys_core",
