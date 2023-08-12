@@ -22,8 +22,8 @@ import com.matthewprenger.cursegradle.Options
 import gg.essential.gradle.util.*
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.4.21"
+    alias(libs.plugins.kotlin)
+    //kotlin("plugin.serialization") version "1.8.22"
     id("gg.essential.multi-version")
     id("gg.essential.defaults")
     id("com.github.johnrengelman.shadow")
@@ -52,7 +52,7 @@ base {
     archivesName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})")
 }
 
-tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
+//tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 loom {
     /*if (project.platform.isLegacyForge) launchConfigs.named("client") {
@@ -78,39 +78,42 @@ val shade: Configuration by configurations.creating {
 }
 
 dependencies {
-    val elementaVersion = "590+markdown"
-    val universalVersion = "277"
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val essentialPlatform: String? by project
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         val fabricLanguageKotlinVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
-        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion")
-        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion")!!)
+        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa}")
+        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal}")!!)
     } else if (platform.isForge) {
-        compileOnly("gg.essential:essential-${essentialPlatform ?: platform}:4166+ge3c5b9d02")
         if (platform.isLegacyForge) {
-            shade("gg.essential:loader-launchwrapper:1.1.3") {
+            /*shade("gg.essential:loader-launchwrapper:1.1.3") {
                 isTransitive = false
-            }
+            }*/
+            shade(libs.bundles.kotlin) { isTransitive = false }
             annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
             compileOnly("org.spongepowered:mixin:0.8.5")
         } else {
             val kotlinForForgeVersion: String by project
-            runtimeOnly("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
-            shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
-                isTransitive = false
-            }
+            implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
+        }
+        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal}") {
+            isTransitive = false
         }
     }
-    shade("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion") {
+    listOf(libs.bundles.twelvemonkeys, libs.caffeine).forEach {
+        if (platform.isFabric) {
+            implementation(it)
+            include(it)
+        } else {
+            shade(it) { isTransitive = false }
+        }
+    }
+    shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa}") {
         isTransitive = false
     }
-    shade("com.github.ben-manes.caffeine:caffeine:2.9.3")
-    shade("com.twelvemonkeys.imageio:imageio-webp:3.9.4")
 }
 
 tasks.processResources {
@@ -160,10 +163,10 @@ tasks {
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
-        relocate("com.github.benmanes.caffeine", "dev.dediamondpro.resourcify.libs.caffeine")
-        relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
-        relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
-        if (platform.isForge && !platform.isLegacyForge) {
+        if (platform.isForge) {
+            relocate("com.github.benmanes.caffeine", "dev.dediamondpro.resourcify.libs.caffeine")
+            relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
+            relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
     }

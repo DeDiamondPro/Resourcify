@@ -1,0 +1,38 @@
+[versions]
+kotlin = "1.8.22"
+caffeine = "2.9.3"
+twelvemonkeys = "3.9.4"
+universal = "277"
+elementa = "590+markdown"
+
+[libraries]
+# Kotlin
+kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+
+# Caching
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+# Image Dependencies
+twelvemonkeys_core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys" }
+twelvemonkeys_webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version.ref = "twelvemonkeys" }
+twelvemonkeys_metadata = { module = "com.twelvemonkeys.imageio:imageio-metadata", version.ref = "twelvemonkeys" }
+twelvemonkeys_lang = { module = "com.twelvemonkeys.common:common-lang", version.ref = "twelvemonkeys" }
+twelvemonkeys_io = { module = "com.twelvemonkeys.common:common-io", version.ref = "twelvemonkeys" }
+twelvemonkeys_image = { module = "com.twelvemonkeys.common:common-image", version.ref = "twelvemonkeys" }
+
+[plugins]
+# Kotlin
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+
+[bundles]
+kotlin = [
+    "kotlin"
+]
+twelvemonkeys = [
+    "twelvemonkeys_core",
+    "twelvemonkeys_webp",
+    "twelvemonkeys_metadata",
+    "twelvemonkeys_lang",
+    "twelvemonkeys_io",
+    "twelvemonkeys_image"
+]

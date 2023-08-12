@@ -25,8 +25,16 @@ pluginManagement {
         maven("https://repo.essential.gg/repository/maven-public")
     }
     plugins {
-        val egtVersion = "0.2.1"
+        val egtVersion = "0.2.2"
         id("gg.essential.multi-version.root") version egtVersion
+    }
+}
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("libs.versions.toml"))
+        }
     }
 }
 
