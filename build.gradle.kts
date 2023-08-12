@@ -52,9 +52,12 @@ base {
     archivesName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})")
 }
 
-//tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
+tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 loom {
+    if (project.platform.isLegacyForge) runConfigs {
+        "client" { programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker") }
+    }
     if (project.platform.isForge) forge {
         mixinConfig("mixins.${mod_id}.json")
     }
