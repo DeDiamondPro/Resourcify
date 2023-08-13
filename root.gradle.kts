@@ -17,9 +17,9 @@
 
 plugins {
     alias(libs.plugins.kotlin) apply false
-    id("net.kyori.blossom") version "1.3.1" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
-    id("gg.essential.multi-version.root")
+    alias(libs.plugins.shadow) apply false
+    alias(libs.plugins.blossom) apply false
+    alias(egt.plugins.multiversionRoot)
 }
 
 preprocess {

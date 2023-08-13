@@ -23,13 +23,13 @@ import gg.essential.gradle.util.*
 
 plugins {
     alias(libs.plugins.kotlin)
-    kotlin("plugin.serialization") version "1.8.22"
-    id("gg.essential.multi-version")
-    id("gg.essential.defaults")
-    id("com.github.johnrengelman.shadow")
-    id("net.kyori.blossom")
-    id("com.modrinth.minotaur") version "2.8.0"
-    id("com.matthewprenger.cursegradle") version "1.4.0"
+    alias(libs.plugins.serialization)
+    id(egt.plugins.multiversion.get().pluginId)
+    id(egt.plugins.defaults.get().pluginId)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.blossom)
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.cursegradle)
 }
 
 val mod_name: String by project
@@ -91,8 +91,8 @@ dependencies {
     } else if (platform.isForge) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
+            shade(libs.mixin) { isTransitive = false }
             annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-            shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") { isTransitive = false }
         } else {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
@@ -233,7 +233,7 @@ tasks {
                 }
             })
             gameVersionStrings.addAll(getMcVersionList())
-            addGameVersion(platform.loaderStr.capitalize())
+            addGameVersion(platform.loaderStr.replaceFirstChar { it.titlecase() })
             releaseType = "release"
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
                 displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"
