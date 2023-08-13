@@ -11,9 +11,6 @@ elementa = "590+markdown"
 # Mixin
 mixin = "0.7.11-SNAPSHOT"
 
-# Caching
-caffeine = "2.9.3"
-
 # Image Dependencies
 twelvemonkeys = "3.9.4"
 
@@ -34,9 +31,6 @@ kotlin_serialization_json = { module = "org.jetbrains.kotlinx:kotlinx-serializat
 
 # Mixin
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin"}
-
-# Caching
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 
 # Image Dependencies
 twelvemonkeys_core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys" }

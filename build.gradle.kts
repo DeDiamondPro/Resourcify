@@ -101,7 +101,7 @@ dependencies {
             isTransitive = false
         }
     }
-    listOf(libs.bundles.twelvemonkeys, libs.caffeine).forEach {
+    listOf(libs.bundles.twelvemonkeys).forEach {
         if (platform.isFabric) {
             implementation(it)
             include(it)
@@ -162,7 +162,6 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
         if (platform.isForge) {
-            relocate("com.github.benmanes.caffeine", "dev.dediamondpro.resourcify.libs.caffeine")
             relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
             relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
