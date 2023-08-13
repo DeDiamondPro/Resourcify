@@ -1,0 +1,81 @@
+[versions]
+# Kotlin
+kotlin = "1.8.22"
+kotlin_serialization = "1.5.1"
+
+# Essential Dependencies
+egt = "0.2.2"
+universal = "277"
+elementa = "590+markdown"
+
+# Mixin
+mixin = "0.7.11-SNAPSHOT"
+
+# Caching
+caffeine = "2.9.3"
+
+# Image Dependencies
+twelvemonkeys = "3.9.4"
+
+# Publishing
+minotaur = "2.8.0"
+cursegradle = "1.4.0"
+
+# Misc
+shadow = "7.1.2"
+blossom = "1.3.1"
+
+[libraries]
+# Kotlin
+kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin_serialization_core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlin_serialization" }
+kotlin_serialization_json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin_serialization" }
+
+# Mixin
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin"}
+
+# Caching
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+# Image Dependencies
+twelvemonkeys_core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys" }
+twelvemonkeys_webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version.ref = "twelvemonkeys" }
+twelvemonkeys_metadata = { module = "com.twelvemonkeys.imageio:imageio-metadata", version.ref = "twelvemonkeys" }
+twelvemonkeys_lang = { module = "com.twelvemonkeys.common:common-lang", version.ref = "twelvemonkeys" }
+twelvemonkeys_io = { module = "com.twelvemonkeys.common:common-io", version.ref = "twelvemonkeys" }
+twelvemonkeys_image = { module = "com.twelvemonkeys.common:common-image", version.ref = "twelvemonkeys" }
+
+[plugins]
+# Kotlin
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+# Essential Gradle Toolkit
+egt_multiversion = { id = "gg.essential.multi-version", version.ref = "egt" }
+egt_multiversion_root = { id = "gg.essential.multi-version.root", version.ref = "egt" }
+egt_defaults = { id = "gg.essential.defaults", version.ref = "egt" }
+
+# Publishing
+minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
+cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
+
+# Misc
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow"}
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+
+[bundles]
+kotlin = [
+    "kotlin",
+    "kotlin_reflect",
+    "kotlin_serialization_core",
+    "kotlin_serialization_json"
+]
+twelvemonkeys = [
+    "twelvemonkeys_core",
+    "twelvemonkeys_webp",
+    "twelvemonkeys_metadata",
+    "twelvemonkeys_lang",
+    "twelvemonkeys_io",
+    "twelvemonkeys_image"
+]

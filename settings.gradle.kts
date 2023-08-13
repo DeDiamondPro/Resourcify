@@ -24,9 +24,19 @@ pluginManagement {
         maven("https://maven.minecraftforge.net")
         maven("https://repo.essential.gg/repository/maven-public")
     }
+    val egtVersion = "0.2.2"
     plugins {
-        val egtVersion = "0.2.1"
         id("gg.essential.multi-version.root") version egtVersion
+    }
+    dependencyResolutionManagement {
+        versionCatalogs {
+            create("libs")
+            create("egt") {
+                plugin("multiversion", "gg.essential.multi-version").version(egtVersion)
+                plugin("multiversionRoot", "gg.essential.multi-version.root").version(egtVersion)
+                plugin("defaults", "gg.essential.defaults").version(egtVersion)
+            }
+        }
     }
 }
 
