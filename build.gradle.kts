@@ -19,7 +19,8 @@ import com.matthewprenger.cursegradle.CurseArtifact
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
-import gg.essential.gradle.util.*
+import gg.essential.gradle.util.noServerRunConfigs
+import gg.essential.gradle.util.setJvmDefault
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -205,9 +206,7 @@ tasks {
         loaders.add(platform.loaderStr)
         changelog.set(file("../../changelog.md").readText())
         dependencies {
-            if (platform.isLegacyForge) {
-                embedded.project("essential")
-            } else if (platform.isForge) {
+            if (platform.isForge && !platform.isLegacyForge) {
                 required.project("kotlin-for-forge")
             } else {
                 required.project("fabric-api")
@@ -222,9 +221,7 @@ tasks {
             changelog = file("../../changelog.md")
             changelogType = "markdown"
             relations(closureOf<CurseRelation> {
-                if (platform.isLegacyForge) {
-                    embeddedLibrary("essential-mod")
-                } else if (platform.isForge) {
+                if (platform.isForge && !platform.isLegacyForge) {
                     requiredDependency("kotlin-for-forge")
                 } else {
                     requiredDependency("fabric-api")
