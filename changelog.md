@@ -1,3 +1,8 @@
+## 1.1.2 changelog
+Fixed crash when interacting with some GUIs (fabric only)
+
+----------------------------------------------------------------------------------------------------
+## 1.1.1 changelog
 ## New Features
 - Added a changelog page in the version section of a project, can be accessed by clicking a version.
 - Forge now supports Oculus for shaders!

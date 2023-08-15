@@ -35,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public interface ParentElementMixin {
     @Inject(method = "mouseClicked", at = @At("HEAD"))
     default void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        if (!(this instanceof Screen)) return;
         String title = Platform.INSTANCE.getTranslateKey((Screen) this);
         ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
