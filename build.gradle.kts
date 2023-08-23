@@ -110,6 +110,7 @@ dependencies {
             shade(it) { isTransitive = false }
         }
     }
+    // Always shade elementa since we use a custom version, relocate to avoid conflicts
     shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
         isTransitive = false
     }
@@ -162,9 +163,9 @@ tasks {
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
+        relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
         if (platform.isForge) {
             relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
-            relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
     }

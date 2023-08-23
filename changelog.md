@@ -1,5 +1,9 @@
-## 1.1.2 changelog
-Fixed crash when interacting with some GUIs (fabric only)
+## 1.1.3 changelog (fabric only version)
+Fix a dependency conflict with Essential (one line misplaced in buildscript).
+
+----------------------------------------------------------------------------------------------------
+## 1.1.2 changelog (fabric only version)
+Fixed crash when interacting with some GUIs
 
 ----------------------------------------------------------------------------------------------------
 ## 1.1.1 changelog
