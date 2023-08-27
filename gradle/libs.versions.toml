@@ -1,7 +1,7 @@
 [versions]
 # Kotlin
 kotlin = "1.8.22"
-kotlin_serialization = "1.5.1"
+kotlin_serialization = "1.4.1"
 
 # Essential Dependencies
 egt = "0.2.2"

@@ -1,9 +1,5 @@
-## 1.1.3 changelog (fabric only version)
-Fix a dependency conflict with Essential (one line misplaced in buildscript).
-
-----------------------------------------------------------------------------------------------------
-## 1.1.2 changelog (fabric only version)
-Fixed crash when interacting with some GUIs
+## 1.1.3 changelog (1.8.9 and 1.12.2)
+Downgrade kotlinx serialization from 1.5.1 to 1.4.1 to resolve conflict with Essential
 
 ----------------------------------------------------------------------------------------------------
 ## 1.1.1 changelog
