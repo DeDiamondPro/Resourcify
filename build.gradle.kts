@@ -209,7 +209,7 @@ tasks {
         dependencies {
             if (platform.isForge && !platform.isLegacyForge) {
                 required.project("kotlin-for-forge")
-            } else {
+            } else if (!platform.isLegacyForge) {
                 required.project("fabric-api")
                 required.project("fabric-language-kotlin")
             }
