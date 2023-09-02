@@ -15,6 +15,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// decodeFromString import is required on older kotlin versions
+@file:Suppress("unusedImport")
+
 package dev.dediamondpro.resourcify.config
 
 import kotlinx.serialization.Serializable
@@ -39,7 +42,9 @@ data class Config(val checkForUpdates: Boolean = true, var ignoredVersions: Muta
             try {
                 json.decodeFromString(configFile.readText())
             } catch (_: Exception) {
-                Config()
+                val config =  Config()
+                configFile.writeText(json.encodeToString(config))
+                config
             }
         }
 

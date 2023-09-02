@@ -17,10 +17,12 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
+import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.capitalizeAll
+import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -42,7 +44,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class VersionCard(
-    val version: Version, private val hashes: List<String>, private val downloadFolder: File
+    parent: VersionsPage, val version: Version, private val hashes: List<String>, private val downloadFolder: File
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
@@ -112,54 +114,61 @@ class VersionCard(
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
 
-        downloadButton()
+        val button = createDownloadButton(version, hashes, downloadFolder) childOf this
+        onMouseClick {
+            if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
+            parent.showChangelog(version)
+        }
     }
 
-    private fun downloadButton() {
-        val fileToDownload = version.files.firstOrNull {
-            it.primary
-        } ?: version.files.firstOrNull() ?: return
-        val url = URL(fileToDownload.url)
-        var installed = hashes.contains(fileToDownload.hashes.sha512)
-        val buttonText = if (installed) "${ChatColor.BOLD}Installed" else "${ChatColor.BOLD}Install"
+    companion object {
+        fun createDownloadButton(version: Version, hashes: List<String>, downloadFolder: File): UIComponent {
+            val fileToDownload = version.files.firstOrNull {
+                it.primary
+            } ?: version.files.firstOrNull() ?: error("No file available")
+            val url = URL(fileToDownload.url)
+            var installed = hashes.contains(fileToDownload.hashes.sha512)
+            val buttonText = if (installed) "${ChatColor.BOLD}Installed" else "${ChatColor.BOLD}Install"
 
-        var progressBox: UIBlock? = null
-        var text: UIText? = null
-        val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
-            x = 6.pixels(true)
-            y = CenterConstraint()
-            width = 73.pixels()
-            height = 18.pixels()
-        }.onMouseClick {
-            if (installed || it.mouseButton != 0) return@onMouseClick
-            if (DownloadManager.getProgress(url) == null) {
-                text?.setText("${ChatColor.BOLD}Installing...")
-                DownloadManager.download(
-                    File(downloadFolder, fileToDownload.fileName),
-                    fileToDownload.hashes.sha512, url
-                ) {
-                    text?.setText("${ChatColor.BOLD}Installed")
-                    installed = true
+            var progressBox: UIBlock? = null
+            var text: UIText? = null
+            val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+                x = 6.pixels(true)
+                y = CenterConstraint()
+                width = 73.pixels()
+                height = 18.pixels()
+            }.onMouseClick {
+                if (installed || it.mouseButton != 0) return@onMouseClick
+                if (DownloadManager.getProgress(url) == null) {
+                    text?.setText("${ChatColor.BOLD}Installing...")
+                    DownloadManager.download(
+                        File(downloadFolder, fileToDownload.fileName),
+                        fileToDownload.hashes.sha512, url
+                    ) {
+                        text?.setText("${ChatColor.BOLD}Installed")
+                        installed = true
+                    }
+                    progressBox?.constraints?.width?.recalculate = true
+                } else {
+                    DownloadManager.cancelDownload(url)
+                    text?.setText("${ChatColor.BOLD}Install")
                 }
-                progressBox?.constraints?.width?.recalculate = true
-            } else {
-                DownloadManager.cancelDownload(url)
-                text?.setText("${ChatColor.BOLD}Install")
             }
-        } childOf this
-        progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
-            x = 0.pixels(true)
-            y = 0.pixels()
-            width = basicWidthConstraint {
-                val progress = DownloadManager.getProgress(url)
-                if (progress == null) 0f
-                else (1 - progress) * it.parent.getWidth()
-            }
-            height = 18.pixels()
-        } childOf downloadButton
-        text = UIText(buttonText).constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-        } childOf downloadButton
+            progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
+                x = 0.pixels(true)
+                y = 0.pixels()
+                width = basicWidthConstraint {
+                    val progress = DownloadManager.getProgress(url)
+                    if (progress == null) 0f
+                    else (1 - progress) * it.parent.getWidth()
+                }
+                height = 18.pixels()
+            } childOf downloadButton
+            text = UIText(buttonText).constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+            } childOf downloadButton
+            return downloadButton
+        }
     }
 }

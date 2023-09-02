@@ -34,7 +34,7 @@ data class GameVersions(
     companion object {
         private val versions: CompletableFuture<List<GameVersions>> by lazy {
             CompletableFuture.supplyAsync {
-                (URL("https://api.modrinth.com/v2/tag/game_version").getJson<List<GameVersions>>()
+                (URL("https://api.modrinth.com/v2/tag/game_version").getJson<List<GameVersions>>(useCache = false)
                     ?: emptyList()).reversed()
             }
         }

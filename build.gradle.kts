@@ -19,17 +19,18 @@ import com.matthewprenger.cursegradle.CurseArtifact
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
-import gg.essential.gradle.util.*
+import gg.essential.gradle.util.noServerRunConfigs
+import gg.essential.gradle.util.setJvmDefault
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.4.21"
-    id("gg.essential.multi-version")
-    id("gg.essential.defaults")
-    id("com.github.johnrengelman.shadow")
-    id("net.kyori.blossom")
-    id("com.modrinth.minotaur") version "2.8.0"
-    id("com.matthewprenger.cursegradle") version "1.4.0"
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.serialization)
+    id(egt.plugins.multiversion.get().pluginId)
+    id(egt.plugins.defaults.get().pluginId)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.blossom)
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.cursegradle)
 }
 
 val mod_name: String by project
@@ -55,9 +56,9 @@ base {
 tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 loom {
-    /*if (project.platform.isLegacyForge) launchConfigs.named("client") {
-        arg("--tweakClass", "gg.essential.loader.stage0.EssentialSetupTweaker")
-    }*/
+    if (project.platform.isLegacyForge) runConfigs {
+        "client" { programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker") }
+    }
     if (project.platform.isForge) forge {
         mixinConfig("mixins.${mod_id}.json")
     }
@@ -70,6 +71,7 @@ repositories {
     maven("https://repo.essential.gg/repository/maven-public/")
     maven("https://maven.dediamondpro.dev/releases")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
+    maven("https://repo.spongepowered.org/maven/")
     mavenCentral()
 }
 
@@ -78,39 +80,40 @@ val shade: Configuration by configurations.creating {
 }
 
 dependencies {
-    val elementaVersion = "590+markdown"
-    val universalVersion = "277"
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val essentialPlatform: String? by project
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         val fabricLanguageKotlinVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
-        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion")
-        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion")!!)
+        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
+        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")!!)
     } else if (platform.isForge) {
-        compileOnly("gg.essential:essential-${essentialPlatform ?: platform}:4166+ge3c5b9d02")
         if (platform.isLegacyForge) {
-            shade("gg.essential:loader-launchwrapper:1.1.3") {
-                isTransitive = false
-            }
+            shade(libs.bundles.kotlin) { isTransitive = false }
+            shade(libs.mixin) { isTransitive = false }
             annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-            compileOnly("org.spongepowered:mixin:0.8.5")
         } else {
             val kotlinForForgeVersion: String by project
-            runtimeOnly("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
-            shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
-                isTransitive = false
-            }
+            implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
+        }
+        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
+            isTransitive = false
         }
     }
-    shade("gg.essential:elementa-${elementaPlatform ?: platform}:$elementaVersion") {
+    listOf(libs.bundles.twelvemonkeys).forEach {
+        if (platform.isFabric) {
+            implementation(it)
+            include(it)
+        } else {
+            shade(it) { isTransitive = false }
+        }
+    }
+    // Always shade elementa since we use a custom version, relocate to avoid conflicts
+    shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
         isTransitive = false
     }
-    shade("com.github.ben-manes.caffeine:caffeine:2.9.3")
-    shade("com.twelvemonkeys.imageio:imageio-webp:3.9.4")
 }
 
 tasks.processResources {
@@ -160,10 +163,9 @@ tasks {
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
-        relocate("com.github.benmanes.caffeine", "dev.dediamondpro.resourcify.libs.caffeine")
-        relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
-        if (platform.isForge && !platform.isLegacyForge) {
+        if (platform.isForge) {
+            relocate("com.twelvemonkeys", "dev.dediamondpro.resourcify.libs.twelvemonkeys")
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
     }
@@ -179,7 +181,7 @@ tasks {
                     mapOf(
                         "ModSide" to "CLIENT",
                         "TweakOrder" to "0",
-                        "TweakClass" to "gg.essential.loader.stage0.EssentialSetupTweaker",
+                        "TweakClass" to "org.spongepowered.asm.launch.MixinTweaker",
                         "ForceLoadAsMod" to true
                     )
                 )
@@ -205,11 +207,9 @@ tasks {
         loaders.add(platform.loaderStr)
         changelog.set(file("../../changelog.md").readText())
         dependencies {
-            if (platform.isLegacyForge) {
-                embedded.project("essential")
-            } else if (platform.isForge) {
+            if (platform.isForge && !platform.isLegacyForge) {
                 required.project("kotlin-for-forge")
-            } else {
+            } else if (!platform.isLegacyForge) {
                 required.project("fabric-api")
                 required.project("fabric-language-kotlin")
             }
@@ -222,9 +222,7 @@ tasks {
             changelog = file("../../changelog.md")
             changelogType = "markdown"
             relations(closureOf<CurseRelation> {
-                if (platform.isLegacyForge) {
-                    embeddedLibrary("essential-mod")
-                } else if (platform.isForge) {
+                if (platform.isForge && !platform.isLegacyForge) {
                     requiredDependency("kotlin-for-forge")
                 } else {
                     requiredDependency("fabric-api")
@@ -232,7 +230,7 @@ tasks {
                 }
             })
             gameVersionStrings.addAll(getMcVersionList())
-            addGameVersion(platform.loaderStr.capitalize())
+            addGameVersion(platform.loaderStr.replaceFirstChar { it.titlecase() })
             releaseType = "release"
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
                 displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"

@@ -15,22 +15,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// decodeFromString import is required on older kotlin versions
+@file:Suppress("unusedImport")
+
 package dev.dediamondpro.resourcify.util
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
 import dev.dediamondpro.resourcify.ModInfo
-import kotlinx.serialization.decodeFromString
+import gg.essential.universal.UMinecraft
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
+import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPInputStream
 import javax.net.ssl.HttpsURLConnection
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.toJavaDuration
 
 val json = Json {
     encodeDefaults = true
@@ -40,18 +41,49 @@ val json = Json {
 }
 
 object NetworkUtil {
-    val cache: LoadingCache<URL, ByteArray> = Caffeine.newBuilder()
-        .expireAfterAccess(5.minutes.toJavaDuration())
-        .maximumWeight(100_000_000)
-        .weigher<URL, ByteArray> { _, bytes -> bytes.size }
-        .build {
-            println(it)
-            it.getEncodedInputStream()?.use { stream -> stream.readBytes() }
-        }
+    private const val MAX_CACHE_SIZE = 100_000_000
+    private val cache = ConcurrentHashMap<URL, CacheObject>()
 
+    fun getOrFetch(url: URL): ByteArray? {
+        val value = cache[url]
+        return if (value == null) {
+            val bytes = url.getEncodedInputStream()?.use { it.readBytes() }
+            if (bytes != null) {
+                cache[url] = CacheObject(url, bytes)
+                pruneCache()
+            }
+            bytes
+        } else {
+            value.getBytes()
+        }
+    }
+
+    private fun pruneCache() {
+        var cacheSize = cache.values.sumOf { it.size }
+        if (cacheSize <= MAX_CACHE_SIZE) return
+        val sorted = cache.values.sortedBy { it.lastAccess }
+        var i = 0
+        while (cacheSize > MAX_CACHE_SIZE) {
+            val element = sorted[i]
+            cache.remove(element.url)
+            cacheSize -= element.size
+            i++
+        }
+    }
+
+    private data class CacheObject(
+        val url: URL,
+        private val bytes: ByteArray,
+        var lastAccess: Long = UMinecraft.getTime()
+    ) {
+        val size = bytes.size
+        fun getBytes(): ByteArray {
+            lastAccess = UMinecraft.getTime()
+            return bytes
+        }
+    }
     fun clearCache() {
-        cache.invalidateAll()
-        cache.cleanUp()
+        cache.clear()
     }
 }
 
@@ -77,7 +109,7 @@ fun URLConnection.getEncodedInputStream(): InputStream? {
 fun URL.getEncodedInputStream(): InputStream? = this.setupConnection().getEncodedInputStream()
 
 fun URL.getString(useCache: Boolean = true): String? {
-    if (useCache) return NetworkUtil.cache[this]?.decodeToString()
+    if (useCache) return NetworkUtil.getOrFetch(this)?.decodeToString()
     return this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
 }
 
@@ -86,7 +118,7 @@ inline fun <reified T> URL.getJson(useCache: Boolean = true): T? {
 }
 
 fun URL.getImage(useCache: Boolean = true): BufferedImage? {
-    if (useCache) return NetworkUtil.cache[this]?.inputStream()?.use { Utils.readImage(this, it) }
+    if (useCache) return NetworkUtil.getOrFetch(this)?.inputStream()?.use { Utils.readImage(this, it) }
     return this.getEncodedInputStream()?.use { Utils.readImage(this, it) }
 }
 
