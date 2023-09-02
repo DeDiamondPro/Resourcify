@@ -204,7 +204,13 @@ tasks {
         versionName.set("[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version")
         uploadFile.set(remapJar.get().archiveFile as Any)
         gameVersions.addAll(getMcVersionList())
-        loaders.add(platform.loaderStr)
+        if (platform.isFabric) {
+            loaders.add("Fabric")
+            loaders.add("Quilt")
+        } else if (platform.isForge) {
+            loaders.add("Forge")
+            if (platform.mcMinor >= 20) loaders.add("NeoForge")
+        }
         changelog.set(file("../../changelog.md").readText())
         dependencies {
             if (platform.isForge && !platform.isLegacyForge) {
@@ -230,7 +236,13 @@ tasks {
                 }
             })
             gameVersionStrings.addAll(getMcVersionList())
-            addGameVersion(platform.loaderStr.replaceFirstChar { it.titlecase() })
+            if (platform.isFabric) {
+                addGameVersion("Fabric")
+                addGameVersion("Quilt")
+            } else if (platform.isForge) {
+                addGameVersion("Forge")
+                if (platform.mcMinor >= 20) addGameVersion("NeoForge")
+            }
             releaseType = "release"
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
                 displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"
