@@ -22,12 +22,9 @@ import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.modrinth.VersionFile
-import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.Utils
 import dev.dediamondpro.resourcify.util.postAndGetJson
 import gg.essential.universal.UScreen
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.io.File
 import java.net.URL
 import java.net.URLDecoder
@@ -63,6 +60,7 @@ object UpdateChecker {
                     StandardCharsets.UTF_8.name()
                 ).removePrefix("file:").split(".jar")[0] + ".jar"
             )
+            if (!modFile.exists()) return null
             val checksum = Utils.getSha512(modFile) ?: return null
             //#if FORGE == 1
             val loader = "forge"

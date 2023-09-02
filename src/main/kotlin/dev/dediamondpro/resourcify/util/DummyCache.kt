@@ -27,7 +27,7 @@ import java.net.URL
 object DummyCache : ImageCache {
     override fun get(url: URL): BufferedImage {
         val finalUrl = if (url.host == "img.shields.io") URL(
-            url.toExternalForm().replace("https://img.shields.io", "https://raster.shields.io")
+            url.toExternalForm().replace("://img.shields.io", "://raster.shields.io")
         ) else url
         return finalUrl.getImage() ?: error("Failed to fetch $url, don't retry")
     }

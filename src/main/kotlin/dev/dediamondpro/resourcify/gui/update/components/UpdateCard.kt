@@ -23,6 +23,7 @@ import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.ofURL
+import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
@@ -88,13 +89,30 @@ class UpdateCard(
             height = 48.pixels()
         } childOf this
 
-        val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+        createUpdateButton() childOf buttonHolder
+
+
+        val changeLogButton = UIBlock(Color(150, 150, 150)).constrain {
+            y = 0.pixels(true)
+            width = 73.pixels()
+            height = 50.percent() - 2.pixels()
+        }.onMouseClick {
+            gui.showChangeLog(project, newVersion, createUpdateButton())
+        } childOf buttonHolder
+        UIText("${ChatColor.BOLD}Changelog").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+        } childOf changeLogButton
+    }
+
+    private fun createUpdateButton(): UIComponent {
+        val updateButton = UIBlock(Color(27, 217, 106)).constrain {
             y = 0.pixels()
             width = 73.pixels()
             height = 50.percent() - 2.pixels()
         }.onMouseClick {
             downloadUpdate()
-        } childOf buttonHolder
+        }
         progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
             x = 0.pixels(true)
             y = 0.pixels()
@@ -104,22 +122,12 @@ class UpdateCard(
                 else (1 - progress) * it.parent.getWidth()
             }
             height = 100.percent()
-        } childOf downloadButton
+        } childOf updateButton
         text = UIText("${ChatColor.BOLD}Update").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-        } childOf downloadButton
-
-
-        val changeLogButton = UIBlock(Color(27, 217, 106)).constrain {
-            y = 0.pixels(true)
-            width = 73.pixels()
-            height = 50.percent() - 2.pixels()
-        } childOf buttonHolder
-        UIText("${ChatColor.BOLD}Changelog").constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-        } childOf changeLogButton
+        } childOf updateButton
+        return updateButton
     }
 
     fun downloadUpdate() {

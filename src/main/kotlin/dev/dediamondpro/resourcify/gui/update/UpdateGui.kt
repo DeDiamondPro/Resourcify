@@ -26,14 +26,14 @@ import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
 import dev.dediamondpro.resourcify.modrinth.ProjectResponse
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.PackUtils
-import dev.dediamondpro.resourcify.util.Utils
-import dev.dediamondpro.resourcify.util.getJson
-import dev.dediamondpro.resourcify.util.postAndGetJson
+import dev.dediamondpro.resourcify.util.*
+import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
@@ -76,6 +76,31 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     private var closing = false
     val packsToDelete = mutableListOf<File>()
 
+    private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
+        x = 0.pixels()
+        y = 30.pixels()
+        width = 100.percent()
+        height = 100.percent() - y
+    } childOf window
+    private val updateContainer = UIContainer().constrain {
+        x = 4.pixels()
+        width = 100.percent() - 8.pixels()
+        height = ChildLocationSizeConstraint() + 4.pixels()
+    }.animateBeforeHide {
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (-this@UpdateGui.width).pixels())
+    }.animateAfterUnhide {
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
+    } childOf scrollBox
+    private val changelogContainer = UIBlock(Color(0, 0, 0, 100)).constrain {
+        x = this@UpdateGui.width.pixels()
+        width = 100.percent() - 8.pixels()
+        height = ChildLocationSizeConstraint() + 4.pixels()
+    }.animateBeforeHide {
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, this@UpdateGui.width.pixels())
+    }.animateAfterUnhide {
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
+    } childOf scrollBox
+
     private val stopCloseBox = UIBlock(color = Color(0, 0, 0, 150)).constrain {
         x = 0.pixels()
         y = 0.pixels()
@@ -90,6 +115,7 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
     } childOf window
 
     init {
+        changelogContainer.hide(true)
         UIText("Please wait for updates to finish before closing this GUI.").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
@@ -159,18 +185,6 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
                     y = CenterConstraint()
                 } childOf topBar
 
-                val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
-                    x = 0.pixels()
-                    y = 30.pixels()
-                    width = 100.percent()
-                    height = 100.percent() - y
-                } childOf window
-                val updateContainer = UIContainer().constrain {
-                    x = 4.pixels()
-                    width = 100.percent() - 8.pixels()
-                    height = ChildLocationSizeConstraint() + 4.pixels()
-                } childOf scrollBox
-
                 cards.addAll(mods.map { (project, newVersion) ->
                     UpdateCard(project, newVersion, hashes.get()[updates.get()[newVersion]]!!, this).constrain {
                         y = SiblingConstraint(padding = 2f)
@@ -205,6 +219,35 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
             selectedUpdates.remove(updateCard)
             topText?.setText("${cards.size} update${if (cards.size == 1) "" else "s"} available!")
         }
+    }
+
+    fun showChangeLog(project: ProjectResponse, version: Version, updateButton: UIComponent) {
+        updateContainer.hide()
+        changelogContainer.constrain { x = this@UpdateGui.width.pixels() }
+        changelogContainer.clearChildren()
+        UIText("Updates ").constrain {
+            x = 4.pixels()
+            y = 8.pixels()
+            color = Color.BLUE.toConstraint()
+        }.onMouseClick {
+            changelogContainer.hide()
+            updateContainer.unhide()
+        } childOf changelogContainer
+        UIText("> ${project.title} > ${version.versionNumber}").constrain {
+            x = SiblingConstraint()
+            y = 8.pixels()
+        } childOf changelogContainer
+        updateButton.constrain {
+            x = 4.pixels(true)
+            y = 4.pixels()
+            height = 22.pixels()
+        } childOf changelogContainer
+        MarkdownComponent(version.changelog, disableSelection = true, imageCache = DummyCache).constrain {
+            x = 4.pixels()
+            y = SiblingConstraint(4f)
+            width = 100.percent() - 8.pixels()
+        } childOf changelogContainer
+        changelogContainer.unhide()
     }
 
     private fun closeGui() {
