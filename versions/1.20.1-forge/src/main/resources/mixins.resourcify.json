@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "ScreenMixin",
+    "IrisAccessor",
     "PackScreenAccessor",
     "AbstractResourcePackAccessor",
     "ResourcePackOrganizerAccessor",

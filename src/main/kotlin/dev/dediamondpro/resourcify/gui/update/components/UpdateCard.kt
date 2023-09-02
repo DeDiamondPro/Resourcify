@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.gui.update.components
 
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
+import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ProjectResponse
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
@@ -32,6 +33,11 @@ import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
 import java.net.URL
+
+//#if MC >= 11600
+//$$ import dev.dediamondpro.resourcify.handlers.IrisHandler
+//$$ import dev.dediamondpro.resourcify.gui.PaginatedScreen
+//#endif
 
 class UpdateCard(
     project: ProjectResponse,
@@ -139,10 +145,26 @@ class UpdateCard(
                 downloadFile,
                 newFile.hashes.sha512, updateUrl
             ) {
-                if (Platform.getSelectedResourcePacks().contains(file)) Window.enqueueRenderOperation {
-                    Platform.replaceResourcePack(file, downloadFile)
-                } else {
-                    Platform.closeResourcePack(file)
+                when (gui.type) {
+                    ApiInfo.ProjectType.RESOURCE_PACK -> {
+                        if (Platform.getSelectedResourcePacks().contains(file)) Window.enqueueRenderOperation {
+                            Platform.replaceResourcePack(file, downloadFile)
+                        } else {
+                            Platform.closeResourcePack(file)
+                        }
+                    }
+
+                    //#if MC >= 11600
+                    //$$ ApiInfo.ProjectType.IRIS_SHADER -> {
+                    //$$     PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
+                    //$$         if (IrisHandler.getActiveShader(it) == file.name) {
+                    //$$             IrisHandler.applyShaders(it, downloadFile.name)
+                    //$$         }
+                    //$$     }
+                    //$$ }
+                    //#endif
+
+                    else -> error("Type not implemented")
                 }
                 if (!file.delete()) gui.packsToDelete.add(file)
                 gui.removeCard(this)

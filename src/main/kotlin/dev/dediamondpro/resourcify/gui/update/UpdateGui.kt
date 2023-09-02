@@ -37,7 +37,6 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.GuiScreenResourcePacks
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -48,7 +47,7 @@ import java.util.concurrent.CompletableFuture
 //$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
-class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
+class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
     private val hashes = CompletableFuture.supplyAsync {
         val files = PackUtils.getPackFiles(folder)
         files.associateBy { Utils.getSha512(it)!! }
@@ -264,19 +263,23 @@ class UpdateGui(private val type: ApiInfo.ProjectType, private val folder: File)
             Platform.reloadResources()
             UMinecraft.getMinecraft().gameSettings.saveOptions()
         }
-        val screen = backScreens.firstOrNull { it is GuiScreenResourcePacks }
+        val screen = backScreens.firstOrNull { it !is PaginatedScreen }
         if (screen == null) {
             displayScreen(null)
         } else {
-            //#if MC >= 11904
-            //$$ if (reloadOnClose) {
-            //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
-            //$$ } else {
-            //$$     displayScreen(screen)
-            //$$ }
-            //#else
-            displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
-            //#endif
+            if (type == ApiInfo.ProjectType.RESOURCE_PACK) {
+                //#if MC >= 11904
+                //$$ if (reloadOnClose) {
+                //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
+                //$$ } else {
+                //$$     displayScreen(screen)
+                //$$ }
+                //#else
+                displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
+                //#endif
+            } else {
+                displayScreen(screen)
+            }
         }
         cleanUp()
         packsToDelete.forEach {

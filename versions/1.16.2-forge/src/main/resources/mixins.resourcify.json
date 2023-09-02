@@ -4,9 +4,10 @@
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "ScreenMixin",
-    "PackScreenAccessor",
     "AbstractResourcePackAccessor",
-    "ReloadableResourceManagerMixin"
+    "IrisAccessor",
+    "PackScreenAccessor",
+    "ReloadableResourceManagerMixin",
+    "ScreenMixin"
   ]
 }
