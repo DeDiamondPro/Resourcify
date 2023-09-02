@@ -45,13 +45,10 @@ object UpdateChecker {
     fun displayScreenIfNeeded() {
         if (!Config.INSTANCE.checkForUpdates) return
         updateCheck?.let {
-            if (it.isDone) {
-                val data = it.get()
-                if (data != null) {
-                    val (version, file) = data
-                    UScreen.displayScreen(UpdateGui(version, file))
-                }
-            } else {
+            if (it.isDone && !it.isCompletedExceptionally) it.get()?.let { data ->
+                val (version, file) = data
+                UScreen.displayScreen(UpdateGui(version, file))
+            } else if (!it.isCompletedExceptionally) {
                 it.cancel(true)
             }
             updateCheck = null
@@ -78,7 +75,7 @@ object UpdateChecker {
             val file = version.files.firstOrNull { it.primary } ?: version.files.firstOrNull() ?: return null
             if (checksum == file.hashes.sha512 || Config.INSTANCE.ignoredVersions.contains(file.hashes.sha512)) return null
             return version to file
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             e.printStackTrace()
             return null
         }
