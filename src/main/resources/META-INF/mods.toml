@@ -1,6 +1,7 @@
 modLoader="kotlinforforge"
 loaderVersion="[1,)"
-license="All Rights Reserved"
+license="LGPL 3.0"
+showAsResourcePack=false
 
 [[mods]]
 modId="resourcify"
@@ -9,3 +10,9 @@ displayName="Resourcify"
 authors="DeDiamondPro"
 description="In-game resource pack, data pack and shader browser"
 logoFile="icon.png"
+
+[[dependencies.resourcify]]
+modId="kotlinforforge"
+mandatory=true
+versionRange="[1,)"
+side="CLIENT"

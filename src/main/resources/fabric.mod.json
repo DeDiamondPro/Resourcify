@@ -31,7 +31,7 @@
     }
   },
   "icon": "icon.png",
-  "license": "All Rights Reserved",
+  "license": "LGPL 3.0",
   "environment": "client",
   "depends": {
     "fabric-language-kotlin": ">=1.6.4+kotlin.1.5.30",

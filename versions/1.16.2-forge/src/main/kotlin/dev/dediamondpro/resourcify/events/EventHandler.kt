@@ -20,17 +20,16 @@ package dev.dediamondpro.resourcify.events
 //#if FORGE==1
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
-import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraftforge.client.event.GuiScreenEvent
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.EventPriority
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 
 object EventHandler {
 
     init {
-        MinecraftForge.EVENT_BUS.register(this)
+        FORGE_BUS.register(this)
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

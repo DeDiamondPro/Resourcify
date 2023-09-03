@@ -153,11 +153,11 @@ tasks.processResources {
 tasks {
     withType<Jar> {
         if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml")
+            exclude("mcmod.info", "mods.toml", "pack.mcmeta")
         } else {
             exclude("fabric.mod.json")
             if (project.platform.isLegacyForge) {
-                exclude("mods.toml")
+                exclude("mods.toml", "pack.mcmeta")
             } else {
                 exclude("mcmod.info")
             }
