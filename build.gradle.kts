@@ -212,11 +212,11 @@ tasks {
         uploadFile.set(remapJar.get().archiveFile as Any)
         gameVersions.addAll(getMcVersionList())
         if (platform.isFabric) {
-            loaders.add("Fabric")
-            loaders.add("Quilt")
+            loaders.add("fabric")
+            loaders.add("quilt")
         } else if (platform.isForge) {
-            loaders.add("Forge")
-            if (platform.mcMinor >= 20) loaders.add("NeoForge")
+            loaders.add("forge")
+            if (platform.mcMinor >= 20) loaders.add("neoforge")
         }
         changelog.set(file("../../changelog.md").readText())
         dependencies {
