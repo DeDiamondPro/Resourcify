@@ -23,17 +23,13 @@ import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import dev.dediamondpro.resourcify.platform.Platform;
 import gg.essential.universal.UMatrixStack;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Screen.class)
 class ScreenMixin {
-    @Shadow @Final protected ITextComponent title;
 
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {

@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.mixins;
 
 import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.gui.screen.pack.ResourcePackOrganizer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -28,4 +29,7 @@ public interface PackScreenAccessor {
 
     @Accessor("file")
     Path getDirectory();
+
+    @Accessor("organizer")
+    ResourcePackOrganizer getOrganizer();
 }

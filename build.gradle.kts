@@ -72,6 +72,7 @@ repositories {
     maven("https://maven.dediamondpro.dev/releases")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://repo.spongepowered.org/maven/")
+    maven("https://api.modrinth.com/maven")
     mavenCentral()
 }
 
@@ -114,6 +115,12 @@ dependencies {
     shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
         isTransitive = false
     }
+
+    val irisVersion: String by project
+    if (!platform.isLegacyForge) modCompileOnly(
+        if (platform.isFabric) "maven.modrinth:iris:$irisVersion"
+        else "maven.modrinth:oculus:$irisVersion"
+    )
 }
 
 tasks.processResources {

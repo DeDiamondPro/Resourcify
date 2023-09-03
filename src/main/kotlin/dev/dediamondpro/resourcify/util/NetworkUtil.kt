@@ -82,7 +82,6 @@ object NetworkUtil {
             return bytes
         }
     }
-
     fun clearCache() {
         cache.clear()
     }

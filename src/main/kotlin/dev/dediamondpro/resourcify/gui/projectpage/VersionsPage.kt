@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.gui.projectpage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
 import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.util.DummyCache
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -90,7 +91,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             x = 4.pixels(true)
             y = 4.pixels()
         } childOf changeLogHolder
-        MarkdownComponent(version.changelog, disableSelection = true).constrain {
+        MarkdownComponent(version.changelog, disableSelection = true, imageCache = DummyCache).constrain {
             x = 4.pixels()
             y = SiblingConstraint(4f)
             width = 100.percent() - 8.pixels()

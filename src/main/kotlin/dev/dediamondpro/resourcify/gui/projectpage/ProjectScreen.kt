@@ -48,13 +48,13 @@ class ProjectScreen(
     val downloadFolder: File
 ) : PaginatedScreen() {
     val project: CompletableFuture<ProjectResponse> = CompletableFuture.supplyAsync {
-        URL("https://api.modrinth.com/v2/project/${projectLimited.slug}").getJson<ProjectResponse>()!!
+        URL("${ApiInfo.API}/project/${projectLimited.slug}").getJson<ProjectResponse>()!!
     }
     val versions: CompletableFuture<List<Version>> = CompletableFuture.supplyAsync {
-        URL("https://api.modrinth.com/v2/project/${projectLimited.slug}/version").getJson<List<Version>>()!!
+        URL("${ApiInfo.API}/project/${projectLimited.slug}/version").getJson<List<Version>>()!!
     }
     private val members = CompletableFuture.supplyAsync {
-        URL("https://api.modrinth.com/v2/project/${projectLimited.slug}/members").getJson<List<Member>>()!!
+        URL("${ApiInfo.API}/project/${projectLimited.slug}/members").getJson<List<Member>>()!!
             .sortedBy { it.ordering }
     }
     val packHashes: CompletableFuture<List<String>> = CompletableFuture.supplyAsync {

@@ -20,18 +20,23 @@ package dev.dediamondpro.resourcify.gui.pack
 import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.MinecraftButton
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
+import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.util.isHidden
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.plus
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UScreen
+import gg.essential.universal.USound
 import java.io.File
+
 //#if MC >= 11600
 //$$ import net.minecraft.util.text.TranslationTextComponent
 //$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
@@ -41,28 +46,50 @@ import java.io.File
 object PackScreensAddition {
     private val window = Window(ElementaVersion.V2)
 
-    private val button = MinecraftButton().constrain {
+    private val addButton = MinecraftButton().constrain {
         x = CenterConstraint() + 194.pixels()
         y = 10.pixels()
         width = 20.pixels()
         height = 20.pixels()
     } childOf window
-    private val icon = Icon(Icons.PLUS, true).constrain {
+    private val addIcon = Icon(Icons.PLUS, true).constrain {
         x = CenterConstraint()
         y = CenterConstraint()
         width = 16.pixels()
         height = 16.pixels()
-    } childOf button
+    } childOf addButton
+    private val updateButton = MinecraftButton().constrain {
+        x = SiblingConstraint(8f, true)
+        y = 10.pixels()
+        width = 20.pixels()
+        height = 20.pixels()
+    } childOf window
+    private val updateIcon = Icon(Icons.UPDATE, true).constrain {
+        x = CenterConstraint()
+        y = CenterConstraint()
+        width = 16.pixels()
+        height = 16.pixels()
+    } childOf updateButton
 
     fun onRender(matrix: UMatrixStack, type: ApiInfo.ProjectType) {
-        button.setX(type.plusX)
-        button.setY(type.plusY)
+        addButton.setX(type.plusX)
+        addButton.setY(type.plusY)
+        if (type.hasUpdateButton) updateButton.unhide()
+        else updateButton.hide(true)
+        updateButton.setY(type.plusY)
         window.draw(matrix)
     }
 
     fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ApiInfo.ProjectType, folder: File) {
-        if (!this.button.isPointInside(mouseX.toFloat(), mouseY.toFloat()) || button != 0) return
-        UScreen.displayScreen(BrowseScreen(type, folder))
+        if (addButton.isPointInside(mouseX.toFloat(), mouseY.toFloat()) && button == 0) {
+            USound.playButtonPress()
+            UScreen.displayScreen(BrowseScreen(type, folder))
+        } else if (!updateButton.isHidden() && updateButton.isPointInside(mouseX.toFloat(), mouseY.toFloat())
+            && button == 0
+        ) {
+            USound.playButtonPress()
+            UScreen.displayScreen(UpdateGui(type, folder))
+        }
     }
 
     fun getType(title: String): ApiInfo.ProjectType? {

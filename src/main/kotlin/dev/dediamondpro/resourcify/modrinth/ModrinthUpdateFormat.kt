@@ -15,22 +15,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.mixins;
+package dev.dediamondpro.resourcify.modrinth
 
-import net.minecraft.client.gui.screen.PackScreen;
-import net.minecraft.client.gui.screen.Screen;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import dev.dediamondpro.resourcify.platform.Platform
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-import java.io.File;
-
-@Mixin(PackScreen.class)
-public interface PackScreenAccessor {
-
-    @Accessor("field_241817_w_")
-    File getDirectory();
-
-    @Accessor("field_238888_r_")
-    Screen getParentScreen();
-}
+@Serializable
+data class ModrinthUpdateFormat(
+    val hashes: List<String>,
+    val loaders: List<String>,
+    val algorithm: String = "sha512",
+    @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
+)

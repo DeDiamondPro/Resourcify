@@ -38,7 +38,9 @@ data class Version(
     val files: List<VersionFile>,
     @SerialName("game_versions") val gameVersions: List<String>,
     val loaders: List<String>
-)
+) {
+    val primaryFile by lazy { files.firstOrNull { it.primary } ?: files.firstOrNull() }
+}
 
 @Serializable
 data class VersionFile(

@@ -25,9 +25,9 @@ object PackUtils {
         return getPackFiles(directory).mapNotNull { Utils.getSha512(it) }
     }
 
-    private fun getPackFiles(directory: File): List<File> {
+    fun getPackFiles(directory: File): List<File> {
         val files = directory.listFiles() ?: return emptyList()
-        val packs = files.filter { it.isFile && it.extension == "zip"  }.toMutableList()
+        val packs = files.filter { it.isFile && it.extension == "zip" }.toMutableList()
         files.filter { it.isDirectory }.forEach { packs.addAll(getPackFiles(it)) }
         return packs
     }

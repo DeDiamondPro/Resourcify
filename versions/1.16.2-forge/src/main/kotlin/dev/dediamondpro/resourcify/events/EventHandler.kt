@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.events
 //#if FORGE==1
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.common.MinecraftForge
