@@ -144,10 +144,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     x = 0.pixels()
                     width = 73.pixels()
                     height = 100.percent()
-                }.onMouseClick {
-                    closeGui()
-                    cleanUp()
-                } childOf topBar
+                }.onMouseClick { closeGui() } childOf topBar
                 UIText("${ChatColor.BOLD}Close").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
@@ -283,7 +280,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
         }
         cleanUp()
         packsToDelete.forEach {
-            if (!it.delete()) println("Failed to delete old resource pack file.")
+            if (!it.delete()) println("Failed to delete old pack file.")
         }
     }
 

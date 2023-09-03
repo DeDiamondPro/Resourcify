@@ -164,7 +164,11 @@ class UpdateCard(
                     //$$ }
                     //#endif
 
-                    else -> error("Type not implemented")
+                    else -> {
+                        // Other types (Optifine shaders) don't have an implementation to update the selected shader
+                        // This is because optifine is a pain to work with and I don't have the motivation to support it
+                        // since optifine is not open source and is a pain to work with
+                    }
                 }
                 if (!file.delete()) gui.packsToDelete.add(file)
                 gui.removeCard(this)
