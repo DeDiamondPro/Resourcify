@@ -10,9 +10,3 @@ displayName="Resourcify"
 authors="DeDiamondPro"
 description="In-game resource pack, data pack and shader browser"
 logoFile="icon.png"
-
-[[dependencies.resourcify]]
-modId="kotlinforforge"
-mandatory=true
-versionRange="[1,)"
-side="CLIENT"

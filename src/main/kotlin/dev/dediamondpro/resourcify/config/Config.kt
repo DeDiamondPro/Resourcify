@@ -33,7 +33,7 @@ data class Config(val checkForUpdates: Boolean = true, var ignoredVersions: Muta
         private val configFile = File("config/resourcify.json")
         private val json = Json {
             encodeDefaults = true
-            prettyPrint = false
+            prettyPrint = true
             ignoreUnknownKeys = true
             isLenient = true
         }

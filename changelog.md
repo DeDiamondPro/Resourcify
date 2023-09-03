@@ -1,21 +1,13 @@
-## 1.1.3 changelog (1.8.9 and 1.12.2)
-Downgrade kotlinx serialization from 1.5.1 to 1.4.1 to resolve conflict with Essential
+## Resourcify 1.2.0: The Updating Update
+An update button has been added right next to the button to download new packs, so you can update your packs easily.
 
-----------------------------------------------------------------------------------------------------
-## 1.1.1 changelog
-## New Features
-- Added a changelog page in the version section of a project, can be accessed by clicking a version.
-- Forge now supports Oculus for shaders!
+![](https://i.imgur.com/kUq0XRg.png)
 
-## Bug fixes
-- Fixed a crash related to a library conflict on fabric
+Clicking it opens a GUI where you can view all packs that have an update and update them.
 
-## Misc
-- Removed Essential in 1.8.9 and 1.12.2
-- Cleaned up dependencies
-- Switched to custom caching approach
+![](https://i.imgur.com/uKYDv8E.png)
 
-Due to disuse, the 1.17 version of Resourcify has been discontinued.
+This works for resource packs and shaders!
 
 ----------------------------------------------------------------------------------------------------
 
