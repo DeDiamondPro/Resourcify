@@ -12,6 +12,15 @@ Easily view the description, gallery and versions of a pack,<br>when you've foun
 
 ------------------------------------
 
+![Group 6](https://github.com/DeDiamondPro/Resourcify/assets/67508414/99437f3e-bbcb-4a8b-b188-ce7a48ee57fb)
+Easily view available updates and install all of them or just the one you want with one click!
+
+------------------------------------
+
 </div>
 
 [<img src="https://www.bisecthosting.com/partners/custom-banners/43c818dc-2c64-43d0-bf13-568c6037b79e.webp" alt="https://bisecthosting.com/diamond" width=100%>](https://bisecthosting.com/diamond?r=Resourcify+GitHub)
+
+------------------------------------
+### For Modpacks
+For modpacks it might be desirable to disable Resourcify's update checker, to do this edit or create the file `.minecraft/config/resourcify.json` with the folowing content: `{ "checkForUpdates": false }`, then add it to the overrides in your modpack. This will disable the update checker.
