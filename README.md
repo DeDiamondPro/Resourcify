@@ -10,6 +10,8 @@ Resourcify allows you to browse all resource packs, data packs and shaders on mo
 ![Install a Resource Pack with the click of a button](https://github.com/DeDiamondPro/Resourcify/assets/67508414/af1ccd6c-c159-4218-b000-0d2991941d00)
 Easily view the description, gallery and versions of a pack,<br>when you've found a pack you like you can easily install it with one click!
 
+------------------------------------
+
 </div>
 
-[<img src="https://www.bisecthosting.com/partners/custom-banners/793f80ea-c602-458b-968d-6a83df014fe4.webp" alt="https://bisecthosting.com/diamond" width=100%>](https://bisecthosting.com/diamond)
+[<img src="https://www.bisecthosting.com/partners/custom-banners/43c818dc-2c64-43d0-bf13-568c6037b79e.webp" alt="https://bisecthosting.com/diamond" width=100%>](https://bisecthosting.com/diamond?r=Resourcify+GitHub)

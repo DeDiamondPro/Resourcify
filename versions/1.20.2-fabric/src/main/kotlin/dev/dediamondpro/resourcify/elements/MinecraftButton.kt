@@ -27,8 +27,8 @@ import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.USound
 import gg.essential.universal.utils.ReleasedDynamicTexture
-import net.minecraft.client.resources.IResourceManager
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resource.ResourceManager
+import net.minecraft.util.Identifier
 
 class MinecraftButton(text: String? = null) : UIContainer() {
     init {
@@ -42,26 +42,26 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     }
 
     override fun draw(matrixStack: UMatrixStack) {
-        texture?.let {
+        (if (isHovered()) highlightedTexture else texture)?.let {
             Utils.drawTexture(
                 matrixStack, it,
                 this.getLeft().toDouble(),
                 this.getTop().toDouble(),
                 0.0,
-                66.0 + if (isHovered()) 20.0 else 0.0,
+                0.0,
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
-                256.0, 256.0
+                200.0, 20.0
             )
             Utils.drawTexture(
                 matrixStack, it,
                 this.getLeft().toDouble() + this.getWidth().toDouble() / 2,
                 this.getTop().toDouble(),
                 200.0 - this.getWidth().toDouble() / 2,
-                66.0 + if (isHovered()) 20.0 else 0.0,
+                0.0,
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
-                256.0, 256.0
+                200.0, 20.0
             )
         }
         super.draw(matrixStack)
@@ -69,23 +69,30 @@ class MinecraftButton(text: String? = null) : UIContainer() {
 
     companion object {
         private var texture: ReleasedDynamicTexture? = null
+        private var highlightedTexture: ReleasedDynamicTexture? = null
 
-        fun reloadTexture(resourceManager: IResourceManager) {
+        fun reloadTexture(resourceManager: ResourceManager) {
+            texture = loadTexture("textures/gui/sprites/widget/button.png", resourceManager, texture)
+            highlightedTexture =
+                loadTexture("textures/gui/sprites/widget/button_highlighted.png", resourceManager, highlightedTexture)
+        }
+
+        private fun loadTexture(
+            identifier: String,
+            resourceManager: ResourceManager,
+            texture: ReleasedDynamicTexture?
+        ): ReleasedDynamicTexture? {
             val resource = try {
-                resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
+                resourceManager.getResource(Identifier(identifier))
             } catch (e: Exception) {
-                return
+                return null
             }
-            //#if MC >= 11900
-            //$$ if (resource.isEmpty) return
-            //$$ val stream = resource.get().inputStream
-            //#else
-            val stream = resource.inputStream
-            //#endif
+            if (resource.isEmpty) return null
+            val stream = resource.get().inputStream
             val tex = UGraphics.getTexture(stream)
             tex.uploadTexture()
-            texture?.deleteGlTexture()
-            texture = tex
+            texture?.clearGlId()
+            return tex
         }
     }
 }

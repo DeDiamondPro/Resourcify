@@ -48,6 +48,8 @@ object Utils {
         textureY: Double,
         width: Double,
         height: Double,
+        textureWidth: Double,
+        textureHeight: Double,
         textureMinFilter: Int = GL11.GL_NEAREST,
         textureMagFilter: Int = GL11.GL_NEAREST
     ) {
@@ -69,14 +71,17 @@ object Utils {
             UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR
         )
 
-        val f = 0.00390625
-        worldRenderer.pos(matrixStack, x, y + height, 0.0).tex(textureX * f, (textureY + height) * f)
+        worldRenderer.pos(matrixStack, x, y + height, 0.0)
+            .tex(textureX / textureWidth, (textureY + height) / textureHeight)
             .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + width, y + height, 0.0).tex((textureX + width) * f, (textureY + height) * f)
+        worldRenderer.pos(matrixStack, x + width, y + height, 0.0)
+            .tex((textureX + width) / textureWidth, (textureY + height) / textureHeight)
             .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + width, y, 0.0).tex((textureX + width) * f, textureY * f)
+        worldRenderer.pos(matrixStack, x + width, y, 0.0)
+            .tex((textureX + width) / textureWidth, textureY / textureHeight)
             .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + 0, y + 0, 0.0).tex((textureX + 0) * f, (textureY + 0) * f)
+        worldRenderer.pos(matrixStack, x + 0, y + 0, 0.0)
+            .tex((textureX + 0) / textureWidth, (textureY + 0) / textureHeight)
             .color(1f, 1f, 1f, 1f).endVertex()
         worldRenderer.drawDirect()
 

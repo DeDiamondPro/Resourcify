@@ -23,6 +23,7 @@ import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.resources.I18n
 import net.minecraft.resources.FilePack
+import net.minecraft.resources.IResourcePack
 import net.minecraft.resources.ResourcePackInfo
 import net.minecraft.resources.ResourcePackList
 import net.minecraft.util.SharedConstants
@@ -53,7 +54,7 @@ object Platform {
     fun getSelectedResourcePacks(): List<File> {
         return UMinecraft.getMinecraft().resourcePackList.enabledPacks.mapNotNull {
             if (it.resourcePack !is FilePack) return@mapNotNull null
-            (it.resourcePack as AbstractResourcePackAccessor).file
+            getResourcePackFile(it.resourcePack)
         }
     }
 
@@ -64,7 +65,7 @@ object Platform {
     fun closeResourcePack(pack: File) {
         UMinecraft.getMinecraft().resourcePackList.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).file == pack
+            getResourcePackFile(it.resourcePack) == pack
         }?.resourcePack?.close()
     }
 
@@ -74,7 +75,7 @@ object Platform {
         val packs = Lists.newArrayList(repo.enabledPacks)
         val old = repo.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).file == oldPack
+            getResourcePackFile(it.resourcePack) == oldPack
         }
         old?.let {
             packs.remove(it)
@@ -82,7 +83,7 @@ object Platform {
         }
         packs.add(repo.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).file == newPack
+            getResourcePackFile(it.resourcePack) == newPack
         } ?: return)
         //#if FORGE == 1 && MC == 11602
         repo.setEnabledPacks(packs.map { it.name })
@@ -108,5 +109,13 @@ object Platform {
                 }
             }
         }
+    }
+
+    private fun getResourcePackFile(resourcePack: IResourcePack): File {
+        //#if MC < 12002
+        return (resourcePack as AbstractResourcePackAccessor).file
+        //#else
+        //$$ return (resourcePack as AbstractResourcePackAccessor).fileWrapper.file
+        //#endif
     }
 }

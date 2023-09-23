@@ -64,6 +64,10 @@ loom {
     }
 
     mixin.defaultRefmapName.set("mixins.${mod_id}.refmap.json")
+
+    if (project.platform.mcVersion >= 12002) {
+        accessWidenerPath = file("src/main/resources/resourcify.accesswidener")
+    }
 }
 
 repositories {
@@ -155,7 +159,7 @@ tasks {
         if (project.platform.isFabric) {
             exclude("mcmod.info", "mods.toml", "pack.mcmeta")
         } else {
-            exclude("fabric.mod.json")
+            exclude("fabric.mod.json", "resourcify.accesswidener")
             if (project.platform.isLegacyForge) {
                 exclude("mods.toml", "pack.mcmeta")
             } else {
@@ -237,7 +241,7 @@ tasks {
             relations(closureOf<CurseRelation> {
                 if (platform.isForge && !platform.isLegacyForge) {
                     requiredDependency("kotlin-for-forge")
-                } else {
+                } else if (!platform.isLegacyForge) {
                     requiredDependency("fabric-api")
                     requiredDependency("fabric-language-kotlin")
                 }
@@ -269,9 +273,11 @@ tasks {
 
 fun getMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
-        "1.19.2" -> "1.19.0-1.19.2"
-        "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
+        "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
+        "1.19.2" -> "1.19.0-1.19.2"
+        "1.20.1" -> "1.20-1.20.1"
+        "1.20.2" -> "1.20.2+"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -284,6 +290,8 @@ fun getInternalMcVersionStr(): String {
     return when (project.platform.mcVersionStr) {
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
         "1.19.2" -> ">=1.19 <=1.19.2"
+        "1.20.1" -> ">=1.20 <=1.20.1"
+        "1.20.2" -> ">=1.20.2"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -302,6 +310,7 @@ fun getMcVersionList(): List<String> {
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
         "1.20.1" -> listOf("1.20", "1.20.1")
+        "1.20.2" -> listOf("1.20.2")
         else -> error("Unknown version")
     }
 }

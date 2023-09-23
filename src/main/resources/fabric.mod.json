@@ -23,6 +23,7 @@
   "mixins": [
     "mixins.${id}.json"
   ],
+  "accessWidener": "${id}.accesswidener",
   "custom": {
     "modmenu": {
       "links": {
