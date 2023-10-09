@@ -50,7 +50,7 @@ blossom {
 version = mod_version
 group = "dev.dediamondpro"
 base {
-    archivesName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})")
+    archivesName.set(mod_id)
 }
 
 tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
@@ -89,9 +89,8 @@ dependencies {
     val universalPlatform: String? by project
     if (platform.isFabric) {
         val fabricApiVersion: String by project
-        val fabricLanguageKotlinVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
-        modImplementation("net.fabricmc:fabric-language-kotlin:$fabricLanguageKotlinVersion")
+        modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")!!)
     } else if (platform.isForge) {
@@ -184,6 +183,7 @@ tasks {
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
         finalizedBy("copyJar")
+        archiveFileName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr}).jar")
     }
     jar {
         if (project.platform.isLegacyForge) {

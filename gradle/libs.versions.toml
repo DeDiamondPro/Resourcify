@@ -2,11 +2,12 @@
 # Kotlin
 kotlin = "1.8.22"
 kotlin_serialization = "1.3.3"
+fabric_language_kotlin = "1.9.5+kotlin.1.8.22"
 
 # Essential Dependencies
 egt = "0.2.2"
 universal = "312"
-elementa = "590+markdown"
+elementa = "DIAMOND-2"
 
 # Mixin
 mixin = "0.7.11-SNAPSHOT"
