@@ -12,14 +12,6 @@
     "sources": "https://github.com/DeDiamondPro/Resourcify",
     "issues": "https://github.com/DeDiamondPro/Resourcify/issues"
   },
-  "entrypoints": {
-    "client": [
-      {
-        "adapter": "kotlin",
-        "value": "dev.dediamondpro.resourcify.Resourcify"
-      }
-    ]
-  },
   "mixins": [
     "mixins.${id}.json"
   ],
@@ -35,7 +27,7 @@
   "license": "LGPL 3.0",
   "environment": "client",
   "depends": {
-    "fabric-language-kotlin": ">=1.9.5+kotlin.1.8.22",
+    "fabric-language-kotlin": ">=1.7.1+kotlin.1.7.10",
     "fabricloader": ">=0.12.0",
     "fabric-api-base": "*",
     "minecraft": "${mcVersionStr}",

@@ -20,24 +20,12 @@ package dev.dediamondpro.resourcify
 //#if FORGE==1
 
 import dev.dediamondpro.resourcify.events.EventHandler
-import dev.dediamondpro.resourcify.updater.UpdateChecker
-import net.minecraftforge.event.TickEvent.ClientTickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 
 @Mod(ModInfo.ID)
 object Resourcify {
     init {
         EventHandler
-        UpdateChecker.startUpdateCheck()
-        FORGE_BUS.register(this)
-    }
-
-    @SubscribeEvent
-    fun onTick(tickEvent: ClientTickEvent) {
-        UpdateChecker.displayScreenIfNeeded()
-        FORGE_BUS.unregister(this)
     }
 }
 //#endif

@@ -1,13 +1,7 @@
-## Resourcify 1.2.0: The Updating Update
-An update button has been added right next to the button to download new packs, so you can update your packs easily.
-
-![](https://i.imgur.com/kUq0XRg.png)
-
-Clicking it opens a GUI where you can view all packs that have an update and update them.
-
-![](https://i.imgur.com/uKYDv8E.png)
-
-This works for resource packs and shaders!
+## Resourcify 1.2.1
+- Fixed a bug making it so you can't load into a world with some mods
+- Removed update checker
+- Made jar file 1mb smaller by deleting unused stuff in elementa fork
 
 ----------------------------------------------------------------------------------------------------
 
