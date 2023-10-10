@@ -25,9 +25,9 @@ import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UMinecraft
 import gg.essential.universal.USound
 import gg.essential.universal.utils.ReleasedDynamicTexture
-import net.minecraft.client.resources.IResourceManager
 import net.minecraft.util.ResourceLocation
 
 class MinecraftButton(text: String? = null) : UIContainer() {
@@ -42,6 +42,24 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     }
 
     override fun draw(matrixStack: UMatrixStack) {
+        if (shouldReloadTexture) {
+            val resource = try {
+                UMinecraft.getMinecraft().resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
+            } catch (e: Exception) {
+                return
+            }
+            //#if MC >= 11900
+            //$$ if (resource.isEmpty) return
+            //$$ val stream = resource.get().inputStream
+            //#else
+            val stream = resource.inputStream
+            //#endif
+            val tex = UGraphics.getTexture(stream)
+            tex.uploadTexture()
+            texture?.deleteGlTexture()
+            texture = tex
+            shouldReloadTexture = false
+        }
         texture?.let {
             Utils.drawTexture(
                 matrixStack, it,
@@ -68,24 +86,11 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     }
 
     companion object {
+        private var shouldReloadTexture = false
         private var texture: ReleasedDynamicTexture? = null
 
-        fun reloadTexture(resourceManager: IResourceManager) {
-            val resource = try {
-                resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
-            } catch (e: Exception) {
-                return
-            }
-            //#if MC >= 11900
-            //$$ if (resource.isEmpty) return
-            //$$ val stream = resource.get().inputStream
-            //#else
-            val stream = resource.inputStream
-            //#endif
-            val tex = UGraphics.getTexture(stream)
-            tex.uploadTexture()
-            texture?.deleteGlTexture()
-            texture = tex
+        fun reloadTexture() {
+            shouldReloadTexture = true
         }
     }
 }

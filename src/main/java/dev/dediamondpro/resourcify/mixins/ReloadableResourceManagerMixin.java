@@ -29,6 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ReloadableResourceManagerMixin {
     @Inject(method = "notifyReloadListeners", at = @At("HEAD"))
     void onReload(CallbackInfo ci) {
-        MinecraftButton.Companion.reloadTexture((IResourceManager) this);
+        MinecraftButton.Companion.reloadTexture();
     }
 }

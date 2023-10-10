@@ -40,6 +40,6 @@ public class ReloadableResourceManagerMixin {
     @Inject(method = "reloadResources", at = @At("RETURN"))
     //#endif
     void onReload(Executor backgroundExecutor, Executor gameExecutor, CompletableFuture<Unit> waitingFor, List<IResourcePack> resourcePacks, CallbackInfoReturnable<IAsyncReloader> cir) {
-        MinecraftButton.Companion.reloadTexture((IResourceManager) this);
+        MinecraftButton.Companion.reloadTexture();
     }
 }

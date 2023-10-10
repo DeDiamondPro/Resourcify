@@ -25,9 +25,9 @@ import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UMinecraft
 import gg.essential.universal.USound
 import gg.essential.universal.utils.ReleasedDynamicTexture
-import net.minecraft.resource.ResourceManager
 import net.minecraft.util.Identifier
 
 class MinecraftButton(text: String? = null) : UIContainer() {
@@ -42,6 +42,12 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     }
 
     override fun draw(matrixStack: UMatrixStack) {
+        if (shouldReloadTexture) {
+            texture = loadTexture("textures/gui/sprites/widget/button.png", texture)
+            highlightedTexture =
+                loadTexture("textures/gui/sprites/widget/button_highlighted.png", highlightedTexture)
+            shouldReloadTexture = false
+        }
         (if (isHovered()) highlightedTexture else texture)?.let {
             Utils.drawTexture(
                 matrixStack, it,
@@ -68,22 +74,20 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     }
 
     companion object {
+        private var shouldReloadTexture = false
         private var texture: ReleasedDynamicTexture? = null
         private var highlightedTexture: ReleasedDynamicTexture? = null
 
-        fun reloadTexture(resourceManager: ResourceManager) {
-            texture = loadTexture("textures/gui/sprites/widget/button.png", resourceManager, texture)
-            highlightedTexture =
-                loadTexture("textures/gui/sprites/widget/button_highlighted.png", resourceManager, highlightedTexture)
+        fun reloadTexture() {
+            shouldReloadTexture = true
         }
 
         private fun loadTexture(
             identifier: String,
-            resourceManager: ResourceManager,
             texture: ReleasedDynamicTexture?
         ): ReleasedDynamicTexture? {
             val resource = try {
-                resourceManager.getResource(Identifier(identifier))
+                UMinecraft.getMinecraft().resourceManager.getResource(Identifier(identifier))
             } catch (e: Exception) {
                 return null
             }
