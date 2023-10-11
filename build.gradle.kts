@@ -183,7 +183,7 @@ tasks {
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
         finalizedBy("copyJar")
-        archiveFileName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr}).jar")
+        archiveFileName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})-${mod_version}.jar")
     }
     jar {
         if (project.platform.isLegacyForge) {
@@ -238,7 +238,7 @@ tasks {
             id = "870076"
             changelog = file("../../changelog.md")
             changelogType = "markdown"
-            relations(closureOf<CurseRelation> {
+            if (!platform.isLegacyForge) relations(closureOf<CurseRelation> {
                 if (platform.isForge && !platform.isLegacyForge) {
                     requiredDependency("kotlin-for-forge")
                 } else if (!platform.isLegacyForge) {
