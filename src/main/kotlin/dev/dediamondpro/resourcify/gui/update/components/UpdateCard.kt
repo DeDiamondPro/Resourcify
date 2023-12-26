@@ -146,6 +146,9 @@ class UpdateCard(
                 newFile.hashes.sha512, updateUrl
             ) {
                 when (gui.type) {
+                    //#if MC == 10809
+                    ApiInfo.ProjectType.AYCY_RESOURCE_PACK,
+                        //#endif
                     ApiInfo.ProjectType.RESOURCE_PACK -> {
                         if (Platform.getSelectedResourcePacks().contains(file)) Window.enqueueRenderOperation {
                             Platform.replaceResourcePack(file, downloadFile)

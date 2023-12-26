@@ -1,7 +1,5 @@
-## Resourcify 1.2.1
-- Fixed a bug making it so you can't load into a world with some mods
-- Removed update checker
-- Made jar file 1mb smaller by deleting unused stuff in elementa fork
+## Resourcify 1.2.1.1 (1.8.9 only version)
+- Add support for Aycy's Resource Pack Manager
 
 ----------------------------------------------------------------------------------------------------
 

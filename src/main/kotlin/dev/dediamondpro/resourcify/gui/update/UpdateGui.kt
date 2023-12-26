@@ -37,6 +37,7 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
+import net.minecraft.client.gui.GuiScreen
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -264,18 +265,26 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
         if (screen == null) {
             displayScreen(null)
         } else {
-            if (type == ApiInfo.ProjectType.RESOURCE_PACK) {
-                //#if MC >= 11904
-                //$$ if (reloadOnClose) {
-                //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
-                //$$ } else {
-                //$$     displayScreen(screen)
-                //$$ }
-                //#else
-                displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
+            when (type) {
+                ApiInfo.ProjectType.RESOURCE_PACK -> {
+                    //#if MC >= 11904
+                    //$$ if (reloadOnClose) {
+                    //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
+                    //$$ } else {
+                    //$$     displayScreen(screen)
+                    //$$ }
+                    //#else
+                    displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
+                    //#endif
+                }
+                //#if MC == 10809
+                ApiInfo.ProjectType.AYCY_RESOURCE_PACK -> {
+                    val previousScreenField = screen.javaClass.getDeclaredField("previousScreen")
+                    previousScreenField.isAccessible = true
+                    displayScreen(if (reloadOnClose) previousScreenField.get(screen) as GuiScreen else screen)
+                }
                 //#endif
-            } else {
-                displayScreen(screen)
+                else -> displayScreen(screen)
             }
         }
         cleanUp()

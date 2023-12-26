@@ -220,7 +220,7 @@ tasks {
             loaders.add("quilt")
         } else if (platform.isForge) {
             loaders.add("forge")
-            if (platform.mcMinor >= 20) loaders.add("neoforge")
+            if (platform.mcMinor == 20 && platform.mcPatch == 1) loaders.add("neoforge")
         }
         changelog.set(file("../../changelog.md").readText())
         dependencies {

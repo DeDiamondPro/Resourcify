@@ -70,14 +70,14 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, draw
         }
     }
 
-    fun goBack() {
+    open fun goBack() {
         val backScreen = backScreens.removeLastOrNull()
         if (backScreen is PaginatedScreen) forwardScreens.add(this)
         else cleanUp()
         displayScreen(backScreen)
     }
 
-    fun goForward() {
+    open fun goForward() {
         val forwardScreen = forwardScreens.removeLastOrNull() ?: return
         backScreens.add(this)
         displayScreen(forwardScreen)

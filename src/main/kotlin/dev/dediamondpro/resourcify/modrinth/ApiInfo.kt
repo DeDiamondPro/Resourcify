@@ -48,6 +48,15 @@ object ApiInfo {
             "[\"project_type:resourcepack\"]",
             "minecraft"
         ),
+        //#if MC == 10809
+        AYCY_RESOURCE_PACK(
+            "resource packs",
+            "resourcepack",
+            "[\"project_type:resourcepack\"]",
+            "minecraft",
+            plusX = 10.pixels(true)
+        ),
+        //#endif
         DATA_PACK(
             "data packs",
             "mod",

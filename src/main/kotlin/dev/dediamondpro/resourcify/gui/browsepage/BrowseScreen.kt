@@ -38,6 +38,7 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UMatrixStack
+import net.minecraft.client.gui.GuiScreen
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -322,5 +323,19 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
             loadPacks(false)
         }
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
+    }
+
+    override fun goBack() {
+        //#if MC == 10809
+        if (type == ApiInfo.ProjectType.AYCY_RESOURCE_PACK) {
+            val screen = backScreens.lastOrNull()
+            val previousScreenField = screen?.javaClass?.getDeclaredField("previousScreen")
+            previousScreenField?.isAccessible = true
+            displayScreen(previousScreenField?.get(screen) as GuiScreen?)
+            cleanUp()
+            return
+        }
+        //#endif
+        super.goBack()
     }
 }
