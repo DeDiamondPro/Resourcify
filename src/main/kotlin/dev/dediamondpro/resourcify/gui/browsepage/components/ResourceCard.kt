@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ProjectObject
+import dev.dediamondpro.resourcify.util.ImageURLUtils
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -32,7 +33,8 @@ import gg.essential.universal.UScreen
 import java.awt.Color
 import java.io.File
 
-class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFolder: File) : UIBlock(color = Color(0, 0, 0, 100)) {
+class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFolder: File) :
+    UIBlock(color = Color(0, 0, 0, 100)) {
 
     init {
         constrain {
@@ -51,12 +53,15 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
         } effect ScissorEffect() childOf this
 
         val bannerUrl = project.featuredGallery ?: project.gallery.firstOrNull()
-        if (bannerUrl != null) UIImage.ofURL(bannerUrl, false).constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-            width = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
-            height = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
-        } childOf bannerHolder
+        if (bannerUrl != null) {
+            UIImage.ofURL(bannerUrl, false, 262f, bannerHolder.getHeight(), ImageURLUtils.Fit.COVER)
+                .constrain {
+                    x = CenterConstraint()
+                    y = CenterConstraint()
+                    width = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
+                    height = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
+                } childOf bannerHolder
+        }
 
         val imageHolder = UIBlock(color = Color(0, 0, 0, 150)).constrain {
             x = 4.pixels()
@@ -69,7 +74,12 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
         if (project.iconUrl.isNullOrBlank()) {
             UIImage.ofResource("/pack.png")
         } else {
-            UIImage.ofURL(project.iconUrl)
+            UIImage.ofURL(
+                project.iconUrl,
+                width = imageHolder.getWidth(),
+                height = imageHolder.getHeight(),
+                fit = ImageURLUtils.Fit.COVER
+            )
         }.constrain {
             width = 100.percent()
             height = 100.percent()

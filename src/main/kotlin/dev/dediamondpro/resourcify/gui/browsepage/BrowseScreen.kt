@@ -29,6 +29,7 @@ import dev.dediamondpro.resourcify.modrinth.Categories
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.SearchResponse
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.util.NetworkUtil
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJson
 import gg.essential.elementa.components.*
@@ -49,7 +50,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
 
     private var offset = 0
     private val selectedCategories = mutableListOf<Categories>()
-    private var fetchingFuture: CompletableFuture<Void>? = null
+    private var fetchingFuture: CompletableFuture<SearchResponse?>? = null
     private var totalHits: Int = 0
 
     private val contentBox = UIContainer().constrain {
@@ -255,7 +256,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
 
     private fun loadPacks(clear: Boolean = true) {
         fetchingFuture?.cancel(true)
-        fetchingFuture = CompletableFuture.runAsync {
+        fetchingFuture = CompletableFuture.supplyAsync {
             if (clear) offset = 0
             else offset += 20
             val url = URIBuilder("${ApiInfo.API}/search")
@@ -265,9 +266,11 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
                 .setParameter("offset", "$offset")
                 .setParameter("index", sortDropDown!!.selectedOptions.first().lowercase())
                 .build()
-            val response = url.toURL().getJson<SearchResponse>()
+            url.toURL().getJson<SearchResponse>()
+        }.whenCompleteAsync { response, error ->
+            if (error != null) return@whenCompleteAsync
             totalHits = response?.totalHits ?: 0
-            val projects = response?.hits ?: return@runAsync
+            val projects = response?.hits ?: return@whenCompleteAsync
             Window.enqueueRenderOperation {
                 if (clear) projectContainer.clearChildren()
 

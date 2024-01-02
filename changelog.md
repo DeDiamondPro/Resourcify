@@ -1,6 +1,13 @@
-## Resourcify 1.2.1.1 (1.8.9 only version)
-- Add support for Aycy's Resource Pack Manager
+## Resourcify 1.3.0
+
+- Use MineMark TODO: elaborate
+- Use image resizing service on browse page, this increases image loading times on the browse page, especially on slower
+  connections
+- Better multithreading for fetching jsons/images, can increase loading speed when a lot of things are being loaded at
+  once
 
 ----------------------------------------------------------------------------------------------------
 
-Looking for a top-notch Minecraft server host? BisectHosting has got you covered! Create your own server at [bisecthosting.com/diamond](https://bisecthosting.com/diamond?r=resourcify+update) and use code **diamond** to get 25% of your first month while also supporting me!
+Looking for a top-notch Minecraft server host? BisectHosting has got you covered! Create your own server
+at [bisecthosting.com/diamond](https://bisecthosting.com/diamond?r=resourcify+update) and use code **diamond** to get
+25% of your first month while also supporting me!

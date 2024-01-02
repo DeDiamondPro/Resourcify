@@ -17,21 +17,16 @@
 
 package dev.dediamondpro.resourcify.util
 
-import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.lwjgl.opengl.GL11
 import java.awt.Color
-import java.awt.image.BufferedImage
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
-import java.net.URL
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import javax.imageio.ImageIO
 
 fun String.capitalizeAll(): String {
     return this.split(" ").joinToString(" ") { it.replaceFirstChar { c -> c.titlecase() } }
@@ -115,17 +110,5 @@ object Utils {
     fun getShadowColor(color: Color): Color {
         val rgb = color.rgb
         return Color(rgb and 16579836 shr 2 or (rgb and -16777216))
-    }
-
-    // In an ideal world this wouldn't be needed, but for some reason it is for some MC versions
-    fun readImage(url: URL, inputStream: InputStream): BufferedImage {
-        if (!url.file.endsWith("webp")) return ImageIO.read(inputStream)
-        val reader = WebPImageReaderSpi().createReaderInstance()
-        try {
-            reader.input = ImageIO.createImageInputStream(inputStream)
-            return reader.read(0)
-        } finally {
-            reader.dispose()
-        }
     }
 }

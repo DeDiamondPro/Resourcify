@@ -202,7 +202,7 @@ class ProjectScreen(
             height = ChildBasedSizeConstraint() + 4.pixels()
         } childOf sideContainer
         val bannerUrl = projectLimited.featuredGallery
-        if (bannerUrl != null && !bannerUrl.endsWith(".webp")) UIImage.ofURL(bannerUrl, false).constrain {
+        if (bannerUrl != null) UIImage.ofURL(bannerUrl, false).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()

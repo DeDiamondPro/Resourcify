@@ -29,8 +29,10 @@ import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.*
+import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
+import javax.imageio.ImageIO
 import javax.net.ssl.HttpsURLConnection
 
 val json = Json {
@@ -43,18 +45,31 @@ val json = Json {
 object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000
     private val cache = ConcurrentHashMap<URL, CacheObject>()
+    private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
+    // Use a custom, larger, thread-pool to massively increase fetching speed
+    private val FetchingThreadPool = Executors.newCachedThreadPool()
 
-    fun getOrFetch(url: URL): ByteArray? {
-        val value = cache[url]
-        return if (value == null) {
-            val bytes = url.getEncodedInputStream()?.use { it.readBytes() }
-            if (bytes != null) {
-                cache[url] = CacheObject(url, bytes)
-                pruneCache()
+    fun getOrFetch(url: URL, executor: Executor = FetchingThreadPool): ByteArray? {
+        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, executor).get()
+    }
+
+    fun getOrFetchAsync(url: URL, executor: Executor = FetchingThreadPool): CompletableFuture<ByteArray?> {
+        return cache[url]?.getBytes()?.let {
+            CompletableFuture.supplyAsync({ it }, executor)
+        } ?: currentlyFetching[url] ?: startFetch(url, executor)
+    }
+
+    private fun startFetch(url: URL, executor: Executor): CompletableFuture<ByteArray?> {
+        return CompletableFuture.supplyAsync({
+            url.getEncodedInputStream()?.use { it.readBytes() }?.let {
+                cache[url] = CacheObject(url, it)
+                it
             }
-            bytes
-        } else {
-            value.getBytes()
+        }, executor).apply {
+            currentlyFetching[url] = this
+        }.whenCompleteAsync { _, _ ->
+            currentlyFetching.remove(url)
+            pruneCache()
         }
     }
 
@@ -82,7 +97,12 @@ object NetworkUtil {
             return bytes
         }
     }
+
     fun clearCache() {
+        for ((url, future) in currentlyFetching) {
+            future.cancel(true)
+            currentlyFetching.remove(url)
+        }
         cache.clear()
     }
 }
@@ -90,16 +110,20 @@ object NetworkUtil {
 fun URL.setupConnection(): HttpsURLConnection {
     val con = this.openConnection() as HttpsURLConnection
     con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
-    con.setRequestProperty("Accept-Encoding", "gzip")
-    con.connectTimeout = 5000
-    con.readTimeout = 5000
+    con.setRequestProperty("Accept-Encoding", "gzip, deflate")
+    con.connectTimeout = 20000
+    con.readTimeout = 20000
     return con
 }
 
 fun URLConnection.getEncodedInputStream(): InputStream? {
     return try {
         val inputStream = this.inputStream
-        if (this.contentEncoding == "gzip") GZIPInputStream(inputStream) else inputStream
+        when (this.contentEncoding) {
+            "gzip" -> GZIPInputStream(inputStream)
+            "deflate" -> DeflaterInputStream(inputStream)
+            else -> inputStream
+        }
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -117,9 +141,29 @@ inline fun <reified T> URL.getJson(useCache: Boolean = true): T? {
     return this.getString(useCache)?.let { json.decodeFromString(it) }
 }
 
-fun URL.getImage(useCache: Boolean = true): BufferedImage? {
-    if (useCache) return NetworkUtil.getOrFetch(this)?.inputStream()?.use { Utils.readImage(this, it) }
-    return this.getEncodedInputStream()?.use { Utils.readImage(this, it) }
+fun URL.getImage(
+    useCache: Boolean = true,
+    width: Float? = null,
+    height: Float? = null,
+    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
+): BufferedImage? {
+    val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
+    if (useCache) return NetworkUtil.getOrFetch(url)?.inputStream()?.use { ImageIO.read(it) }
+    return url.getEncodedInputStream()?.use { ImageIO.read(it) }
+}
+
+fun URL.getImageAsync(
+    useCache: Boolean = true,
+    width: Float? = null,
+    height: Float? = null,
+    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
+): CompletableFuture<BufferedImage> {
+    val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
+    return if (useCache) return NetworkUtil.getOrFetchAsync(url).thenApplyAsync { bytes ->
+        bytes?.inputStream()?.use { ImageIO.read(it) }
+    } else {
+        CompletableFuture.supplyAsync { url.getEncodedInputStream()?.use { ImageIO.read(it) } }
+    }
 }
 
 inline fun <reified T, reified S : Any> URL.postAndGetJson(data: S): T? {

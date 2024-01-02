@@ -78,6 +78,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     maven("https://api.modrinth.com/maven")
     mavenCentral()
+    mavenLocal()
 }
 
 val shade: Configuration by configurations.creating {
@@ -85,6 +86,16 @@ val shade: Configuration by configurations.creating {
 }
 
 dependencies {
+    val version = "44"
+    shade("dev.dediamondpro:minemark:1.0-SNAPSHOT$version") {
+        isTransitive = false
+    }
+    shade("dev.dediamondpro:minemark-elementa:1.0-SNAPSHOT$version") {
+        isTransitive = false
+    }
+    shade("org.commonmark:commonmark:0.21.0")
+    shade("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
+
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
     if (platform.isFabric) {
@@ -106,14 +117,14 @@ dependencies {
             isTransitive = false
         }
     }
-    listOf(libs.bundles.twelvemonkeys).forEach {
+    /*listOf().forEach {
         if (platform.isFabric) {
             implementation(it)
             include(it)
         } else {
             shade(it) { isTransitive = false }
         }
-    }
+    }*/
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
     shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
         isTransitive = false

@@ -17,12 +17,13 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage
 
+import dev.dediamondpro.minemark.elementa.LayoutConfigImpl
+import dev.dediamondpro.minemark.elementa.MineMarkComponent
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
-import dev.dediamondpro.resourcify.util.DummyCache
+import dev.dediamondpro.resourcify.util.SanitizingImageProvider
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 
 class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 100)) {
@@ -33,7 +34,7 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
             width = 100.percent()
             height = ChildLocationSizeConstraint() + 8.pixels()
         }
-        MarkdownComponent(screen.project.get().body, disableSelection = true, imageCache = DummyCache).constrain {
+        MineMarkComponent(screen.project.get().body, LayoutConfigImpl(imageProvider = SanitizingImageProvider)).constrain {
             x = 6.pixels()
             y = 6.pixels()
             width = 100.percent() - 12.pixels()

@@ -20,19 +20,31 @@ package dev.dediamondpro.resourcify.util
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.DefaultLoadingImage
+import gg.essential.universal.UResolution
 import java.net.URL
-import java.util.concurrent.CompletableFuture
 
 fun UIImage.Companion.ofURL(
     source: String,
-    loadingImage: Boolean = true
+    loadingImage: Boolean = true,
+    width: Float? = null,
+    height: Float? = null,
+    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
+    scaleFactor: Float = UResolution.scaleFactor.toFloat(),
+    useCache: Boolean = true
 ): UIImage {
     val url = URL(source)
     val image = UIImage(
-        CompletableFuture.supplyAsync { url.getImage() },
+        url.getImageAsync(
+            useCache = useCache,
+            width = width?.times(scaleFactor),
+            height = height?.times(scaleFactor),
+            fit = fit
+        ),
         loadingImage = if (loadingImage) DefaultLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
+    if (width != null) image.imageWidth = width * scaleFactor
+    if (height != null) image.imageHeight = height * scaleFactor
     return image
 }
 
