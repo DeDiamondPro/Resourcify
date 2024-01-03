@@ -3,8 +3,7 @@
 - Use MineMark TODO: elaborate
 - Use image resizing service on browse page, this increases image loading times on the browse page, especially on slower
   connections
-- Better multithreading for fetching jsons/images, can increase loading speed when a lot of things are being loaded at
-  once
+- Better multithreading for fetching images, can increase loading speed when a lot of things are being loaded at once
 
 ----------------------------------------------------------------------------------------------------
 

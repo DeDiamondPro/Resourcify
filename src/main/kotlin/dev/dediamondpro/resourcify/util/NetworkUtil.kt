@@ -46,14 +46,15 @@ object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000
     private val cache = ConcurrentHashMap<URL, CacheObject>()
     private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
-    // Use a custom, larger, thread-pool to massively increase fetching speed
-    private val FetchingThreadPool = Executors.newCachedThreadPool()
 
-    fun getOrFetch(url: URL, executor: Executor = FetchingThreadPool): ByteArray? {
+    // Use a custom, larger, thread-pool to increase fetching speed of images and avoid flooding the main pool
+    val ImageThreadPool = Executors.newCachedThreadPool()
+
+    fun getOrFetch(url: URL, executor: Executor = ForkJoinPool.commonPool()): ByteArray? {
         return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, executor).get()
     }
 
-    fun getOrFetchAsync(url: URL, executor: Executor = FetchingThreadPool): CompletableFuture<ByteArray?> {
+    fun getOrFetchAsync(url: URL, executor: Executor = ForkJoinPool.commonPool()): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
             CompletableFuture.supplyAsync({ it }, executor)
         } ?: currentlyFetching[url] ?: startFetch(url, executor)
@@ -148,7 +149,9 @@ fun URL.getImage(
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
 ): BufferedImage? {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    if (useCache) return NetworkUtil.getOrFetch(url)?.inputStream()?.use { ImageIO.read(it) }
+    if (useCache) return NetworkUtil.getOrFetch(url, NetworkUtil.ImageThreadPool)?.inputStream()?.use {
+        ImageIO.read(it)
+    }
     return url.getEncodedInputStream()?.use { ImageIO.read(it) }
 }
 
@@ -159,10 +162,13 @@ fun URL.getImageAsync(
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
 ): CompletableFuture<BufferedImage> {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    return if (useCache) return NetworkUtil.getOrFetchAsync(url).thenApplyAsync { bytes ->
+    return if (useCache) return NetworkUtil.getOrFetchAsync(url, NetworkUtil.ImageThreadPool).thenApplyAsync { bytes ->
         bytes?.inputStream()?.use { ImageIO.read(it) }
     } else {
-        CompletableFuture.supplyAsync { url.getEncodedInputStream()?.use { ImageIO.read(it) } }
+        CompletableFuture.supplyAsync(
+            { url.getEncodedInputStream()?.use { ImageIO.read(it) } },
+            NetworkUtil.ImageThreadPool
+        )
     }
 }
 

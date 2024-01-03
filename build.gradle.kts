@@ -86,7 +86,7 @@ val shade: Configuration by configurations.creating {
 }
 
 dependencies {
-    val version = "44"
+    val version = "62"
     shade("dev.dediamondpro:minemark:1.0-SNAPSHOT$version") {
         isTransitive = false
     }
