@@ -17,10 +17,8 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage
 
-import dev.dediamondpro.minemark.elementa.LayoutConfigImpl
-import dev.dediamondpro.minemark.elementa.MineMarkComponent
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
-import dev.dediamondpro.resourcify.util.SanitizingImageProvider
+import dev.dediamondpro.resourcify.util.markdown
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
@@ -32,9 +30,9 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
-            height = ChildLocationSizeConstraint() + 8.pixels()
+            height = ChildLocationSizeConstraint() + 6.pixels()
         }
-        MineMarkComponent(screen.project.get().body, LayoutConfigImpl(imageProvider = SanitizingImageProvider)).constrain {
+        markdown(screen.project.get().body,).constrain {
             x = 6.pixels()
             y = 6.pixels()
             width = 100.percent() - 12.pixels()

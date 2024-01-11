@@ -33,7 +33,6 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
@@ -239,7 +238,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             y = 4.pixels()
             height = 22.pixels()
         } childOf changelogContainer
-        MarkdownComponent(version.changelog, disableSelection = true, imageCache = DummyCache).constrain {
+        markdown(version.changelog).constrain {
             x = 4.pixels()
             y = SiblingConstraint(4f)
             width = 100.percent() - 8.pixels()

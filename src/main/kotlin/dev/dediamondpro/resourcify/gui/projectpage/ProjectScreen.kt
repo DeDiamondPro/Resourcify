@@ -17,6 +17,10 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage
 
+import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
+import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
+import dev.dediamondpro.minemark.elementa.util.ElementaBrowserProvider
+import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.Paginator
@@ -30,10 +34,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.markdown.MarkdownComponent
-import gg.essential.elementa.markdown.MarkdownConfig
-import gg.essential.elementa.markdown.ParagraphConfig
-import gg.essential.elementa.markdown.TextConfig
+import gg.essential.elementa.font.DefaultFonts
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
 import java.awt.Color
@@ -263,17 +264,14 @@ class ProjectScreen(
                         y = 0.pixels()
                         color = Color.LIGHT_GRAY.toConstraint()
                     } childOf externalResourcesBox
-                    MarkdownComponent(
+                    markdown(
                         links.joinToString(" ● "),
-                        config = MarkdownConfig(
-                            paragraphConfig = ParagraphConfig(spaceBetweenLines = 1f),
-                            textConfig = TextConfig(
-                                color = Color.LIGHT_GRAY,
-                                shadowColor = Utils.getShadowColor(Color.LIGHT_GRAY),
-                                linkColor = Color.LIGHT_GRAY
-                            )
+                        style = MarkdownStyle(
+                            textStyle = MarkdownTextStyle(
+                                1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
+                            ),
+                            linkStyle = LinkStyleConfig(Color.LIGHT_GRAY, ElementaBrowserProvider)
                         ),
-                        disableSelection = true
                     ).constrain {
                         x = 4.pixels()
                         y = SiblingConstraint(padding = 2f)

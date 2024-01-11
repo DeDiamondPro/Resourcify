@@ -20,7 +20,7 @@ package dev.dediamondpro.resourcify.gui.projectpage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
 import dev.dediamondpro.resourcify.modrinth.Version
-import dev.dediamondpro.resourcify.util.DummyCache
+import dev.dediamondpro.resourcify.util.markdown
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -30,7 +30,6 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
-import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 
 class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
@@ -91,7 +90,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             x = 4.pixels(true)
             y = 4.pixels()
         } childOf changeLogHolder
-        MarkdownComponent(version.changelog, disableSelection = true, imageCache = DummyCache).constrain {
+        markdown(version.changelog).constrain {
             x = 4.pixels()
             y = SiblingConstraint(4f)
             width = 100.percent() - 8.pixels()
