@@ -40,30 +40,38 @@ object Platform {
         UMinecraft.getMinecraft().refreshResources()
     }
 
-    fun closeResourcePack(pack: File) {
-        UMinecraft.getMinecraft().resourcePackRepository.repositoryEntriesAll.firstOrNull {
-            if (it.resourcePack !is AbstractResourcePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).resourcePackFile == pack
-        }?.closeResourcePack()
-    }
-
-    fun replaceResourcePack(oldPack: File, newPack: File) {
+    fun closeResourcePack(file: File): Int {
         val repo = UMinecraft.getMinecraft().resourcePackRepository
         repo.updateRepositoryEntriesAll()
         val packs = Lists.newArrayList(repo.repositoryEntries)
-        val old = repo.repositoryEntriesAll.firstOrNull {
+        val pack = repo.repositoryEntriesAll.firstOrNull {
             if (it.resourcePack !is AbstractResourcePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).resourcePackFile == oldPack
+            (it.resourcePack as AbstractResourcePackAccessor).resourcePackFile == file
         }
-        old?.let {
-            packs.remove(it)
-            it.closeResourcePack()
+        if (pack != null) {
+            val index = packs.indexOf(pack)
+            if (index != -1) {
+                packs.remove(pack)
+                repo.setRepositories(packs)
+            }
+            pack.closeResourcePack()
+            return index
         }
-        packs.add(repo.repositoryEntriesAll.firstOrNull {
+        return -1
+    }
+
+    fun enableResourcePack(file: File, position: Int) {
+        val repo = UMinecraft.getMinecraft().resourcePackRepository
+        repo.updateRepositoryEntriesAll()
+        val packs = Lists.newArrayList(repo.repositoryEntries)
+        packs.add(position, repo.repositoryEntriesAll.firstOrNull {
             if (it.resourcePack !is AbstractResourcePack) return@firstOrNull false
-            (it.resourcePack as AbstractResourcePackAccessor).resourcePackFile == newPack
+            (it.resourcePack as AbstractResourcePackAccessor).resourcePackFile == file
         } ?: return)
         repo.setRepositories(packs)
+    }
+
+    fun saveSettings() {
         UMinecraft.getMinecraft().gameSettings.saveOptions()
     }
 }

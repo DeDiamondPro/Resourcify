@@ -25,7 +25,10 @@ import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.*
+import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UIContainer
+import gg.essential.elementa.components.UIImage
+import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
@@ -33,6 +36,7 @@ import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
 import java.net.URL
+import java.util.concurrent.locks.ReentrantLock
 
 //#if MC >= 11600
 //$$ import dev.dediamondpro.resourcify.handlers.IrisHandler
@@ -140,7 +144,12 @@ class UpdateCard(
         if (DownloadManager.getProgress(updateUrl) == null) {
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
             text?.setText("${ChatColor.BOLD}Updating...")
-            val downloadFile = File(file.parentFile, newFile.fileName)
+            val newFileName = if (file.name == newFile.fileName) {
+                incrementFileName(newFile.fileName)
+            } else {
+                newFile.fileName
+            }
+            val downloadFile = File(file.parentFile, newFileName)
             DownloadManager.download(
                 downloadFile,
                 newFile.hashes.sha512, updateUrl
@@ -150,10 +159,16 @@ class UpdateCard(
                     ApiInfo.ProjectType.AYCY_RESOURCE_PACK,
                         //#endif
                     ApiInfo.ProjectType.RESOURCE_PACK -> {
-                        if (Platform.getSelectedResourcePacks().contains(file)) Window.enqueueRenderOperation {
-                            Platform.replaceResourcePack(file, downloadFile)
-                        } else {
-                            Platform.closeResourcePack(file)
+                        try {
+                            // If multiple threads try to update stuff at the same time things can go very wrong
+                            updateResourcePackLock.lock()
+                            val position = Platform.closeResourcePack(file)
+                            if (position != -1) {
+                                Platform.enableResourcePack(downloadFile, position)
+                            }
+                            Platform.saveSettings()
+                        } finally {
+                            updateResourcePackLock.unlock()
                         }
                     }
 
@@ -184,7 +199,29 @@ class UpdateCard(
         }
     }
 
+    private fun incrementFileName(fileName: String): String {
+        val regex = """\((\d+)\)(\.\w+)$""".toRegex()
+        val matchResult = regex.find(fileName)
+
+        return if (matchResult != null) {
+            val currentNumber = matchResult.groupValues[1].toInt()
+            val extension = matchResult.groupValues[2]
+            fileName.replace(regex, "(${currentNumber + 1})$extension")
+        } else {
+            val dotIndex = fileName.lastIndexOf('.')
+            if (dotIndex != -1) {
+                fileName.substring(0, dotIndex) + " (1)." + fileName.substring(dotIndex + 1)
+            } else {
+                "$fileName (1)"
+            }
+        }
+    }
+
     fun getProgress(): Float {
         return DownloadManager.getProgress(updateUrl) ?: 0f
+    }
+
+    companion object {
+        private val updateResourcePackLock = ReentrantLock()
     }
 }

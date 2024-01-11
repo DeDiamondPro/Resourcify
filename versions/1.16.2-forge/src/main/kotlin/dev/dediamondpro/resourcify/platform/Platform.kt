@@ -62,46 +62,55 @@ object Platform {
         UMinecraft.getMinecraft().reloadResources()
     }
 
-    fun closeResourcePack(pack: File) {
-        UMinecraft.getMinecraft().resourcePackList.allPacks.firstOrNull {
-            if (it.resourcePack !is FilePack) return@firstOrNull false
-            getResourcePackFile(it.resourcePack) == pack
-        }?.resourcePack?.close()
-    }
-
-    fun replaceResourcePack(oldPack: File, newPack: File) {
+    fun closeResourcePack(file: File): Int {
         val repo = UMinecraft.getMinecraft().resourcePackList
         repo.reloadPacksFromFinders()
         val packs = Lists.newArrayList(repo.enabledPacks)
-        val old = repo.allPacks.firstOrNull {
+        val pack = UMinecraft.getMinecraft().resourcePackList.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
-            getResourcePackFile(it.resourcePack) == oldPack
+            getResourcePackFile(it.resourcePack) == file
         }
-        old?.let {
-            packs.remove(it)
-            it.resourcePack.close()
+        if (pack != null) {
+            val index = packs.indexOf(pack)
+            if (index != -1) {
+                packs.remove(pack)
+                //#if FORGE == 1 && MC == 11602
+                repo.setEnabledPacks(packs.map { it.name })
+                //#else
+                //$$ repo.setEnabledProfiles(packs.map { it.name })
+                //#endif
+                applyResources(repo)
+            }
+            pack.resourcePack.close()
+            return index
         }
-        packs.add(repo.allPacks.firstOrNull {
+
+        return -1
+    }
+
+    fun enableResourcePack(file: File, position: Int) {
+        val repo = UMinecraft.getMinecraft().resourcePackList
+        repo.reloadPacksFromFinders()
+        val packs = Lists.newArrayList(repo.enabledPacks)
+        packs.add(position, repo.allPacks.firstOrNull {
             if (it.resourcePack !is FilePack) return@firstOrNull false
-            getResourcePackFile(it.resourcePack) == newPack
+            getResourcePackFile(it.resourcePack) == file
         } ?: return)
         //#if FORGE == 1 && MC == 11602
         repo.setEnabledPacks(packs.map { it.name })
         //#else
         //$$ repo.setEnabledProfiles(packs.map { it.name })
         //#endif
-
         applyResources(repo)
-        UMinecraft.getMinecraft().gameSettings.saveOptions()
     }
 
     private fun applyResources(arg: ResourcePackList) {
         UMinecraft.getMinecraft().gameSettings.resourcePacks.clear()
         UMinecraft.getMinecraft().gameSettings.incompatibleResourcePacks.clear()
-        val var3: Iterator<*> = arg.enabledPacks.iterator()
+        val it: Iterator<*> = arg.enabledPacks.iterator()
 
-        while (var3.hasNext()) {
-            val resourcePackInfo = var3.next() as ResourcePackInfo
+        while (it.hasNext()) {
+            val resourcePackInfo = it.next() as ResourcePackInfo
             if (!resourcePackInfo.isOrderLocked) {
                 UMinecraft.getMinecraft().gameSettings.resourcePacks.add(resourcePackInfo.name)
                 if (!resourcePackInfo.compatibility.isCompatible) {
@@ -117,5 +126,9 @@ object Platform {
         //#else
         //$$ return (resourcePack as AbstractResourcePackAccessor).fileWrapper.file
         //#endif
+    }
+
+    fun saveSettings() {
+        UMinecraft.getMinecraft().gameSettings.saveOptions()
     }
 }
