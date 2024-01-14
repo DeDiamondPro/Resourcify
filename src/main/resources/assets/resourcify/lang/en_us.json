@@ -34,7 +34,7 @@
   "resourcify.version.type.release": "Release",
   "resourcify.version.type.snapshot": "Snapshot",
   "resourcify.version.type.beta": "Beta",
-  "resourcify.version.type.Alpha": "Alpha",
+  "resourcify.version.type.alpha": "Alpha",
   "resourcify.version.download_count": "%,d downloads",
   "resourcify.version.published_on": "Published on %1$tb %1$te, %1$tY",
 
