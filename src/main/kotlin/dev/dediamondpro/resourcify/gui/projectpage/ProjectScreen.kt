@@ -108,8 +108,8 @@ class ProjectScreen(
             } ?: versionToDownload.files.firstOrNull() ?: return@whenComplete
             val url = URL(fileToDownload.url)
             var installed = packHashes.get().contains(fileToDownload.hashes.sha512)
-            val buttonText = if (installed) "${ChatColor.BOLD}Installed"
-            else "${ChatColor.BOLD}Install ${versionToDownload.versionNumber}"
+            val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
+            else "${ChatColor.BOLD}${localize("resourcify.version.install_version", versionToDownload.versionNumber)}"
             Window.enqueueRenderOperation {
                 var progressBox: UIBlock? = null
                 var text: UIText? = null
@@ -121,18 +121,22 @@ class ProjectScreen(
                 }.onMouseClick {
                     if (installed || it.mouseButton != 0) return@onMouseClick
                     if (DownloadManager.getProgress(url) == null) {
-                        text?.setText("${ChatColor.BOLD}Installing...")
+                        text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
                         DownloadManager.download(
                             File(downloadFolder, fileToDownload.fileName),
                             fileToDownload.hashes.sha512, url
                         ) {
-                            text?.setText("${ChatColor.BOLD}Installed")
+                            text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                             installed = true
                         }
                         progressBox?.constraints?.width?.recalculate = true
                     } else {
                         DownloadManager.cancelDownload(url)
-                        text?.setText("${ChatColor.BOLD}Install ${versionToDownload.versionNumber}")
+                        text?.setText(
+                            "${ChatColor.BOLD}${
+                                localize("resourcify.version.install_version", versionToDownload.versionNumber)
+                            }"
+                        )
                     }
                 } childOf navigationBox
                 progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
@@ -156,13 +160,14 @@ class ProjectScreen(
         val loadedPages = mutableMapOf<(ProjectScreen) -> UIComponent, UIComponent>()
         project.whenComplete { _, _ -> loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox }
         mapOf<String, (ProjectScreen) -> UIComponent>(
-            "Description" to ::DescriptionPage,
-            "Gallery" to ::GalleryPage,
-            "Versions" to ::VersionsPage
+            "resourcify.project.description".localize() to ::DescriptionPage,
+            "resourcify.project.gallery".localize() to ::GalleryPage,
+            "resourcify.project.versions".localize() to ::VersionsPage
         ).forEach { (text, page) ->
-            if (text == "Gallery" && projectLimited.gallery.isEmpty()) return@forEach
+            if (text == "resourcify.project.gallery".localize() && projectLimited.gallery.isEmpty()) return@forEach
             UIText("${ChatColor.BOLD}$text").constrain {
-                x = if (text == "Description") 6.pixels() else SiblingConstraint(padding = 8f)
+                x = if (text == "resourcify.project.description".localize()) 6.pixels()
+                else SiblingConstraint(padding = 8f)
                 y = CenterConstraint()
             }.onMouseClick {
                 if (page == currentPage || !project.isDone || !versions.isDone || it.mouseButton != 0) return@onMouseClick
@@ -173,13 +178,14 @@ class ProjectScreen(
                 }.unhide()
             } childOf navigationBox
         }
-        TextIcon("${ChatColor.BOLD}Modrinth", Icons.EXTERNAL_LINK).constrain {
+        TextIcon("${ChatColor.BOLD}${localize("resourcify.project.modrinth")}", Icons.EXTERNAL_LINK).constrain {
             x = SiblingConstraint(padding = 8f)
             y = CenterConstraint()
             width = ChildLocationSizeConstraint()
             height = ChildBasedMaxSizeConstraint()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
+            println(projectLimited.browserUrl)
             UDesktop.browse(URI(projectLimited.browserUrl))
         } childOf navigationBox
     }
@@ -224,13 +230,21 @@ class ProjectScreen(
             width = 152.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf sideBox
-        UIText("Categories:").constrain {
+        UIText("resourcify.project.categories".localize()).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 8f)
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf sideBox
         projectLimited.categories.forEach {
-            UIText("- ${it.replaceFirstChar { c -> c.titlecase() }}").constrain {
+            UIText(
+                "- ${
+                    localizeOrDefault(
+                        "resourcify.categories.${projectLimited.projectType}.${
+                            it.lowercase().replace(" ", "_")
+                        }", it.capitalizeAll()
+                    )
+                }"
+            ).constrain {
                 x = 4.pixels()
                 y = SiblingConstraint(padding = 2f)
                 color = Color.LIGHT_GRAY.toConstraint()
@@ -246,16 +260,16 @@ class ProjectScreen(
             if (project == null) return@whenComplete
             val links = mutableListOf<String>()
             with(links) {
-                if (project.issuesUrl != null) add("[Issues](${project.issuesUrl})")
-                if (project.sourceUrl != null) add("[Source](${project.sourceUrl})")
-                if (project.wikiUrl != null) add("[Wiki](${project.wikiUrl})")
-                if (project.discordUrl != null) add("[Discord](${project.discordUrl})")
+                if (project.issuesUrl != null) add("[${localize("resourcify.project.issues")}](${project.issuesUrl})")
+                if (project.sourceUrl != null) add("[${localize("resourcify.project.source")}](${project.sourceUrl})")
+                if (project.wikiUrl != null) add("[${localize("resourcify.project.wiki")}](${project.wikiUrl})")
+                if (project.discordUrl != null) add("[${localize("resourcify.project.discord")}](${project.discordUrl})")
                 addAll(project.donationUrls.map { "[${it.platform}](${it.url})" })
             }
             Window.enqueueRenderOperation {
                 if (links.isNotEmpty()) {
                     externalResourcesBox.constrain { y = SiblingConstraint(padding = 8f) }
-                    UIText("External Resources:").constrain {
+                    UIText("resourcify.project.external_resources".localize()).constrain {
                         x = 4.pixels()
                         y = 0.pixels()
                         color = Color.LIGHT_GRAY.toConstraint()
@@ -288,7 +302,7 @@ class ProjectScreen(
             if (members == null || members.isEmpty()) return@whenComplete
             Window.enqueueRenderOperation {
                 membersBox.constrain { y = SiblingConstraint(padding = 8f) }
-                UIText("Project Members:").constrain {
+                UIText("resourcify.project.members".localize()).constrain {
                     x = 4.pixels()
                     y = 0.pixels()
                     color = Color.LIGHT_GRAY.toConstraint()

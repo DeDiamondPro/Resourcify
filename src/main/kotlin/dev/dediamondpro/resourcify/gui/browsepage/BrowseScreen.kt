@@ -29,8 +29,8 @@ import dev.dediamondpro.resourcify.modrinth.Categories
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.SearchResponse
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJson
+import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
@@ -39,7 +39,6 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UMatrixStack
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.resources.I18n
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -136,7 +135,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
         } childOf categoryContainer
         Categories.getCategoriesByHeaderWhenLoaded({ it.projectType == type.projectType }) { categoriesHeaders ->
             for ((header, categories) in categoriesHeaders) {
-                UIText(header.capitalizeAll()).constrain {
+                UIText(header).constrain {
                     x = 4.pixels()
                     y = MaxConstraint(4.pixels(), SiblingConstraint(padding = 4f))
                     textScale = 1.5f.pixels()
@@ -189,7 +188,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
                     } childOf categoriesBox
                     checkBox childOf categoryBox
 
-                    UIText(category.name.capitalizeAll()).constrain {
+                    UIText(category.localizedName).constrain {
                         x = SiblingConstraint(padding = 4f)
                         y = 0.pixels()
                         color = Color.LIGHT_GRAY.toConstraint()
@@ -204,18 +203,18 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
             height = ChildLocationSizeConstraint()
         } childOf categoryContainer
         GameVersions.getVersionsWhenLoaded {
-            UIText("Minecraft Versions").constrain {
+            UIText("resourcify.browse.minecraft_version".localize()).constrain {
                 x = 4.pixels()
                 y = 0.pixels()
                 textScale = 1.5f.pixels()
             } childOf versionsBox
             val currVersion = Platform.getMcVersion()
             versionDropDown = DropDown(
-                *it.filter { version -> version.versionType == "release" }
-                    .map { version -> version.version }.reversed().toTypedArray(),
+                it.filter { version -> version.versionType == "release" }
+                    .map { version -> version.version }.reversed(),
                 selectedOptions = if (it.any { version -> version.version == currVersion })
                     mutableListOf(currVersion) else mutableListOf(),
-                top = true, placeHolder = "Choose Versions"
+                top = true, placeHolder = "resourcify.browse.minecraft_version.placeholder".localize()
             ).constrain {
                 x = 4.pixels()
                 y = SiblingConstraint(padding = 4f)
@@ -227,7 +226,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
     }
 
     private fun header() {
-        searchBox = (UITextInput("${I18n.format("gui.resourcify.search")} ${type.displayName}...").constrain {
+        searchBox = (UITextInput("resourcify.browse.search".localize(type.displayName.localize())).constrain {
             x = 6.pixels()
             y = CenterConstraint()
             width = 100.percent() - 89.pixels()
@@ -238,13 +237,15 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
             grabWindowFocus()
         } childOf headerBox) as UITextInput
         sortDropDown = DropDown(
-            "Relevance",
-            "Downloads",
-            "Follows",
-            "Newest",
-            "Updated",
+            listOf(
+                "resourcify.browse.sort.relevance".localize(),
+                "resourcify.browse.sort.downloads".localize(),
+                "resourcify.browse.sort.follows".localize(),
+                "resourcify.browse.sort.newest".localize(),
+                "resourcify.browse.sort.updated".localize()
+            ),
             onlyOneOption = true,
-            selectedOptions = mutableListOf("Relevance")
+            selectedOptions = mutableListOf("resourcify.browse.sort.relevance".localize())
         ).constrain {
             x = 5.pixels(true)
             y = CenterConstraint()
@@ -259,12 +260,20 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
         fetchingFuture = CompletableFuture.supplyAsync {
             if (clear) offset = 0
             else offset += 20
+            val sortType = when(sortDropDown!!.options.indexOf(sortDropDown!!.selectedOptions.first())) {
+                0 -> "relevance"
+                1 -> "downloads"
+                2 -> "follows"
+                3 -> "newest"
+                4 -> "updated"
+                else -> "relevance"
+            }
             val url = URIBuilder("${ApiInfo.API}/search")
                 .setParameter("query", searchBox.getText())
                 .setParameter("facets", buildFacets())
                 .setParameter("limit", "20")
                 .setParameter("offset", "$offset")
-                .setParameter("index", sortDropDown!!.selectedOptions.first().lowercase())
+                .setParameter("index", sortType)
                 .build()
             url.toURL().getJson<SearchResponse>()
         }.whenCompleteAsync { response, error ->

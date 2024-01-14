@@ -28,7 +28,7 @@ import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class DropDown(
-    vararg options: String,
+    val options: List<String>,
     private val onlyOneOption: Boolean = false,
     val selectedOptions: MutableList<String> = mutableListOf(),
     private val top: Boolean = false,

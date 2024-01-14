@@ -32,10 +32,12 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
             width = 100.percent()
             height = ChildLocationSizeConstraint() + 6.pixels()
         }
-        markdown(screen.project.get().body,).constrain {
-            x = 6.pixels()
-            y = 6.pixels()
-            width = 100.percent() - 12.pixels()
-        } childOf this
+        screen.project.get()?.let { project ->
+            markdown(project.body).constrain {
+                x = 6.pixels()
+                y = 6.pixels()
+                width = 100.percent() - 12.pixels()
+            } childOf this
+        }
     }
 }

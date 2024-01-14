@@ -114,7 +114,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
 
     init {
         changelogContainer.hide(true)
-        UIText("Please wait for updates to finish before closing this GUI.").constrain {
+        UIText("resourcify.updates.wait".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
@@ -122,7 +122,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
         } childOf stopCloseBox
         stopCloseBox.hide(true)
 
-        val checkingText = UIText("Checking for updates...").constrain {
+        val checkingText = UIText("resourcify.updates.checking".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
@@ -144,7 +144,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     width = 73.pixels()
                     height = 100.percent()
                 }.onMouseClick { closeGui() } childOf topBar
-                UIText("${ChatColor.BOLD}Close").constrain {
+                UIText("${ChatColor.BOLD}${localize("resourcify.screens.close")}").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf closeButton
@@ -162,7 +162,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                         if (startSize == 0) return@basicWidthConstraint 0f
                         if (cards.isEmpty()) {
                             startSize = 0
-                            updateText?.setText("${ChatColor.BOLD}Update All")
+                            updateText?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update_all")}")
                             return@basicWidthConstraint 0f
                         }
                         val progress = (startSize - cards.size + cards.sumOf { card -> card.getProgress().toDouble() }
@@ -171,11 +171,17 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     }
                     height = 100.percent()
                 } childOf updateAllButton
-                updateText = UIText("${ChatColor.BOLD}Update All").constrain {
+                updateText = UIText("${ChatColor.BOLD}${localize("resourcify.updates.update_all")}").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf updateAllButton
-                topText = UIText("${projects.size} update${if (projects.size == 1) "" else "s"} available!").constrain {
+                topText = UIText(
+                    localize(
+                        "resourcify.updates.updates_available",
+                        projects.size,
+                        localize(if (projects.size == 1) "resourcify.updates.update_singular" else "resourcify.updates.update_plural")
+                    )
+                ).constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf topBar
@@ -191,7 +197,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     if (startSize != 0) return@onMouseClick
                     startSize = cards.size
                     cards.forEach { it.downloadUpdate() }
-                    updateText.setText("${ChatColor.BOLD}Updating...")
+                    updateText.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
                     progressBox.constraints.width.recalculate = true
                 }
             }
@@ -212,7 +218,13 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             updateCard.hide()
             cards.remove(updateCard)
             selectedUpdates.remove(updateCard)
-            topText?.setText("${cards.size} update${if (cards.size == 1) "" else "s"} available!")
+            topText?.setText(
+                localize(
+                    "resourcify.updates.updates_available",
+                    cards.size,
+                    localize(if (cards.size == 1) "resourcify.updates.update_singular" else "resourcify.updates.update_plural")
+                )
+            )
         }
     }
 
@@ -220,10 +232,10 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
         updateContainer.hide()
         changelogContainer.constrain { x = this@UpdateGui.width.pixels() }
         changelogContainer.clearChildren()
-        UIText("Updates ").constrain {
+        UIText("resourcify.updates.updates".localize()).constrain {
             x = 4.pixels()
             y = 8.pixels()
-            color = Color.BLUE.toConstraint()
+            color = Color(65, 105, 225).toConstraint()
         }.onMouseClick {
             changelogContainer.hide()
             updateContainer.unhide()

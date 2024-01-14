@@ -18,7 +18,6 @@
 package dev.dediamondpro.resourcify.modrinth
 
 import com.google.gson.annotations.SerializedName
-import dev.dediamondpro.resourcify.util.capitalizeAll
 import java.awt.Color
 
 data class Version(
@@ -63,7 +62,7 @@ enum class VersionType {
     @SerializedName("alpha")
     ALPHA;
 
-    val formattedName = name.lowercase().capitalizeAll()
+    val localizedName = "resourcify.version.type.${name.lowercase()}"
 
     val color = when (name) {
         "RELEASE" -> Color(27, 217, 106)

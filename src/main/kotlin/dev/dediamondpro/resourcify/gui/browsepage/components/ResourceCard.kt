@@ -22,6 +22,7 @@ import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.modrinth.ApiInfo
 import dev.dediamondpro.resourcify.modrinth.ProjectObject
 import dev.dediamondpro.resourcify.util.ImageURLUtils
+import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -95,7 +96,7 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
         UIText(project.title).constrain {
             textScale = 1.5f.pixels()
         } childOf titleHolder
-        UIText("by ${project.author}").constrain {
+        UIText("resourcify.browse.by".localize(project.author)).constrain {
             y = SiblingConstraint(padding = 2f)
             textScale = 1.2f.pixels()
             color = Color.LIGHT_GRAY.toConstraint()

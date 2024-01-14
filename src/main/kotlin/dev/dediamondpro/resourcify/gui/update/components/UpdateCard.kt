@@ -23,6 +23,7 @@ import dev.dediamondpro.resourcify.modrinth.ProjectResponse
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.DownloadManager
+import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
@@ -82,7 +83,7 @@ class UpdateCard(
             x = 56.pixels()
             y = SiblingConstraint(padding = 4f)
         } childOf this
-        UIText(newVersion.versionType.formattedName).constrain {
+        UIText(newVersion.versionType.localizedName.localize()).constrain {
             x = 0.pixels()
             y = 0.pixels()
             color = newVersion.versionType.color.toConstraint()
@@ -109,7 +110,7 @@ class UpdateCard(
         }.onMouseClick {
             gui.showChangeLog(project, newVersion, createUpdateButton())
         } childOf buttonHolder
-        UIText("${ChatColor.BOLD}Changelog").constrain {
+        UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
         } childOf changeLogButton
@@ -133,7 +134,7 @@ class UpdateCard(
             }
             height = 100.percent()
         } childOf updateButton
-        text = UIText("${ChatColor.BOLD}Update").constrain {
+        text = UIText("${ChatColor.BOLD}${localize("resourcify.updates.update")}").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
         } childOf updateButton
@@ -143,7 +144,7 @@ class UpdateCard(
     fun downloadUpdate() {
         if (DownloadManager.getProgress(updateUrl) == null) {
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
-            text?.setText("${ChatColor.BOLD}Updating...")
+            text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
             val newFileName = if (file.name == newFile.fileName) {
                 incrementFileName(newFile.fileName)
             } else {
@@ -195,7 +196,7 @@ class UpdateCard(
         } else {
             gui.cancelUpdate(this)
             DownloadManager.cancelDownload(updateUrl)
-            text?.setText("${ChatColor.BOLD}Update")
+            text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update")}")
         }
     }
 

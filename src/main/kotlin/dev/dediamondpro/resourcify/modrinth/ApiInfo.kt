@@ -43,14 +43,14 @@ object ApiInfo {
         val hasUpdateButton: Boolean = true
     ) {
         RESOURCE_PACK(
-            "resource packs",
+            "resourcify.type.resource_packs",
             "resourcepack",
             "[\"project_type:resourcepack\"]",
             "minecraft"
         ),
         //#if MC == 10809
         AYCY_RESOURCE_PACK(
-            "resource packs",
+            "resourcify.type.resource_packs",
             "resourcepack",
             "[\"project_type:resourcepack\"]",
             "minecraft",
@@ -58,14 +58,14 @@ object ApiInfo {
         ),
         //#endif
         DATA_PACK(
-            "data packs",
+            "resourcify.type.data_packs",
             "mod",
             "[\"project_type:mod\"],[\"categories=datapack\"]",
             "datapack",
             hasUpdateButton = false
         ),
         IRIS_SHADER(
-            "shaders",
+            "resourcify.type.shaders",
             "shader",
             "[\"project_type:shader\"],[\"categories=iris\"]",
             "iris",
@@ -73,7 +73,7 @@ object ApiInfo {
             6.pixels()
         ),
         OPTIFINE_SHADER(
-            "shaders",
+            "resourcify.type.shaders",
             "shader",
             "[\"project_type:shader\"],[\"categories=optifine\"]",
             "optifine",

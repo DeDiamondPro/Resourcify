@@ -49,7 +49,6 @@ data class ProjectObject(
     @SerializedName("featured_gallery") val featuredGallery: String?,
     val color: Int?
 ) {
-    val browserUrl = buildString {
-        append("https://modrinth.com/$projectType/$slug")
-    }
+    val browserUrl
+        get() = "https://modrinth.com/$projectType/$slug"
 }

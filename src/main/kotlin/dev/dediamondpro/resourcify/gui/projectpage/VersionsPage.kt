@@ -62,11 +62,13 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             height = ChildBasedMaxSizeConstraint()
         }
         effect(ScissorEffect())
-        for (version in screen.versions.get()) {
-            VersionCard(this, version, screen.packHashes.get(), screen.downloadFolder).constrain {
-                x = 0.pixels()
-                y = SiblingConstraint(padding = 4f)
-            } childOf versionsHolder
+        screen.versions.get()?.let { versions ->
+            for (version in versions) {
+                VersionCard(this, version, screen.packHashes.get(), screen.downloadFolder).constrain {
+                    x = 0.pixels()
+                    y = SiblingConstraint(padding = 4f)
+                } childOf versionsHolder
+            }
         }
         changeLogHolder.hide(true)
     }

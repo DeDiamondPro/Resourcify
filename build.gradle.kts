@@ -21,6 +21,7 @@ import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
 import gg.essential.gradle.util.noServerRunConfigs
 import gg.essential.gradle.util.setJvmDefault
+import org.jetbrains.kotlin.com.google.gson.Gson
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -123,34 +124,61 @@ dependencies {
     )
 }
 
-tasks.processResources {
-    inputs.property("id", mod_id)
-    inputs.property("name", mod_name)
-    val java = if (project.platform.mcMinor >= 18) {
-        17
-    } else {
-        if (project.platform.mcMinor == 17) 16 else 8
-    }
-    val compatLevel = "JAVA_${java}"
-    inputs.property("java", java)
-    inputs.property("java_level", compatLevel)
-    inputs.property("version", mod_version)
-    inputs.property("mcVersionStr", project.platform.mcVersionStr)
-    filesMatching(listOf("mcmod.info", "mods.toml", "fabric.mod.json")) {
-        expand(
-            mapOf(
-                "id" to mod_id,
-                "name" to mod_name,
-                "java" to java,
-                "java_level" to compatLevel,
-                "version" to mod_version,
-                "mcVersionStr" to getInternalMcVersionStr()
-            )
-        )
-    }
-}
-
 tasks {
+    processResources {
+        inputs.property("id", mod_id)
+        inputs.property("name", mod_name)
+        val java = if (project.platform.mcMinor >= 18) {
+            17
+        } else {
+            if (project.platform.mcMinor == 17) 16 else 8
+        }
+        val compatLevel = "JAVA_${java}"
+        inputs.property("java", java)
+        inputs.property("java_level", compatLevel)
+        inputs.property("version", mod_version)
+        inputs.property("mcVersionStr", project.platform.mcVersionStr)
+        filesMatching(listOf("mcmod.info", "mods.toml", "fabric.mod.json")) {
+            expand(
+                mapOf(
+                    "id" to mod_id,
+                    "name" to mod_name,
+                    "java" to java,
+                    "java_level" to compatLevel,
+                    "version" to mod_version,
+                    "mcVersionStr" to getInternalMcVersionStr()
+                )
+            )
+        }
+
+        if (project.platform.mcMinor <= 12) {
+            dependsOn("generateLangFiles")
+            from("${project.buildDir}/generated/lang") {
+                into("assets/$mod_id/lang")
+            }
+            exclude("**/assets/$mod_id/lang/*.json")
+        }
+    }
+    register("generateLangFiles") {
+        val gson = Gson()
+        val generatedDir = File(project.buildDir, "generated/lang")
+        generatedDir.mkdirs()
+        rootProject.file("src/main/resources/assets/$mod_id/lang").listFiles()?.filter {
+            it.extension == "json"
+        }?.forEach { jsonFile ->
+            val map: Map<String, String> =
+                gson.fromJson(jsonFile.reader(), Map::class.java) as Map<String, String>
+            val fileName = jsonFile.nameWithoutExtension.split("_").let {
+                "${it[0]}_${it[1].uppercase()}.lang"
+            }
+            val langFile = File(generatedDir, fileName)
+            langFile.printWriter().use { out ->
+                map.forEach { (key, value) ->
+                    out.println("$key=$value")
+                }
+            }
+        }
+    }
     withType<Jar> {
         if (project.platform.isFabric) {
             exclude("mcmod.info", "mods.toml", "pack.mcmeta")

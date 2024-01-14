@@ -18,7 +18,9 @@
 package dev.dediamondpro.resourcify.modrinth
 
 import com.google.gson.annotations.SerializedName
+import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJsonAsync
+import dev.dediamondpro.resourcify.util.localizeOrDefault
 import gg.essential.elementa.components.Window
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -29,6 +31,11 @@ data class Categories(
     @SerializedName("project_type") val projectType: String,
     val header: String
 ) {
+    val localizedName
+        get() = "resourcify.categories.$projectType.${name.lowercase().replace(" ", "_")}".localizeOrDefault(
+            name.capitalizeAll()
+        )
+
     companion object {
         private val categories: CompletableFuture<List<Categories>> by lazy {
             URL("https://api.modrinth.com/v2/tag/category").getJsonAsync<List<Categories>>(useCache = false).thenApply {
@@ -43,11 +50,18 @@ data class Categories(
             filter: (Categories) -> Boolean,
             callback: (Map<String, List<Categories>>) -> Unit
         ) {
-            if (categories.isDone) callback(categories.get().filter { filter(it) }.groupBy { it.header })
+            if (categories.isDone) callback(categories.get().filter { filter(it) }.groupBy { it.localizeHeader() })
             else categories.whenComplete { categories, _ ->
                 if (categories == null) return@whenComplete
-                Window.enqueueRenderOperation { callback(categories.filter { filter(it) }.groupBy { it.header }) }
+                Window.enqueueRenderOperation {
+                    callback(categories.filter { filter(it) }.groupBy { it.localizeHeader() })
+                }
             }
         }
+
+        private fun Categories.localizeHeader(): String =
+            "resourcify.categories.$projectType.${header.lowercase().replace(" ", "_")}".localizeOrDefault(
+                header.capitalizeAll()
+            )
     }
 }

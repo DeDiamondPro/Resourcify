@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.elements
 
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
@@ -37,7 +38,7 @@ class Paginator(screen: PaginatedScreen) : UIBlock(color = Color(0, 0, 0, 100)) 
             width = 9.pixels()
             height = 9.pixels()
         }.onMouseClick { screen.goBack() } childOf this
-        UIText("Close").constrain {
+        UIText("resourcify.screens.close".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
         }.onMouseClick {

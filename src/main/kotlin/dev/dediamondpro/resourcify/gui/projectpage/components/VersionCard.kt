@@ -22,6 +22,7 @@ import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.Version
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.capitalizeAll
+import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
@@ -44,7 +45,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class VersionCard(
-    parent: VersionsPage, val version: Version, private val hashes: List<String>, private val downloadFolder: File
+    parent: VersionsPage, val version: Version, hashes: List<String>, downloadFolder: File
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
@@ -69,7 +70,7 @@ class VersionCard(
             width = 45.percent() - 12.pixels()
             height = ChildBasedMaxSizeConstraint()
         } childOf versionInfo
-        UIText(version.versionType.formattedName).constrain {
+        UIText(version.versionType.localizedName.localize()).constrain {
             x = 0.pixels()
             y = 0.pixels()
             color = version.versionType.color.toConstraint()
@@ -104,12 +105,12 @@ class VersionCard(
             width = 40.percent() - 81.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
-        UIText("${nf.format(version.downloads)} downloads").constrain {
+        UIText("resourcify.version.download_count".localize(version.downloads)).constrain {
             y = 0.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
         val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.datePublished))
-        UIText("Published on ${df.format(Date.from(instant))}").constrain {
+        UIText("resourcify.version.published_on".localize(Date.from(instant))).constrain {
             y = SiblingConstraint(padding = 2f)
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
@@ -128,8 +129,8 @@ class VersionCard(
             } ?: version.files.firstOrNull() ?: error("No file available")
             val url = URL(fileToDownload.url)
             var installed = hashes.contains(fileToDownload.hashes.sha512)
-            val buttonText = if (installed) "${ChatColor.BOLD}Installed" else "${ChatColor.BOLD}Install"
-
+            val buttonText =
+                "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var progressBox: UIBlock? = null
             var text: UIText? = null
             val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
@@ -140,18 +141,18 @@ class VersionCard(
             }.onMouseClick {
                 if (installed || it.mouseButton != 0) return@onMouseClick
                 if (DownloadManager.getProgress(url) == null) {
-                    text?.setText("${ChatColor.BOLD}Installing...")
+                    text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
                     DownloadManager.download(
                         File(downloadFolder, fileToDownload.fileName),
                         fileToDownload.hashes.sha512, url
                     ) {
-                        text?.setText("${ChatColor.BOLD}Installed")
+                        text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                         installed = true
                     }
                     progressBox?.constraints?.width?.recalculate = true
                 } else {
                     DownloadManager.cancelDownload(url)
-                    text?.setText("${ChatColor.BOLD}Install")
+                    text?.setText("${ChatColor.BOLD}${localize("resourcify.version.install")}")
                 }
             }
             progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
