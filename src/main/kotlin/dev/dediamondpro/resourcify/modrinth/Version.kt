@@ -17,55 +17,50 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
+import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.util.capitalizeAll
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.awt.Color
 
-@Serializable
 data class Version(
     val id: String,
-    @SerialName("project_id") val projectId: String,
-    @SerialName("author_id") val authorId: String,
+    @SerializedName("project_id") val projectId: String,
+    @SerializedName("author_id") val authorId: String,
     val featured: Boolean,
     val name: String,
-    @SerialName("version_number") val versionNumber: String,
+    @SerializedName("version_number") val versionNumber: String,
     val changelog: String,
-    @SerialName("date_published") val datePublished: String,
+    @SerializedName("date_published") val datePublished: String,
     val downloads: Int,
-    @SerialName("version_type") val versionType: VersionType,
+    @SerializedName("version_type") val versionType: VersionType,
     val status: String,
     val files: List<VersionFile>,
-    @SerialName("game_versions") val gameVersions: List<String>,
+    @SerializedName("game_versions") val gameVersions: List<String>,
     val loaders: List<String>
 ) {
-    val primaryFile by lazy { files.firstOrNull { it.primary } ?: files.firstOrNull() }
+    fun getPrimaryFile() = files.firstOrNull { it.primary } ?: files.firstOrNull()
 }
 
-@Serializable
 data class VersionFile(
     val hashes: VersionFileHashes,
     val url: String,
-    @SerialName("filename") val fileName: String,
+    @SerializedName("filename") val fileName: String,
     val primary: Boolean,
     val size: Int,
 )
 
-@Serializable
 data class VersionFileHashes(val sha512: String, val sha1: String)
 
-@Serializable
 enum class VersionType {
-    @SerialName("release")
+    @SerializedName("release")
     RELEASE,
 
-    @SerialName("snapshot")
+    @SerializedName("snapshot")
     SNAPSHOT,
 
-    @SerialName("beta")
+    @SerializedName("beta")
     BETA,
 
-    @SerialName("alpha")
+    @SerializedName("alpha")
     ALPHA;
 
     val formattedName = name.lowercase().capitalizeAll()
@@ -78,23 +73,22 @@ enum class VersionType {
 }
 
 data class Dependency(
-    @SerialName("version_id") val versionId: String,
-    @SerialName("project_id") val projectId: String,
-    @SerialName("file_name") val fileName: String,
-    @SerialName("dependency_type") val dependencyType: DependencyType
+    @SerializedName("version_id") val versionId: String,
+    @SerializedName("project_id") val projectId: String,
+    @SerializedName("file_name") val fileName: String,
+    @SerializedName("dependency_type") val dependencyType: DependencyType
 )
 
-@Serializable
 enum class DependencyType {
-    @SerialName("required")
+    @SerializedName("required")
     REQUIRED,
 
-    @SerialName("optional")
+    @SerializedName("optional")
     OPTIONAL,
 
-    @SerialName("incompatible")
+    @SerializedName("incompatible")
     INCOMPATIBLE,
 
-    @SerialName("embedded")
+    @SerializedName("embedded")
     EMBEDDED
 }

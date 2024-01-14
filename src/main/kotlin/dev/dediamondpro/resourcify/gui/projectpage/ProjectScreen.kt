@@ -48,16 +48,12 @@ class ProjectScreen(
     val type: ApiInfo.ProjectType,
     val downloadFolder: File
 ) : PaginatedScreen() {
-    val project: CompletableFuture<ProjectResponse> = CompletableFuture.supplyAsync {
-        URL("${ApiInfo.API}/project/${projectLimited.slug}").getJson<ProjectResponse>()!!
-    }
-    val versions: CompletableFuture<List<Version>> = CompletableFuture.supplyAsync {
-        URL("${ApiInfo.API}/project/${projectLimited.slug}/version").getJson<List<Version>>()!!
-    }
-    private val members = CompletableFuture.supplyAsync {
-        URL("${ApiInfo.API}/project/${projectLimited.slug}/members").getJson<List<Member>>()!!
-            .sortedBy { it.ordering }
-    }
+    val project = URL("${ApiInfo.API}/project/${projectLimited.slug}").getJsonAsync<ProjectResponse>()
+    val versions = URL("${ApiInfo.API}/project/${projectLimited.slug}/version").getJsonAsync<List<Version>>()
+    private val members: CompletableFuture<List<Member>?> =
+        URL("${ApiInfo.API}/project/${projectLimited.slug}/members").getJsonAsync<List<Member>>().thenApply {
+            it?.sortedBy { member -> member.ordering }
+        }
     val packHashes: CompletableFuture<List<String>> = CompletableFuture.supplyAsync {
         PackUtils.getPackHashes(downloadFolder)
     }

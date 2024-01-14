@@ -49,7 +49,7 @@ class UpdateCard(
     val file: File,
     private val gui: UpdateGui
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
-    private val newFile = newVersion.primaryFile!!
+    private val newFile = newVersion.getPrimaryFile()!!
     private val updateUrl = URL(newFile.url)
     private var progressBox: UIBlock? = null
     private var text: UIText? = null

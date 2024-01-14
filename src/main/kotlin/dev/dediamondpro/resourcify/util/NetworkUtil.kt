@@ -22,11 +22,9 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.ModInfo
 import gg.essential.universal.UMinecraft
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.awt.image.BufferedImage
 import java.io.InputStream
+import java.io.Reader
 import java.net.URL
 import java.net.URLConnection
 import java.util.concurrent.*
@@ -34,13 +32,6 @@ import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
 import javax.imageio.ImageIO
 import javax.net.ssl.HttpsURLConnection
-
-val json = Json {
-    encodeDefaults = true
-    prettyPrint = false
-    ignoreUnknownKeys = true
-    isLenient = true
-}
 
 object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000
@@ -138,8 +129,17 @@ fun URL.getString(useCache: Boolean = true): String? {
     return this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
 }
 
+fun URL.getStringAsync(useCache: Boolean = true): CompletableFuture<String?> {
+    if (useCache) return NetworkUtil.getOrFetchAsync(this).thenApply { it?.decodeToString() }
+    return CompletableFuture.supplyAsync { this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() } }
+}
+
 inline fun <reified T> URL.getJson(useCache: Boolean = true): T? {
-    return this.getString(useCache)?.let { json.decodeFromString(it) }
+    return this.getString(useCache)?.fromJson()
+}
+
+inline fun <reified T> URL.getJsonAsync(useCache: Boolean = true): CompletableFuture<T?> {
+    return this.getStringAsync(useCache).thenApply { it?.fromJson() }
 }
 
 fun URL.getImage(
@@ -162,7 +162,7 @@ fun URL.getImageAsync(
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
 ): CompletableFuture<BufferedImage> {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    return if (useCache) return NetworkUtil.getOrFetchAsync(url, NetworkUtil.ImageThreadPool).thenApplyAsync { bytes ->
+    return if (useCache) return NetworkUtil.getOrFetchAsync(url, NetworkUtil.ImageThreadPool).thenApply { bytes ->
         bytes?.inputStream()?.use { ImageIO.read(it) }
     } else {
         CompletableFuture.supplyAsync(
@@ -172,12 +172,12 @@ fun URL.getImageAsync(
     }
 }
 
-inline fun <reified T, reified S : Any> URL.postAndGetJson(data: S): T? {
+inline fun <reified T, reified S> URL.postAndGetJson(data: S): T? {
     val con = this.setupConnection()
-    val output = json.encodeToString(data)
+    val output = data.toJson()
     con.setRequestProperty("Content-Type", "application/json")
     con.setRequestProperty("Content-Length", output.length.toString())
     con.doOutput = true
     con.outputStream.bufferedWriter().use { it.write(output) }
-    return con.getEncodedInputStream()?.bufferedReader()?.use { json.decodeFromString(it.readText()) }
+    return con.getEncodedInputStream()?.bufferedReader()?.use { it.fromJson() }
 }

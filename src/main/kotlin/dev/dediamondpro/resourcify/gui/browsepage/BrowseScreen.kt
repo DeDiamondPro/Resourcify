@@ -29,7 +29,6 @@ import dev.dediamondpro.resourcify.modrinth.Categories
 import dev.dediamondpro.resourcify.modrinth.GameVersions
 import dev.dediamondpro.resourcify.modrinth.SearchResponse
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.NetworkUtil
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.getJson
 import gg.essential.elementa.components.*
@@ -40,6 +39,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UMatrixStack
 import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.resources.I18n
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
@@ -227,7 +227,7 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
     }
 
     private fun header() {
-        searchBox = (UITextInput("Search ${type.displayName}...").constrain {
+        searchBox = (UITextInput("${I18n.format("gui.resourcify.search")} ${type.displayName}...").constrain {
             x = 6.pixels()
             y = CenterConstraint()
             width = 100.percent() - 89.pixels()

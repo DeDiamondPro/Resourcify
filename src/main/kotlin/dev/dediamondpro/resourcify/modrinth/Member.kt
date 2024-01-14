@@ -17,24 +17,21 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class Member(
-    @SerialName("team_id") val teamId: String,
+    @SerializedName("team_id") val teamId: String,
     val user: User,
     val role: String,
     val accepted: Boolean,
     val ordering: Int
 )
 
-@Serializable
 data class User(
     val id: String,
-    @SerialName("github_id") val githubId: Int?,
+    @SerializedName("github_id") val githubId: Int?,
     val username: String,
-    @SerialName("avatar_url") val avatarUrl: String,
+    @SerializedName("avatar_url") val avatarUrl: String,
     val bio: String?,
     val created: String,
     val role: String,

@@ -17,17 +17,15 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
+import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.util.getJson
 import gg.essential.elementa.components.Window
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-@Serializable
 data class GameVersions(
     val version: String,
-    @SerialName("version_type") val versionType: String,
+    @SerializedName("version_type") val versionType: String,
     val date: String,
     val major: Boolean
 ) {

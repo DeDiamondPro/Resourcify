@@ -1,7 +1,6 @@
 [versions]
 # Kotlin
 kotlin = "1.8.22"
-kotlin_serialization = "1.3.3"
 fabric_language_kotlin = "1.7.1+kotlin.1.6.10"
 
 # Essential Dependencies
@@ -29,8 +28,6 @@ blossom = "1.3.1"
 # Kotlin
 kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-kotlin_serialization_core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlin_serialization" }
-kotlin_serialization_json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin_serialization" }
 
 # Markdown
 minemark = { module = "dev.dediamondpro:minemark-core", version.ref = "minemark" }
@@ -65,8 +62,6 @@ blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 kotlin = [
     "kotlin",
     "kotlin_reflect",
-    "kotlin_serialization_core",
-    "kotlin_serialization_json"
 ]
 markdown = [
     "minemark",

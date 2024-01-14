@@ -17,14 +17,12 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
+import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.platform.Platform
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class ModrinthUpdateFormat(
     val hashes: List<String>,
     val loaders: List<String>,
     val algorithm: String = "sha512",
-    @SerialName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
+    @SerializedName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
 )

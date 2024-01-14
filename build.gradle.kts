@@ -169,6 +169,9 @@ tasks {
         archiveClassifier.set("dev")
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        exclude("META-INF/versions/9/**")
+
         mergeServiceFiles()
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")

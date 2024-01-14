@@ -17,27 +17,24 @@
 
 package dev.dediamondpro.resourcify.modrinth
 
-import dev.dediamondpro.resourcify.util.getJson
+import com.google.gson.annotations.SerializedName
+import dev.dediamondpro.resourcify.util.getJsonAsync
 import gg.essential.elementa.components.Window
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-@Serializable
 data class Categories(
     val icon: String,
     val name: String,
-    @SerialName("project_type") val projectType: String,
+    @SerializedName("project_type") val projectType: String,
     val header: String
 ) {
     companion object {
         private val categories: CompletableFuture<List<Categories>> by lazy {
-            CompletableFuture.supplyAsync {
-                (URL("https://api.modrinth.com/v2/tag/category").getJson<List<Categories>>(useCache = false)
-                    ?: emptyList()).sortedBy {
-                    it.header + if (it.header != "resolutions") it.name
-                    else it.name.replace(Regex("[^0-9]"), "").toInt().toChar()
+            URL("https://api.modrinth.com/v2/tag/category").getJsonAsync<List<Categories>>(useCache = false).thenApply {
+                (it ?: emptyList()).sortedBy { category ->
+                    category.header + if (category.header != "resolutions") category.name
+                    else category.name.replace(Regex("[^0-9]"), "").toInt().toChar()
                 }
             }
         }

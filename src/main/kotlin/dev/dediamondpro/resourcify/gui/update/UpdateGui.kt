@@ -55,9 +55,8 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
     private val updates = CompletableFuture.supplyAsync {
         getUpdates(type, hashes.get().keys.toList()).map { (k, v) -> v to k }.toMap()
     }
-    private val mods = CompletableFuture.supplyAsync {
-        val updates = updates.get()
-        if (updates.isEmpty()) return@supplyAsync emptyMap()
+    private val mods = updates.thenApplyAsync { updates ->
+        if (updates.isEmpty()) return@thenApplyAsync emptyMap()
         val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
         URIBuilder("${ApiInfo.API}/projects").setParameter("ids", idString)
             .build().toURL().getJson<List<ProjectResponse>>()!!
@@ -130,7 +129,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             color = Color.YELLOW.toConstraint()
         } childOf window
 
-        mods.whenComplete { mods, _ ->
+        mods.whenComplete { projects, _ ->
             Window.enqueueRenderOperation {
                 checkingText.hide(true)
                 val topBar = UIContainer().constrain {
@@ -176,12 +175,12 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf updateAllButton
-                topText = UIText("${mods.size} update${if (mods.size == 1) "" else "s"} available!").constrain {
+                topText = UIText("${projects.size} update${if (projects.size == 1) "" else "s"} available!").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf topBar
 
-                cards.addAll(mods.map { (project, newVersion) ->
+                cards.addAll(projects.map { (project, newVersion) ->
                     UpdateCard(project, newVersion, hashes.get()[updates.get()[newVersion]]!!, this).constrain {
                         y = SiblingConstraint(padding = 2f)
                         width = 100.percent()
@@ -315,7 +314,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                 URL("${ApiInfo.API}/version_files/update").postAndGetJson(data) ?: return
             hashes.forEach { hash ->
                 updateInfo[hash] = if (updates.containsKey(hash)) {
-                    if (allHashes.contains(updates[hash]!!.primaryFile?.hashes?.sha512)) null else updates[hash]
+                    if (allHashes.contains(updates[hash]!!.getPrimaryFile()?.hashes?.sha512)) null else updates[hash]
                 } else {
                     null
                 }

@@ -9,12 +9,15 @@
     - Support for links in images
     - Support for center and right alignment
     - Support for horizontal rule elements
+  
+If you find any issues please report them on [GitHub](https://github.com/DeDiamondPro/Resourcify) or in my [Discord](https://discord.gg/XtAuqsJWby)
 
 ### Changes
 
 - Use image resizing service (https://wsrv.nl/) on browse page, this increases image loading times on the browse page,
   especially on slower connections
 - Better multithreading for fetching images, can increase loading speed when a lot of things are being loaded at once
+- Switch from kotlinx serialization to gson to decrease file size on legacy versions
 
 ### Bug Fixes
 - Fix resource packs getting added at top after an update
