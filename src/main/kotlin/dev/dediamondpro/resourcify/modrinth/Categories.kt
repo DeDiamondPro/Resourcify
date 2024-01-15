@@ -50,11 +50,11 @@ data class Categories(
             filter: (Categories) -> Boolean,
             callback: (Map<String, List<Categories>>) -> Unit
         ) {
-            if (categories.isDone) callback(categories.get().filter { filter(it) }.groupBy { it.localizeHeader() })
+            if (categories.isDone) callback((categories.get() ?: emptyList()).filter { filter(it) }
+                .groupBy { it.localizeHeader() })
             else categories.whenComplete { categories, _ ->
-                if (categories == null) return@whenComplete
                 Window.enqueueRenderOperation {
-                    callback(categories.filter { filter(it) }.groupBy { it.localizeHeader() })
+                    callback((categories ?: emptyList()).filter { filter(it) }.groupBy { it.localizeHeader() })
                 }
             }
         }

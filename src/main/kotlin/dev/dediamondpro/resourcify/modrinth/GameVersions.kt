@@ -38,15 +38,14 @@ data class GameVersions(
         }
 
         fun getVersionsWhenLoaded(callback: (List<GameVersions>) -> Unit) {
-            if (versions.isDone) callback(versions.get())
+            if (versions.isDone) callback(versions.get() ?: emptyList())
             else versions.whenComplete { versions, _ ->
-                if (versions == null) return@whenComplete
-                Window.enqueueRenderOperation { callback(versions) }
+                Window.enqueueRenderOperation { callback(versions ?: emptyList()) }
             }
         }
 
         fun getVersions(snapshots: Boolean = false): List<GameVersions> {
-            var response = versions.get()
+            var response = versions.get() ?: emptyList()
             if (!snapshots) response = response.filter { it.versionType == "release" }
             return response
         }

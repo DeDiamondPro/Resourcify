@@ -9,6 +9,7 @@
     - Support for links in images
     - Support for center and right alignment
     - Support for horizontal rule elements
+- Add support for localizations
   
 If you find any issues please report them on [GitHub](https://github.com/DeDiamondPro/Resourcify) or in my [Discord](https://discord.gg/XtAuqsJWby)
 
@@ -17,11 +18,13 @@ If you find any issues please report them on [GitHub](https://github.com/DeDiamo
 - Use image resizing service (https://wsrv.nl/) on browse page, this increases image loading times on the browse page,
   especially on slower connections
 - Better multithreading for fetching images, can increase loading speed when a lot of things are being loaded at once
+- Allow 3 retries for fetching important data
 - Switch from kotlinx serialization to gson to decrease file size on legacy versions
 
 ### Bug Fixes
 - Fix resource packs getting added at top after an update
 - Fix not being able to update a pack if the old and new filename match
+- Fix game crashing when not being able to fetch some resources
 
 ----------------------------------------------------------------------------------------------------
 

@@ -98,14 +98,14 @@ class ProjectScreen(
             height = 29.pixels()
         } childOf mainBox
 
-        versions.whenComplete { versions, _ ->
-            if (versions == null) return@whenComplete
+        versions.thenAccept { versions ->
+            if (versions == null) return@thenAccept
             val versionToDownload = versions.firstOrNull {
                 it.gameVersions.contains(Platform.getMcVersion()) && it.loaders.contains(type.loader)
-            } ?: return@whenComplete
+            } ?: return@thenAccept
             val fileToDownload = versionToDownload.files.firstOrNull {
                 it.primary
-            } ?: versionToDownload.files.firstOrNull() ?: return@whenComplete
+            } ?: versionToDownload.files.firstOrNull() ?: return@thenAccept
             val url = URL(fileToDownload.url)
             var installed = packHashes.get().contains(fileToDownload.hashes.sha512)
             val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
@@ -158,7 +158,10 @@ class ProjectScreen(
 
         var currentPage: (ProjectScreen) -> UIComponent = ::DescriptionPage
         val loadedPages = mutableMapOf<(ProjectScreen) -> UIComponent, UIComponent>()
-        project.whenComplete { _, _ -> loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox }
+        project.thenAccept { projects ->
+            if (projects == null) return@thenAccept
+            loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox
+        }
         mapOf<String, (ProjectScreen) -> UIComponent>(
             "resourcify.project.description".localize() to ::DescriptionPage,
             "resourcify.project.gallery".localize() to ::GalleryPage,
@@ -256,8 +259,8 @@ class ProjectScreen(
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf sideBox
-        project.whenComplete { project, _ ->
-            if (project == null) return@whenComplete
+        project.thenAccept { project ->
+            if (project == null) return@thenAccept
             val links = mutableListOf<String>()
             with(links) {
                 if (project.issuesUrl != null) add("[${localize("resourcify.project.issues")}](${project.issuesUrl})")
@@ -275,7 +278,7 @@ class ProjectScreen(
                         color = Color.LIGHT_GRAY.toConstraint()
                     } childOf externalResourcesBox
                     markdown(
-                        links.joinToString(" ● "),
+                        links.joinToString(" * "),
                         style = MarkdownStyle(
                             textStyle = MarkdownTextStyle(
                                 1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
@@ -298,8 +301,8 @@ class ProjectScreen(
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf sideBox
-        members.whenComplete { members, _ ->
-            if (members == null || members.isEmpty()) return@whenComplete
+        members.thenAccept { members ->
+            if (members.isNullOrEmpty()) return@thenAccept
             Window.enqueueRenderOperation {
                 membersBox.constrain { y = SiblingConstraint(padding = 8f) }
                 UIText("resourcify.project.members".localize()).constrain {

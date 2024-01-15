@@ -24,7 +24,6 @@ import dev.dediamondpro.resourcify.ModInfo
 import gg.essential.universal.UMinecraft
 import java.awt.image.BufferedImage
 import java.io.InputStream
-import java.io.Reader
 import java.net.URL
 import java.net.URLConnection
 import java.util.concurrent.*
@@ -41,22 +40,38 @@ object NetworkUtil {
     // Use a custom, larger, thread-pool to increase fetching speed of images and avoid flooding the main pool
     val ImageThreadPool = Executors.newCachedThreadPool()
 
-    fun getOrFetch(url: URL, executor: Executor = ForkJoinPool.commonPool()): ByteArray? {
-        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, executor).get()
+    fun getOrFetch(url: URL, attempts: Int = 1, executor: Executor = ForkJoinPool.commonPool()): ByteArray? {
+        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts, executor).get()
     }
 
-    fun getOrFetchAsync(url: URL, executor: Executor = ForkJoinPool.commonPool()): CompletableFuture<ByteArray?> {
+    fun getOrFetchAsync(
+        url: URL,
+        attempts: Int = 1,
+        executor: Executor = ForkJoinPool.commonPool()
+    ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
             CompletableFuture.supplyAsync({ it }, executor)
-        } ?: currentlyFetching[url] ?: startFetch(url, executor)
+        } ?: currentlyFetching[url] ?: startFetch(url, attempts, executor)
     }
 
-    private fun startFetch(url: URL, executor: Executor): CompletableFuture<ByteArray?> {
+    private fun startFetch(url: URL, attempts: Int, executor: Executor): CompletableFuture<ByteArray?> {
         return CompletableFuture.supplyAsync({
-            url.getEncodedInputStream()?.use { it.readBytes() }?.let {
-                cache[url] = CacheObject(url, it)
-                it
+            for (i in 0 until attempts) {
+                try {
+                    val result = url.getEncodedInputStream()?.use { it.readBytes() }?.let {
+                        cache[url] = CacheObject(url, it)
+                        it
+                    }
+                    if (result != null) {
+                        return@supplyAsync result
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                // Wait a bit before trying again
+                Thread.sleep(250)
             }
+            return@supplyAsync null
         }, executor).apply {
             currentlyFetching[url] = this
         }.whenCompleteAsync { _, _ ->
@@ -103,8 +118,8 @@ fun URL.setupConnection(): HttpsURLConnection {
     val con = this.openConnection() as HttpsURLConnection
     con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
     con.setRequestProperty("Accept-Encoding", "gzip, deflate")
-    con.connectTimeout = 20000
-    con.readTimeout = 20000
+    con.connectTimeout = 5000
+    con.readTimeout = 5000
     return con
 }
 
@@ -124,60 +139,102 @@ fun URLConnection.getEncodedInputStream(): InputStream? {
 
 fun URL.getEncodedInputStream(): InputStream? = this.setupConnection().getEncodedInputStream()
 
-fun URL.getString(useCache: Boolean = true): String? {
-    if (useCache) return NetworkUtil.getOrFetch(this)?.decodeToString()
-    return this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
+fun URL.getString(useCache: Boolean = true, attempts: Int = 3): String? {
+    if (useCache) return NetworkUtil.getOrFetch(this, attempts)?.decodeToString()
+    for (i in 0 until attempts) {
+        try {
+            val result = this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
+            if (result != null) {
+                return result
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        // Wait a bit before trying again
+        Thread.sleep(250)
+    }
+    return null
 }
 
-fun URL.getStringAsync(useCache: Boolean = true): CompletableFuture<String?> {
-    if (useCache) return NetworkUtil.getOrFetchAsync(this).thenApply { it?.decodeToString() }
-    return CompletableFuture.supplyAsync { this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() } }
+fun URL.getStringAsync(useCache: Boolean = true, attempts: Int = 3): CompletableFuture<String?> {
+    if (useCache) return NetworkUtil.getOrFetchAsync(this, attempts).thenApply { it?.decodeToString() }
+    return CompletableFuture.supplyAsync { this.getString(false, attempts) }
 }
 
-inline fun <reified T> URL.getJson(useCache: Boolean = true): T? {
-    return this.getString(useCache)?.fromJson()
+inline fun <reified T> URL.getJson(useCache: Boolean = true, attempts: Int = 3): T? {
+    return this.getString(useCache, attempts)?.fromJson()
 }
 
-inline fun <reified T> URL.getJsonAsync(useCache: Boolean = true): CompletableFuture<T?> {
-    return this.getStringAsync(useCache).thenApply { it?.fromJson() }
+inline fun <reified T> URL.getJsonAsync(useCache: Boolean = true, attempts: Int = 3): CompletableFuture<T?> {
+    return this.getStringAsync(useCache, attempts).thenApply { it?.fromJson() }
 }
 
 fun URL.getImage(
     useCache: Boolean = true,
     width: Float? = null,
     height: Float? = null,
-    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
+    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
+    attempts: Int = 1
 ): BufferedImage? {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    if (useCache) return NetworkUtil.getOrFetch(url, NetworkUtil.ImageThreadPool)?.inputStream()?.use {
+    if (useCache) return NetworkUtil.getOrFetch(url, attempts, NetworkUtil.ImageThreadPool)?.inputStream()?.use {
         ImageIO.read(it)
     }
-    return url.getEncodedInputStream()?.use { ImageIO.read(it) }
+    for (i in 0 until attempts) {
+        try {
+            val result = url.getEncodedInputStream()?.use { ImageIO.read(it) }
+            if (result != null) {
+                return result
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        // Wait a bit before trying again
+        Thread.sleep(250)
+    }
+    return null
+
 }
 
 fun URL.getImageAsync(
     useCache: Boolean = true,
     width: Float? = null,
     height: Float? = null,
-    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE
+    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
+    attempts: Int = 1
 ): CompletableFuture<BufferedImage> {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    return if (useCache) return NetworkUtil.getOrFetchAsync(url, NetworkUtil.ImageThreadPool).thenApply { bytes ->
-        bytes?.inputStream()?.use { ImageIO.read(it) }
-    } else {
-        CompletableFuture.supplyAsync(
-            { url.getEncodedInputStream()?.use { ImageIO.read(it) } },
-            NetworkUtil.ImageThreadPool
-        )
-    }
+    return if (useCache) NetworkUtil.getOrFetchAsync(url, attempts, NetworkUtil.ImageThreadPool)
+        .thenApply { bytes ->
+            bytes?.inputStream()?.use { ImageIO.read(it) }
+        } else CompletableFuture.supplyAsync(
+        { this.getImage(false, width, height, fit, attempts) },
+        NetworkUtil.ImageThreadPool
+    )
 }
 
-inline fun <reified T, reified S> URL.postAndGetJson(data: S): T? {
-    val con = this.setupConnection()
-    val output = data.toJson()
-    con.setRequestProperty("Content-Type", "application/json")
-    con.setRequestProperty("Content-Length", output.length.toString())
-    con.doOutput = true
-    con.outputStream.bufferedWriter().use { it.write(output) }
-    return con.getEncodedInputStream()?.bufferedReader()?.use { it.fromJson() }
+inline fun <reified S> URL.postAndGetString(data: S, attempts: Int = 3): String? {
+    for (i in 0 until attempts) {
+        try {
+            val con = this.setupConnection()
+            val output = data.toJson()
+            con.setRequestProperty("Content-Type", "application/json")
+            con.setRequestProperty("Content-Length", output.length.toString())
+            con.doOutput = true
+            con.outputStream.bufferedWriter().use { it.write(output) }
+            val result = con.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
+            if (result != null) {
+                return result
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        // Wait a bit before trying again
+        Thread.sleep(250)
+    }
+    return null
+}
+
+inline fun <reified T, reified S> URL.postAndGetJson(data: S, attempts: Int = 3): T? {
+    return postAndGetString(data, attempts)?.fromJson()
 }

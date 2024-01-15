@@ -129,9 +129,10 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             color = Color.YELLOW.toConstraint()
         } childOf window
 
-        mods.whenComplete { projects, _ ->
+        mods.thenAccept { projects ->
             Window.enqueueRenderOperation {
                 checkingText.hide(true)
+                if (projects == null) return@enqueueRenderOperation
                 val topBar = UIContainer().constrain {
                     x = 4.pixels()
                     y = 4.pixels()
