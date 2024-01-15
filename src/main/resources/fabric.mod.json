@@ -13,7 +13,7 @@
     "issues": "https://github.com/DeDiamondPro/Resourcify/issues"
   },
   "mixins": [
-    "mixins.${id}.json"
+    "fabric.mixins.${id}.json"
   ],
   "accessWidener": "${id}.accesswidener",
   "custom": {

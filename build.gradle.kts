@@ -61,10 +61,10 @@ loom {
         "client" { programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker") }
     }
     if (project.platform.isForge) forge {
-        mixinConfig("mixins.${mod_id}.json")
+        mixinConfig("${project.platform.loaderStr}.mixins.${mod_id}.json")
     }
 
-    mixin.defaultRefmapName.set("mixins.${mod_id}.refmap.json")
+    mixin.defaultRefmapName.set("${project.platform.loaderStr}.mixins.${mod_id}.refmap.json")
 
     if (project.platform.mcVersion >= 12002) {
         accessWidenerPath = file("src/main/resources/resourcify.accesswidener")
@@ -181,9 +181,9 @@ tasks {
     }
     withType<Jar> {
         if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml", "pack.mcmeta")
+            exclude("mcmod.info", "mods.toml", "pack.mcmeta", "forge.mixins.${mod_id}.json")
         } else {
-            exclude("fabric.mod.json", "resourcify.accesswidener")
+            exclude("fabric.mod.json", "resourcify.accesswidener", "fabric.mixins.${mod_id}.json")
             if (project.platform.isLegacyForge) {
                 exclude("mods.toml", "pack.mcmeta")
             } else {

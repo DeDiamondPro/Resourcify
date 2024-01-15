@@ -1,13 +1,15 @@
 {
   "package": "dev.dediamondpro.resourcify.mixins",
-  "refmap": "mixins.resourcify.refmap.json",
+  "refmap": "fabric.mixins.resourcify.refmap.json",
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
     "ScreenMixin",
     "IrisAccessor",
     "PackScreenAccessor",
+    "ParentElementMixin",
     "AbstractResourcePackAccessor",
+    "ResourcePackOrganizerAccessor",
     "ReloadableResourceManagerMixin"
   ]
 }

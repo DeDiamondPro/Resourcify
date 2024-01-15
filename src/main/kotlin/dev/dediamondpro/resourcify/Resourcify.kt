@@ -15,15 +15,33 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+//#if FORGE == 1
+
 package dev.dediamondpro.resourcify
 
+//#if MODERN == 0
 import net.minecraftforge.fml.common.Mod
+//#else
+//$$ import dev.dediamondpro.resourcify.platform.EventHandler
+//$$ import net.minecraftforge.fml.common.Mod
+//#endif
 
+//#if MODERN == 0
 @Mod(
     name = ModInfo.NAME,
     modid = ModInfo.ID,
     version = ModInfo.VERSION,
     modLanguageAdapter = "dev.dediamondpro.resourcify.platform.KotlinLanguageAdapter"
 )
+//#else
+//$$ @Mod(ModInfo.ID)
+//#endif
 object Resourcify {
+    //#if MC > 11202
+    //$$ init {
+    //$$     EventHandler
+    //$$ }
+    //#endif
 }
+
+//#endif
