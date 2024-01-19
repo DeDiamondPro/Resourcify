@@ -54,7 +54,7 @@ class ProjectScreen(
         URL("${ApiInfo.API}/project/${projectLimited.slug}/members").getJsonAsync<List<Member>>().thenApply {
             it?.sortedBy { member -> member.ordering }
         }
-    val packHashes: CompletableFuture<List<String>> = CompletableFuture.supplyAsync {
+    val packHashes: CompletableFuture<List<String>> = supplyAsync {
         PackUtils.getPackHashes(downloadFolder)
     }
 

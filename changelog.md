@@ -25,6 +25,7 @@ If you find any issues please report them on [GitHub](https://github.com/DeDiamo
 - Fix resource packs getting added at top after an update
 - Fix not being able to update a pack if the old and new filename match
 - Fix game crashing when not being able to fetch some resources
+- Fix classes loading on a wrong class loader on modern forge and causing log spam
 
 ----------------------------------------------------------------------------------------------------
 

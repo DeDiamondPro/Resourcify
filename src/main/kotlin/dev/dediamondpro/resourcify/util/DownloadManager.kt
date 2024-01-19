@@ -58,7 +58,7 @@ object DownloadManager {
         if (downloadsInProgress.size >= 2) return
         val url = queuedDownloads.keys.firstOrNull() ?: return
         val queuedDownload = queuedDownloads.remove(url) ?: return
-        downloadsInProgress[url] = DownloadData(CompletableFuture.runAsync {
+        downloadsInProgress[url] = DownloadData(runAsync {
             val con = url.setupConnection()
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {

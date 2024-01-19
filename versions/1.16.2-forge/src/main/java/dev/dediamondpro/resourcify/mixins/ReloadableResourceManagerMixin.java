@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify.mixins;
 
 import dev.dediamondpro.resourcify.elements.MinecraftButton;
 import net.minecraft.resources.IAsyncReloader;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.Unit;
