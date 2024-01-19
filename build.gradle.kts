@@ -75,7 +75,7 @@ loom {
 
     // we only use access wideners in 1.20.4 or above
     if (project.platform.mcVersion >= 12004) {
-        accessWidenerPath = File(project.buildDir, "preprocessed/main/resources/resourcify.accesswidener")
+        accessWidenerPath = project.file("src/main/resources/resourcify.accesswidener")
     }
     if (project.platform.isForge) forge {
         mixinConfig("${project.platform.loaderStr}.mixins.${mod_id}.json")
@@ -200,17 +200,6 @@ tasks {
         }
     }
     withType<Jar> {
-        exclude("META-INF/versions/9/**")
-        if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml", "pack.mcmeta", "forge.mixins.${mod_id}.json")
-        } else {
-            exclude("fabric.mod.json", "resourcify.accesswidener", "fabric.mixins.${mod_id}.json")
-            if (project.platform.isLegacyForge) {
-                exclude("mods.toml", "pack.mcmeta")
-            } else {
-                exclude("mcmod.info")
-            }
-        }
         from(rootProject.file("LICENSE"))
         from(rootProject.file("LICENSE.LESSER"))
     }
@@ -218,6 +207,18 @@ tasks {
         archiveClassifier.set("dev")
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        exclude("META-INF/versions/9/**")
+        if (project.platform.isFabric) {
+            exclude("mcmod.info", "mods.toml", "pack.mcmeta", "forge.mixins.${mod_id}.json")
+        } else {
+            exclude("fabric.mod.json", "fabric.mixins.${mod_id}.json")
+            if (project.platform.isLegacyForge) {
+                exclude("mods.toml", "pack.mcmeta", "resourcify.accesswidener")
+            } else {
+                exclude("mcmod.info")
+            }
+        }
 
         mergeServiceFiles()
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
