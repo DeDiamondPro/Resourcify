@@ -37,25 +37,21 @@ object NetworkUtil {
     private val cache = ConcurrentHashMap<URL, CacheObject>()
     private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
 
-    // Use a custom, larger, thread-pool to increase fetching speed of images and avoid flooding the main pool
-    val ImageThreadPool = Executors.newCachedThreadPool()
-
-    fun getOrFetch(url: URL, attempts: Int = 1, executor: Executor = ForkJoinPool.commonPool()): ByteArray? {
-        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts, executor).get()
+    fun getOrFetch(url: URL, attempts: Int = 1): ByteArray? {
+        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts).get()
     }
 
     fun getOrFetchAsync(
         url: URL,
-        attempts: Int = 1,
-        executor: Executor = ForkJoinPool.commonPool()
+        attempts: Int = 1
     ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
-            CompletableFuture.supplyAsync({ it }, executor)
-        } ?: currentlyFetching[url] ?: startFetch(url, attempts, executor)
+            supplyAsync({ it })
+        } ?: currentlyFetching[url] ?: startFetch(url, attempts)
     }
 
-    private fun startFetch(url: URL, attempts: Int, executor: Executor): CompletableFuture<ByteArray?> {
-        return CompletableFuture.supplyAsync({
+    private fun startFetch(url: URL, attempts: Int): CompletableFuture<ByteArray?> {
+        return supplyAsync {
             for (i in 0 until attempts) {
                 try {
                     val result = url.getEncodedInputStream()?.use { it.readBytes() }?.let {
@@ -72,9 +68,9 @@ object NetworkUtil {
                 Thread.sleep(250)
             }
             return@supplyAsync null
-        }, executor).apply {
+        }.apply {
             currentlyFetching[url] = this
-        }.whenCompleteAsync { _, _ ->
+        }.whenComplete { _, _ ->
             currentlyFetching.remove(url)
             pruneCache()
         }
@@ -158,7 +154,7 @@ fun URL.getString(useCache: Boolean = true, attempts: Int = 3): String? {
 
 fun URL.getStringAsync(useCache: Boolean = true, attempts: Int = 3): CompletableFuture<String?> {
     if (useCache) return NetworkUtil.getOrFetchAsync(this, attempts).thenApply { it?.decodeToString() }
-    return CompletableFuture.supplyAsync { this.getString(false, attempts) }
+    return supplyAsync { this.getString(false, attempts) }
 }
 
 inline fun <reified T> URL.getJson(useCache: Boolean = true, attempts: Int = 3): T? {
@@ -177,7 +173,7 @@ fun URL.getImage(
     attempts: Int = 1
 ): BufferedImage? {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    if (useCache) return NetworkUtil.getOrFetch(url, attempts, NetworkUtil.ImageThreadPool)?.inputStream()?.use {
+    if (useCache) return NetworkUtil.getOrFetch(url, attempts)?.inputStream()?.use {
         ImageIO.read(it)
     }
     for (i in 0 until attempts) {
@@ -204,13 +200,10 @@ fun URL.getImageAsync(
     attempts: Int = 1
 ): CompletableFuture<BufferedImage> {
     val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    return if (useCache) NetworkUtil.getOrFetchAsync(url, attempts, NetworkUtil.ImageThreadPool)
+    return if (useCache) NetworkUtil.getOrFetchAsync(url, attempts)
         .thenApply { bytes ->
             bytes?.inputStream()?.use { ImageIO.read(it) }
-        } else CompletableFuture.supplyAsync(
-        { this.getImage(false, width, height, fit, attempts) },
-        NetworkUtil.ImageThreadPool
-    )
+        } else supplyAsync { this.getImage(false, width, height, fit, attempts)!! }
 }
 
 inline fun <reified S> URL.postAndGetString(data: S, attempts: Int = 3): String? {

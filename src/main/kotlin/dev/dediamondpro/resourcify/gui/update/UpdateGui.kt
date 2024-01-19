@@ -41,22 +41,21 @@ import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
 import java.net.URL
-import java.util.concurrent.CompletableFuture
 
 //#if MC >= 11904
 //$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
 class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
-    private val hashes = CompletableFuture.supplyAsync {
+    private val hashes = supplyAsync {
         val files = PackUtils.getPackFiles(folder)
         files.associateBy { Utils.getSha512(it)!! }
     }
-    private val updates = CompletableFuture.supplyAsync {
+    private val updates = supplyAsync {
         getUpdates(type, hashes.get().keys.toList()).map { (k, v) -> v to k }.toMap()
     }
-    private val mods = updates.thenApplyAsync { updates ->
-        if (updates.isEmpty()) return@thenApplyAsync emptyMap()
+    private val mods = updates.thenApply { updates ->
+        if (updates.isEmpty()) return@thenApply emptyMap()
         val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
         URIBuilder("${ApiInfo.API}/projects").setParameter("ids", idString)
             .build().toURL().getJson<List<ProjectResponse>>()!!

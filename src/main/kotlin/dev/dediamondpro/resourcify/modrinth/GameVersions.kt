@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.modrinth
 
 import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.util.getJson
+import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.components.Window
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -31,7 +32,7 @@ data class GameVersions(
 ) {
     companion object {
         private val versions: CompletableFuture<List<GameVersions>> by lazy {
-            CompletableFuture.supplyAsync {
+            supplyAsync {
                 (URL("https://api.modrinth.com/v2/tag/game_version").getJson<List<GameVersions>>(useCache = false)
                     ?: emptyList()).reversed()
             }

@@ -31,6 +31,7 @@ import dev.dediamondpro.resourcify.modrinth.SearchResponse
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.util.getJson
 import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
@@ -257,10 +258,10 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
 
     private fun loadPacks(clear: Boolean = true) {
         fetchingFuture?.cancel(true)
-        fetchingFuture = CompletableFuture.supplyAsync {
+        fetchingFuture = supplyAsync {
             if (clear) offset = 0
             else offset += 20
-            val sortType = when(sortDropDown!!.options.indexOf(sortDropDown!!.selectedOptions.first())) {
+            val sortType = when (sortDropDown!!.options.indexOf(sortDropDown!!.selectedOptions.first())) {
                 0 -> "relevance"
                 1 -> "downloads"
                 2 -> "follows"
@@ -276,10 +277,10 @@ class BrowseScreen(private val type: ApiInfo.ProjectType, private val downloadFo
                 .setParameter("index", sortType)
                 .build()
             url.toURL().getJson<SearchResponse>()
-        }.whenCompleteAsync { response, error ->
-            if (error != null) return@whenCompleteAsync
+        }.whenComplete { response, error ->
+            if (error != null) return@whenComplete
             totalHits = response?.totalHits ?: 0
-            val projects = response?.hits ?: return@whenCompleteAsync
+            val projects = response?.hits ?: return@whenComplete
             Window.enqueueRenderOperation {
                 if (clear) projectContainer.clearChildren()
 
