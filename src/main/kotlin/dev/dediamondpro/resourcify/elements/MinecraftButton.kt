@@ -43,21 +43,13 @@ class MinecraftButton(text: String? = null) : UIContainer() {
 
     override fun draw(matrixStack: UMatrixStack) {
         if (shouldReloadTexture) {
-            val resource = try {
-                UMinecraft.getMinecraft().resourceManager.getResource(ResourceLocation("textures/gui/widgets.png"))
-            } catch (e: Exception) {
-                return
-            }
-            //#if MC >= 11900
-            //$$ if (resource.isEmpty) return
-            //$$ val stream = resource.get().inputStream
+            //#if MC >= 12004
+            //$$ texture = loadTexture("textures/gui/sprites/widget/button.png", texture)
+            //$$ highlightedTexture =
+            //$$     loadTexture("textures/gui/sprites/widget/button_highlighted.png", highlightedTexture)
             //#else
-            val stream = resource.inputStream
+            texture = loadTexture("textures/gui/widgets.png", texture)
             //#endif
-            val tex = UGraphics.getTexture(stream)
-            tex.uploadTexture()
-            texture?.deleteGlTexture()
-            texture = tex
             shouldReloadTexture = false
         }
         //#if MC < 12002
@@ -74,11 +66,15 @@ class MinecraftButton(text: String? = null) : UIContainer() {
                 //#if MC < 12002
                 66.0 + if (isHovered()) 20.0 else 0.0,
                 //#else
-                //$$ 0.0
+                //$$ 0.0,
                 //#endif
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
+                //#if MC < 12002
                 256.0, 256.0
+                //#else
+                //$$ 200.0, 20.0
+                //#endif
             )
             Utils.drawTexture(
                 matrixStack, it,
@@ -88,11 +84,15 @@ class MinecraftButton(text: String? = null) : UIContainer() {
                 //#if MC < 12002
                 66.0 + if (isHovered()) 20.0 else 0.0,
                 //#else
-                //$$ 0.0
+                //$$ 0.0,
                 //#endif
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
+                //#if MC < 12002
                 256.0, 256.0
+                //#else
+                //$$ 200.0, 20.0
+                //#endif
             )
         }
         super.draw(matrixStack)

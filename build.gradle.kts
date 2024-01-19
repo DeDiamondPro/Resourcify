@@ -19,6 +19,7 @@ import com.matthewprenger.cursegradle.CurseArtifact
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
+import com.replaymod.gradle.preprocess.PreprocessTask
 import gg.essential.gradle.util.noServerRunConfigs
 import gg.essential.gradle.util.setJvmDefault
 import org.jetbrains.kotlin.com.google.gson.Gson
@@ -40,6 +41,17 @@ val mod_id: String by project
 
 preprocess {
     vars.put("MODERN", if (project.platform.mcMinor >= 16) 1 else 0)
+    keywords.set(
+        mutableMapOf(
+            ".java" to PreprocessTask.DEFAULT_KEYWORDS,
+            ".kt" to PreprocessTask.DEFAULT_KEYWORDS,
+            ".gradle" to PreprocessTask.DEFAULT_KEYWORDS,
+            ".json" to PreprocessTask.DEFAULT_KEYWORDS,
+            ".mcmeta" to PreprocessTask.DEFAULT_KEYWORDS,
+            ".cfg" to PreprocessTask.CFG_KEYWORDS,
+            ".accesswidener" to PreprocessTask.CFG_KEYWORDS
+        )
+    )
 }
 
 blossom {
@@ -60,15 +72,23 @@ loom {
     if (project.platform.isLegacyForge) runConfigs {
         "client" { programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker") }
     }
+
+    // we only use access wideners in 1.20.4 or above
+    if (project.platform.mcVersion >= 12004) {
+        accessWidenerPath = File(project.buildDir, "preprocessed/main/resources/resourcify.accesswidener")
+    }
     if (project.platform.isForge) forge {
         mixinConfig("${project.platform.loaderStr}.mixins.${mod_id}.json")
+        if (project.platform.mcVersion >= 12004) {
+            convertAccessWideners = true
+        }
     }
 
     mixin.defaultRefmapName.set("${project.platform.loaderStr}.mixins.${mod_id}.refmap.json")
+}
 
-    if (project.platform.mcVersion >= 12002) {
-        accessWidenerPath = file("src/main/resources/resourcify.accesswidener")
-    }
+if (project.platform.mcVersion != 10809) {
+    tasks.getByName("validateAccessWidener").dependsOn("preprocessResources")
 }
 
 repositories {
@@ -94,7 +114,7 @@ dependencies {
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")!!)
+        modCompileOnly("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")
     } else if (platform.isForge) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
@@ -104,9 +124,9 @@ dependencies {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
         }
-        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
-            isTransitive = false
-        }
+    }
+    shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
+        isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
     shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
@@ -180,6 +200,7 @@ tasks {
         }
     }
     withType<Jar> {
+        exclude("META-INF/versions/9/**")
         if (project.platform.isFabric) {
             exclude("mcmod.info", "mods.toml", "pack.mcmeta", "forge.mixins.${mod_id}.json")
         } else {
@@ -198,16 +219,12 @@ tasks {
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-        exclude("META-INF/versions/9/**")
-
         mergeServiceFiles()
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
-        if (platform.isForge) {
-            relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
-        }
+        relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
     }
     remapJar {
         input.set(shadowJar.get().archiveFile)

@@ -61,7 +61,7 @@ class UpdateCard(
         }
 
         if (project.iconUrl.isNullOrBlank()) {
-            UIImage.ofResource("/pack.png")
+            UIImage.ofResource("/assets/resourcify/pack.png")
         } else {
             UIImage.ofURL(project.iconUrl)
         }.constrain {

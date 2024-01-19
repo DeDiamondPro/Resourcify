@@ -1,0 +1,7 @@
+accessWidener v2 named
+
+##if MC >= 1202 && FABRIC == 1
+#$$ accessible field net/minecraft/resource/ZipResourcePack$ZipFileWrapper file Ljava/io/File;
+##elseif MC >= 1202
+#$$ accessible field net/minecraft/server/packs/FilePackResources$SharedZipFileAccess file Ljava/io/File;
+##endif

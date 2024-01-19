@@ -214,7 +214,8 @@ class ProjectScreen(
             width = 100.percent()
             height = ImageAspectConstraint()
         } childOf sideBox
-        if (projectLimited.iconUrl.isNullOrBlank()) UIImage.ofResource("/pack.png") else UIImage.ofURL(projectLimited.iconUrl)
+        (if (projectLimited.iconUrl.isNullOrBlank()) UIImage.ofResource("/assets/resourcify/pack.png")
+        else UIImage.ofURL(projectLimited.iconUrl))
             .constrain {
                 x = 4.pixels()
                 y = SiblingConstraint(padding = 4f)

@@ -73,7 +73,7 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
         } childOf this
 
         if (project.iconUrl.isNullOrBlank()) {
-            UIImage.ofResource("/pack.png")
+            UIImage.ofResource("/assets/resourcify/pack.png")
         } else {
             UIImage.ofURL(
                 project.iconUrl,
