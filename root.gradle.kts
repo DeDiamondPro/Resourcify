@@ -30,13 +30,14 @@ preprocess {
     val forge11902 = createNode("1.19.2-forge", 11902, "srg")
     val forge11904 = createNode("1.19.4-forge", 11904, "srg")
     val forge12001 = createNode("1.20.1-forge", 12001, "srg")
+    val forge12004 = createNode("1.20.4-forge", 12004, "srg")
 
     val fabric11602 = createNode("1.16.2-fabric", 11602, "yarn")
     val fabric11801 = createNode("1.18.2-fabric", 11802, "yarn")
     val fabric11902 = createNode("1.19.2-fabric", 11902, "yarn")
     val fabric11904 = createNode("1.19.4-fabric", 11904, "yarn")
     val fabric12001 = createNode("1.20.1-fabric", 12001, "yarn")
-    val fabric12002 = createNode("1.20.2-fabric", 12002, "yarn")
+    val fabric12004 = createNode("1.20.4-fabric", 12002, "yarn")
 
     forge11202.link(forge10809)
     forge11602.link(forge11202, file("versions/1.12.2-forge-1.16.2-forge"))
@@ -44,11 +45,12 @@ preprocess {
     forge11902.link(fabric11902)
     forge11904.link(fabric11904)
     forge12001.link(fabric12001)
+    forge12004.link(forge12001)
 
     fabric11602.link(forge11602)
     fabric11801.link(fabric11602)
     fabric11902.link(fabric11801)
     fabric11904.link(fabric11902)
     fabric12001.link(fabric11904)
-    fabric12002.link(fabric12001)
+    fabric12004.link(fabric12001)
 }

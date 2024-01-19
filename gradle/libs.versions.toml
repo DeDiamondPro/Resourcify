@@ -4,8 +4,8 @@ kotlin = "1.8.22"
 fabric_language_kotlin = "1.7.1+kotlin.1.6.10"
 
 # Essential Dependencies
-egt = "0.2.2"
-universal = "312"
+egt = "0.3.0"
+universal = "323"
 elementa = "DIAMOND-4"
 
 # Markdown

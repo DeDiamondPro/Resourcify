@@ -307,7 +307,7 @@ fun getMcVersionStr(): String {
         "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
         "1.19.2" -> "1.19.0-1.19.2"
         "1.20.1" -> "1.20-1.20.1"
-        "1.20.2" -> "1.20.2+"
+        "1.20.4" -> "1.20.2+"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -321,7 +321,7 @@ fun getInternalMcVersionStr(): String {
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
         "1.19.2" -> ">=1.19 <=1.19.2"
         "1.20.1" -> ">=1.20 <=1.20.1"
-        "1.20.2" -> ">=1.20.2"
+        "1.20.4" -> ">=1.20.2"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -340,7 +340,7 @@ fun getMcVersionList(): List<String> {
         "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
         "1.19.4" -> listOf("1.19.4")
         "1.20.1" -> listOf("1.20", "1.20.1")
-        "1.20.2" -> listOf("1.20.2")
+        "1.20.4" -> listOf("1.20.2", "1.20.3", "1.20.4")
         else -> error("Unknown version")
     }
 }

@@ -60,13 +60,22 @@ class MinecraftButton(text: String? = null) : UIContainer() {
             texture = tex
             shouldReloadTexture = false
         }
-        texture?.let {
+        //#if MC < 12002
+        val textureToRender = texture
+        //#else
+        //$$ val textureToRender = if (isHovered()) highlightedTexture else texture
+        //#endif
+        textureToRender?.let {
             Utils.drawTexture(
                 matrixStack, it,
                 this.getLeft().toDouble(),
                 this.getTop().toDouble(),
                 0.0,
+                //#if MC < 12002
                 66.0 + if (isHovered()) 20.0 else 0.0,
+                //#else
+                //$$ 0.0
+                //#endif
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
                 256.0, 256.0
@@ -76,7 +85,11 @@ class MinecraftButton(text: String? = null) : UIContainer() {
                 this.getLeft().toDouble() + this.getWidth().toDouble() / 2,
                 this.getTop().toDouble(),
                 200.0 - this.getWidth().toDouble() / 2,
+                //#if MC < 12002
                 66.0 + if (isHovered()) 20.0 else 0.0,
+                //#else
+                //$$ 0.0
+                //#endif
                 this.getWidth().toDouble() / 2,
                 this.getHeight().toDouble(),
                 256.0, 256.0
@@ -88,9 +101,33 @@ class MinecraftButton(text: String? = null) : UIContainer() {
     companion object {
         private var shouldReloadTexture = false
         private var texture: ReleasedDynamicTexture? = null
+        //#if MC >= 12002
+        //$$ private var highlightedTexture: ReleasedDynamicTexture? = null
+        //#endif
 
         fun reloadTexture() {
             shouldReloadTexture = true
+        }
+
+        private fun loadTexture(
+            identifier: String,
+            texture: ReleasedDynamicTexture?
+        ): ReleasedDynamicTexture? {
+            val resource = try {
+                UMinecraft.getMinecraft().resourceManager.getResource(ResourceLocation(identifier))
+            } catch (e: Exception) {
+                return null
+            }
+            //#if MC >= 11900
+            //$$ if (resource.isEmpty) return null
+            //$$ val stream = resource.get().inputStream
+            //#else
+            val stream = resource.inputStream
+            //#endif
+            val tex = UGraphics.getTexture(stream)
+            tex.uploadTexture()
+            texture?.deleteGlTexture()
+            return tex
         }
     }
 }
