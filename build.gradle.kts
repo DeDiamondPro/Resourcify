@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.com.google.gson.Gson
 
 plugins {
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.serialization)
     id(egt.plugins.multiversion.get().pluginId)
     id(egt.plugins.defaults.get().pluginId)
     alias(libs.plugins.shadow)

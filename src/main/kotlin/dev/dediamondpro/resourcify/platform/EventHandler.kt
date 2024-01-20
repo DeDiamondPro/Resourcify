@@ -22,7 +22,6 @@ package dev.dediamondpro.resourcify.platform
 //$$ import dev.dediamondpro.resourcify.platform.Platform
 //$$ import net.minecraftforge.eventbus.api.EventPriority
 //$$ import net.minecraftforge.eventbus.api.SubscribeEvent
-//$$ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 //$$
 //$$ //#if MC <= 11800
 //$$ import net.minecraftforge.client.event.GuiScreenEvent
@@ -31,10 +30,6 @@ package dev.dediamondpro.resourcify.platform
 //$$ //#endif
 //$$
 //$$ object EventHandler {
-//$$
-//$$     init {
-//$$         FORGE_BUS.register(this)
-//$$     }
 //$$
 //$$     @SubscribeEvent(priority = EventPriority.HIGHEST)
 //$$     fun onMouseClicked(

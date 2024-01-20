@@ -43,7 +43,6 @@ mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 [plugins]
 # Kotlin
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 # Essential Gradle Toolkit
 egt_multiversion = { id = "gg.essential.multi-version", version.ref = "egt" }

@@ -23,6 +23,9 @@ package dev.dediamondpro.resourcify
 import net.minecraftforge.fml.common.Mod
 //#else
 //$$ import dev.dediamondpro.resourcify.platform.EventHandler
+//$$ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
+//$$ import thedarkcolour.kotlinforforge.forge.MOD_BUS
+//$$ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 //$$ import net.minecraftforge.fml.common.Mod
 //#endif
 
@@ -39,7 +42,11 @@ import net.minecraftforge.fml.common.Mod
 object Resourcify {
     //#if MC > 11202
     //$$ init {
-    //$$     EventHandler
+    //$$     MOD_BUS.register(this::onClientInit)
+    //$$ }
+    //$$
+    //$$ private fun onClientInit(event: FMLClientSetupEvent) {
+    //$$     FORGE_BUS.register(EventHandler)
     //$$ }
     //#endif
 }
