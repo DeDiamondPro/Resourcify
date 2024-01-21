@@ -31,7 +31,7 @@ data class User(
     val id: String,
     @SerializedName("github_id") val githubId: Int?,
     val username: String,
-    @SerializedName("avatar_url") val avatarUrl: String,
+    @SerializedName("avatar_url") val avatarUrl: String?,
     val bio: String?,
     val created: String,
     val role: String,

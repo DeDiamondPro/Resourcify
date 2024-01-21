@@ -42,7 +42,7 @@ class MemberCard(member: Member) : UIContainer() {
             if (it.mouseButton != 0) return@onMouseClick
             UDesktop.browse(URI("https://modrinth.com/user/${member.user.username}"))
         }
-        UIImage.ofURL(member.user.avatarUrl).constrain {
+        if(member.user.avatarUrl != null) UIImage.ofURL(member.user.avatarUrl).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 32.pixels()

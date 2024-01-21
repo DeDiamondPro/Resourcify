@@ -128,7 +128,10 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             color = Color.YELLOW.toConstraint()
         } childOf window
 
-        mods.thenAccept { projects ->
+        mods.exceptionally {
+            it.printStackTrace()
+            emptyMap()
+        }.thenAccept { projects ->
             Window.enqueueRenderOperation {
                 checkingText.hide(true)
                 if (projects == null) return@enqueueRenderOperation

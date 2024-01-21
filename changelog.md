@@ -27,6 +27,7 @@ If you find any issues please report them on [GitHub](https://github.com/DeDiamo
 - Fix game crashing when not being able to fetch some resources
 - Fix classes loading on a wrong class loader on modern forge and causing log spam
 - Fix forge crashing when loading on server side (Resourcify is still client side only)
+- Fix not correctly applying shaders after update sometimes
 
 ----------------------------------------------------------------------------------------------------
 

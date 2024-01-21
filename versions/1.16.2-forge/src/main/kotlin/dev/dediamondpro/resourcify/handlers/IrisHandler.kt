@@ -9,7 +9,7 @@ object IrisHandler {
 
     fun getActiveShader(screen: Screen): String? {
         if (screen !is ShaderPackScreen) return null
-        return ((screen as IrisAccessor).shaderPackList.selected as ShaderPackEntry).packName
+        return ((screen as IrisAccessor).shaderPackList.selected as ShaderPackEntry?)?.packName
     }
 
     fun applyShaders(screen: Screen, shader: String) {

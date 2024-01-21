@@ -42,6 +42,7 @@ import java.util.concurrent.locks.ReentrantLock
 //#if MC >= 11600
 //$$ import dev.dediamondpro.resourcify.handlers.IrisHandler
 //$$ import dev.dediamondpro.resourcify.gui.PaginatedScreen
+//$$ import gg.essential.elementa.components.Window
 //#endif
 
 class UpdateCard(
@@ -177,7 +178,7 @@ class UpdateCard(
                     //$$ ApiInfo.ProjectType.IRIS_SHADER -> {
                     //$$     PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
                     //$$         if (IrisHandler.getActiveShader(it) == file.name) {
-                    //$$             IrisHandler.applyShaders(it, downloadFile.name)
+                    //$$             Window.enqueueRenderOperation{ IrisHandler.applyShaders(it, downloadFile.name) }
                     //$$         }
                     //$$     }
                     //$$ }

@@ -116,15 +116,8 @@ dependencies {
         val fabricApiVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
-        modImplementation("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modImplementation("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")
-        shadeRuntime("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
-            isTransitive = false
-        }
-        // Always shade elementa since we use a custom version, relocate to avoid conflicts
-        shadeRuntime("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
-            isTransitive = false
-        }
+        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
+        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")!!)
     } else if (platform.isForge) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
@@ -134,13 +127,14 @@ dependencies {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
         }
-        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
+        val universalVersion = if (project.platform.mcVersion == 12004) "DIAMOND-1" else libs.versions.universal.get()
+        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
             isTransitive = false
         }
-        // Always shade elementa since we use a custom version, relocate to avoid conflicts
-        shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
-            isTransitive = false
-        }
+    }
+    // Always shade elementa since we use a custom version, relocate to avoid conflicts
+    shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
+        isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
     shade(libs.bundles.markdown) {
@@ -235,7 +229,9 @@ tasks {
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
-        relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
+        if (platform.isForge) {
+            relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
+        }
     }
     remapJar {
         input.set(shadowJar.get().archiveFile)
