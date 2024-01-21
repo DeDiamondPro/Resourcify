@@ -105,6 +105,10 @@ val shade: Configuration by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
+val shadeRuntime: Configuration by configurations.creating {
+    configurations.runtimeOnly.get().extendsFrom(this)
+}
+
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
@@ -112,8 +116,15 @@ dependencies {
         val fabricApiVersion: String by project
         modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
-        modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modCompileOnly("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")
+        modImplementation("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
+        modImplementation("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")
+        shadeRuntime("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
+            isTransitive = false
+        }
+        // Always shade elementa since we use a custom version, relocate to avoid conflicts
+        shadeRuntime("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
+            isTransitive = false
+        }
     } else if (platform.isForge) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
@@ -123,13 +134,13 @@ dependencies {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
         }
-    }
-    shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
-        isTransitive = false
-    }
-    // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
-        isTransitive = false
+        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}") {
+            isTransitive = false
+        }
+        // Always shade elementa since we use a custom version, relocate to avoid conflicts
+        shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
+            isTransitive = false
+        }
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
     shade(libs.bundles.markdown) {
@@ -204,7 +215,7 @@ tasks {
     }
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
-        configurations = listOf(shade)
+        configurations = listOf(shade, shadeRuntime)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         exclude("META-INF/versions/9/**")
