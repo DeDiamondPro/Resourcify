@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.Mod
 object Resourcify {
     //#if MC > 11202
     //$$ init {
-    //$$     MOD_BUS.register(this::onClientInit)
+    //$$     MOD_BUS.addListener(this::onClientInit)
     //$$ }
     //$$
     //$$ private fun onClientInit(event: FMLClientSetupEvent) {
