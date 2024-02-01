@@ -9,7 +9,7 @@ universal = "323"
 elementa = "DIAMOND-5"
 
 # Markdown
-minemark = "1.0.0"
+minemark = "1.0.1"
 commonmark = "0.21.0"
 tagsoup = "1.2.1"
 

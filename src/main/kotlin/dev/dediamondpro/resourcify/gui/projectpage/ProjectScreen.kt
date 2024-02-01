@@ -279,7 +279,7 @@ class ProjectScreen(
                         color = Color.LIGHT_GRAY.toConstraint()
                     } childOf externalResourcesBox
                     markdown(
-                        links.joinToString(" * "),
+                        links.joinToString(" ● "),
                         style = MarkdownStyle(
                             textStyle = MarkdownTextStyle(
                                 1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
