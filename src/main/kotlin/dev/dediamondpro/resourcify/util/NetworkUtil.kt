@@ -26,16 +26,57 @@ import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
+import java.security.KeyStore
 import java.util.concurrent.*
 import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
 import javax.imageio.ImageIO
 import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000
     private val cache = ConcurrentHashMap<URL, CacheObject>()
     private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
+
+    //#if MC < 11700
+    private var sslContext: SSLContext? = null
+
+    // In case of MC 1.16.5 or lower, we need to load a custom keystore since the java version bundled with the Minecraft Launcher doesn't have the Let's Encrypt CA
+    init {
+        try {
+            val keyStore = KeyStore.getInstance("JKS")
+            keyStore.load(
+                this::class.java.getResourceAsStream("/ssl/resourcify-keystore.jks"),
+                "Resourcify".toCharArray()
+            )
+            val keyManager = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+            val trustManager = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            keyManager.init(keyStore, null)
+            trustManager.init(keyStore)
+            sslContext = SSLContext.getInstance("TLS").apply {
+                init(keyManager.keyManagers, trustManager.trustManagers, null)
+            }
+        } catch (e: Exception) {
+            println("Failed to load Resourcify keystore, api requests may not work properly.")
+            e.printStackTrace()
+        }
+    }
+    //#endif
+
+    fun setupConnection(url: URL): HttpsURLConnection {
+        val con = url.openConnection() as HttpsURLConnection
+        //#if MC < 11700
+        sslContext?.let { con.sslSocketFactory = it.socketFactory }
+        //#endif
+        con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
+        con.setRequestProperty("Accept-Encoding", "gzip, deflate")
+        con.connectTimeout = 5000
+        con.readTimeout = 5000
+        return con
+    }
 
     fun getOrFetch(url: URL, attempts: Int = 1): ByteArray? {
         return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts).get()
@@ -110,14 +151,7 @@ object NetworkUtil {
     }
 }
 
-fun URL.setupConnection(): HttpsURLConnection {
-    val con = this.openConnection() as HttpsURLConnection
-    con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
-    con.setRequestProperty("Accept-Encoding", "gzip, deflate")
-    con.connectTimeout = 5000
-    con.readTimeout = 5000
-    return con
-}
+fun URL.setupConnection(): HttpsURLConnection = NetworkUtil.setupConnection(this)
 
 fun URLConnection.getEncodedInputStream(): InputStream? {
     return try {

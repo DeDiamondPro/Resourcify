@@ -182,6 +182,9 @@ tasks {
             }
             exclude("**/assets/$mod_id/lang/*.json")
         }
+        if (project.platform.mcMinor > 16) {
+            exclude("ssl/*")
+        }
     }
     register("generateLangFiles") {
         val gson = Gson()

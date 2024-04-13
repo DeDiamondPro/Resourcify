@@ -1,8 +1,9 @@
-## Resourcify 1.3.1
+## Resourcify 1.3.2
 
-- Added Simplified Chinese translations ([jhqwqmc](https://github.com/jhqwqmc), [#25](https://github.com/DeDiamondPro/Resourcify/pull/25))
-- Fixed unicode characters (for example Chinese characters) rendering as `?` in markdown
-- Fix compatibility with VulkanMod
+- Added Turkish translations by [WinTone01](https://github.com/WinTone01) ([#28](https://github.com/DeDiamondPro/Resourcify/pull/28))
+- (Minecraft 1.8.9-1.16.5) Fixed SSL certificate errors when fetching some resources due to the java 8 version the Minecraft Launcher ships with not supporting Let's Encrypt certificates.
+
+If you find any issues, please report them on [GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in my [Discord server](https://discord.gg/XtAuqsJWby).
 
 ----------------------------------------------------------------------------------------------------
 
