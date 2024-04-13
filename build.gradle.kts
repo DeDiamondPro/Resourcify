@@ -127,7 +127,7 @@ dependencies {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
         }
-        val universalVersion = if (project.platform.mcVersion == 12004) "DIAMOND-1" else libs.versions.universal.get()
+        val universalVersion = libs.versions.universal.get()
         shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
             isTransitive = false
         }
