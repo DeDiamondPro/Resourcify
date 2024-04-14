@@ -1,3 +1,10 @@
+## Resourcify 1.3.3
+
+- Fixed imgur images not loading.
+- (Minecraft 1.8.9-1.16.5) Fixed issues related to the SSL solution in 1.3.2.
+
+----------------------------------------------------------------------------------------------------
+
 ## Resourcify 1.3.2
 
 - Added Turkish translations by [WinTone01](https://github.com/WinTone01) ([#28](https://github.com/DeDiamondPro/Resourcify/pull/28))

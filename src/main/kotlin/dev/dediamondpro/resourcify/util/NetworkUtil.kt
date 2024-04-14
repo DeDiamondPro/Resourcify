@@ -15,9 +15,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// decodeFromString import is required on older kotlin versions
-@file:Suppress("unusedImport")
-
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.ModInfo
@@ -27,7 +24,8 @@ import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
 import java.security.KeyStore
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
 import javax.imageio.ImageIO
@@ -87,7 +85,7 @@ object NetworkUtil {
         attempts: Int = 1
     ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
-            supplyAsync({ it })
+            supplyAsync { it }
         } ?: currentlyFetching[url] ?: startFetch(url, attempts)
     }
 
