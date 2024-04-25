@@ -16,7 +16,7 @@
  */
 
 plugins {
-    alias(libs.plugins.kotlin) apply false
+    kotlin("jvm") version "1.9.23" apply false
     alias(libs.plugins.shadow) apply false
     alias(libs.plugins.blossom) apply false
     alias(egt.plugins.multiversionRoot)
@@ -38,6 +38,7 @@ preprocess {
     val fabric11904 = createNode("1.19.4-fabric", 11904, "yarn")
     val fabric12001 = createNode("1.20.1-fabric", 12001, "yarn")
     val fabric12004 = createNode("1.20.4-fabric", 12004, "yarn")
+    val fabric12005 = createNode("1.20.5-fabric", 12005, "yarn")
 
     forge11202.link(forge10809)
     forge11602.link(forge11202, file("versions/1.12.2-forge-1.16.2-forge"))
@@ -53,4 +54,5 @@ preprocess {
     fabric11904.link(fabric11902)
     fabric12001.link(fabric11904)
     fabric12004.link(fabric12001)
+    fabric12005.link(fabric12004)
 }

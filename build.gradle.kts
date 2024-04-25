@@ -25,7 +25,7 @@ import gg.essential.gradle.util.setJvmDefault
 import org.jetbrains.kotlin.com.google.gson.Gson
 
 plugins {
-    alias(libs.plugins.kotlin)
+    kotlin("jvm")
     id(egt.plugins.multiversion.get().pluginId)
     id(egt.plugins.defaults.get().pluginId)
     alias(libs.plugins.shadow)
@@ -112,12 +112,14 @@ val shadeRuntime: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
+    val universalVersion =
+        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+localtest5" else "")
     if (platform.isFabric) {
         val fabricApiVersion: String by project
-        modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
+        // modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${libs.versions.universal.get()}")!!)
+        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
     } else if (platform.isForge) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
@@ -127,7 +129,6 @@ dependencies {
             val kotlinForForgeVersion: String by project
             implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
         }
-        val universalVersion = libs.versions.universal.get()
         shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
             isTransitive = false
         }
@@ -334,7 +335,8 @@ fun getMcVersionStr(): String {
         "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
         "1.19.2" -> "1.19.0-1.19.2"
         "1.20.1" -> "1.20-1.20.1"
-        "1.20.4" -> "1.20.2+"
+        "1.20.4" -> "1.20.2-1.20.4"
+        "1.20.5" -> "1.20.5+"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -348,7 +350,8 @@ fun getInternalMcVersionStr(): String {
         in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
         "1.19.2" -> ">=1.19 <=1.19.2"
         "1.20.1" -> ">=1.20 <=1.20.1"
-        "1.20.4" -> ">=1.20.2"
+        "1.20.4" -> ">=1.20.2 <=1.20.4"
+        "1.20.5" -> ">=1.20.5"
         else -> {
             val dots = project.platform.mcVersionStr.count { it == '.' }
             if (dots == 1) "${project.platform.mcVersionStr}.x"
@@ -368,6 +371,7 @@ fun getMcVersionList(): List<String> {
         "1.19.4" -> listOf("1.19.4")
         "1.20.1" -> listOf("1.20", "1.20.1")
         "1.20.4" -> listOf("1.20.2", "1.20.3", "1.20.4")
+        "1.20.5" -> listOf("1.20.5")
         else -> error("Unknown version")
     }
 }
