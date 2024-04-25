@@ -16,9 +16,8 @@
  */
 
 plugins {
-    kotlin("jvm") version "1.9.23" apply false
+    alias(libs.plugins.kotlin) apply false
     alias(libs.plugins.shadow) apply false
-    alias(libs.plugins.blossom) apply false
     alias(egt.plugins.multiversionRoot)
 }
 
@@ -28,7 +27,7 @@ preprocess {
     val forge11602 = createNode("1.16.2-forge", 11602, "srg")
     val forge11801 = createNode("1.18.2-forge", 11802, "srg")
     val forge11902 = createNode("1.19.2-forge", 11902, "srg")
-    val forge11904 = createNode("1.19.4-forge", 11904, "srg")
+    val forge11904 = createNode("1.19.4-forge", 11904 , "srg")
     val forge12001 = createNode("1.20.1-forge", 12001, "srg")
     val forge12004 = createNode("1.20.4-forge", 12004, "srg")
 

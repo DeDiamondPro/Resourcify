@@ -1,10 +1,9 @@
 [versions]
 # Kotlin
 kotlin = "1.9.23"
-fabric_language_kotlin = "1.10.19+kotlin.1.9.23"
+fabric_language_kotlin = "1.7.1+kotlin.1.6.10"
 
 # Essential Dependencies
-egt = "0.4.1"
 universal = "325"
 elementa = "DIAMOND-6"
 
@@ -21,8 +20,8 @@ minotaur = "2.8.0"
 cursegradle = "1.4.0"
 
 # Misc
-shadow = "7.1.2"
-blossom = "1.3.1"
+shadow = "8.1.1"
+blossom = "2.1.0"
 
 [libraries]
 # Kotlin
@@ -43,11 +42,6 @@ mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 [plugins]
 # Kotlin
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-
-# Essential Gradle Toolkit
-egt_multiversion = { id = "gg.essential.multi-version", version.ref = "egt" }
-egt_multiversion_root = { id = "gg.essential.multi-version.root", version.ref = "egt" }
-egt_defaults = { id = "gg.essential.defaults", version.ref = "egt" }
 
 # Publishing
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }

@@ -18,7 +18,7 @@
 package dev.dediamondpro.resourcify
 
 object ModInfo {
-    const val NAME = "@NAME@"
-    const val ID = "@ID@"
-    const val VERSION = "@VER@"
+    const val NAME = "Resourcify"
+    const val ID = "resourcify"
+    const val VERSION = "1.3.3" // TODO: automatically update this
 }

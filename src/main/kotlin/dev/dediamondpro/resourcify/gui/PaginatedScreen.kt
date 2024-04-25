@@ -40,7 +40,9 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, draw
     }
 
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        //#if MC>=12000
+        //#if MC>=12005
+        //$$ renderDarkening(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
+        //#elseif MC>=12000
         //$$ renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
         //#elseif MC>=11904
         //$$ renderBackgroundTexture(matrixStack.toMC())

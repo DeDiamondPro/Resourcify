@@ -25,11 +25,10 @@ import gg.essential.gradle.util.setJvmDefault
 import org.jetbrains.kotlin.com.google.gson.Gson
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin)
     id(egt.plugins.multiversion.get().pluginId)
     id(egt.plugins.defaults.get().pluginId)
     alias(libs.plugins.shadow)
-    alias(libs.plugins.blossom)
     alias(libs.plugins.minotaur)
     alias(libs.plugins.cursegradle)
 }
@@ -51,12 +50,6 @@ preprocess {
             ".accesswidener" to PreprocessTask.CFG_KEYWORDS
         )
     )
-}
-
-blossom {
-    replaceToken("@NAME@", mod_name)
-    replaceToken("@ID@", mod_id)
-    replaceToken("@VER@", mod_version)
 }
 
 version = mod_version
@@ -113,7 +106,7 @@ dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
     val universalVersion =
-        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+localtest5" else "")
+        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+diamond12005" else "")
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         // modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
