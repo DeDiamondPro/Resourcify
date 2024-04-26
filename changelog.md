@@ -1,16 +1,7 @@
-## Resourcify 1.3.3
+## Resourcify 1.3.4
 
-- Fixed imgur images not loading.
-- (Minecraft 1.8.9-1.16.5) Fixed issues related to the SSL solution in 1.3.2.
-
-----------------------------------------------------------------------------------------------------
-
-## Resourcify 1.3.2
-
-- Added Turkish translations by [WinTone01](https://github.com/WinTone01) ([#28](https://github.com/DeDiamondPro/Resourcify/pull/28))
-- (Minecraft 1.8.9-1.16.5) Fixed SSL certificate errors when fetching some resources due to the java 8 version the Minecraft Launcher ships with not supporting Let's Encrypt certificates.
-
-If you find any issues, please report them on [GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in my [Discord server](https://discord.gg/XtAuqsJWby).
+- Fixed issues when updating the active shader pack with iris 1.7.0
+- 1.20.5 support
 
 ----------------------------------------------------------------------------------------------------
 

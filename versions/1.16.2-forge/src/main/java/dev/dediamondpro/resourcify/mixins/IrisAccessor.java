@@ -1,5 +1,6 @@
 package dev.dediamondpro.resourcify.mixins;
 
+/*
 import net.coderbot.iris.gui.element.ShaderPackSelectionList;
 import net.coderbot.iris.gui.screen.ShaderPackScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,3 +13,4 @@ public interface IrisAccessor {
     @Accessor(remap = false)
     ShaderPackSelectionList getShaderPackList();
 }
+*/

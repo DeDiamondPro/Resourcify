@@ -156,39 +156,44 @@ class UpdateCard(
                 downloadFile,
                 newFile.hashes.sha512, updateUrl
             ) {
-                when (gui.type) {
-                    //#if MC == 10809
-                    ApiInfo.ProjectType.AYCY_RESOURCE_PACK,
+                try {
+                    // Try to update the pack if it is currently selected, not critical if it fails
+                    when (gui.type) {
+                        //#if MC == 10809
+                        ApiInfo.ProjectType.AYCY_RESOURCE_PACK,
                         //#endif
-                    ApiInfo.ProjectType.RESOURCE_PACK -> {
-                        try {
-                            // If multiple threads try to update stuff at the same time things can go very wrong
-                            updateResourcePackLock.lock()
-                            val position = Platform.closeResourcePack(file)
-                            if (position != -1) {
-                                Platform.enableResourcePack(downloadFile, position)
+                        ApiInfo.ProjectType.RESOURCE_PACK -> {
+                            try {
+                                // If multiple threads try to update stuff at the same time things can go very wrong
+                                updateResourcePackLock.lock()
+                                val position = Platform.closeResourcePack(file)
+                                if (position != -1) {
+                                    Platform.enableResourcePack(downloadFile, position)
+                                }
+                                Platform.saveSettings()
+                            } finally {
+                                updateResourcePackLock.unlock()
                             }
-                            Platform.saveSettings()
-                        } finally {
-                            updateResourcePackLock.unlock()
+                        }
+
+                        //#if MC >= 11600
+                        //$$ ApiInfo.ProjectType.IRIS_SHADER -> {
+                        //$$     PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
+                        //$$         if (IrisHandler.getActiveShader(it) == file.name) {
+                        //$$             Window.enqueueRenderOperation{ IrisHandler.applyShaders(it, downloadFile.name) }
+                        //$$         }
+                        //$$     }
+                        //$$ }
+                        //#endif
+
+                        else -> {
+                            // Other types (Optifine shaders) don't have an implementation to update the selected shader
+                            // This is because optifine is a pain to work with and I don't have the motivation to support it
+                            // since optifine is not open source and is a pain to work with
                         }
                     }
-
-                    //#if MC >= 11600
-                    //$$ ApiInfo.ProjectType.IRIS_SHADER -> {
-                    //$$     PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
-                    //$$         if (IrisHandler.getActiveShader(it) == file.name) {
-                    //$$             Window.enqueueRenderOperation{ IrisHandler.applyShaders(it, downloadFile.name) }
-                    //$$         }
-                    //$$     }
-                    //$$ }
-                    //#endif
-
-                    else -> {
-                        // Other types (Optifine shaders) don't have an implementation to update the selected shader
-                        // This is because optifine is a pain to work with and I don't have the motivation to support it
-                        // since optifine is not open source and is a pain to work with
-                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
                 if (!file.delete()) gui.packsToDelete.add(file)
                 gui.removeCard(this)

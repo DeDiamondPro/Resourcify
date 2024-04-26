@@ -23,6 +23,7 @@ import com.replaymod.gradle.preprocess.PreprocessTask
 import gg.essential.gradle.util.noServerRunConfigs
 import gg.essential.gradle.util.setJvmDefault
 import org.jetbrains.kotlin.com.google.gson.Gson
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -109,7 +110,10 @@ dependencies {
         libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+diamond12005" else "")
     if (platform.isFabric) {
         val fabricApiVersion: String by project
-        // modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
+        // Our loom version doesn't support mixin remap thingy, so we can't load it in dev env on newer versions
+        if (platform.mcVersion <= 12001) {
+            modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
+        }
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
@@ -136,13 +140,19 @@ dependencies {
     }
 
     val irisVersion: String by project
-    if (!platform.isLegacyForge) modCompileOnly(
-        if (platform.isFabric) "maven.modrinth:iris:$irisVersion"
-        else "maven.modrinth:oculus:$irisVersion"
-    )
+    // if (!platform.isLegacyForge) modCompileOnly(
+    //     if (platform.isFabric) "maven.modrinth:iris:$irisVersion"
+    //     else "maven.modrinth:oculus:$irisVersion"
+    // )
 }
 
 tasks {
+    withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_6
+            apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_6
+        }
+    }
     processResources {
         inputs.property("id", mod_id)
         inputs.property("name", mod_name)
