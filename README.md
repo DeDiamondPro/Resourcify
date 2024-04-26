@@ -4,17 +4,17 @@
 
 ------------------------------------
 
-![Browse Resource Packs, right from in Minecraft](https://github.com/DeDiamondPro/Resourcify/assets/67508414/b1e0659d-a634-4f98-b413-0c27a99e7e36)
+![Browse Resource Packs, right from in Minecraft](https://github.com/DeDiamondPro/Resourcify/assets/67508414/61ab5d82-a58c-4cea-b0c3-25f808e690fa)
 Resourcify allows you to browse all resource packs, data packs and shaders on modrinth right from in Minecraft!<br>Just open the resource pack GUI and press the plus button in the top right.
 
 ------------------------------------
 
-![Install a Resource Pack with the click of a button](https://github.com/DeDiamondPro/Resourcify/assets/67508414/af1ccd6c-c159-4218-b000-0d2991941d00)
+![Install a Resource Pack with the click of a button](https://github.com/DeDiamondPro/Resourcify/assets/67508414/b1e18d3e-7f04-4a96-a4b9-810173de1dfd)
 Easily view the description, gallery and versions of a pack,<br>when you've found a pack you like you can easily install it with one click!
 
 ------------------------------------
 
-![Group 6](https://github.com/DeDiamondPro/Resourcify/assets/67508414/99437f3e-bbcb-4a8b-b188-ce7a48ee57fb)
+![Update packs easily right within Minecraft](https://github.com/DeDiamondPro/Resourcify/assets/67508414/278c3916-3865-40b4-a730-8ac3f9572e10)
 Easily view available updates and install all of them or just the one you want with one click!
 
 ------------------------------------
