@@ -57,9 +57,12 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, draw
     override fun onTick() {
         if (defaultScale == -1) defaultScale = UMinecraft.guiScale
         val updatedScale = getGuiScale(defaultScale)
-        if (updatedScale != newGuiScale) {
+        if (updatedScale != UResolution.scaleFactor.toInt()) {
             newGuiScale = updatedScale
             updateGuiScale()
+            UMinecraft.guiScale = updatedScale
+            width = UResolution.scaledWidth
+            height = UResolution.scaledHeight
         }
         super.onTick()
     }

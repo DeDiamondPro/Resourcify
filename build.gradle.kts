@@ -107,7 +107,7 @@ dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
     val universalVersion =
-        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+diamond12005" else "")
+        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+diamond.1.20.5" else "")
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         // Our loom version doesn't support mixin remap thingy, so we can't load it in dev env on newer versions
