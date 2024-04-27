@@ -5,7 +5,7 @@ fabric_language_kotlin = "1.7.1+kotlin.1.6.10"
 
 # Essential Dependencies
 universal = "325"
-elementa = "DIAMOND-6"
+elementa = "DIAMOND-7"
 
 # Markdown
 minemark = "1.0.1"
