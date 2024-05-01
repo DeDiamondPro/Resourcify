@@ -20,5 +20,5 @@ package dev.dediamondpro.resourcify
 object ModInfo {
     const val NAME = "Resourcify"
     const val ID = "resourcify"
-    const val VERSION = "1.3.4" // TODO: automatically update this
+    const val VERSION = "1.3.6" // TODO: automatically update this
 }

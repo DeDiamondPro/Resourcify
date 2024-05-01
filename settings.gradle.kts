@@ -61,6 +61,7 @@ listOf(
     "1.20.1-forge",
     "1.20.1-fabric",
     "1.20.4-forge",
+    "1.20.4-neoforge",
     "1.20.4-fabric",
     "1.20.5-neoforge",
     "1.20.5-fabric",

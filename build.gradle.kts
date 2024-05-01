@@ -74,6 +74,10 @@ loom {
         mixinConfig("${project.platform.loaderStr}.mixins.${mod_id}.json")
         mixin.defaultRefmapName.set("forge.mixins.${mod_id}.refmap.json")
     }
+    if (project.platform.isNeoForge) mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName.set("forge.mixins.${mod_id}.refmap.json")
+    }
 }
 
 if (project.platform.mcVersion != 10809) {

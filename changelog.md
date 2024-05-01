@@ -1,13 +1,10 @@
-## Resourcify 1.3.5
+## Resourcify 1.3.6
 
-- Fix crash when searching in Minecraft 1.20.5 ([#30](https://github.com/DeDiamondPro/Resourcify/issues/30))
-
-----------------------------------------------------------------------------------------------------
-
-## Resourcify 1.3.4
-
-- Fixed issues when updating the active shader pack with iris 1.7.0
-- 1.20.5 support
+- Add Korean translations by [Koala0107](https://github.com/Koala0107) ([#31](https://github.com/DeDiamondPro/Resourcify/pull/31))
+- Add support for NeoForge 1.20.2-1.20.6
+- Fix buttons not being aligned to the resource pack list on 1.20.5+
+- Fix an access widener issue causing updating the active pack on Forge 1.20.4 to fail
+- Fix Minecraft 1.12.2 version trying to load a Minecraft 1.8.9 only mixin
 
 ----------------------------------------------------------------------------------------------------
 

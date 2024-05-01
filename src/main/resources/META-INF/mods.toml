@@ -21,3 +21,6 @@ type = "required"
 versionRange = "${forgeMcVersion}"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "forge.mixins.resourcify.json"
