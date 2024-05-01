@@ -23,8 +23,10 @@ pluginManagement {
         maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
         maven("https://repo.essential.gg/repository/maven-public")
+        maven("https://maven.dediamondpro.dev/releases/")
+        mavenLocal()
     }
-    val egtVersion = "0.4.1"
+    val egtVersion = "0.5.0+neoforge1"
     plugins {
         id("gg.essential.multi-version.root") version egtVersion
     }
@@ -60,6 +62,7 @@ listOf(
     "1.20.1-fabric",
     "1.20.4-forge",
     "1.20.4-fabric",
+    "1.20.5-neoforge",
     "1.20.5-fabric",
 ).forEach { version ->
     include(":$version")

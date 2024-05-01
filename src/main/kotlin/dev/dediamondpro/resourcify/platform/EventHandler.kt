@@ -17,21 +17,26 @@
 
 package dev.dediamondpro.resourcify.platform
 
-//#if FORGE==1 && MODERN == 1
+//#if FORGELIKE==1 && MODERN == 1
 //$$ import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition
 //$$ import dev.dediamondpro.resourcify.platform.Platform
-//$$ import net.minecraftforge.eventbus.api.EventPriority
-//$$ import net.minecraftforge.eventbus.api.SubscribeEvent
 //$$
+//$$ //#if FORGE == 1
+//$$ import net.minecraftforge.eventbus.api.SubscribeEvent
 //$$ //#if MC <= 11800
 //$$ import net.minecraftforge.client.event.GuiScreenEvent
 //$$ //#else
 //$$ //$$ import net.minecraftforge.client.event.ScreenEvent
 //$$ //#endif
+//$$ //#elseif NEOFORGE == 1
+//$$ //$$ import net.neoforged.bus.api.SubscribeEvent
+//$$ //$$ import net.neoforged.neoforge.client.event.ScreenEvent
+//$$ //#endif
+//$$
 //$$
 //$$ object EventHandler {
 //$$
-//$$     @SubscribeEvent(priority = EventPriority.HIGHEST)
+//$$     @SubscribeEvent
 //$$     fun onMouseClicked(
 //$$        event:
 //$$        //#if MC <= 11800

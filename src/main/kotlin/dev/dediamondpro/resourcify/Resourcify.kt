@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-//#if FORGE == 1
+//#if FORGELIKE == 1
 
 package dev.dediamondpro.resourcify
 
@@ -23,10 +23,19 @@ package dev.dediamondpro.resourcify
 import net.minecraftforge.fml.common.Mod
 //#else
 //$$ import dev.dediamondpro.resourcify.platform.EventHandler
-//$$ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-//$$ import thedarkcolour.kotlinforforge.forge.MOD_BUS
+
+//#endif
+
+//#if NEOFORGE == 1 && MODERN == 1
+//$$ import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
+//$$ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
+//$$ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+//$$ import net.neoforged.fml.common.Mod
+//#elseif FORGE == 1 && MODERN == 1
 //$$ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 //$$ import net.minecraftforge.fml.common.Mod
+//$$ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
+//$$ import thedarkcolour.kotlinforforge.forge.MOD_BUS
 //#endif
 
 //#if MODERN == 0

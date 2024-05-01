@@ -72,12 +72,8 @@ loom {
     }
     if (project.platform.isForge) forge {
         mixinConfig("${project.platform.loaderStr}.mixins.${mod_id}.json")
-        if (project.platform.mcVersion >= 12004) {
-            convertAccessWideners = true
-        }
+        mixin.defaultRefmapName.set("forge.mixins.${mod_id}.refmap.json")
     }
-
-    mixin.defaultRefmapName.set("${project.platform.loaderStr}.mixins.${mod_id}.refmap.json")
 }
 
 if (project.platform.mcVersion != 10809) {
@@ -91,6 +87,7 @@ repositories {
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://repo.spongepowered.org/maven/")
     maven("https://api.modrinth.com/maven")
+    maven("https://maven.neoforged.net/releases/")
     mavenCentral()
     mavenLocal()
 }
@@ -106,8 +103,11 @@ val shadeRuntime: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val universalVersion =
-        libs.versions.universal.get() + (if (project.platform.mcVersion == 12005) "+diamond.1.20.5" else "")
+    val universalVersion = libs.versions.universal.get() + when {
+        project.platform.mcVersion == 12005 && platform.isFabric -> "+diamond.1.20.5"
+        project.platform.isNeoForge -> "+diamond.neoforge"
+        else -> ""
+    }
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         // Our loom version doesn't support mixin remap thingy, so we can't load it in dev env on newer versions
@@ -117,14 +117,18 @@ dependencies {
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
-    } else if (platform.isForge) {
+    } else if (platform.isForgeLike) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
             shade(libs.mixin) { isTransitive = false }
             annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
         } else {
             val kotlinForForgeVersion: String by project
-            implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
+            if (platform.isNeoForge) {
+                implementation("thedarkcolour:kotlinforforge-neoforge:$kotlinForForgeVersion")
+            } else {
+                implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
+            }
         }
         shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
             isTransitive = false
@@ -166,7 +170,7 @@ tasks {
         inputs.property("java_level", compatLevel)
         inputs.property("version", mod_version)
         inputs.property("mcVersionStr", project.platform.mcVersionStr)
-        filesMatching(listOf("mcmod.info", "mods.toml", "fabric.mod.json")) {
+        filesMatching(listOf("mcmod.info", "META-INF/mods.toml", "META-INF/neoforge.mods.toml", "fabric.mod.json")) {
             expand(
                 mapOf(
                     "id" to mod_id,
@@ -189,6 +193,13 @@ tasks {
         if (project.platform.mcMinor > 16) {
             exclude("ssl/*")
         }
+
+        if (!project.platform.isFabric) exclude("fabric.mod.json", "fabric.mixins.${mod_id}.json")
+        if (!project.platform.isLegacyForge) exclude("mcmod.info")
+        if (project.platform.isLegacyForge) exclude("resourcify.accesswidener")
+        if (!platform.isModLauncher) exclude("pack.mcmeta")
+        if (!platform.isForge && (!platform.isNeoForge || platform.mcVersion >= 12005)) exclude("META-INF/mods.toml")
+        if (!platform.isNeoForge || platform.mcVersion < 12005) exclude("META-INF/neoforge.mods.toml")
     }
     register("generateLangFiles") {
         val gson = Gson()
@@ -220,23 +231,13 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         exclude("META-INF/versions/9/**")
-        if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml", "pack.mcmeta", "forge.mixins.${mod_id}.json")
-        } else {
-            exclude("fabric.mod.json", "fabric.mixins.${mod_id}.json")
-            if (project.platform.isLegacyForge) {
-                exclude("mods.toml", "pack.mcmeta", "resourcify.accesswidener")
-            } else {
-                exclude("mcmod.info")
-            }
-        }
 
         mergeServiceFiles()
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
-        if (platform.isForge) {
+        if (platform.isForgeLike) {
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
     }
@@ -245,6 +246,9 @@ tasks {
         archiveClassifier.set("")
         finalizedBy("copyJar")
         archiveFileName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})-${mod_version}.jar")
+        if (platform.isForgeLike && platform.mcVersion >= 12004) {
+            atAccessWideners.add("resourcify.accesswidener")
+        }
     }
     jar {
         if (project.platform.isLegacyForge) {
