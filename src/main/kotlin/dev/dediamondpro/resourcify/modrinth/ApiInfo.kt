@@ -38,7 +38,12 @@ object ApiInfo {
         val projectType: String,
         val searchFacet: String,
         val loader: String,
-        val plusX: XConstraint = CenterConstraint() + 194.pixels(),
+        val plusX: XConstraint = CenterConstraint()
+                //#if MC >= 12005
+                //$$ + 205.pixels(),
+                //#else
+                + 194.pixels(),
+                //#endif
         val plusY: YConstraint = 10.pixels(),
         val hasUpdateButton: Boolean = true
     ) {
