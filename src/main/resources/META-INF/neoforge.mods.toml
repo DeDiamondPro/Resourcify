@@ -13,5 +13,12 @@ description = "In-game resource pack, data pack and shader browser"
 logoFile = "icon.png"
 displayTest = "IGNORE_ALL_VERSION"
 
+[[dependencies.resourcify]]
+modId = "minecraft"
+type = "required"
+versionRange = "${forgeMcVersion}"
+ordering = "NONE"
+side = "BOTH"
+
 [[mixins]]
 config = "forge.mixins.resourcify.json"

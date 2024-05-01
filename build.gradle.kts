@@ -160,25 +160,17 @@ tasks {
     processResources {
         inputs.property("id", mod_id)
         inputs.property("name", mod_name)
-        val java = if (project.platform.mcMinor >= 18) {
-            17
-        } else {
-            if (project.platform.mcMinor == 17) 16 else 8
-        }
-        val compatLevel = "JAVA_${java}"
-        inputs.property("java", java)
-        inputs.property("java_level", compatLevel)
         inputs.property("version", mod_version)
-        inputs.property("mcVersionStr", project.platform.mcVersionStr)
+        inputs.property("fabricMcVersion", getFabricMcVersionRange())
+        inputs.property("forgeMcVersion", getForgeMcVersionRange())
         filesMatching(listOf("mcmod.info", "META-INF/mods.toml", "META-INF/neoforge.mods.toml", "fabric.mod.json")) {
             expand(
                 mapOf(
                     "id" to mod_id,
                     "name" to mod_name,
-                    "java" to java,
-                    "java_level" to compatLevel,
                     "version" to mod_version,
-                    "mcVersionStr" to getInternalMcVersionStr()
+                    "fabricMcVersion" to getFabricMcVersionRange(),
+                    "forgeMcVersion" to getForgeMcVersionRange(),
                 )
             )
         }
@@ -198,6 +190,7 @@ tasks {
         if (!project.platform.isLegacyForge) exclude("mcmod.info")
         if (project.platform.isLegacyForge) exclude("resourcify.accesswidener")
         if (!platform.isModLauncher) exclude("pack.mcmeta")
+        if (!platform.isForgeLike) exclude("forge.mixins.${mod_id}.json")
         if (!platform.isForge && (!platform.isNeoForge || platform.mcVersion >= 12005)) exclude("META-INF/mods.toml")
         if (!platform.isNeoForge || platform.mcVersion < 12005) exclude("META-INF/neoforge.mods.toml")
     }
@@ -245,7 +238,7 @@ tasks {
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
         finalizedBy("copyJar")
-        archiveFileName.set("$mod_name (${getMcVersionStr()}-${platform.loaderStr})-${mod_version}.jar")
+        archiveFileName.set("$mod_name (${getPrettyVersionRange()}-${platform.loaderStr})-${mod_version}.jar")
         if (platform.isForgeLike && platform.mcVersion >= 12004) {
             atAccessWideners.add("resourcify.accesswidener")
         }
@@ -277,21 +270,23 @@ tasks {
         token.set(System.getenv("MODRINTH_TOKEN"))
         projectId.set("resourcify")
         versionNumber.set(mod_version)
-        versionName.set("[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version")
+        versionName.set("[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version")
         uploadFile.set(remapJar.get().archiveFile as Any)
-        gameVersions.addAll(getMcVersionList())
+        gameVersions.addAll(getSupportedVersionList())
         if (platform.isFabric) {
             loaders.add("fabric")
             loaders.add("quilt")
         } else if (platform.isForge) {
             loaders.add("forge")
-            if (platform.mcMinor == 20 && platform.mcPatch == 1) loaders.add("neoforge")
+            if (platform.mcVersion == 12001) loaders.add("neoforge")
+        } else if (platform.isNeoForge) {
+            loaders.add("neoforge")
         }
         changelog.set(file("../../changelog.md").readText())
         dependencies {
-            if (platform.isForge && !platform.isLegacyForge) {
+            if (platform.isForgeLike && !platform.isLegacyForge) {
                 required.project("kotlin-for-forge")
-            } else if (!platform.isLegacyForge) {
+            } else if (platform.isFabric) {
                 required.project("fabric-api")
                 required.project("fabric-language-kotlin")
             }
@@ -304,24 +299,26 @@ tasks {
             changelog = file("../../changelog.md")
             changelogType = "markdown"
             if (!platform.isLegacyForge) relations(closureOf<CurseRelation> {
-                if (platform.isForge && !platform.isLegacyForge) {
+                if (platform.isForgeLike && !platform.isLegacyForge) {
                     requiredDependency("kotlin-for-forge")
-                } else if (!platform.isLegacyForge) {
+                } else if (platform.isFabric) {
                     requiredDependency("fabric-api")
                     requiredDependency("fabric-language-kotlin")
                 }
             })
-            gameVersionStrings.addAll(getMcVersionList())
+            gameVersionStrings.addAll(getSupportedVersionList())
             if (platform.isFabric) {
                 addGameVersion("Fabric")
                 addGameVersion("Quilt")
             } else if (platform.isForge) {
                 addGameVersion("Forge")
-                if (platform.mcMinor >= 20) addGameVersion("NeoForge")
+                if (platform.mcVersion == 12001) addGameVersion("NeoForge")
+            } else if (platform.isNeoForge) {
+                addGameVersion("NeoForge")
             }
             releaseType = "release"
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
-                displayName = "[${getMcVersionStr()}-${platform.loaderStr}] Resourcify $mod_version"
+                displayName = "[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version"
             })
         })
         options(closureOf<Options> {
@@ -336,49 +333,56 @@ tasks {
     }
 }
 
-fun getMcVersionStr(): String {
-    return when (project.platform.mcVersionStr) {
-        in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
-        "1.18.2" -> if (platform.isFabric) "1.18.x" else "1.18.2"
-        "1.19.2" -> "1.19.0-1.19.2"
-        "1.20.1" -> "1.20-1.20.1"
-        "1.20.4" -> "1.20.2-1.20.4"
-        "1.20.5" -> "1.20.5+"
-        else -> {
-            val dots = project.platform.mcVersionStr.count { it == '.' }
-            if (dots == 1) "${project.platform.mcVersionStr}.x"
-            else "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
-        }
+// Function to get the range of mc versions supported by a version we are building for.
+// First value is start of range, second value is end of range or null to leave the range open
+fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion) {
+    12005 -> "1.20.5" to null
+    12004 -> "1.20.2" to "1.20.4"
+    12001 -> "1.20" to "1.20.1"
+    11904 -> "1.19.4" to "1.19.4"
+    11902 -> "1.19" to "1.19.2"
+    11802 -> (if (platform.isForge) "1.18.2" else "1.18") to "1.18.2"
+    11602 -> "1.16" to "1.16.5"
+    11202 -> "1.12.2" to "1.12.2"
+    10809 -> "1.8.9" to "1.8.9"
+    else -> error("Undefined version range for ${platform.mcVersion}")
+}
+
+fun getPrettyVersionRange(): String {
+    val supportedVersionRange = getSupportedVersionRange()
+    return when {
+        supportedVersionRange.first == supportedVersionRange.second -> supportedVersionRange.first
+        listOf("1.16", "1.18").contains(supportedVersionRange.first) -> "${supportedVersionRange.first}.x"
+        else -> "${supportedVersionRange.first}${supportedVersionRange.second?.let { "-$it" } ?: "+"}"
     }
 }
 
-fun getInternalMcVersionStr(): String {
-    return when (project.platform.mcVersionStr) {
-        in listOf("1.8.9", "1.12.2", "1.19.4") -> project.platform.mcVersionStr
-        "1.19.2" -> ">=1.19 <=1.19.2"
-        "1.20.1" -> ">=1.20 <=1.20.1"
-        "1.20.4" -> ">=1.20.2 <=1.20.4"
-        "1.20.5" -> ">=1.20.5"
-        else -> {
-            val dots = project.platform.mcVersionStr.count { it == '.' }
-            if (dots == 1) "${project.platform.mcVersionStr}.x"
-            else "${project.platform.mcVersionStr.substringBeforeLast(".")}.x"
-        }
-    }
+fun getFabricMcVersionRange(): String {
+    val supportedVersionRange = getSupportedVersionRange()
+    return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"
 }
 
-fun getMcVersionList(): List<String> {
-    return when (project.platform.mcVersionStr) {
-        "1.8.9" -> listOf("1.8.9")
-        "1.12.2" -> listOf("1.12.2")
-        "1.16.2" -> listOf("1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5")
-        "1.17.1" -> listOf("1.17", "1.17.1")
-        "1.18.2" -> if (platform.isFabric) listOf("1.18", "1.18.1", "1.18.2") else listOf("1.18.2")
-        "1.19.2" -> listOf("1.19", "1.19.1", "1.19.2")
-        "1.19.4" -> listOf("1.19.4")
-        "1.20.1" -> listOf("1.20", "1.20.1")
-        "1.20.4" -> listOf("1.20.2", "1.20.3", "1.20.4")
-        "1.20.5" -> listOf("1.20.5")
-        else -> error("Unknown version")
+fun getForgeMcVersionRange(): String {
+    val supportedVersionRange = getSupportedVersionRange()
+    return "[${supportedVersionRange.first},${supportedVersionRange.second?.let { "$it]" } ?: ")"}"
+}
+
+fun getSupportedVersionList(): List<String> {
+    val supportedVersionRange = getSupportedVersionRange()
+    return when (supportedVersionRange.first) {
+        "1.20.5" -> listOf("1.20.5", "1.20.6")
+        else -> {
+            val start = supportedVersionRange.first.let {
+                if (it.count { c -> c == '.' } == 1) 0 else it.substringAfterLast(".").toInt()
+            }
+            val end = supportedVersionRange.second!!.let {
+                if (it.count { c -> c == '.' } == 1) 0 else it.substringAfterLast(".").toInt()
+            }
+            val versions = mutableListOf<String>()
+            for (i in start..end) {
+                versions.add("${supportedVersionRange.first.substringBeforeLast(".")}.$i")
+            }
+            versions
+        }
     }
 }

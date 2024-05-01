@@ -13,3 +13,10 @@ description = "In-game resource pack, data pack and shader browser"
 logoFile = "icon.png"
 updateJSONURL = "https://api.modrinth.com/updates/resourcify/forge_updates.json"
 displayTest = "IGNORE_ALL_VERSION"
+
+[[dependencies.resourcify]]
+modId = "minecraft"
+type = "required"
+versionRange = "${forgeMcVersion}"
+ordering = "NONE"
+side = "BOTH"

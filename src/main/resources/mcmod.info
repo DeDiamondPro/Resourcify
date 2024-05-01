@@ -4,7 +4,6 @@
 	"name": "${name}",
 	"description": "In-game resource pack, data pack and shader browser",
 	"version": "${version}",
-	"mcversion": "${mcVersionStr}",
 	"url": "https://modrinth.com/mod/resourcify",
 	"updateUrl": "https://modrinth.com/mod/resourcify",
 	"authorList": [
