@@ -31,7 +31,7 @@ import kotlin.math.floor
 //$$ import net.minecraft.client.gui.DrawContext
 //#endif
 
-abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V2, drawDefaultBackground = false) {
+abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, drawDefaultBackground = false) {
     private var defaultScale = -1
 
     init {

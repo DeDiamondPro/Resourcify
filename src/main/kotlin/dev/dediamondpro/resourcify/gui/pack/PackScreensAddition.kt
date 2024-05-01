@@ -44,7 +44,7 @@ import java.io.File
 //#endif
 
 object PackScreensAddition {
-    private val window = Window(ElementaVersion.V2)
+    private val window = Window(ElementaVersion.V5)
 
     private val addButton = MinecraftButton().constrain {
         x = CenterConstraint() + 194.pixels()
