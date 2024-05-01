@@ -376,6 +376,9 @@ fun getSupportedVersionList(): List<String> {
     return when (supportedVersionRange.first) {
         "1.20.5" -> listOf("1.20.5", "1.20.6")
         else -> {
+            val minorVersion = supportedVersionRange.first.let {
+                if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")
+            }
             val start = supportedVersionRange.first.let {
                 if (it.count { c -> c == '.' } == 1) 0 else it.substringAfterLast(".").toInt()
             }
@@ -384,7 +387,7 @@ fun getSupportedVersionList(): List<String> {
             }
             val versions = mutableListOf<String>()
             for (i in start..end) {
-                versions.add("${supportedVersionRange.first.substringBeforeLast(".")}.$i")
+                versions.add("$minorVersion${if (i == 0) "" else ".$i"}")
             }
             versions
         }
