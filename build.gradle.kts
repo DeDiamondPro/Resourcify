@@ -363,11 +363,13 @@ fun getPrettyVersionRange(): String {
 
 fun getFabricMcVersionRange(): String {
     val supportedVersionRange = getSupportedVersionRange()
+    if (supportedVersionRange.first == supportedVersionRange.second) return supportedVersionRange.first
     return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"
 }
 
 fun getForgeMcVersionRange(): String {
     val supportedVersionRange = getSupportedVersionRange()
+    if (supportedVersionRange.first == supportedVersionRange.second) return "[${supportedVersionRange.first}]"
     return "[${supportedVersionRange.first},${supportedVersionRange.second?.let { "$it]" } ?: ")"}"
 }
 

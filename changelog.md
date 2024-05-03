@@ -1,3 +1,7 @@
+## Resourcify 1.3.6.1
+
+- Fix improper version limits for Forge 1.18.2 and 1.19.4 ([#32](https://github.com/DeDiamondPro/Resourcify/issues/32))
+
 ## Resourcify 1.3.6
 
 - Add Korean translations by [Koala0107](https://github.com/Koala0107) ([#31](https://github.com/DeDiamondPro/Resourcify/pull/31))
