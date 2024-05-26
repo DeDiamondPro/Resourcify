@@ -19,7 +19,7 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
-import dev.dediamondpro.resourcify.modrinth.GalleryResponse
+import dev.dediamondpro.resourcify.services.IGalleryImage
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIImage
@@ -32,7 +32,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.UKeyboard
 import java.awt.Color
 
-class GalleryCard(gallery: GalleryResponse) : UIBlock(color = Color(0, 0, 0, 100)) {
+class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100)) {
     init {
         constrain {
             x = 0.pixels()
@@ -70,13 +70,13 @@ class GalleryCard(gallery: GalleryResponse) : UIBlock(color = Color(0, 0, 0, 100
             width = 100.percent()
             height = ImageAspectConstraint()
         } childOf this
-        if (gallery.title != null) UIWrappedText(gallery.title).constrain {
+        if (!gallery.title.isNullOrBlank()) UIWrappedText(gallery.title ?: "").constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
             textScale = 1.5.pixels()
         } childOf this
-        if (gallery.description != null) UIWrappedText(gallery.description).constrain {
+        if (!gallery.description.isNullOrBlank()) UIWrappedText(gallery.description ?: "").constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()

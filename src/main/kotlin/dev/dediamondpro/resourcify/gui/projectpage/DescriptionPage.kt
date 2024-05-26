@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.gui.projectpage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.util.markdown
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import java.awt.Color
@@ -32,12 +33,14 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
             width = 100.percent()
             height = ChildLocationSizeConstraint() + 6.pixels()
         }
-        screen.project.get()?.let { project ->
-            markdown(project.body).constrain {
-                x = 6.pixels()
-                y = 6.pixels()
-                width = 100.percent() - 12.pixels()
-            } childOf this
+        screen.project.getDescription().thenAccept {
+            Window.enqueueRenderOperation {
+                markdown(it).constrain {
+                    x = 6.pixels()
+                    y = 6.pixels()
+                    width = 100.percent() - 12.pixels()
+                } childOf this
+            }
         }
     }
 }

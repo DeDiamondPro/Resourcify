@@ -20,12 +20,10 @@ package dev.dediamondpro.resourcify.mixins;
 //#if FABRIC==1
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
-import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import dev.dediamondpro.resourcify.platform.Platform;
+import dev.dediamondpro.resourcify.services.ProjectType;
 import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.pack.PackScreen;
-import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +35,7 @@ public interface ParentElementMixin {
     default void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (!(this instanceof Screen)) return;
         String title = Platform.INSTANCE.getTranslateKey((Screen) this);
-        ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
+        ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
         PackScreensAddition.INSTANCE.onMouseClick(mouseX, mouseY, button, type, type.getDirectory((Screen) this));
     }

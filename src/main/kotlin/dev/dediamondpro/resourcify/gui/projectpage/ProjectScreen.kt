@@ -19,16 +19,18 @@ package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
-import dev.dediamondpro.minemark.elementa.util.ElementaBrowserProvider
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
+import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
-import dev.dediamondpro.resourcify.modrinth.*
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.IProject
+import dev.dediamondpro.resourcify.services.IService
+import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
@@ -44,16 +46,11 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 class ProjectScreen(
-    private val projectLimited: ProjectObject,
-    val type: ApiInfo.ProjectType,
+    val service: IService,
+    val project: IProject,
+    val type: ProjectType,
     val downloadFolder: File
 ) : PaginatedScreen() {
-    val project = URL("${ApiInfo.API}/project/${projectLimited.slug}").getJsonAsync<ProjectResponse>()
-    val versions = URL("${ApiInfo.API}/project/${projectLimited.slug}/version").getJsonAsync<List<Version>>()
-    private val members: CompletableFuture<List<Member>?> =
-        URL("${ApiInfo.API}/project/${projectLimited.slug}/members").getJsonAsync<List<Member>>().thenApply {
-            it?.sortedBy { member -> member.ordering }
-        }
     val packHashes: CompletableFuture<List<String>> = supplyAsync {
         PackUtils.getPackHashes(downloadFolder)
     }
@@ -98,18 +95,34 @@ class ProjectScreen(
             height = 29.pixels()
         } childOf mainBox
 
-        versions.thenAccept { versions ->
+        // If the project can not be installed by resourcify (because, for example, redistribution is disabled on cf)
+        // a link to the website will be displayed
+        if (!project.canBeInstalled()) {
+            val text = UIText("${ChatColor.BOLD}${localize("resourcify.version.install")}").constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+            }
+            val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+                x = 6.pixels(true)
+                y = CenterConstraint()
+                width = basicWidthConstraint { text.getWidth() + 8f }
+                height = 18.pixels()
+            }.onMouseClick {
+                displayScreen(ConfirmLinkScreen(project.getBrowserUrl(), this@ProjectScreen, true))
+            } childOf navigationBox
+            text childOf downloadButton
+        } else project.getVersions().thenAccept { versions ->
             if (versions == null) return@thenAccept
-            val versionToDownload = versions.firstOrNull {
-                it.gameVersions.contains(Platform.getMcVersion()) && it.loaders.contains(type.loader)
+            val version = versions.firstOrNull {
+                it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
-            val fileToDownload = versionToDownload.files.firstOrNull {
-                it.primary
-            } ?: versionToDownload.files.firstOrNull() ?: return@thenAccept
-            val url = URL(fileToDownload.url)
-            var installed = packHashes.get().contains(fileToDownload.hashes.sha512)
+            println(version.getLoaders())
+            val url = version.getDownloadUrl().toURL()
+            var installed = packHashes.get().contains(version.getSha1())
             val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
-            else "${ChatColor.BOLD}${localize("resourcify.version.install_version", versionToDownload.versionNumber)}"
+            else version.getVersionNumber()?.let {
+                "${ChatColor.BOLD}${localize("resourcify.version.install_version", it)}"
+            } ?: "${ChatColor.BOLD}${localize("resourcify.version.install")}"
             Window.enqueueRenderOperation {
                 var progressBox: UIBlock? = null
                 var text: UIText? = null
@@ -123,8 +136,8 @@ class ProjectScreen(
                     if (DownloadManager.getProgress(url) == null) {
                         text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
                         DownloadManager.download(
-                            File(downloadFolder, fileToDownload.fileName),
-                            fileToDownload.hashes.sha512, url
+                            File(downloadFolder, version.getFileName()),
+                            version.getSha1(), url
                         ) {
                             text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                             installed = true
@@ -133,9 +146,9 @@ class ProjectScreen(
                     } else {
                         DownloadManager.cancelDownload(url)
                         text?.setText(
-                            "${ChatColor.BOLD}${
-                                localize("resourcify.version.install_version", versionToDownload.versionNumber)
-                            }"
+                            version.getVersionNumber()?.let { versionNumber ->
+                                "${ChatColor.BOLD}${localize("resourcify.version.install_version", versionNumber)}"
+                            } ?: "${ChatColor.BOLD}${localize("resourcify.version.install")}"
                         )
                     }
                 } childOf navigationBox
@@ -158,38 +171,33 @@ class ProjectScreen(
 
         var currentPage: (ProjectScreen) -> UIComponent = ::DescriptionPage
         val loadedPages = mutableMapOf<(ProjectScreen) -> UIComponent, UIComponent>()
-        project.thenAccept { projects ->
-            if (projects == null) return@thenAccept
-            loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox
-        }
-        mapOf<String, (ProjectScreen) -> UIComponent>(
-            "resourcify.project.description".localize() to ::DescriptionPage,
-            "resourcify.project.gallery".localize() to ::GalleryPage,
-            "resourcify.project.versions".localize() to ::VersionsPage
-        ).forEach { (text, page) ->
-            if (text == "resourcify.project.gallery".localize() && projectLimited.gallery.isEmpty()) return@forEach
+        loadedPages[::DescriptionPage] = DescriptionPage(this) childOf mainBox
+        val pages = mutableMapOf<String, (ProjectScreen) -> UIComponent>()
+        pages["resourcify.project.description".localize()] = ::DescriptionPage
+        if (project.hasGallery()) pages["resourcify.project.gallery".localize()] = ::GalleryPage
+        if (project.canBeInstalled()) pages["resourcify.project.versions".localize()] = ::VersionsPage
+        pages.forEach { (text, page) ->
             UIText("${ChatColor.BOLD}$text").constrain {
                 x = if (text == "resourcify.project.description".localize()) 6.pixels()
                 else SiblingConstraint(padding = 8f)
                 y = CenterConstraint()
             }.onMouseClick {
-                if (page == currentPage || !project.isDone || !versions.isDone || it.mouseButton != 0) return@onMouseClick
+                if (page == currentPage || it.mouseButton != 0) return@onMouseClick
                 currentPage = page
-                loadedPages.forEach { page -> page.value.hide() }
+                loadedPages.forEach { (_, page) -> page.hide() }
                 loadedPages.getOrPut(page) {
                     page(this@ProjectScreen) childOf mainBox
                 }.unhide()
             } childOf navigationBox
         }
-        TextIcon("${ChatColor.BOLD}${localize("resourcify.project.modrinth")}", Icons.EXTERNAL_LINK).constrain {
+        TextIcon("${ChatColor.BOLD}${service.getName().localize()}", Icons.EXTERNAL_LINK).constrain {
             x = SiblingConstraint(padding = 8f)
             y = CenterConstraint()
             width = ChildLocationSizeConstraint()
             height = ChildBasedMaxSizeConstraint()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            println(projectLimited.browserUrl)
-            UDesktop.browse(URI(projectLimited.browserUrl))
+            UDesktop.browse(URI(project.getBrowserUrl()))
         } childOf navigationBox
     }
 
@@ -207,52 +215,58 @@ class ProjectScreen(
             width = 160.pixels()
             height = ChildBasedSizeConstraint() + 4.pixels()
         } childOf sideContainer
-        val bannerUrl = projectLimited.featuredGallery
+        val bannerUrl = project.getBannerUrl()
         if (bannerUrl != null) UIImage.ofURL(bannerUrl, false).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
             height = ImageAspectConstraint()
         } childOf sideBox
-        (if (projectLimited.iconUrl.isNullOrBlank()) UIImage.ofResource("/assets/resourcify/pack.png")
-        else UIImage.ofURL(projectLimited.iconUrl))
+        val iconUrl = project.getIconUrl()
+        (if (iconUrl.isNullOrBlank()) UIImage.ofResource("/assets/resourcify/pack.png")
+        else UIImage.ofURL(iconUrl))
             .constrain {
                 x = 4.pixels()
                 y = SiblingConstraint(padding = 4f)
                 width = 64.pixels()
                 height = 64.pixels()
             } childOf sideBox
-        UIWrappedText(projectLimited.title).constrain {
+        UIWrappedText(project.getName()).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 152.pixels()
             textScale = 1.5.pixels()
         } childOf sideBox
-        UIWrappedText(projectLimited.description).constrain {
+        UIWrappedText(project.getSummary()).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 152.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf sideBox
-        UIText("resourcify.project.categories".localize()).constrain {
+
+        val categoryHolder = UIContainer().constrain {
             x = 4.pixels()
-            y = SiblingConstraint(padding = 8f)
-            color = Color.LIGHT_GRAY.toConstraint()
+            y = SiblingConstraint()
+            width = 100.percent()
+            height = ChildLocationSizeConstraint()
         } childOf sideBox
-        projectLimited.categories.forEach {
-            UIText(
-                "- ${
-                    localizeOrDefault(
-                        "resourcify.categories.${projectLimited.projectType}.${
-                            it.lowercase().replace(" ", "_")
-                        }", it.capitalizeAll()
-                    )
-                }"
-            ).constrain {
-                x = 4.pixels()
-                y = SiblingConstraint(padding = 2f)
-                color = Color.LIGHT_GRAY.toConstraint()
-            } childOf sideBox
+        project.getCategories().thenAccept {
+            if (it.isEmpty()) return@thenAccept
+            Window.enqueueRenderOperation {
+                categoryHolder.constrain { y = SiblingConstraint(padding = 8f) }
+                UIText("resourcify.project.categories".localize()).constrain {
+                    x = 0.pixels()
+                    y = 0.pixels()
+                    color = Color.LIGHT_GRAY.toConstraint()
+                } childOf categoryHolder
+                it.forEach { category ->
+                    UIText("- ${category.capitalizeAll()}").constrain {
+                        x = 0.pixels()
+                        y = SiblingConstraint(padding = 2f)
+                        color = Color.LIGHT_GRAY.toConstraint()
+                    } childOf categoryHolder
+                }
+            }
         }
         val externalResourcesBox = UIContainer().constrain {
             x = 0.pixels()
@@ -260,40 +274,28 @@ class ProjectScreen(
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf sideBox
-        project.thenAccept { project ->
-            if (project == null) return@thenAccept
-            val links = mutableListOf<String>()
-            with(links) {
-                if (project.issuesUrl != null) add("[${localize("resourcify.project.issues")}](${project.issuesUrl})")
-                if (project.sourceUrl != null) add("[${localize("resourcify.project.source")}](${project.sourceUrl})")
-                if (project.wikiUrl != null) add("[${localize("resourcify.project.wiki")}](${project.wikiUrl})")
-                if (project.discordUrl != null) add("[${localize("resourcify.project.discord")}](${project.discordUrl})")
-                addAll(project.donationUrls.map { "[${it.platform}](${it.url})" })
-            }
+        project.getExternalLinks().thenAccept {
+            if (it.isEmpty()) return@thenAccept
             Window.enqueueRenderOperation {
-                if (links.isNotEmpty()) {
-                    externalResourcesBox.constrain { y = SiblingConstraint(padding = 8f) }
-                    UIText("resourcify.project.external_resources".localize()).constrain {
-                        x = 4.pixels()
-                        y = 0.pixels()
-                        color = Color.LIGHT_GRAY.toConstraint()
-                    } childOf externalResourcesBox
-                    markdown(
-                        links.joinToString(" ● "),
-                        style = MarkdownStyle(
-                            textStyle = MarkdownTextStyle(
-                                1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
-                            ),
-                            linkStyle = LinkStyleConfig(Color.LIGHT_GRAY, ElementaBrowserProvider)
+                externalResourcesBox.constrain { y = SiblingConstraint(padding = 8f) }
+                UIText("resourcify.project.external_resources".localize()).constrain {
+                    x = 4.pixels()
+                    y = 0.pixels()
+                    color = Color.LIGHT_GRAY.toConstraint()
+                } childOf externalResourcesBox
+                markdown(
+                    it.map { (name, url) -> "[$name]($url)" }.joinToString(" ● "),
+                    style = MarkdownStyle(
+                        textStyle = MarkdownTextStyle(
+                            1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
                         ),
-                    ).constrain {
-                        x = 4.pixels()
-                        y = SiblingConstraint(padding = 2f)
-                        width = 100.percent() - 8.pixels()
-                    } childOf externalResourcesBox
-                } else {
-                    sideBox.removeChild(externalResourcesBox)
-                }
+                        linkStyle = LinkStyleConfig(Color.LIGHT_GRAY, ConfirmingBrowserProvider)
+                    ),
+                ).constrain {
+                    x = 4.pixels()
+                    y = SiblingConstraint(padding = 2f)
+                    width = 100.percent() - 8.pixels()
+                } childOf externalResourcesBox
             }
         }
         val membersBox = UIContainer().constrain {
@@ -302,8 +304,8 @@ class ProjectScreen(
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf sideBox
-        members.thenAccept { members ->
-            if (members.isNullOrEmpty()) return@thenAccept
+        project.getMembers().thenAccept {
+            if (it.isNullOrEmpty()) return@thenAccept
             Window.enqueueRenderOperation {
                 membersBox.constrain { y = SiblingConstraint(padding = 8f) }
                 UIText("resourcify.project.members".localize()).constrain {
@@ -311,7 +313,7 @@ class ProjectScreen(
                     y = 0.pixels()
                     color = Color.LIGHT_GRAY.toConstraint()
                 } childOf membersBox
-                for (member in members) {
+                it.forEach { member ->
                     MemberCard(member).constrain {
                         x = 4.pixels()
                         y = SiblingConstraint(padding = 2f)

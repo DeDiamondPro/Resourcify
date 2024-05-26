@@ -17,10 +17,9 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+import dev.dediamondpro.resourcify.services.ProjectType;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
-import dev.dediamondpro.resourcify.modrinth.ApiInfo;
 import dev.dediamondpro.resourcify.platform.Platform;
 import gg.essential.universal.UMatrixStack;
 import net.minecraft.client.gui.screen.Screen;
@@ -39,7 +38,7 @@ class ScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void drawScreen(DrawContext context, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
-        ApiInfo.ProjectType type = PackScreensAddition.INSTANCE.getType(title);
+        ProjectType type = PackScreensAddition.INSTANCE.getType(title);
         if (type == null) return;
         PackScreensAddition.INSTANCE.onRender(new UMatrixStack(context.getMatrices()), type);
     }

@@ -19,11 +19,15 @@ package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
-import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.gui.update.modrinth.Version
+import dev.dediamondpro.resourcify.services.IProject
+import dev.dediamondpro.resourcify.services.IService
+import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.markdown
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
@@ -62,18 +66,23 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             height = ChildBasedMaxSizeConstraint()
         }
         effect(ScissorEffect())
-        screen.versions.get()?.let { versions ->
-            for (version in versions) {
-                VersionCard(this, version, screen.packHashes.get(), screen.downloadFolder).constrain {
-                    x = 0.pixels()
-                    y = SiblingConstraint(padding = 4f)
-                } childOf versionsHolder
+        screen.project.getVersions().thenApply { versions ->
+            Window.enqueueRenderOperation {
+                for (version in versions) {
+                    VersionCard(
+                        this, version, screen.service,
+                        screen.packHashes.get(), screen.downloadFolder
+                    ).constrain {
+                        x = 0.pixels()
+                        y = SiblingConstraint(padding = 4f)
+                    } childOf versionsHolder
+                }
             }
         }
         changeLogHolder.hide(true)
     }
 
-    fun showChangelog(version: Version) {
+    fun showChangelog(version: IVersion) {
         versionsHolder.hide()
         changeLogHolder.clearChildren()
         UIText("Versions ").constrain {
@@ -84,7 +93,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             changeLogHolder.hide()
             versionsHolder.unhide()
         } childOf changeLogHolder
-        UIText("> ${version.versionNumber}").constrain {
+        UIText("> ${version.getVersionNumber() ?: version.getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
         } childOf changeLogHolder
@@ -92,11 +101,15 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             x = 4.pixels(true)
             y = 4.pixels()
         } childOf changeLogHolder
-        markdown(version.changelog).constrain {
-            x = 4.pixels()
-            y = SiblingConstraint(4f)
-            width = 100.percent() - 8.pixels()
-        } childOf changeLogHolder
+        version.getChangeLog().thenApply {
+            Window.enqueueRenderOperation {
+                markdown(it).constrain {
+                    x = 4.pixels()
+                    y = SiblingConstraint(4f)
+                    width = 100.percent() - 8.pixels()
+                } childOf changeLogHolder
+            }
+        }
         changeLogHolder.unhide()
     }
 }

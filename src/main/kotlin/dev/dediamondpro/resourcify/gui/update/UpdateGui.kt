@@ -21,11 +21,12 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import dev.dediamondpro.resourcify.modrinth.ApiInfo
-import dev.dediamondpro.resourcify.modrinth.ModrinthUpdateFormat
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.gui.update.modrinth.ModrinthUpdateFormat
+import dev.dediamondpro.resourcify.gui.update.modrinth.ProjectResponse
+import dev.dediamondpro.resourcify.gui.update.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
@@ -46,10 +47,10 @@ import java.net.URL
 //$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
-class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : PaginatedScreen() {
+class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
     private val hashes = supplyAsync {
         val files = PackUtils.getPackFiles(folder)
-        files.associateBy { Utils.getSha512(it)!! }
+        files.associateBy { Utils.getSha1(it)!! }
     }
     private val updates = supplyAsync {
         getUpdates(type, hashes.get().keys.toList()).map { (k, v) -> v to k }.toMap()
@@ -57,7 +58,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
     private val mods = updates.thenApply { updates ->
         if (updates.isEmpty()) return@thenApply emptyMap()
         val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
-        URIBuilder("${ApiInfo.API}/projects").setParameter("ids", idString)
+        URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
             .build().toURL().getJson<List<ProjectResponse>>()!!
             .map { project -> project to updates.keys.first { it.projectId == project.id } }
             .sortedBy { (_, newVersion) ->
@@ -279,7 +280,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
             displayScreen(null)
         } else {
             when (type) {
-                ApiInfo.ProjectType.RESOURCE_PACK -> {
+                ProjectType.RESOURCE_PACK -> {
                     //#if MC >= 11904
                     //$$ if (reloadOnClose) {
                     //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
@@ -291,7 +292,7 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
                     //#endif
                 }
                 //#if MC == 10809
-                ApiInfo.ProjectType.AYCY_RESOURCE_PACK -> {
+                ProjectType.AYCY_RESOURCE_PACK -> {
                     val previousScreenField = screen.javaClass.getDeclaredField("previousScreen")
                     previousScreenField.isAccessible = true
                     displayScreen(if (reloadOnClose) previousScreenField.get(screen) as GuiScreen else screen)
@@ -317,19 +318,25 @@ class UpdateGui(val type: ApiInfo.ProjectType, private val folder: File) : Pagin
     companion object {
         private val updateInfo = mutableMapOf<String, Version?>()
 
-        fun getUpdates(type: ApiInfo.ProjectType, hashes: List<String>): Map<String, Version> {
+        fun getUpdates(type: ProjectType, hashes: List<String>): Map<String, Version> {
             fetchUpdates(type, hashes.filter { !updateInfo.containsKey(it) }, hashes)
             return hashes.filter { updateInfo[it] != null }.associateWith { updateInfo[it]!! }
         }
 
-        private fun fetchUpdates(type: ApiInfo.ProjectType, hashes: List<String>, allHashes: List<String>) {
+        private fun fetchUpdates(type: ProjectType, hashes: List<String>, allHashes: List<String>) {
             if (hashes.isEmpty()) return
-            val data = ModrinthUpdateFormat(loaders = listOf(type.loader), hashes = hashes)
+            val loader = when (type) {
+                ProjectType.RESOURCE_PACK, ProjectType.AYCY_RESOURCE_PACK -> "minecraft"
+                ProjectType.DATA_PACK -> "datapack"
+                ProjectType.IRIS_SHADER -> "iris"
+                ProjectType.OPTIFINE_SHADER -> "optifine"
+            }
+            val data = ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes)
             val updates: Map<String, Version> =
-                URL("${ApiInfo.API}/version_files/update").postAndGetJson(data) ?: return
+                URL("${ModrinthService.API}/version_files/update").postAndGetJson(data) ?: return
             hashes.forEach { hash ->
                 updateInfo[hash] = if (updates.containsKey(hash)) {
-                    if (allHashes.contains(updates[hash]!!.getPrimaryFile()?.hashes?.sha512)) null else updates[hash]
+                    if (allHashes.contains(updates[hash]!!.getPrimaryFile()?.hashes?.sha1)) null else updates[hash]
                 } else {
                     null
                 }

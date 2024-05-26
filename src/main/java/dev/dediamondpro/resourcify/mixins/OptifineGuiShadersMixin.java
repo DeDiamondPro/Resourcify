@@ -20,7 +20,7 @@ package dev.dediamondpro.resourcify.mixins;
 //#if MC < 11600
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
-import dev.dediamondpro.resourcify.modrinth.ApiInfo;
+import dev.dediamondpro.resourcify.services.ProjectType;
 import gg.essential.universal.UMatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -34,7 +34,7 @@ public class OptifineGuiShadersMixin {
 
     @Inject(method = "func_73863_a", at = @At("RETURN"), remap = false)
     void onDraw(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ApiInfo.ProjectType.OPTIFINE_SHADER);
+        PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ProjectType.OPTIFINE_SHADER);
     }
 }
 

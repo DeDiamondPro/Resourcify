@@ -6,7 +6,7 @@ import java.net.URI
 
 object SanitizingImageProvider : DefaultImageProvider() {
     override fun getInputStream(src: String): InputStream? {
-        return ImageURLUtils.getTransformedImageUrl(URI(src)).toURL().setupConnection().apply {
+        return ImageURLUtils.getTransformedImageUrl(src.toURI()).toURL().setupConnection().apply {
             setRequestProperty("Accept", "image/*")
         }.getEncodedInputStream()
     }

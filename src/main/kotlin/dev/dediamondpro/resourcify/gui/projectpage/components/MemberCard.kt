@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
-import dev.dediamondpro.resourcify.modrinth.Member
+import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.UIContainer
@@ -32,7 +32,7 @@ import gg.essential.universal.UDesktop
 import java.awt.Color
 import java.net.URI
 
-class MemberCard(member: Member) : UIContainer() {
+class MemberCard(member: IMember) : UIContainer() {
 
     init {
         constrain {
@@ -40,21 +40,23 @@ class MemberCard(member: Member) : UIContainer() {
         }
         onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            UDesktop.browse(URI("https://modrinth.com/user/${member.user.username}"))
+            UDesktop.browse(URI(member.url))
         }
-        if(member.user.avatarUrl != null) UIImage.ofURL(member.user.avatarUrl).constrain {
-            x = 0.pixels()
-            y = 0.pixels()
-            width = 32.pixels()
-            height = 32.pixels()
-        } childOf this
+        member.avatarUrl?.let {
+            UIImage.ofURL(it).constrain {
+                x = 0.pixels()
+                y = 0.pixels()
+                width = 32.pixels()
+                height = 32.pixels()
+            } childOf this
+        }
         val textHolder = UIContainer().constrain {
-            x = 36.pixels()
+            x = SiblingConstraint(padding = 4f)
             y = 7.pixels()
             width = 100.percent() - 36.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
-        UIText("${ChatColor.BOLD}${member.user.username}").constrain {
+        UIText("${ChatColor.BOLD}${member.name}").constrain {
             x = 0.pixels()
             y = 0.pixels()
             color = Color.LIGHT_GRAY.toConstraint()

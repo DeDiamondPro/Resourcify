@@ -25,14 +25,15 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UResolution
 import java.awt.Color
 
 class DropDown(
     val options: List<String>,
     private val onlyOneOption: Boolean = false,
     val selectedOptions: MutableList<String> = mutableListOf(),
-    private val top: Boolean = false,
-    private val placeHolder: String = ""
+    private val placeHolder: String = "",
+    private val canDeSelect: Boolean = !onlyOneOption
 ) : UIContainer() {
     private val selectionUpdateListeners = mutableListOf<(List<String>) -> Unit>()
     private var canOpen = false
@@ -63,8 +64,14 @@ class DropDown(
         updateText()
         val expandContainer = UIContainer().constrain {
             x = 0.pixels()
-            y = if (top) basicYConstraint { this@DropDown.getTop() - getHeight() - 1f }
-            else SiblingConstraint(padding = 1f)
+            y = basicYConstraint {
+                val top = this@DropDown.getTop()
+                if (top > UResolution.scaledHeight - 150f) {
+                    top - getHeight() - 1f
+                } else {
+                    top + box.getHeight() + 1f
+                }
+            }
             width = 100.percent()
             height = ChildBasedSizeConstraint()
         } effect OutlineEffect(Color.LIGHT_GRAY, 1f) childOf this
@@ -87,7 +94,9 @@ class DropDown(
                 width = 100.percent()
             }.onMouseClick {
                 if (this !is DropDownElement || it.mouseButton != 0) return@onMouseClick
-                if (onlyOneOption) {
+                if (selectedOptions.contains(option) && canDeSelect) {
+                    selectedOptions.remove(option)
+                } else if (onlyOneOption) {
                     selectedOptions.clear()
                     selectedOptions.add(option)
                     for (child in scrollBox.children.first().children) {
@@ -95,8 +104,6 @@ class DropDown(
                         if (child.option == option) continue
                         child.unSelectInstant()
                     }
-                } else if (selectedOptions.contains(option)) {
-                    selectedOptions.remove(option)
                 } else {
                     selectedOptions.add(option)
                 }
@@ -112,7 +119,7 @@ class DropDown(
             expandContainer.grabWindowFocus()
             hidden = false
         }
-        expandContainer.onMouseClick { if (!onlyOneOption || it.mouseButton != 0) grabWindowFocus() }
+        expandContainer.onMouseClick { if (canDeSelect || it.mouseButton != 0) grabWindowFocus() }
         expandContainer.onFocusLost {
             expandContainer.setFloating(false)
             expandContainer.hide()
@@ -148,7 +155,7 @@ class DropDown(
             } childOf this
             onMouseClick {
                 if (it.mouseButton != 0) return@onMouseClick
-                if (!selected) select() else if (!onlyOneOption) unSelect()
+                if (!selected) select() else if (canDeSelect) unSelect()
             }
         }
 

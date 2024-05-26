@@ -19,8 +19,9 @@ package dev.dediamondpro.resourcify.gui.browsepage.components
 
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
-import dev.dediamondpro.resourcify.modrinth.ApiInfo
-import dev.dediamondpro.resourcify.modrinth.ProjectObject
+import dev.dediamondpro.resourcify.services.IProject
+import dev.dediamondpro.resourcify.services.IService
+import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.ImageURLUtils
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofURL
@@ -34,7 +35,7 @@ import gg.essential.universal.UScreen
 import java.awt.Color
 import java.io.File
 
-class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFolder: File) :
+class ResourceCard(service: IService, project: IProject, type: ProjectType, downloadFolder: File) :
     UIBlock(color = Color(0, 0, 0, 100)) {
 
     init {
@@ -43,19 +44,23 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
             y = 0.pixels()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            UScreen.displayScreen(ProjectScreen(project, type, downloadFolder))
+            UScreen.displayScreen(ProjectScreen(service, project, type, downloadFolder))
         }
 
-        val bannerHolder = UIBlock(color = project.color?.let { Color(it) } ?: Color.BLACK).constrain {
+        val bannerColor = project.getBannerColor() ?: Color(
+            (200 * Math.random()).toInt(),
+            (200 * Math.random()).toInt(),
+            (200 * Math.random()).toInt()
+        )
+        val bannerHolder = UIBlock(color = bannerColor).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
             height = 84.pixels()
         } effect ScissorEffect() childOf this
 
-        val bannerUrl = project.featuredGallery ?: project.gallery.firstOrNull()
-        if (bannerUrl != null) {
-            UIImage.ofURL(bannerUrl, false, 262f, bannerHolder.getHeight(), ImageURLUtils.Fit.COVER)
+        project.getBannerUrl()?.let {
+            UIImage.ofURL(it, false, 262f, bannerHolder.getHeight(), ImageURLUtils.Fit.COVER)
                 .constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
@@ -72,11 +77,12 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
             height = 56.pixels()
         } childOf this
 
-        if (project.iconUrl.isNullOrBlank()) {
+        val iconUrl = project.getIconUrl()
+        if (iconUrl.isNullOrBlank()) {
             UIImage.ofResource("/assets/resourcify/pack.png")
         } else {
             UIImage.ofURL(
-                project.iconUrl,
+                iconUrl,
                 width = imageHolder.getWidth(),
                 height = imageHolder.getHeight(),
                 fit = ImageURLUtils.Fit.COVER
@@ -93,16 +99,16 @@ class ResourceCard(project: ProjectObject, type: ApiInfo.ProjectType, downloadFo
             height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
 
-        UIText(project.title).constrain {
+        UIText(project.getName()).constrain {
             textScale = 1.5f.pixels()
         } childOf titleHolder
-        UIText("resourcify.browse.by".localize(project.author)).constrain {
+        UIText("resourcify.browse.by".localize(project.getAuthor())).constrain {
             y = SiblingConstraint(padding = 2f)
             textScale = 1.2f.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf titleHolder
 
-        UIWrappedText(project.description).constrain {
+        UIWrappedText(project.getSummary()).constrain {
             x = 4.pixels()
             y = 122.pixels()
             width = 100.percent() - 8.pixels()

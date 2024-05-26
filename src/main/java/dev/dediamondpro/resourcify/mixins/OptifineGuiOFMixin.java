@@ -20,7 +20,7 @@ package dev.dediamondpro.resourcify.mixins;
 //#if MC < 11600
 
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
-import dev.dediamondpro.resourcify.modrinth.ApiInfo;
+import dev.dediamondpro.resourcify.services.ProjectType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,7 +37,7 @@ public class OptifineGuiOFMixin {
     void onClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
         if (this instanceof OptifineGuiShadersAccessor) {
             PackScreensAddition.INSTANCE.onMouseClick(
-                    mouseX, mouseY, mouseButton, ApiInfo.ProjectType.OPTIFINE_SHADER,
+                    mouseX, mouseY, mouseButton, ProjectType.OPTIFINE_SHADER,
                     new File("./shaderpacks")
             );
         }

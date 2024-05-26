@@ -30,6 +30,7 @@ plugins {
     id(egt.plugins.multiversion.get().pluginId)
     id(egt.plugins.defaults.get().pluginId)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.blossom)
     alias(libs.plugins.minotaur)
     alias(libs.plugins.cursegradle)
 }
@@ -51,6 +52,12 @@ preprocess {
             ".accesswidener" to PreprocessTask.CFG_KEYWORDS
         )
     )
+}
+
+blossom {
+    replaceToken("@NAME@", mod_name)
+    replaceToken("@ID@", mod_id)
+    replaceToken("@VER@", mod_version)
 }
 
 version = mod_version

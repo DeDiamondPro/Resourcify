@@ -7,8 +7,8 @@ import javax.imageio.ImageIO
 object ImageURLUtils {
     private val urlExtensionRegex: Regex = Regex(".*\\.(\\w+)\$")
 
-    // Hostnames that won't be automatically proxied, same one is used by modrinth
-    // Taken from https://github.com/modrinth/omorphia/blob/2ed06a96fec38b81ab58bdac0c2bb667960ca1c2/lib/helpers/parse.js#L78
+    // Hostnames that won't be automatically proxied
+    // Partially taken from https://github.com/modrinth/omorphia/blob/2ed06a96fec38b81ab58bdac0c2bb667960ca1c2/lib/helpers/parse.js#L78
     private val allowedHostNames = listOf(
         "imgur.com",
         "i.imgur.com",
@@ -26,6 +26,8 @@ object ImageURLUtils {
         "wsrv.nl",
         "cf.way2muchnoise.eu",
         "bstats.org",
+        "media.forgecdn.net",
+        "static.planetminecraft.com",
     )
 
     fun getTransformedImageUrl(

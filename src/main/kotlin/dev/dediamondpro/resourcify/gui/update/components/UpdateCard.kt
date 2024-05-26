@@ -18,13 +18,11 @@
 package dev.dediamondpro.resourcify.gui.update.components
 
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.modrinth.ApiInfo
-import dev.dediamondpro.resourcify.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.gui.update.modrinth.ProjectResponse
+import dev.dediamondpro.resourcify.gui.update.modrinth.Version
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.util.DownloadManager
-import dev.dediamondpro.resourcify.util.localize
-import dev.dediamondpro.resourcify.util.ofURL
+import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
@@ -36,7 +34,6 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
-import java.net.URL
 import java.util.concurrent.locks.ReentrantLock
 
 //#if MC >= 11600
@@ -52,7 +49,7 @@ class UpdateCard(
     private val gui: UpdateGui
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val newFile = newVersion.getPrimaryFile()!!
-    private val updateUrl = URL(newFile.url)
+    private val updateUrl = newFile.url.toURL()
     private var progressBox: UIBlock? = null
     private var text: UIText? = null
 
@@ -159,10 +156,7 @@ class UpdateCard(
                 try {
                     // Try to update the pack if it is currently selected, not critical if it fails
                     when (gui.type) {
-                        //#if MC == 10809
-                        ApiInfo.ProjectType.AYCY_RESOURCE_PACK,
-                        //#endif
-                        ApiInfo.ProjectType.RESOURCE_PACK -> {
+                        ProjectType.AYCY_RESOURCE_PACK, ProjectType.RESOURCE_PACK -> {
                             try {
                                 // If multiple threads try to update stuff at the same time things can go very wrong
                                 updateResourcePackLock.lock()
@@ -177,7 +171,7 @@ class UpdateCard(
                         }
 
                         //#if MC >= 11600
-                        //$$ ApiInfo.ProjectType.IRIS_SHADER -> {
+                        //$$ ProjectType.IRIS_SHADER -> {
                         //$$     PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
                         //$$         if (IrisHandler.getActiveShader(it) == file.name) {
                         //$$             Window.enqueueRenderOperation{ IrisHandler.applyShaders(it, downloadFile.name) }

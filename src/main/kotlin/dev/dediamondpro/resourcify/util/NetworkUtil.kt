@@ -19,10 +19,13 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.ModInfo
 import gg.essential.universal.UMinecraft
+import org.apache.http.client.utils.URIBuilder
 import java.awt.image.BufferedImage
 import java.io.InputStream
+import java.net.URI
 import java.net.URL
 import java.net.URLConnection
+import java.net.URLEncoder
 import java.security.KeyStore
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -76,32 +79,36 @@ object NetworkUtil {
         return con
     }
 
-    fun getOrFetch(url: URL, attempts: Int = 1): ByteArray? {
-        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts).get()
+    fun getOrFetch(url: URL, attempts: Int = 1, headers: Map<String, String> = emptyMap()): ByteArray? {
+        return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts, headers).get()
     }
 
     fun getOrFetchAsync(
-        url: URL,
-        attempts: Int = 1
+        url: URL, attempts: Int = 1,
+        headers: Map<String, String> = emptyMap()
     ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
-            supplyAsync { it }
-        } ?: currentlyFetching[url] ?: startFetch(url, attempts)
+            supply { it }
+        } ?: currentlyFetching[url] ?: startFetch(url, attempts, headers)
     }
 
-    private fun startFetch(url: URL, attempts: Int): CompletableFuture<ByteArray?> {
+    private fun startFetch(
+        url: URL, attempts: Int,
+        headers: Map<String, String> = emptyMap()
+    ): CompletableFuture<ByteArray?> {
         return supplyAsync {
             for (i in 0 until attempts) {
                 try {
-                    val result = url.getEncodedInputStream()?.use { it.readBytes() }?.let {
+                    val result = url.setupConnection().apply {
+                        headers.forEach { (key, value) -> this.setRequestProperty(key, value) }
+                    }.getEncodedInputStream()?.use { it.readBytes() }?.let {
                         cache[url] = CacheObject(url, it)
                         it
                     }
                     if (result != null) {
                         return@supplyAsync result
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } catch (_: Exception) {
                 }
                 // Wait a bit before trying again
                 Thread.sleep(250)
@@ -159,19 +166,20 @@ fun URLConnection.getEncodedInputStream(): InputStream? {
             "deflate" -> DeflaterInputStream(inputStream)
             else -> inputStream
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (_: Exception) {
         null
     }
 }
 
 fun URL.getEncodedInputStream(): InputStream? = this.setupConnection().getEncodedInputStream()
 
-fun URL.getString(useCache: Boolean = true, attempts: Int = 3): String? {
-    if (useCache) return NetworkUtil.getOrFetch(this, attempts)?.decodeToString()
+fun URL.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<String, String> = emptyMap()): String? {
+    if (useCache) return NetworkUtil.getOrFetch(this, attempts, headers)?.decodeToString()
     for (i in 0 until attempts) {
         try {
-            val result = this.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
+            val result = this.setupConnection()
+                .apply { headers.forEach { (key, value) -> this.setRequestProperty(key, value) } }
+                .getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
             if (result != null) {
                 return result
             }
@@ -184,17 +192,26 @@ fun URL.getString(useCache: Boolean = true, attempts: Int = 3): String? {
     return null
 }
 
-fun URL.getStringAsync(useCache: Boolean = true, attempts: Int = 3): CompletableFuture<String?> {
-    if (useCache) return NetworkUtil.getOrFetchAsync(this, attempts).thenApply { it?.decodeToString() }
-    return supplyAsync { this.getString(false, attempts) }
+fun URL.getStringAsync(
+    useCache: Boolean = true, attempts: Int = 3,
+    headers: Map<String, String> = emptyMap()
+): CompletableFuture<String?> {
+    if (useCache) return NetworkUtil.getOrFetchAsync(this, attempts, headers).thenApply { it?.decodeToString() }
+    return supplyAsync { this.getString(false, attempts, headers) }
 }
 
-inline fun <reified T> URL.getJson(useCache: Boolean = true, attempts: Int = 3): T? {
-    return this.getString(useCache, attempts)?.fromJson()
+inline fun <reified T> URL.getJson(
+    useCache: Boolean = true, attempts: Int = 3,
+    headers: Map<String, String> = emptyMap()
+): T? {
+    return this.getString(useCache, attempts, headers)?.fromJson()
 }
 
-inline fun <reified T> URL.getJsonAsync(useCache: Boolean = true, attempts: Int = 3): CompletableFuture<T?> {
-    return this.getStringAsync(useCache, attempts).thenApply { it?.fromJson() }
+inline fun <reified T> URL.getJsonAsync(
+    useCache: Boolean = true, attempts: Int = 3,
+    headers: Map<String, String> = emptyMap()
+): CompletableFuture<T?> {
+    return this.getStringAsync(useCache, attempts, headers).thenApply { it?.fromJson() }
 }
 
 fun URL.getImage(
@@ -238,13 +255,17 @@ fun URL.getImageAsync(
         } else supplyAsync { this.getImage(false, width, height, fit, attempts)!! }
 }
 
-inline fun <reified S> URL.postAndGetString(data: S, attempts: Int = 3): String? {
+inline fun <reified S> URL.postAndGetString(
+    data: S, attempts: Int = 3,
+    headers: Map<String, String> = emptyMap()
+): String? {
     for (i in 0 until attempts) {
         try {
             val con = this.setupConnection()
             val output = data.toJson()
             con.setRequestProperty("Content-Type", "application/json")
             con.setRequestProperty("Content-Length", output.length.toString())
+            headers.forEach { (key, value) -> con.setRequestProperty(key, value) }
             con.doOutput = true
             con.outputStream.bufferedWriter().use { it.write(output) }
             val result = con.getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
@@ -260,6 +281,29 @@ inline fun <reified S> URL.postAndGetString(data: S, attempts: Int = 3): String?
     return null
 }
 
-inline fun <reified T, reified S> URL.postAndGetJson(data: S, attempts: Int = 3): T? {
-    return postAndGetString(data, attempts)?.fromJson()
+inline fun <reified T, reified S> URL.postAndGetJson(
+    data: S, attempts: Int = 3,
+    headers: Map<String, String> = emptyMap()
+): T? {
+    return postAndGetString(data, attempts, headers)?.fromJson()
 }
+
+// Ideally this wouldn't be necessary, but CurseForge doesn't encode their URLs properly
+fun String.encodeUrl(): String {
+    val protocol = this.substringBefore("://", "")
+    val path = this.substringAfter("://")
+    val host = path.substringBefore("/")
+    val query = path.substringAfterLast("?", "")
+    val parts = path.substringAfter("/").substringBeforeLast("?").split("/").toMutableList()
+    return "${if (protocol.isNotEmpty()) "$protocol://" else ""}$host/${
+        parts.joinToString("/") { URLEncoder.encode(it, "UTF-8").replace("+", "%20") }
+    }${if (query.isNotEmpty()) "?$query" else ""}"
+}
+
+fun String.toURI(): URI = try {
+    URI(this)
+} catch (_: Exception) {
+    URI(this.encodeUrl())
+}
+
+fun String.toURL(): URL = this.toURI().toURL()

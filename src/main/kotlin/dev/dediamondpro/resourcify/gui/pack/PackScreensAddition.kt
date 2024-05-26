@@ -21,7 +21,9 @@ import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.MinecraftButton
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.modrinth.ApiInfo
+import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.Icons
 import dev.dediamondpro.resourcify.util.isHidden
 import gg.essential.elementa.ElementaVersion
@@ -71,7 +73,7 @@ object PackScreensAddition {
         height = 16.pixels()
     } childOf updateButton
 
-    fun onRender(matrix: UMatrixStack, type: ApiInfo.ProjectType) {
+    fun onRender(matrix: UMatrixStack, type: ProjectType) {
         addButton.setX(type.plusX)
         addButton.setY(type.plusY)
         if (type.hasUpdateButton) updateButton.unhide()
@@ -80,10 +82,10 @@ object PackScreensAddition {
         window.draw(matrix)
     }
 
-    fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ApiInfo.ProjectType, folder: File) {
+    fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ProjectType, folder: File) {
         if (addButton.isPointInside(mouseX.toFloat(), mouseY.toFloat()) && button == 0) {
             USound.playButtonPress()
-            UScreen.displayScreen(BrowseScreen(type, folder))
+            UScreen.displayScreen(BrowseScreen(ModrinthService, type, folder))
         } else if (!updateButton.isHidden() && updateButton.isPointInside(mouseX.toFloat(), mouseY.toFloat())
             && button == 0
         ) {
@@ -92,28 +94,29 @@ object PackScreensAddition {
         }
     }
 
-    fun getType(title: String): ApiInfo.ProjectType? {
+    fun getType(title: String): ProjectType? {
         return when (title) {
-            "resourcePack.title" -> ApiInfo.ProjectType.RESOURCE_PACK
-            "dataPack.title" -> ApiInfo.ProjectType.DATA_PACK
-            "of.options.shadersTitle" -> ApiInfo.ProjectType.OPTIFINE_SHADER
-            "options.iris.shaderPackSelection.title" -> ApiInfo.ProjectType.IRIS_SHADER
+            "resourcePack.title" -> ProjectType.RESOURCE_PACK
+            "dataPack.title" -> ProjectType.DATA_PACK
+            "of.options.shadersTitle" -> ProjectType.OPTIFINE_SHADER
+            "options.iris.shaderPackSelection.title" -> ProjectType.IRIS_SHADER
             else -> return null
         }
     }
 
     //#if MC >= 11600
-    //$$ fun getDirectory(type: ApiInfo.ProjectType, screen: Screen): File {
+    //$$ fun getDirectory(type: ProjectType, screen: Screen): File {
     //$$     return when(type) {
     //$$         //#if MC < 11904
-    //$$         ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
-    //$$         ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
+    //$$         ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
+    //$$         ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
     //$$         //#else
-    //$$         //$$ ApiInfo.ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
-    //$$         //$$ ApiInfo.ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
+    //$$         //$$ ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
+    //$$         //$$ ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
     //$$         //#endif
-    //$$         ApiInfo.ProjectType.IRIS_SHADER -> File("./shaderpacks")
-    //$$         ApiInfo.ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
+    //$$         ProjectType.IRIS_SHADER -> File("./shaderpacks")
+    //$$         ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
+    //$$         else -> error("Unknown project type: $type")
     //$$     }
     //$$ }
     //#endif

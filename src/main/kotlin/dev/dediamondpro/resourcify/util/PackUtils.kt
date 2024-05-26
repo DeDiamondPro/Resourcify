@@ -22,7 +22,7 @@ import java.io.File
 object PackUtils {
 
     fun getPackHashes(directory: File): List<String> {
-        return getPackFiles(directory).mapNotNull { Utils.getSha512(it) }
+        return getPackFiles(directory).mapNotNull { Utils.getSha1(it) }
     }
 
     fun getPackFiles(directory: File): List<File> {

@@ -104,10 +104,10 @@ object Utils {
         matrixStack.pop()
     }
 
-    fun getSha512(file: File): String? {
+    fun getSha1(file: File): String? {
         try {
             FileInputStream(file).use { it ->
-                val digest: MessageDigest = MessageDigest.getInstance("SHA-512")
+                val digest: MessageDigest = MessageDigest.getInstance("SHA-1")
                 val buffer = ByteArray(1024)
                 var count: Int
                 while (it.read(buffer).also { count = it } != -1) {

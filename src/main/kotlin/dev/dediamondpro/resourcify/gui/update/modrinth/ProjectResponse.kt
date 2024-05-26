@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.modrinth
+package dev.dediamondpro.resourcify.gui.update.modrinth
 
 import com.google.gson.annotations.SerializedName
 

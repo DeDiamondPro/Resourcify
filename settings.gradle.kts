@@ -24,6 +24,7 @@ pluginManagement {
         maven("https://maven.minecraftforge.net")
         maven("https://repo.essential.gg/repository/maven-public")
         maven("https://maven.dediamondpro.dev/releases/")
+        maven("https://repo.polyfrost.org/releases")
         mavenLocal()
     }
     val egtVersion = "0.5.0+neoforge1"

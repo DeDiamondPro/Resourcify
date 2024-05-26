@@ -27,5 +27,6 @@ object MultiThreading {
 
 fun <U> supplyAsync(supplier: Supplier<U>): CompletableFuture<U> = MultiThreading.supplyAsync(supplier)
 
-
 fun runAsync(runnable: Runnable): CompletableFuture<Void> = MultiThreading.runAsync(runnable)
+
+fun <U> supply(supplier: Supplier<U>): CompletableFuture<U> = CompletableFuture.completedFuture(supplier.get())

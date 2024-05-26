@@ -64,8 +64,8 @@ object DownloadManager {
             con.getEncodedInputStream().use {
                 Files.copy(it!!, queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
-            queuedDownload.sha512?.let {
-                val hash = Utils.getSha512(queuedDownload.file)
+            queuedDownload.sha1?.let {
+                val hash = Utils.getSha1(queuedDownload.file)
                 if (hash == it) return@let
                 queuedDownload.file.delete()
                 error("Hash $hash does not match expected hash $it!")
@@ -83,6 +83,6 @@ object DownloadManager {
     }
 }
 
-private data class QueuedDownload(val file: File, val sha512: String?, val callback: (() -> Unit)?)
+private data class QueuedDownload(val file: File, val sha1: String?, val callback: (() -> Unit)?)
 
 private data class DownloadData(val future: CompletableFuture<Void>, val file: File, var length: Int? = null)

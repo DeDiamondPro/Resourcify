@@ -18,11 +18,12 @@
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
-import dev.dediamondpro.resourcify.modrinth.GameVersions
-import dev.dediamondpro.resourcify.modrinth.Version
+import dev.dediamondpro.resourcify.services.IService
+import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.toURL
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
@@ -37,7 +38,6 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
-import java.net.URL
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -45,7 +45,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class VersionCard(
-    parent: VersionsPage, val version: Version, hashes: List<String>, downloadFolder: File
+    parent: VersionsPage, val version: IVersion, val service: IService, hashes: List<String>, downloadFolder: File
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
@@ -60,7 +60,7 @@ class VersionCard(
             width = 45.percent() - 12.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
-        UIText(version.name.trim()).constrain {
+        UIText(version.getName().trim()).constrain {
             x = 6.pixels()
             y = 0.pixels()
         } childOf versionInfo
@@ -70,16 +70,18 @@ class VersionCard(
             width = 45.percent() - 12.pixels()
             height = ChildBasedMaxSizeConstraint()
         } childOf versionInfo
-        UIText(version.versionType.localizedName.localize()).constrain {
+        UIText(version.getVersionType().localizedName).constrain {
             x = 0.pixels()
             y = 0.pixels()
-            color = version.versionType.color.toConstraint()
+            color = version.getVersionType().color.toConstraint()
         } childOf infoHolder
-        UIText(version.versionNumber).constrain {
-            x = SiblingConstraint(padding = 4f)
-            y = 0.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
-        } childOf infoHolder
+        version.getVersionNumber()?.let {
+            UIText(it).constrain {
+                x = SiblingConstraint(padding = 4f)
+                y = 0.pixels()
+                color = Color.LIGHT_GRAY.toConstraint()
+            } childOf infoHolder
+        }
 
         val mcVersionContainer = UIContainer().constrain {
             x = 45.percent - 2.pixels()
@@ -87,12 +89,12 @@ class VersionCard(
             width = 15.percent() - 4.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } childOf this
-        UIWrappedText(version.loaders.joinToString(", ") { it.capitalizeAll() }).constrain {
+        UIWrappedText(version.getLoaders().joinToString(", ") { it.capitalizeAll() }).constrain {
             y = 0.pixels()
             width = 100.percent()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf mcVersionContainer
-        UIWrappedText(GameVersions.formatVersions(version.gameVersions)).constrain {
+        UIWrappedText(getFormattedVersions()).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 2f)
             width = 100.percent()
@@ -105,11 +107,11 @@ class VersionCard(
             width = 40.percent() - 81.pixels()
             height = ChildBasedSizeConstraint(padding = 2f)
         } effect ScissorEffect() childOf this
-        UIText("resourcify.version.download_count".localize(version.downloads)).constrain {
+        UIText("resourcify.version.download_count".localize(version.getDownloadCount())).constrain {
             y = 0.pixels()
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
-        val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.datePublished))
+        val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.getReleaseDate()))
         UIText("resourcify.version.published_on".localize(Date.from(instant))).constrain {
             y = SiblingConstraint(padding = 2f)
             color = Color.LIGHT_GRAY.toConstraint()
@@ -122,13 +124,63 @@ class VersionCard(
         }
     }
 
+    private fun getFormattedVersions(): String {
+        val versions = version.getMinecraftVersions()
+        if (versions.isEmpty()) {
+            return ""
+        }
+        val allVersionsFuture = service.getMinecraftVersions()
+        if (!allVersionsFuture.isDone || allVersionsFuture.isCompletedExceptionally || allVersionsFuture.isCancelled) {
+            return ""
+        }
+        val allVersions = allVersionsFuture.getNow(emptyMap())?.values?.reversed()
+        if (allVersions.isNullOrEmpty()) {
+            return versions.joinToString(", ")
+        }
+        return buildString {
+            var currentVersionIndex = 0
+            while (currentVersionIndex < versions.size) {
+                var allVersionIndex = allVersions.indexOf(versions[currentVersionIndex])
+                if (allVersionIndex == -1) {
+                    currentVersionIndex += 1
+                    continue
+                }
+                val versionGroup = mutableListOf(versions[currentVersionIndex])
+                while (
+                    currentVersionIndex + 1 < versions.size
+                    && allVersions.indexOf(versions[currentVersionIndex + 1]) == -1
+                ) {
+                    currentVersionIndex += 1
+                }
+                while (
+                    currentVersionIndex + 1 < versions.size
+                    && allVersionIndex + 1 < allVersions.size
+                    && versions[currentVersionIndex + 1] == allVersions[allVersionIndex + 1]
+                ) {
+                    currentVersionIndex += 1
+                    allVersionIndex += 1
+                    versionGroup.add(versions[currentVersionIndex])
+                    while (
+                        currentVersionIndex + 1 < versions.size
+                        && allVersions.indexOf(versions[currentVersionIndex + 1]) == -1
+                    ) {
+                        currentVersionIndex += 1
+                    }
+                }
+                append(
+                    if (versionGroup.size > 1) "${versionGroup.first()}—${versionGroup.last()}"
+                    else versionGroup.first()
+                )
+                append(", ")
+                currentVersionIndex += 1
+            }
+        }.removeSuffix(", ")
+    }
+
     companion object {
-        fun createDownloadButton(version: Version, hashes: List<String>, downloadFolder: File): UIComponent {
-            val fileToDownload = version.files.firstOrNull {
-                it.primary
-            } ?: version.files.firstOrNull() ?: error("No file available")
-            val url = URL(fileToDownload.url)
-            var installed = hashes.contains(fileToDownload.hashes.sha512)
+        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File): UIComponent {
+            val url = version.getDownloadUrl().toURL()
+            var installed = hashes.contains(version.getSha1())
             val buttonText =
                 "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var progressBox: UIBlock? = null
@@ -143,8 +195,8 @@ class VersionCard(
                 if (DownloadManager.getProgress(url) == null) {
                     text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
                     DownloadManager.download(
-                        File(downloadFolder, fileToDownload.fileName),
-                        fileToDownload.hashes.sha512, url
+                        File(downloadFolder, version.getFileName()),
+                        version.getSha1(), url
                     ) {
                         text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                         installed = true

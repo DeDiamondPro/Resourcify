@@ -15,25 +15,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.modrinth
+package dev.dediamondpro.resourcify.gui.update.modrinth
 
 import com.google.gson.annotations.SerializedName
+import dev.dediamondpro.resourcify.platform.Platform
 
-data class Member(
-    @SerializedName("team_id") val teamId: String,
-    val user: User,
-    val role: String,
-    val accepted: Boolean,
-    val ordering: Int
-)
-
-data class User(
-    val id: String,
-    @SerializedName("github_id") val githubId: Int?,
-    val username: String,
-    @SerializedName("avatar_url") val avatarUrl: String?,
-    val bio: String?,
-    val created: String,
-    val role: String,
-    val badges: String
+data class ModrinthUpdateFormat(
+    val hashes: List<String>,
+    val loaders: List<String>,
+    val algorithm: String = "sha512",
+    @SerializedName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
 )
