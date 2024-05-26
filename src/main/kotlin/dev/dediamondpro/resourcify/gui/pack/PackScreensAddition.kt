@@ -22,8 +22,6 @@ import dev.dediamondpro.resourcify.elements.MinecraftButton
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
-import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.Icons
 import dev.dediamondpro.resourcify.util.isHidden
 import gg.essential.elementa.ElementaVersion
@@ -85,7 +83,7 @@ object PackScreensAddition {
     fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ProjectType, folder: File) {
         if (addButton.isPointInside(mouseX.toFloat(), mouseY.toFloat()) && button == 0) {
             USound.playButtonPress()
-            UScreen.displayScreen(BrowseScreen(ModrinthService, type, folder))
+            UScreen.displayScreen(BrowseScreen(type, folder))
         } else if (!updateButton.isHidden() && updateButton.isPointInside(mouseX.toFloat(), mouseY.toFloat())
             && button == 0
         ) {

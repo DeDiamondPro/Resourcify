@@ -28,6 +28,8 @@ import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.components.*
@@ -43,8 +45,11 @@ import java.io.File
 import java.util.concurrent.CompletableFuture
 import kotlin.math.ceil
 
-class BrowseScreen(private val service: IService, private val type: ProjectType, private val downloadFolder: File) :
-    PaginatedScreen() {
+class BrowseScreen(
+    private val type: ProjectType,
+    private val downloadFolder: File,
+    private val service: IService = ModrinthService
+) : PaginatedScreen() {
 
     private var offset = 0
     private val selectedCategories = mutableListOf<String>()
@@ -64,20 +69,6 @@ class BrowseScreen(private val service: IService, private val type: ProjectType,
         width = 160.pixels()
         height = 100.percent()
     } childOf contentBox
-
-    private val sideBoxScrollable = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
-        x = 0.pixels()
-        y = 33.pixels()
-        width = 160.pixels()
-        height = 100.percent() - 37.pixels()
-    } childOf sideContainer
-
-    private val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
-        x = 0.pixels()
-        y = 0.pixels()
-        width = 160.pixels()
-        height = ChildLocationSizeConstraint()
-    } childOf sideBoxScrollable
 
     private val mainBox = UIContainer().constrain {
         x = 0.pixels(alignOpposite = true)
@@ -125,6 +116,43 @@ class BrowseScreen(private val service: IService, private val type: ProjectType,
             width = 160.pixels()
             height = 29.pixels()
         } childOf sideContainer
+
+        val sideBoxScrollable = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 160.pixels()
+            height = 100.percent() - 37.pixels()
+        } childOf sideContainer
+
+        val servicesBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+            x = 0.pixels()
+            y = 0.pixels()
+            width = 160.pixels()
+            height = ChildLocationSizeConstraint()
+        } childOf sideBoxScrollable
+        UIText("resourcify.browse.source".localize()).constrain {
+            x = 4.pixels()
+            y = 4.pixels()
+            textScale = 1.5f.pixels()
+        } childOf servicesBox
+        val services = listOf(ModrinthService, CurseForgeService).associateBy { it.getName() }
+        DropDown(
+            services.keys.toList(), onlyOneOption = true,
+            selectedOptions = mutableListOf(service.getName())
+        ).constrain {
+            x = 4.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 100.percent() - 8.pixels()
+        }.onSelectionUpdate {
+            replaceScreen { BrowseScreen(type, downloadFolder, services[it.first()]!!) }
+        } childOf servicesBox
+
+        val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 160.pixels()
+            height = ChildLocationSizeConstraint()
+        } childOf sideBoxScrollable
 
         val categoriesBox = UIContainer().constrain {
             x = 0.pixels()

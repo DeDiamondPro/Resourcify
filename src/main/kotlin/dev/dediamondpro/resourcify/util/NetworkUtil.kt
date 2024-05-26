@@ -88,7 +88,7 @@ object NetworkUtil {
         headers: Map<String, String> = emptyMap()
     ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
-            supply { it }
+            supplyAsync { it }
         } ?: currentlyFetching[url] ?: startFetch(url, attempts, headers)
     }
 

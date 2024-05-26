@@ -35,8 +35,10 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, draw
     private var defaultScale = -1
 
     init {
-        currentScreen?.let { backScreens.add(it) }
-        forwardScreens.clear()
+        if (!replacingScreen) {
+            currentScreen?.let { backScreens.add(it) }
+            forwardScreens.clear()
+        }
     }
 
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -88,7 +90,14 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, draw
         displayScreen(forwardScreen)
     }
 
+    fun replaceScreen(screen: () -> GuiScreen) {
+        replacingScreen = true
+        displayScreen(screen())
+        replacingScreen = false
+    }
+
     companion object {
+        private var replacingScreen = false
         val backScreens: MutableList<GuiScreen> = mutableListOf()
         val forwardScreens: MutableList<GuiScreen> = mutableListOf()
 
