@@ -27,7 +27,7 @@ pluginManagement {
         maven("https://repo.polyfrost.org/releases")
         mavenLocal()
     }
-    val egtVersion = "0.5.0+neoforge1"
+    val egtVersion = "0.6.0"
     plugins {
         id("gg.essential.multi-version.root") version egtVersion
     }
@@ -64,8 +64,8 @@ listOf(
     "1.20.4-forge",
     "1.20.4-neoforge",
     "1.20.4-fabric",
-    "1.20.5-neoforge",
-    "1.20.5-fabric",
+    "1.20.6-neoforge",
+    "1.20.6-fabric",
 ).forEach { version ->
     include(":$version")
     project(":$version").apply {

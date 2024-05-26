@@ -4,8 +4,8 @@ kotlin = "1.9.23"
 fabric_language_kotlin = "1.7.1+kotlin.1.6.10"
 
 # Essential Dependencies
-universal = "325"
-elementa = "DIAMOND-8"
+universal = "337"
+elementa = "DIAMOND-9"
 
 # Markdown
 minemark = "1.0.2"

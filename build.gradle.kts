@@ -115,7 +115,6 @@ dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
     val universalVersion = libs.versions.universal.get() + when {
-        project.platform.mcVersion == 12005 && platform.isFabric -> "+diamond.1.20.5"
         project.platform.isNeoForge -> "+diamond.neoforge"
         else -> ""
     }
@@ -347,7 +346,7 @@ tasks {
 // Function to get the range of mc versions supported by a version we are building for.
 // First value is start of range, second value is end of range or null to leave the range open
 fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion) {
-    12005 -> "1.20.5" to null
+    12006 -> "1.20.5" to null
     12004 -> "1.20.2" to "1.20.4"
     12001 -> "1.20" to "1.20.1"
     11904 -> "1.19.4" to "1.19.4"

@@ -33,7 +33,7 @@ preprocess {
     val forge12004 = createNode("1.20.4-forge", 12004, "srg")
 
     val neoforge12004 = createNode("1.20.4-neoforge", 12004, "srg")
-    val neoforge12005 = createNode("1.20.5-neoforge", 12005, "srg")
+    val neoforge12006 = createNode("1.20.6-neoforge", 12006, "srg")
 
     val fabric11602 = createNode("1.16.2-fabric", 11602, "yarn")
     val fabric11801 = createNode("1.18.2-fabric", 11802, "yarn")
@@ -41,7 +41,7 @@ preprocess {
     val fabric11904 = createNode("1.19.4-fabric", 11904, "yarn")
     val fabric12001 = createNode("1.20.1-fabric", 12001, "yarn")
     val fabric12004 = createNode("1.20.4-fabric", 12004, "yarn")
-    val fabric12005 = createNode("1.20.5-fabric", 12005, "yarn")
+    val fabric12006 = createNode("1.20.6-fabric", 12006, "yarn")
 
     forge11202.link(forge10809)
     forge11602.link(forge11202, file("versions/1.12.2-forge-1.16.2-forge"))
@@ -52,7 +52,7 @@ preprocess {
     forge12004.link(forge12001)
 
     neoforge12004.link(forge12004)
-    neoforge12005.link(fabric12005)
+    neoforge12006.link(fabric12006)
 
     fabric11602.link(forge11602)
     fabric11801.link(fabric11602)
@@ -60,5 +60,5 @@ preprocess {
     fabric11904.link(fabric11902)
     fabric12001.link(fabric11904)
     fabric12004.link(fabric12001)
-    fabric12005.link(fabric12004)
+    fabric12006.link(fabric12004)
 }
