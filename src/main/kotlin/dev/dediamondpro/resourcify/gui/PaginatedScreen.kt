@@ -31,7 +31,14 @@ import kotlin.math.floor
 //$$ import net.minecraft.client.gui.DrawContext
 //#endif
 
-abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, drawDefaultBackground = false) {
+abstract class PaginatedScreen : WindowScreen(
+    version = ElementaVersion.V5,
+    //#if MC>=12005
+    //$$ drawDefaultBackground = true
+    //#else
+    drawDefaultBackground = false
+    //#endif
+) {
     private var defaultScale = -1
 
     init {
@@ -42,9 +49,8 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, draw
     }
 
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        //#if MC>=12005
-        //$$ renderDarkening(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
-        //#elseif MC>=12000
+        //#if MC<12005
+        //#if MC>=12000
         //$$ renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
         //#elseif MC>=11904
         //$$ renderBackgroundTexture(matrixStack.toMC())
@@ -52,6 +58,7 @@ abstract class PaginatedScreen : WindowScreen(version = ElementaVersion.V5, draw
         //$$ renderDirtBackground(0)
         //#else
         drawBackground(0)
+        //#endif
         //#endif
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
     }

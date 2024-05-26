@@ -144,7 +144,9 @@ class BrowseScreen(
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
         }.onSelectionUpdate {
-            replaceScreen { BrowseScreen(type, downloadFolder, services[it.first()]!!) }
+            val newService = services[it.first()] ?: return@onSelectionUpdate
+            if (newService == service) return@onSelectionUpdate
+            replaceScreen { BrowseScreen(type, downloadFolder, newService) }
         } childOf servicesBox
 
         val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
