@@ -32,12 +32,14 @@ import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
 import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.supplyAsync
+import dev.dediamondpro.resourcify.util.toURI
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
+import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
@@ -77,9 +79,11 @@ class BrowseScreen(
         height = 100.percent()
     } childOf contentBox
 
+    private val adBox = UIBlock(color = Color(60, 130, 255, 100)) childOf mainBox
+
     private val headerBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
         x = 0.pixels()
-        y = 0.pixels()
+        y = SiblingConstraint() + (if (service.getAdProvider().isAdAvailable()) 4 else 0).pixels()
         width = 100.percent()
         height = 29.pixels()
     } childOf mainBox
@@ -88,9 +92,9 @@ class BrowseScreen(
 
     private val projectScrollable = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
         x = 0.pixels()
-        y = 33.pixels()
+        y = SiblingConstraint(padding = 4f)
         width = 100.percent()
-        height = 100.percent() - 37.pixels()
+        height = basicHeightConstraint { this@BrowseScreen.height - this.getY() }
     } childOf mainBox
 
     private val projectContainer = UIContainer().constrain {
@@ -124,17 +128,18 @@ class BrowseScreen(
             height = 100.percent() - 37.pixels()
         } childOf sideContainer
 
-        val servicesBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+        val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
             x = 0.pixels()
-            y = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
             width = 160.pixels()
             height = ChildLocationSizeConstraint()
         } childOf sideBoxScrollable
+
         UIText("resourcify.browse.source".localize()).constrain {
             x = 4.pixels()
             y = 4.pixels()
             textScale = 1.5f.pixels()
-        } childOf servicesBox
+        } childOf categoryContainer
         val services = listOf(ModrinthService, CurseForgeService).associateBy { it.getName() }
         DropDown(
             services.keys.toList(), onlyOneOption = true,
@@ -147,18 +152,11 @@ class BrowseScreen(
             val newService = services[it.first()] ?: return@onSelectionUpdate
             if (newService == service) return@onSelectionUpdate
             replaceScreen { BrowseScreen(type, downloadFolder, newService) }
-        } childOf servicesBox
-
-        val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
-            x = 0.pixels()
-            y = SiblingConstraint(padding = 4f)
-            width = 160.pixels()
-            height = ChildLocationSizeConstraint()
-        } childOf sideBoxScrollable
+        } childOf categoryContainer
 
         val categoriesBox = UIContainer().constrain {
             x = 0.pixels()
-            y = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
             width = 100.percent()
             height = ChildLocationSizeConstraint()
         } childOf categoryContainer
@@ -263,6 +261,35 @@ class BrowseScreen(
     }
 
     private fun header() {
+        val adProvider = service.getAdProvider()
+        if (adProvider.isAdAvailable()) {
+            adBox.constrain {
+                x = 0.pixels()
+                y = 0.pixels()
+                width = 100.percent()
+                height = 29.pixels()
+            }.onMouseClick {
+                UDesktop.browse(adProvider.getUrl().toURI())
+            }
+            UIImage.ofResource(adProvider.getImagePath()).constrain {
+                x = 4.pixels()
+                y = 4.pixels()
+                width = 21.pixels()
+                height = 21.pixels()
+            } childOf adBox
+            UIText(adProvider.getText()).constrain {
+                x = SiblingConstraint(padding = 4f)
+                y = CenterConstraint()
+            } childOf adBox
+            UIImage.ofResource("/assets/resourcify/advertisement-text.png").constrain {
+                x = 1.pixels(alignOpposite = true)
+                y = 1.pixels(alignOpposite = true)
+                width = 58.pixels()
+                height = 5.pixels()
+                color = Color.LIGHT_GRAY.toConstraint()
+            } childOf adBox
+        }
+
         searchBox = (UITextInput("resourcify.browse.search".localize(type.displayName.localize())).constrain {
             x = 6.pixels()
             y = CenterConstraint()

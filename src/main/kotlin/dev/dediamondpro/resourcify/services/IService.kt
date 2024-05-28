@@ -1,5 +1,7 @@
 package dev.dediamondpro.resourcify.services
 
+import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
+import dev.dediamondpro.resourcify.services.ads.IAdProvider
 import java.util.concurrent.CompletableFuture
 
 interface IService {
@@ -31,4 +33,6 @@ interface IService {
      * Value = display name
      */
     fun getSortOptions(): Map<String, String>
+
+    fun getAdProvider(): IAdProvider = DefaultAdProvider
 }

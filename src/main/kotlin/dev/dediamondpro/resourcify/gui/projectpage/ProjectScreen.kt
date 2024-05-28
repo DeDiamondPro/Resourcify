@@ -116,7 +116,6 @@ class ProjectScreen(
             val version = versions.firstOrNull {
                 it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
-            println(version.getLoaders())
             val url = version.getDownloadUrl().toURL()
             var installed = packHashes.get().contains(version.getSha1())
             val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"

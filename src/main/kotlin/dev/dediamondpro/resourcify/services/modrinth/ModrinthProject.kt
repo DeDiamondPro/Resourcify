@@ -112,11 +112,11 @@ data class ModrinthProject(
         override val role: String
             get() = member?.role ?: "Owner"
 
-        @Transient
-        override val url: String = "https://modrinth.com/user/$name"
+        override val url: String
+            get() = "https://modrinth.com/user/$name"
     }
 
     data class GalleryImage(
-        override val url: String, override val title: String?, override val description: String?, val ordering: Int
+        override val url: String, override val title: String?, override val description: String?, val ordering: Long
     ) : IGalleryImage
 }
