@@ -35,11 +35,15 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
         }
         screen.project.getDescription().thenAccept {
             Window.enqueueRenderOperation {
-                markdown(it).constrain {
-                    x = 6.pixels()
-                    y = 6.pixels()
-                    width = 100.percent() - 12.pixels()
-                } childOf this
+                try {
+                    markdown(it).constrain {
+                        x = 6.pixels()
+                        y = 6.pixels()
+                        width = 100.percent() - 12.pixels()
+                    } childOf this
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
