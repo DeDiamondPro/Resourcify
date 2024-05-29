@@ -38,7 +38,11 @@ object CurseForgeService : IService {
                 addParameter("sortOrder", "desc")
                 addParameter("index", offset.toString())
                 addParameter("classId", type.getClassId().toString())
-                addParameter("categoryIds", "[${categories.joinToString(",")}]")
+                val actualCategories = categories.toMutableList()
+                if (type == ProjectType.DATA_PACK) {
+                    actualCategories.add("5193") // Add data pack category
+                }
+                addParameter("categoryIds", "[${actualCategories.joinToString(",")}]")
                 if (minecraftVersions.isNotEmpty()) {
                     addParameter("gameVersionTypeId", minecraftVersions.first().split("+")[0])
                 }
@@ -71,15 +75,16 @@ object CurseForgeService : IService {
         return categories?.thenApply {
             val classId = type.getClassId()
             mapOf("resourcify.categories.categories".localize() to
-                    it.filter { category -> category.classId == classId }
-                        .sortedBy { category ->
-                            if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
-                            else category.name.replace(Regex("[^0-9]"), "").toInt().toChar().toString()
-                        }.associate { category ->
-                            category.id.toString() to "resourcify.categories.${
-                                category.name.lowercase().replace(" ", "_")
-                            }".localizeOrDefault(category.name.capitalizeAll())
-                        })
+                    it.filter { category -> // Filter out data pack category in resource packs, we handle this automatically
+                        category.classId == classId && category.id != 5193
+                    }.sortedBy { category ->
+                        if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
+                        else category.name.replace(Regex("[^0-9]"), "").toInt().toChar().toString()
+                    }.associate { category ->
+                        category.id.toString() to "resourcify.categories.${
+                            category.name.lowercase().replace(" ", "_")
+                        }".localizeOrDefault(category.name.capitalizeAll())
+                    })
         } ?: supply { emptyMap() }
     }
 
@@ -97,7 +102,8 @@ object CurseForgeService : IService {
     private fun ProjectType.getClassId(): Int = when (this) {
         ProjectType.RESOURCE_PACK -> 12
         ProjectType.AYCY_RESOURCE_PACK -> 12
-        ProjectType.DATA_PACK -> 6945
+        // Data pack class id is 6945, but all data packs are actually under resource packs for some reason
+        ProjectType.DATA_PACK -> 12
         ProjectType.IRIS_SHADER -> 6552
         ProjectType.OPTIFINE_SHADER -> 6552
     }

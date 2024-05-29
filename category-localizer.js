@@ -46,7 +46,7 @@ async function fetchAndProcessData() {
     const curseForgeData = await fetchData('https://api.curseforge.com/v1/categories?gameId=432', {'x-api-key': 'cf-api-key'});
     const translationIndexes = [];
     curseForgeData.data.forEach(item => {
-        if (![12, 6945, 6552].includes(item.classId)) return;
+        if (![12, 6552].includes(item.classId)) return;
         let category = `"resourcify.categories.${item.name.toLowerCase().replaceAll(" ", "_")}": "${capitalizeWords(item.name)}",`
         if (!translationIndexes.includes(category) && !modrinthIndexes.includes(category)) {
             translationIndexes.push(category);
