@@ -19,6 +19,9 @@ mixin = "0.7.11-SNAPSHOT"
 minotaur = "2.8.0"
 cursegradle = "1.4.0"
 
+# mods
+modMenu = "7.2.1"
+
 # Misc
 shadow = "8.1.1"
 blossom = "1.3.2"
@@ -38,6 +41,9 @@ tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 
 # Mixin
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+
+# Mods
+modMenu = { module = "com.terraformersmc:modmenu", version.ref = "modMenu" }
 
 [plugins]
 # Kotlin

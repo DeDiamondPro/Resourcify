@@ -12,6 +12,14 @@
     "sources": "https://github.com/DeDiamondPro/Resourcify",
     "issues": "https://github.com/DeDiamondPro/Resourcify/issues"
   },
+  "entrypoints": {
+    "modmenu": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.dediamondpro.resourcify.config.ModMenuIntegration"
+      }
+    ]
+  },
   "mixins": [
     "fabric.mixins.${id}.json"
   ],

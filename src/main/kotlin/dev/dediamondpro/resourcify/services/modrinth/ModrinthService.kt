@@ -96,7 +96,7 @@ object ModrinthService : IService {
                 ?: error("Failed to fetch categories.")
         }.thenApply {
             (it ?: emptyList()).sortedBy { category ->
-                category.header + if (category.header != "resolutions") category.name
+                category.header + if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
                 else category.name.replace(Regex("[^0-9]"), "").toInt().toChar()
             }
         }

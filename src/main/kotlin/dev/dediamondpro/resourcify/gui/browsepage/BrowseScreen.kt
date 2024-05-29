@@ -28,8 +28,7 @@ import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
-import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
+import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.supplyAsync
 import dev.dediamondpro.resourcify.util.toURI
@@ -41,6 +40,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 import java.io.File
@@ -50,13 +50,13 @@ import kotlin.math.ceil
 class BrowseScreen(
     private val type: ProjectType,
     private val downloadFolder: File,
-    private val service: IService = ModrinthService
+    private val service: IService = ServiceRegistry.getDefaultService()
 ) : PaginatedScreen() {
-
     private var offset = 0
     private val selectedCategories = mutableListOf<String>()
     private var fetchingFuture: CompletableFuture<ISearchData?>? = null
     private var totalHits: Int = 0
+    private var guiOpenedTime = UMinecraft.getTime()
 
     private val contentBox = UIContainer().constrain {
         x = CenterConstraint()
@@ -140,16 +140,15 @@ class BrowseScreen(
             y = 4.pixels()
             textScale = 1.5f.pixels()
         } childOf categoryContainer
-        val services = listOf(ModrinthService, CurseForgeService).associateBy { it.getName() }
         DropDown(
-            services.keys.toList(), onlyOneOption = true,
+            ServiceRegistry.getServices().map { it.getName() }, onlyOneOption = true,
             selectedOptions = mutableListOf(service.getName())
         ).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
         }.onSelectionUpdate {
-            val newService = services[it.first()] ?: return@onSelectionUpdate
+            val newService = ServiceRegistry.getService(it.first()) ?: return@onSelectionUpdate
             if (newService == service) return@onSelectionUpdate
             replaceScreen { BrowseScreen(type, downloadFolder, newService) }
         } childOf categoryContainer
@@ -269,6 +268,8 @@ class BrowseScreen(
                 width = 100.percent()
                 height = 29.pixels()
             }.onMouseClick {
+                // Prevents opening the ad link accidentally right when the GUI is opened
+                if (it.mouseButton != 0 || guiOpenedTime + 500 > UMinecraft.getTime()) return@onMouseClick
                 UDesktop.browse(adProvider.getUrl().toURI())
             }
             UIImage.ofResource(adProvider.getImagePath()).constrain {
@@ -277,9 +278,10 @@ class BrowseScreen(
                 width = 21.pixels()
                 height = 21.pixels()
             } childOf adBox
-            UIText(adProvider.getText()).constrain {
+            UIWrappedText(adProvider.getText()).constrain {
                 x = SiblingConstraint(padding = 4f)
                 y = CenterConstraint()
+                width = 100.percent() - 33.pixels()
             } childOf adBox
             UIImage.ofResource("/assets/resourcify/advertisement-text.png").constrain {
                 x = 1.pixels(alignOpposite = true)

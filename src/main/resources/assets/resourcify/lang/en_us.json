@@ -15,6 +15,7 @@
   "resourcify.browse.minecraft_version": "Minecraft Version",
   "resourcify.browse.minecraft_version.placeholder": "Choose Versions",
   "resourcify.browse.by": "by %s",
+  "resourcify.browse.bisect_ad": "Host your server on §b§lBisectHosting§r and get 25%% off your first month using code §b§lDIAMOND§r.",
 
   "resourcify.project.description": "Description",
   "resourcify.project.gallery": "Gallery",
@@ -48,6 +49,12 @@
   "resourcify.updates.update_singular": "update",
   "resourcify.updates.update_plural": "updates",
   "resourcify.updates.changelog": "Changelog",
+
+  "resourcify.config.title": "Resourcify Config",
+  "resourcify.config.source.title": "Default Source",
+  "resourcify.config.source.description": "The source that will be enabled by default when opening the browse page.",
+  "resourcify.config.ads.title": "Enable Ads",
+  "resourcify.config.ads.description": "Show a small ad on the browse page to help support the development of Resourcify.",
 
   "resourcify.categories.adventure": "Adventure",
   "resourcify.categories.categories": "Categories",

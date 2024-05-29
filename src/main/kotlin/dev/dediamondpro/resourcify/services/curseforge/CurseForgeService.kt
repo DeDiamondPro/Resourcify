@@ -71,8 +71,11 @@ object CurseForgeService : IService {
         return categories?.thenApply {
             val classId = type.getClassId()
             mapOf("resourcify.categories.categories".localize() to
-                    it.filter { category -> category.classId == classId }.sortedBy { category -> category.name }
-                        .associate { category ->
+                    it.filter { category -> category.classId == classId }
+                        .sortedBy { category ->
+                            if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
+                            else category.name.replace(Regex("[^0-9]"), "").toInt().toChar().toString()
+                        }.associate { category ->
                             category.id.toString() to "resourcify.categories.${
                                 category.name.lowercase().replace(" ", "_")
                             }".localizeOrDefault(category.name.capitalizeAll())

@@ -99,6 +99,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     maven("https://api.modrinth.com/maven")
     maven("https://maven.neoforged.net/releases/")
+    maven("https://maven.terraformersmc.com/releases/")
     mavenCentral()
     mavenLocal()
 }
@@ -127,6 +128,7 @@ dependencies {
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
+        modCompileOnly(libs.modMenu)
     } else if (platform.isForgeLike) {
         if (platform.isLegacyForge) {
             shade(libs.bundles.kotlin) { isTransitive = false }
@@ -214,7 +216,7 @@ tasks {
             val map: Map<String, String> =
                 gson.fromJson(jsonFile.reader(), Map::class.java) as Map<String, String>
             val fileName = jsonFile.nameWithoutExtension.split("_").let {
-                "${it[0]}_${it[1].uppercase()}.lang"
+                "${it[0]}_${if (platform.mcVersion == 10809) it[1].uppercase() else it[1]}.lang"
             }
             val langFile = File(generatedDir, fileName)
             langFile.printWriter().use { out ->
