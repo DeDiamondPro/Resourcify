@@ -56,12 +56,14 @@ fun UIComponent.isHidden(): Boolean = !parent.children.contains(this)
 
 fun markdown(
     markdown: String,
-    style: MarkdownStyle = MarkdownStyle(
-        imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
-            Color(65, 105, 225), ConfirmingBrowserProvider
-        )
-    )
+    style: MarkdownStyle = MarkdownStyle.default()
 ): MineMarkComponent {
     // Create a MineMark component with our own image and browser provider
     return MineMarkComponent(markdown, style)
 }
+
+fun MarkdownStyle.Companion.default(): MarkdownStyle = MarkdownStyle(
+    imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
+        Color(65, 105, 225), ConfirmingBrowserProvider
+    )
+)

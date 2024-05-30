@@ -1,10 +1,16 @@
 package dev.dediamondpro.resourcify.services.curseforge
 
+import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
+import dev.dediamondpro.minemark.style.HeadingLevelStyleConfig
+import dev.dediamondpro.minemark.style.HeadingStyleConfig
+import dev.dediamondpro.minemark.style.ImageStyleConfig
+import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
+import java.awt.Color
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
@@ -114,4 +120,19 @@ object CurseForgeService : IService {
         "11" to "resourcify.browse.sort.newest",
         "3" to "resourcify.browse.sort.updated",
     )
+
+    override fun getMarkdownStyle(): MarkdownStyle {
+        return MarkdownStyle(
+            imageStyle = ImageStyleConfig(SanitizingImageProvider),
+            linkStyle = LinkStyleConfig(Color(65, 105, 225), ConfirmingBrowserProvider),
+            headerStyle = HeadingStyleConfig(
+                HeadingLevelStyleConfig(2f, 12f), // h1
+                HeadingLevelStyleConfig(1.66f, 10f), // h2
+                HeadingLevelStyleConfig(1.33f, 8f), // h3
+                HeadingLevelStyleConfig(1f, 4f), // h4
+                HeadingLevelStyleConfig(1f, 4f), // h5
+                HeadingLevelStyleConfig(1f, 4f) // h6
+            ),
+        )
+    }
 }

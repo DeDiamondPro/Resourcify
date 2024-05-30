@@ -149,7 +149,10 @@ object NetworkUtil {
 
     fun clearCache() {
         for ((url, future) in currentlyFetching) {
-            future.cancel(true)
+            try {
+                future.cancel(true)
+            } catch (_: Exception) {
+            }
             currentlyFetching.remove(url)
         }
         cache.clear()

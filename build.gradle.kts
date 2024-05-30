@@ -284,6 +284,11 @@ tasks {
         versionNumber.set(mod_version)
         versionName.set("[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version")
         uploadFile.set(remapJar.get().archiveFile as Any)
+        versionType.set(when {
+            mod_version.contains("beta", true) -> "beta"
+            mod_version.contains("alpha", true) -> "alpha"
+            else -> "release"
+        })
         gameVersions.addAll(getSupportedVersionList())
         if (platform.isFabric) {
             loaders.add("fabric")
@@ -301,6 +306,7 @@ tasks {
             } else if (platform.isFabric) {
                 required.project("fabric-api")
                 required.project("fabric-language-kotlin")
+                optional.project("modmenu")
             }
         }
     }
@@ -316,6 +322,7 @@ tasks {
                 } else if (platform.isFabric) {
                     requiredDependency("fabric-api")
                     requiredDependency("fabric-language-kotlin")
+                    optionalDependency("modmenu")
                 }
             })
             gameVersionStrings.addAll(getSupportedVersionList())
@@ -328,7 +335,11 @@ tasks {
             } else if (platform.isNeoForge) {
                 addGameVersion("NeoForge")
             }
-            releaseType = "release"
+            releaseType = when {
+                mod_version.contains("beta", true) -> "beta"
+                mod_version.contains("alpha", true) -> "alpha"
+                else -> "release"
+            }
             mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
                 displayName = "[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version"
             })

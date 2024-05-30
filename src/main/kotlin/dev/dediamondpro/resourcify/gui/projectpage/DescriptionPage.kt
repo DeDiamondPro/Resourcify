@@ -36,7 +36,7 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 10
         screen.project.getDescription().thenAccept {
             Window.enqueueRenderOperation {
                 try {
-                    markdown(it).constrain {
+                    markdown(it, screen.service.getMarkdownStyle()).constrain {
                         x = 6.pixels()
                         y = 6.pixels()
                         width = 100.percent() - 12.pixels()

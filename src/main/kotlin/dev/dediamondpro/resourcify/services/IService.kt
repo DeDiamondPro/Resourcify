@@ -1,7 +1,9 @@
 package dev.dediamondpro.resourcify.services
 
+import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
 import dev.dediamondpro.resourcify.services.ads.IAdProvider
+import dev.dediamondpro.resourcify.util.default
 import java.util.concurrent.CompletableFuture
 
 interface IService {
@@ -35,4 +37,6 @@ interface IService {
     fun getSortOptions(): Map<String, String>
 
     fun getAdProvider(): IAdProvider = DefaultAdProvider
+
+    fun getMarkdownStyle(): MarkdownStyle = MarkdownStyle.default()
 }
