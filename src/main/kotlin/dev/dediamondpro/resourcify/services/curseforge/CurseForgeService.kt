@@ -52,7 +52,12 @@ object CurseForgeService : IService {
                 if (minecraftVersions.isNotEmpty()) {
                     addParameter("gameVersionTypeId", minecraftVersions.first().split("+")[0])
                 }
-            }.build().toURL().getJson<CurseForgeSearchData>(headers = mapOf("x-api-key" to API_KEY))
+            }.build().toURL().getJson<CurseForgeSearchData>(headers = mapOf("x-api-key" to API_KEY)).apply {
+                this?.let { // Filter data packs out of resource packs
+                    if (type != ProjectType.RESOURCE_PACK) return@let
+                    projects = projects.filter { !it.getInternalCategories().any { c -> c.id == 5193 } }
+                }
+            }
     }
 
     override fun getMinecraftVersions(): CompletableFuture<Map<String, String>> {

@@ -49,6 +49,8 @@ data class CurseForgeProject(
         }
     }
 
+    fun getInternalCategories() = categories
+
     override fun getExternalLinks(): CompletableFuture<Map<String, String>> = supply {
         mutableMapOf<String, String>().apply {
             if (!links.wikiUrl.isNullOrBlank()) put("resourcify.project.wiki".localize(), links.wikiUrl)
@@ -86,7 +88,7 @@ data class CurseForgeProject(
 
     data class Links(val websiteUrl: String, val wikiUrl: String?, val sourceUrl: String?, val issuesUrl: String?)
 
-    data class Category(val name: String, val slug: String)
+    data class Category(val name: String, val slug: String, val id: Int)
 
     data class Versions(val data: List<CurseForgeVersion>)
 }

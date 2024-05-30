@@ -45,7 +45,6 @@ import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
-import kotlin.math.ceil
 
 class BrowseScreen(
     private val type: ProjectType,
@@ -340,29 +339,31 @@ class BrowseScreen(
             Window.enqueueRenderOperation {
                 if (clear) projectContainer.clearChildren()
 
-                for (i in 0 until ceil(projects.size / 2f).toInt()) {
-                    val row = UIContainer().constrain {
-                        x = 0.pixels()
-                        y = SiblingConstraint(padding = 4f)
-                        width = 100.percent()
-                        height = ChildBasedMaxSizeConstraint()
-                    } childOf projectContainer
-                    val constraint = MaxComponentConstraint(ChildLocationSizeConstraint() + 4.pixels())
-                    ResourceCard(service, projects[i * 2], type, downloadFolder).constrain {
-                        x = 0.pixels()
+                for (project in projects) {
+                    val currentRow =
+                        if (projectContainer.children.isEmpty() || projectContainer.children.last().children.size >= 2) {
+                            UIContainer().constrain {
+                                x = 0.pixels()
+                                y = SiblingConstraint(padding = 4f)
+                                width = 100.percent()
+                                height = ChildBasedMaxSizeConstraint()
+                            } childOf projectContainer
+                        } else {
+                            projectContainer.children.last()
+                        }
+
+                    val constraint: HeightConstraint = if (currentRow.children.isEmpty()) {
+                        MaxComponentConstraint(ChildLocationSizeConstraint() + 4.pixels())
+                    } else {
+                        (currentRow.children.first().constraints.height as MaxComponentConstraint)
+                            .createChildConstraint(ChildLocationSizeConstraint() + 4.pixels())
+                    }
+                    ResourceCard(service, project, type, downloadFolder).constrain {
+                        x = SiblingConstraint(padding = 4f)
                         y = 0.pixels()
                         width = 50.percent() - 2.pixels()
                         height = constraint
-                    } childOf row
-                    if (projects.size > i * 2 + 1) ResourceCard(
-                        service, projects[i * 2 + 1],
-                        type, downloadFolder
-                    ).constrain {
-                        x = 0.pixels(true)
-                        y = 0.pixels()
-                        width = 50.percent() - 2.pixels()
-                        height = constraint.createChildConstraint(ChildLocationSizeConstraint() + 4.pixels())
-                    } childOf row
+                    } childOf currentRow
                 }
 
                 if (clear) projectScrollable.scrollToTop(false)
