@@ -63,17 +63,11 @@ fun UIComponent.isHidden(): Boolean = !parent.children.contains(this)
 
 fun markdown(
     markdown: String,
-    style: MarkdownStyle = MarkdownStyle.defaultStyle()
+    style: MarkdownStyle = ElementaUtils.defaultMarkdownStyle
 ): MineMarkComponent {
     // Create a MineMark component with our own image and browser provider
     return MineMarkComponent(markdown, style, ElementaUtils.defaultMineMarkCore)
 }
-
-fun MarkdownStyle.Companion.defaultStyle(): MarkdownStyle = MarkdownStyle(
-    imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
-        Color(65, 105, 225), ConfirmingBrowserProvider
-    )
-)
 
 object ElementaUtils {
     val defaultMineMarkCore: MineMarkCore<MarkdownStyle, UMatrixStack> =
@@ -84,4 +78,10 @@ object ElementaUtils {
             .addElement(ExpandableMarkdownElement.ExpandableElementCreator)
             .addElement(listOf("summary"), ::SummaryElement)
             .build()
+
+    val defaultMarkdownStyle: MarkdownStyle = MarkdownStyle(
+        imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
+            Color(65, 105, 225), ConfirmingBrowserProvider
+        )
+    )
 }

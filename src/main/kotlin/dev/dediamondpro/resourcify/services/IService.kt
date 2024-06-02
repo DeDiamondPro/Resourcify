@@ -3,7 +3,7 @@ package dev.dediamondpro.resourcify.services
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
 import dev.dediamondpro.resourcify.services.ads.IAdProvider
-import dev.dediamondpro.resourcify.util.defaultStyle
+import dev.dediamondpro.resourcify.util.ElementaUtils
 import java.util.concurrent.CompletableFuture
 
 interface IService {
@@ -38,5 +38,5 @@ interface IService {
 
     fun getAdProvider(): IAdProvider = DefaultAdProvider
 
-    fun getMarkdownStyle(): MarkdownStyle = MarkdownStyle.defaultStyle()
+    fun getMarkdownStyle(): MarkdownStyle = ElementaUtils.defaultMarkdownStyle
 }
