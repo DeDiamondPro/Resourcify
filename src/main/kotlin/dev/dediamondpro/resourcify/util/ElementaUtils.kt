@@ -17,14 +17,21 @@
 
 package dev.dediamondpro.resourcify.util
 
+import dev.dediamondpro.minemark.MineMarkCore
 import dev.dediamondpro.minemark.elementa.MineMarkComponent
+import dev.dediamondpro.minemark.elementa.addElementaExtensions
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
+import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
+import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.DefaultLoadingImage
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
+import org.commonmark.ext.gfm.tables.TablesExtension
 import java.awt.Color
 
 fun UIImage.Companion.ofURL(
@@ -56,14 +63,25 @@ fun UIComponent.isHidden(): Boolean = !parent.children.contains(this)
 
 fun markdown(
     markdown: String,
-    style: MarkdownStyle = MarkdownStyle.default()
+    style: MarkdownStyle = MarkdownStyle.defaultStyle()
 ): MineMarkComponent {
     // Create a MineMark component with our own image and browser provider
-    return MineMarkComponent(markdown, style)
+    return MineMarkComponent(markdown, style, ElementaUtils.defaultMineMarkCore)
 }
 
-fun MarkdownStyle.Companion.default(): MarkdownStyle = MarkdownStyle(
+fun MarkdownStyle.Companion.defaultStyle(): MarkdownStyle = MarkdownStyle(
     imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
         Color(65, 105, 225), ConfirmingBrowserProvider
     )
 )
+
+object ElementaUtils {
+    val defaultMineMarkCore: MineMarkCore<MarkdownStyle, UMatrixStack> =
+        MineMarkCore.builder<MarkdownStyle, UMatrixStack>()
+            .addExtension(StrikethroughExtension.create())
+            .addExtension(TablesExtension.create())
+            .addElementaExtensions()
+            .addElement(ExpandableMarkdownElement.ExpandableElementCreator)
+            .addElement(listOf("summary"), ::SummaryElement)
+            .build()
+}

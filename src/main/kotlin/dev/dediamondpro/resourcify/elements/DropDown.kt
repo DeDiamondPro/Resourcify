@@ -65,11 +65,10 @@ class DropDown(
         val expandContainer = UIContainer().constrain {
             x = 0.pixels()
             y = basicYConstraint {
-                val top = this@DropDown.getTop()
-                if (top > UResolution.scaledHeight - 150f) {
-                    top - getHeight() - 1f
+                if (this@DropDown.getBottom() > UResolution.scaledHeight - 150f) {
+                    this@DropDown.getTop() - getHeight() - 1f
                 } else {
-                    top + box.getHeight() + 1f
+                    this@DropDown.getTop() + box.getHeight() + 1f
                 }
             }
             width = 100.percent()
