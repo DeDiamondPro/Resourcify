@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,12 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.gui.update.modrinth.ModrinthUpdateFormat
-import dev.dediamondpro.resourcify.gui.update.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.gui.update.modrinth.Version
+import dev.dediamondpro.resourcify.gui.update.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthVersion
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
@@ -57,10 +58,10 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
     }
     private val mods = updates.thenApply { updates ->
         if (updates.isEmpty()) return@thenApply emptyMap()
-        val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
+        val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.getProjectId()}\"" }
         URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
-            .build().toURL().getJson<List<ProjectResponse>>()!!
-            .map { project -> project to updates.keys.first { it.projectId == project.id } }
+            .build().toURL().getJson<List<FullModrinthProject>>()!!
+            .map { project -> project to updates.keys.first { it.getProjectId() == project.id } }
             .sortedBy { (_, newVersion) ->
                 if (Platform.getSelectedResourcePacks().contains(hashes.get()[updates[newVersion]]!!)) 0
                 else 1
@@ -232,7 +233,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         }
     }
 
-    fun showChangeLog(project: ProjectResponse, version: Version, updateButton: UIComponent) {
+    fun showChangeLog(project: FullModrinthProject, version: IVersion, updateButton: UIComponent) {
         updateContainer.hide()
         changelogContainer.constrain { x = this@UpdateGui.width.pixels() }
         changelogContainer.clearChildren()
@@ -244,7 +245,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             changelogContainer.hide()
             updateContainer.unhide()
         } childOf changelogContainer
-        UIText("> ${project.title} > ${version.versionNumber}").constrain {
+        UIText("> ${project.title} > ${version.getVersionNumber() ?: version.getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
         } childOf changelogContainer
@@ -253,11 +254,15 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             y = 4.pixels()
             height = 22.pixels()
         } childOf changelogContainer
-        markdown(version.changelog).constrain {
-            x = 4.pixels()
-            y = SiblingConstraint(4f)
-            width = 100.percent() - 8.pixels()
-        } childOf changelogContainer
+        version.getChangeLog().thenApply {
+            Window.enqueueRenderOperation {
+                markdown(it).constrain {
+                    x = 4.pixels()
+                    y = SiblingConstraint(4f)
+                    width = 100.percent() - 8.pixels()
+                } childOf changelogContainer
+            }
+        }
         changelogContainer.unhide()
     }
 
@@ -316,9 +321,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
     }
 
     companion object {
-        private val updateInfo = mutableMapOf<String, Version?>()
+        private val updateInfo = mutableMapOf<String, IVersion?>()
 
-        fun getUpdates(type: ProjectType, hashes: List<String>): Map<String, Version> {
+        fun getUpdates(type: ProjectType, hashes: List<String>): Map<String, IVersion> {
             fetchUpdates(type, hashes.filter { !updateInfo.containsKey(it) }, hashes)
             return hashes.filter { updateInfo[it] != null }.associateWith { updateInfo[it]!! }
         }
@@ -332,11 +337,11 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 ProjectType.OPTIFINE_SHADER -> "optifine"
             }
             val data = ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes)
-            val updates: Map<String, Version> =
+            val updates: Map<String, ModrinthVersion> =
                 URL("${ModrinthService.API}/version_files/update").postAndGetJson(data) ?: return
             hashes.forEach { hash ->
                 updateInfo[hash] = if (updates.containsKey(hash)) {
-                    if (allHashes.contains(updates[hash]!!.getPrimaryFile()?.hashes?.sha1)) null else updates[hash]
+                    if (allHashes.contains(updates[hash]!!.getSha1())) null else updates[hash]
                 } else {
                     null
                 }

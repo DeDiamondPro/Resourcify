@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@ package dev.dediamondpro.resourcify.gui.update.modrinth
 
 import com.google.gson.annotations.SerializedName
 
-data class ProjectResponse(
+data class FullModrinthProject(
     val id: String,
     val slug: String,
     @SerializedName("project_type") val projectType: String,
@@ -30,7 +30,6 @@ data class ProjectResponse(
     val published: String,
     val updated: String,
     val status: String,
-    val license: LicenseResponse,
     @SerializedName("client_side") val clientSide: String,
     @SerializedName("server_side") val serverSide: String,
     val downloads: Int,
@@ -45,20 +44,5 @@ data class ProjectResponse(
     @SerializedName("source_url") val sourceUrl: String?,
     @SerializedName("wiki_url") val wikiUrl: String?,
     @SerializedName("discord_url") val discordUrl: String?,
-    @SerializedName("donation_urls") val donationUrls: List<DonationResponse>,
-    val gallery: List<GalleryResponse>,
     val color: Int?
-)
-
-data class LicenseResponse(val id: String, val name: String, val url: String?)
-
-data class DonationResponse(val id: String, val platform: String, val url: String)
-
-data class GalleryResponse(
-    val url: String,
-    val featured: Boolean,
-    val title: String?,
-    val description: String?,
-    val created: String,
-    val ordering: Int
 )

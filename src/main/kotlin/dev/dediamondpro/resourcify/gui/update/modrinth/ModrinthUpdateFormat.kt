@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,6 @@ import dev.dediamondpro.resourcify.platform.Platform
 data class ModrinthUpdateFormat(
     val hashes: List<String>,
     val loaders: List<String>,
-    val algorithm: String = "sha512",
+    val algorithm: String = "sha1",
     @SerializedName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
 )

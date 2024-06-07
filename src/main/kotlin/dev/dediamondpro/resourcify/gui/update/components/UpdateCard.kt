@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,9 +18,9 @@
 package dev.dediamondpro.resourcify.gui.update.components
 
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.gui.update.modrinth.ProjectResponse
-import dev.dediamondpro.resourcify.gui.update.modrinth.Version
+import dev.dediamondpro.resourcify.gui.update.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
@@ -43,13 +43,12 @@ import java.util.concurrent.locks.ReentrantLock
 //#endif
 
 class UpdateCard(
-    project: ProjectResponse,
-    private val newVersion: Version,
+    project: FullModrinthProject,
+    private val newVersion: IVersion,
     val file: File,
     private val gui: UpdateGui
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
-    private val newFile = newVersion.getPrimaryFile()!!
-    private val updateUrl = newFile.url.toURL()
+    private val updateUrl = newVersion.getDownloadUrl().toURL()
     private var progressBox: UIBlock? = null
     private var text: UIText? = null
 
@@ -73,7 +72,7 @@ class UpdateCard(
             y = 8.pixels()
             textScale = 2.pixels()
         } childOf this
-        UIText(newVersion.name).constrain {
+        UIText(newVersion.getName()).constrain {
             x = 56.pixels()
             y = SiblingConstraint(padding = 4f)
         } childOf this
@@ -81,15 +80,17 @@ class UpdateCard(
             x = 56.pixels()
             y = SiblingConstraint(padding = 4f)
         } childOf this
-        UIText(newVersion.versionType.localizedName.localize()).constrain {
+        UIText(newVersion.getVersionType().localizedName.localize()).constrain {
             x = 0.pixels()
             y = 0.pixels()
-            color = newVersion.versionType.color.toConstraint()
+            color = newVersion.getVersionType().color.toConstraint()
         } childOf versionNumberHolder
-        UIText(newVersion.versionNumber).constrain {
-            x = SiblingConstraint(padding = 4f)
-            y = 0.pixels()
-        } childOf versionNumberHolder
+        newVersion.getVersionNumber()?.let {
+            UIText(it).constrain {
+                x = SiblingConstraint(padding = 4f)
+                y = 0.pixels()
+            } childOf versionNumberHolder
+        }
 
         val buttonHolder = UIContainer().constrain {
             x = 4.pixels(true)
@@ -143,15 +144,15 @@ class UpdateCard(
         if (DownloadManager.getProgress(updateUrl) == null) {
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
-            val newFileName = if (file.name == newFile.fileName) {
-                incrementFileName(newFile.fileName)
+            val newFileName = if (file.name == newVersion.getFileName()) {
+                incrementFileName(newVersion.getFileName())
             } else {
-                newFile.fileName
+                newVersion.getFileName()
             }
             val downloadFile = File(file.parentFile, newFileName)
             DownloadManager.download(
                 downloadFile,
-                newFile.hashes.sha512, updateUrl
+                newVersion.getSha1(), updateUrl
             ) {
                 try {
                     // Try to update the pack if it is currently selected, not critical if it fails
