@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -114,7 +114,11 @@ class MinecraftButton(text: String? = null) : UIContainer() {
             texture: ReleasedDynamicTexture?
         ): ReleasedDynamicTexture? {
             val resource = try {
+                //#if MC < 12100
                 UMinecraft.getMinecraft().resourceManager.getResource(ResourceLocation(identifier))
+                //#else
+                //$$ UMinecraft.getMinecraft().resourceManager.getResource(Identifier.of(identifier))
+                //#endif
             } catch (e: Exception) {
                 return null
             }

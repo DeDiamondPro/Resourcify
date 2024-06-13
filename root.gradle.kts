@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ preprocess {
     val fabric12001 = createNode("1.20.1-fabric", 12001, "yarn")
     val fabric12004 = createNode("1.20.4-fabric", 12004, "yarn")
     val fabric12006 = createNode("1.20.6-fabric", 12006, "yarn")
+    val fabric12100 = createNode("1.21-fabric", 12100, "yarn")
 
     forge11202.link(forge10809)
     forge11602.link(forge11202, file("versions/1.12.2-forge-1.16.2-forge"))
@@ -61,4 +62,5 @@ preprocess {
     fabric12001.link(fabric11904)
     fabric12004.link(fabric12001)
     fabric12006.link(fabric12004)
+    fabric12100.link(fabric12006)
 }

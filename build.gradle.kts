@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -115,16 +115,10 @@ val shadeRuntime: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val universalVersion = libs.versions.universal.get() + when {
-        project.platform.isNeoForge -> "+diamond.neoforge"
-        else -> ""
-    }
+    val universalVersion = if (platform.isNeoForge) "337+diamond.neoforge" else libs.versions.universal.get()
     if (platform.isFabric) {
         val fabricApiVersion: String by project
-        // Our loom version doesn't support mixin remap thingy, so we can't load it in dev env on newer versions
-        if (platform.mcVersion <= 12001) {
-            modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
-        }
+        modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
@@ -284,11 +278,13 @@ tasks {
         versionNumber.set(mod_version)
         versionName.set("[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version")
         uploadFile.set(remapJar.get().archiveFile as Any)
-        versionType.set(when {
-            mod_version.contains("beta", true) -> "beta"
-            mod_version.contains("alpha", true) -> "alpha"
-            else -> "release"
-        })
+        versionType.set(
+            when {
+                mod_version.contains("beta", true) -> "beta"
+                mod_version.contains("alpha", true) -> "alpha"
+                else -> "release"
+            }
+        )
         gameVersions.addAll(getSupportedVersionList())
         if (platform.isFabric) {
             loaders.add("fabric")
@@ -359,7 +355,8 @@ tasks {
 // Function to get the range of mc versions supported by a version we are building for.
 // First value is start of range, second value is end of range or null to leave the range open
 fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion) {
-    12006 -> "1.20.5" to null
+    12100 -> "1.21" to null
+    12006 -> "1.20.5" to "1.20.6"
     12004 -> "1.20.2" to "1.20.4"
     12001 -> "1.20" to "1.20.1"
     11904 -> "1.19.4" to "1.19.4"
@@ -381,6 +378,7 @@ fun getPrettyVersionRange(): String {
 }
 
 fun getFabricMcVersionRange(): String {
+    if (platform.mcVersion == 12100) return "1.21.x"
     val supportedVersionRange = getSupportedVersionRange()
     if (supportedVersionRange.first == supportedVersionRange.second) return supportedVersionRange.first
     return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"
@@ -395,7 +393,7 @@ fun getForgeMcVersionRange(): String {
 fun getSupportedVersionList(): List<String> {
     val supportedVersionRange = getSupportedVersionRange()
     return when (supportedVersionRange.first) {
-        "1.20.5" -> listOf("1.20.5", "1.20.6")
+        "1.21" -> listOf("1.21")
         else -> {
             val minorVersion = supportedVersionRange.first.let {
                 if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")

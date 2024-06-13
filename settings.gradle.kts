@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,7 @@ listOf(
     "1.20.4-fabric",
     "1.20.6-neoforge",
     "1.20.6-fabric",
+    "1.21-fabric",
 ).forEach { version ->
     include(":$version")
     project(":$version").apply {
