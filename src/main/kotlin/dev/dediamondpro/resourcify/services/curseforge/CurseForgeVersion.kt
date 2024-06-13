@@ -17,11 +17,8 @@
 
 package dev.dediamondpro.resourcify.services.curseforge
 
-import dev.dediamondpro.resourcify.services.IVersion
-import dev.dediamondpro.resourcify.services.VersionType
-import dev.dediamondpro.resourcify.util.encodeUrl
-import dev.dediamondpro.resourcify.util.getJson
-import dev.dediamondpro.resourcify.util.supplyAsync
+import dev.dediamondpro.resourcify.services.*
+import dev.dediamondpro.resourcify.util.*
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
@@ -35,10 +32,14 @@ data class CurseForgeVersion(
     private val releaseType: Int,
     private val gameVersions: List<String>,
     private val downloadCount: Int,
-    private val fileDate: String
+    private val fileDate: String,
+    private val dependencies: List<Dependency>,
 ) : IVersion {
     @Transient
     private var changeLogRequest: CompletableFuture<String>? = null
+
+    @Transient
+    private var dependenciesRequest: CompletableFuture<List<CurseForgeDependency>>? = null
 
     override fun getName(): String = displayName
     override fun getVersionNumber(): String? = null
@@ -76,10 +77,39 @@ data class CurseForgeVersion(
 
     override fun getDownloadCount(): Int = downloadCount
     override fun getReleaseDate(): String = fileDate
+    override fun hasDependencies(): Boolean =
+        dependencies.none { DependencyType.fromCurseForgeId(it.relationType) == null } && dependencies.isNotEmpty()
+
+    override fun getDependencies(): CompletableFuture<List<IDependency>> {
+        return (dependenciesRequest ?: supplyAsync {
+            val deps = dependencies.filter { DependencyType.fromCurseForgeId(it.relationType) != null }
+            val projects: ModsResponse = "${CurseForgeService.API}/mods".toURL()
+                .postAndGetJson(
+                    GetByIdProperty(deps.map { it.modId }),
+                    headers = mapOf("x-api-key" to CurseForgeService.API_KEY)
+                ) ?: error("Failed to fetch dependencies.")
+            projects.data.map {
+                CurseForgeDependency(
+                    it,
+                    DependencyType.fromCurseForgeId(deps.first { dep -> dep.modId.toString() == it.getId() }.relationType)!!
+                )
+            }
+        }.apply { dependenciesRequest = this }) as CompletableFuture<List<IDependency>>
+    }
 
     data class Hash(val value: String, val algo: Int)
 
     data class Changelog(val data: String)
+
+    data class Dependency(val modId: Int, val relationType: Int)
+
+    data class GetByIdProperty(val modIds: List<Int>)
+
+    data class ModsResponse(val data: List<CurseForgeProject>)
+
+    data class CurseForgeDependency(override val project: CurseForgeProject, override val type: DependencyType) :
+        IDependency
+
 
     companion object {
         val MC_VERSION_REGEX = Regex("([0-9]+\\.[0-9]+(\\.[0-9]+)?)")

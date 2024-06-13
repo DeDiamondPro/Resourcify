@@ -27,7 +27,7 @@ import java.awt.Color
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-data class ModrinthProject(
+data class PartialModrinthProject(
     private val title: String,
     @SerializedName("description") private val summary: String,
     private val author: String,
@@ -40,7 +40,7 @@ data class ModrinthProject(
     private val id: String,
 ) : IProject {
     @Transient
-    private var projectRequest: CompletableFuture<ProjectResponse?>? = null
+    private var projectRequest: CompletableFuture<FullModrinthProject?>? = null
 
     @Transient
     private var membersRequest: CompletableFuture<List<Member>?>? = null
@@ -56,31 +56,21 @@ data class ModrinthProject(
     override fun getBannerUrl(): String? = featuredGallery ?: gallery.firstOrNull()
     override fun getBannerColor(): Color? = color?.let { Color(it) }
     override fun getDescription(): CompletableFuture<String> =
-        fetchProject().thenApply { it?.body ?: error("Failed to fetch description.") }
+        fetchProject().thenApply { it?.getDescription()?.getNow(null) ?: error("Failed to fetch description.") }
 
     override fun getBrowserUrl(): String = "https://modrinth.com/$projectType/$slug"
     override fun getCategories(): CompletableFuture<List<String>> =
         fetchProject().thenApply {
-            it?.categories?.map { c ->
-                "resourcify.categories.${c.lowercase().replace(" ", "_")}"
-                    .localizeOrDefault(c.capitalizeAll())
-            } ?: error("Failed to fetch categories.")
+            it?.getCategories()?.getNow(null) ?: error("Failed to fetch categories.")
         }
 
     override fun getExternalLinks(): CompletableFuture<Map<String, String>> = fetchProject().thenApply {
-        if (it == null) error("Failed to get external links")
-        mutableMapOf<String, String>().apply {
-            if (!it.wikiUrl.isNullOrBlank()) put("resourcify.project.wiki".localize(), it.wikiUrl)
-            if (!it.discordUrl.isNullOrBlank()) put("resourcify.project.discord".localize(), it.discordUrl)
-            if (!it.sourceUrl.isNullOrBlank()) put("resourcify.project.source".localize(), it.sourceUrl)
-            if (!it.issuesUrl.isNullOrBlank()) put("resourcify.project.issues".localize(), it.issuesUrl)
-            it.donationUrls.forEach { donationUrl -> put(donationUrl.platform, donationUrl.url) }
-        }
+        it?.getExternalLinks()?.getNow(null) ?: error("Failed to get external links")
     }
 
-    private fun fetchProject(): CompletableFuture<ProjectResponse?> {
+    private fun fetchProject(): CompletableFuture<FullModrinthProject?> {
         return projectRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug").getJson<ProjectResponse>()
+            URL("${ModrinthService.API}/project/$slug").getJson<FullModrinthProject>()
         }.apply { projectRequest = this }
     }
 
@@ -91,7 +81,7 @@ data class ModrinthProject(
     override fun hasGallery(): Boolean = gallery.isNotEmpty()
 
     override fun getGalleryImages(): CompletableFuture<List<IGalleryImage>> = fetchProject().thenApply {
-        it?.gallery?.sortedBy { image -> image.ordering }
+        it?.getGalleryImages()?.getNow(null) ?: error("Failed to fetch gallery.")
     }
 
     override fun getVersions(): CompletableFuture<List<IVersion>> {
@@ -107,19 +97,6 @@ data class ModrinthProject(
         }.apply { membersRequest = this }
     }
 
-    data class ProjectResponse(
-        val body: String,
-        val categories: List<String>,
-        @SerializedName("wiki_url") val wikiUrl: String?,
-        @SerializedName("discord_url") val discordUrl: String?,
-        @SerializedName("source_url") val sourceUrl: String?,
-        @SerializedName("issues_url") val issuesUrl: String?,
-        @SerializedName("donation_urls") val donationUrls: List<DonationUrl>,
-        val gallery: List<GalleryImage>
-    )
-
-    data class DonationUrl(val platform: String, val url: String)
-
     data class Member(val user: User, val role: String)
 
     data class User(
@@ -134,8 +111,4 @@ data class ModrinthProject(
         override val url: String
             get() = "https://modrinth.com/user/$name"
     }
-
-    data class GalleryImage(
-        override val url: String, override val title: String?, override val description: String?, val ordering: Long
-    ) : IGalleryImage
 }

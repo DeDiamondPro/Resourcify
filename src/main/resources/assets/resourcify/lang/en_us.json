@@ -27,6 +27,9 @@
   "resourcify.project.wiki": "Wiki",
   "resourcify.project.discord": "Discord",
   "resourcify.project.members": "Project Members:",
+  "resourcify.project.dependencies": "Dependencies",
+  "resourcify.project.required_dependency": "Required dependency",
+  "resourcify.project.optional_dependency": "Optional dependency",
 
   "resourcify.version.install": "Install",
   "resourcify.version.install_version": "Install %s",

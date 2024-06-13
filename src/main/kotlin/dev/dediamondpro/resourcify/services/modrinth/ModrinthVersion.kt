@@ -18,9 +18,11 @@
 package dev.dediamondpro.resourcify.services.modrinth
 
 import com.google.gson.annotations.SerializedName
-import dev.dediamondpro.resourcify.services.IVersion
-import dev.dediamondpro.resourcify.services.VersionType
+import dev.dediamondpro.resourcify.services.*
+import dev.dediamondpro.resourcify.util.getJson
 import dev.dediamondpro.resourcify.util.supply
+import dev.dediamondpro.resourcify.util.supplyAsync
+import org.apache.http.client.utils.URIBuilder
 import java.util.concurrent.CompletableFuture
 
 data class ModrinthVersion(
@@ -34,7 +36,11 @@ data class ModrinthVersion(
     private val downloads: Int,
     @SerializedName("date_published") private val datePublished: String,
     @SerializedName("project_id") private val projectId: String,
+    private val dependencies: List<Dependency>,
 ) : IVersion {
+    @Transient
+    private var dependenciesRequest: CompletableFuture<List<ModrinthDependency>>? = null
+
     override fun getName(): String = name
     override fun getVersionNumber(): String = versionNumber
     override fun getProjectId(): String = projectId
@@ -49,8 +55,37 @@ data class ModrinthVersion(
     override fun getMinecraftVersions(): List<String> = gameVersions
     override fun getDownloadCount(): Int = downloads
     override fun getReleaseDate(): String = datePublished
+    override fun hasDependencies(): Boolean = dependencies.any {
+        it.projectId != null && DependencyType.fromString(it.dependencyType) != null
+    }
+
+    override fun getDependencies(): CompletableFuture<List<IDependency>> {
+        return (dependenciesRequest ?: supplyAsync {
+            val requiredDependencies = dependencies.filter {
+                it.projectId != null && DependencyType.fromString(it.dependencyType) != null
+            }
+            val idString = requiredDependencies.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
+            URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
+                .build().toURL().getJson<List<FullModrinthProject>>()?.map {
+                    ModrinthDependency(
+                        it,
+                        DependencyType.fromString(requiredDependencies.first { d -> d.projectId == it.getId() }.dependencyType)!!
+                    )
+                } ?: emptyList()
+        }.apply { dependenciesRequest = this }) as CompletableFuture<List<IDependency>>
+    }
 
     data class File(val url: String, val filename: String, val hashes: Hash, val primary: Boolean)
 
     data class Hash(val sha1: String)
+
+    data class Dependency(
+        @SerializedName("project_id") val projectId: String?,
+        @SerializedName("dependency_type") val dependencyType: String
+    )
+
+    data class ModrinthDependency(
+        override val project: FullModrinthProject,
+        override val type: DependencyType
+    ) : IDependency
 }

@@ -17,21 +17,30 @@
 
 package dev.dediamondpro.resourcify.services
 
-import java.util.concurrent.CompletableFuture
+import dev.dediamondpro.resourcify.util.localize
 
-interface IVersion {
-    fun getName(): String
-    fun getVersionNumber(): String?
-    fun getProjectId(): String
-    fun getDownloadUrl(): String
-    fun getFileName(): String
-    fun getSha1(): String
-    fun getChangeLog(): CompletableFuture<String>
-    fun getVersionType(): VersionType
-    fun getLoaders(): List<String>
-    fun getMinecraftVersions(): List<String>
-    fun getDownloadCount(): Int
-    fun getReleaseDate(): String
-    fun hasDependencies(): Boolean
-    fun getDependencies(): CompletableFuture<List<IDependency>>
+enum class DependencyType {
+    REQUIRED,
+    OPTIONAL;
+
+    fun getLocalizedName(): String {
+        return when (this) {
+            REQUIRED -> "resourcify.project.required_dependency".localize()
+            OPTIONAL -> "resourcify.project.optional_dependency".localize()
+        }
+    }
+
+    companion object {
+        fun fromString(string: String): DependencyType? = when (string) {
+            "required" -> REQUIRED
+            "optional" -> OPTIONAL
+            else -> null
+        }
+
+        fun fromCurseForgeId(id: Int): DependencyType? = when (id) {
+            2 -> OPTIONAL
+            3 -> REQUIRED
+            else -> null
+        }
+    }
 }

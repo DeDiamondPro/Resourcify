@@ -18,7 +18,7 @@
 package dev.dediamondpro.resourcify.gui.update.components
 
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.gui.update.modrinth.FullModrinthProject
+import dev.dediamondpro.resourcify.services.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
@@ -57,17 +57,18 @@ class UpdateCard(
             height = 56.pixels()
         }
 
-        if (project.iconUrl.isNullOrBlank()) {
+        val iconUrl = project.getIconUrl()
+        if (iconUrl.isNullOrBlank()) {
             UIImage.ofResource("/assets/resourcify/pack.png")
         } else {
-            UIImage.ofURL(project.iconUrl)
+            UIImage.ofURL(iconUrl)
         }.constrain {
             x = 4.pixels()
             y = 4.pixels()
             width = 48.pixels()
             height = 48.pixels()
         } childOf this
-        UIText(project.title).constrain {
+        UIText(project.getName()).constrain {
             x = 56.pixels()
             y = 8.pixels()
             textScale = 2.pixels()

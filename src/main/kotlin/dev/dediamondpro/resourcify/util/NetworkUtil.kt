@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.ModInfo
 import gg.essential.universal.UMinecraft
-import org.apache.http.client.utils.URIBuilder
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URI

@@ -22,7 +22,7 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.gui.update.modrinth.ModrinthUpdateFormat
-import dev.dediamondpro.resourcify.gui.update.modrinth.FullModrinthProject
+import dev.dediamondpro.resourcify.services.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
@@ -61,7 +61,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.getProjectId()}\"" }
         URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
             .build().toURL().getJson<List<FullModrinthProject>>()!!
-            .map { project -> project to updates.keys.first { it.getProjectId() == project.id } }
+            .map { project -> project to updates.keys.first { it.getProjectId() == project.getId() } }
             .sortedBy { (_, newVersion) ->
                 if (Platform.getSelectedResourcePacks().contains(hashes.get()[updates[newVersion]]!!)) 0
                 else 1
@@ -245,7 +245,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             changelogContainer.hide()
             updateContainer.unhide()
         } childOf changelogContainer
-        UIText("> ${project.title} > ${version.getVersionNumber() ?: version.getName()}").constrain {
+        UIText("> ${project.getName()} > ${version.getVersionNumber() ?: version.getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
         } childOf changelogContainer
