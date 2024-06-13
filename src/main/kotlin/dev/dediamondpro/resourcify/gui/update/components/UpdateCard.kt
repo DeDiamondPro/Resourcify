@@ -145,12 +145,10 @@ class UpdateCard(
         if (DownloadManager.getProgress(updateUrl) == null) {
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
-            val newFileName = if (file.name == newVersion.getFileName()) {
-                incrementFileName(newVersion.getFileName())
-            } else {
-                newVersion.getFileName()
+            var downloadFile = File(file.parentFile, newVersion.getFileName())
+            if (downloadFile.exists()) {
+                downloadFile = File(file.parentFile, Utils.incrementFileName(newVersion.getFileName()))
             }
-            val downloadFile = File(file.parentFile, newFileName)
             DownloadManager.download(
                 downloadFile,
                 newVersion.getSha1(), updateUrl
@@ -199,24 +197,6 @@ class UpdateCard(
             gui.cancelUpdate(this)
             DownloadManager.cancelDownload(updateUrl)
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update")}")
-        }
-    }
-
-    private fun incrementFileName(fileName: String): String {
-        val regex = """\((\d+)\)(\.\w+)$""".toRegex()
-        val matchResult = regex.find(fileName)
-
-        return if (matchResult != null) {
-            val currentNumber = matchResult.groupValues[1].toInt()
-            val extension = matchResult.groupValues[2]
-            fileName.replace(regex, "(${currentNumber + 1})$extension")
-        } else {
-            val dotIndex = fileName.lastIndexOf('.')
-            if (dotIndex != -1) {
-                fileName.substring(0, dotIndex) + " (1)." + fileName.substring(dotIndex + 1)
-            } else {
-                "$fileName (1)"
-            }
         }
     }
 

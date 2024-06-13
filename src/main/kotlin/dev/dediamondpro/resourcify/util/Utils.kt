@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -131,5 +131,23 @@ object Utils {
     fun getShadowColor(color: Color): Color {
         val rgb = color.rgb
         return Color(rgb and 16579836 shr 2 or (rgb and -16777216))
+    }
+
+    fun incrementFileName(fileName: String): String {
+        val regex = """\((\d+)\)(\.\w+)$""".toRegex()
+        val matchResult = regex.find(fileName)
+
+        return if (matchResult != null) {
+            val currentNumber = matchResult.groupValues[1].toInt()
+            val extension = matchResult.groupValues[2]
+            fileName.replace(regex, "(${currentNumber + 1})$extension")
+        } else {
+            val dotIndex = fileName.lastIndexOf('.')
+            if (dotIndex != -1) {
+                fileName.substring(0, dotIndex) + " (1)." + fileName.substring(dotIndex + 1)
+            } else {
+                "$fileName (1)"
+            }
+        }
     }
 }

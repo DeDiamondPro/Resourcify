@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,10 +20,7 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
-import dev.dediamondpro.resourcify.util.DownloadManager
-import dev.dediamondpro.resourcify.util.capitalizeAll
-import dev.dediamondpro.resourcify.util.localize
-import dev.dediamondpro.resourcify.util.toURL
+import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
@@ -194,10 +191,11 @@ class VersionCard(
                 if (installed || it.mouseButton != 0) return@onMouseClick
                 if (DownloadManager.getProgress(url) == null) {
                     text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
-                    DownloadManager.download(
-                        File(downloadFolder, version.getFileName()),
-                        version.getSha1(), url
-                    ) {
+                    var file = File(downloadFolder, version.getFileName())
+                    if (file.exists()) {
+                        file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
+                    }
+                    DownloadManager.download(file, version.getSha1(), url) {
                         text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                         installed = true
                     }
