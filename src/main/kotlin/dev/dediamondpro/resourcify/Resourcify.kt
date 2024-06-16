@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,7 +85,7 @@ object Resourcify {
     //$$     //$$ ModLoadingContext.get().registerExtensionPoint(ConfigGuiFactory::class.java) {
     //$$     //$$     ConfigGuiFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
     //$$     //$$ }
-    //$$     //#elseif MC < 12006
+    //$$     //#elseif MC < 12006 || FORGE == 1
     //$$     //$$ ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory::class.java) {
     //$$     //$$     ConfigScreenFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
     //$$     //$$ }

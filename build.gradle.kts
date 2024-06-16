@@ -115,7 +115,8 @@ val shadeRuntime: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val universalVersion = if (platform.isNeoForge) "337+diamond.neoforge" else libs.versions.universal.get()
+    val universalVersion = if (platform.isNeoForge || (platform.isForge && platform.mcVersion == 12100))
+        "342+diamond.neoforge" else libs.versions.universal.get()
     if (platform.isFabric) {
         val fabricApiVersion: String by project
         modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
@@ -148,12 +149,6 @@ dependencies {
     shade(libs.bundles.markdown) {
         isTransitive = false
     }
-
-    val irisVersion: String by project
-    // if (!platform.isLegacyForge) modCompileOnly(
-    //     if (platform.isFabric) "maven.modrinth:iris:$irisVersion"
-    //     else "maven.modrinth:oculus:$irisVersion"
-    // )
 }
 
 tasks {
@@ -239,8 +234,17 @@ tasks {
         if (platform.isForgeLike) {
             relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         }
+
+        if (platform.isForge && platform.mcVersion >= 12100) {
+            exclude("forge.mixins.resourcify.refmap.json")
+            archiveFileName.set("$mod_name (${getPrettyVersionRange()}-${platform.loaderStr})-${mod_version}.jar")
+        }
     }
     remapJar {
+        if (platform.isForge && platform.mcVersion >= 12100) {
+            enabled = false
+        }
+
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
         finalizedBy("copyJar")
@@ -268,7 +272,7 @@ tasks {
     }
     register<Copy>("copyJar") {
         File("${project.rootDir}/jars").mkdir()
-        from(remapJar.get().archiveFile)
+        from(if (platform.isForge && platform.mcVersion >= 12100) shadowJar.get().archiveFile else remapJar.get().archiveFile)
         into("${project.rootDir}/jars")
     }
     clean { delete("${project.rootDir}/jars") }
@@ -277,7 +281,7 @@ tasks {
         projectId.set("resourcify")
         versionNumber.set(mod_version)
         versionName.set("[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version")
-        uploadFile.set(remapJar.get().archiveFile as Any)
+        uploadFile.set(if (platform.isForge && platform.mcVersion >= 12100) shadowJar.get().archiveFile else remapJar.get().archiveFile)
         versionType.set(
             when {
                 mod_version.contains("beta", true) -> "beta"
@@ -336,9 +340,11 @@ tasks {
                 mod_version.contains("alpha", true) -> "alpha"
                 else -> "release"
             }
-            mainArtifact(remapJar.get().archiveFile, closureOf<CurseArtifact> {
-                displayName = "[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version"
-            })
+            mainArtifact(
+                if (platform.isForge && platform.mcVersion >= 12100) shadowJar.get().archiveFile else remapJar.get().archiveFile,
+                closureOf<CurseArtifact> {
+                    displayName = "[${getPrettyVersionRange()}-${platform.loaderStr}] Resourcify $mod_version"
+                })
         })
         options(closureOf<Options> {
             javaVersionAutoDetect = false

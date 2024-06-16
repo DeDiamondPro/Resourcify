@@ -1,6 +1,5 @@
 ## Resourcify 1.4.0
 
-This is a beta version, there might be issues!
 Please make sure to report any bugs and/or visual anomalies on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in the [Discord](https://discord.gg/XtAuqsJWby).
 
 ### Major new features
