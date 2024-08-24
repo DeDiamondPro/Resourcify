@@ -51,9 +51,9 @@ class ExpandableMarkdownElement(
 
     override fun generateNewLayout(layoutData: LayoutData?, renderData: UMatrixStack?) {
         val summary = children.firstOrNull { it is SummaryElement } as? SummaryElement?
-        summary?.generateLayout(layoutData, renderData)
+        summary?.generateLayoutInternal(layoutData, renderData)
         if (!open) return
-        children.forEach { if (it != summary) it.generateLayout(layoutData, renderData) }
+        children.forEach { if (it != summary) it.generateLayoutInternal(layoutData, renderData) }
     }
 
     override fun drawInternal(xOffset: Float, yOffset: Float, mouseX: Float, mouseY: Float, renderData: UMatrixStack) {
@@ -92,9 +92,12 @@ class ExpandableMarkdownElement(
     override fun onMouseClickedInternal(button: MouseButton, mouseX: Float, mouseY: Float) {
         val actualMouseX = mouseX - extraXOffset
         val actualMouseY = mouseY - extraYOffset
+        // Get this here to avoid the summary element opening and the click event getting passed along before
+        // a new layout was generated
+        val wasOpen = open
         val summary = children.firstOrNull { it is SummaryElement } as? SummaryElement?
         summary?.onMouseClickedInternal(button, actualMouseX, actualMouseY)
-        if (!open) return
+        if (!wasOpen) return
         children.forEach { if (it != summary) it.onMouseClickedInternal(button, actualMouseX, actualMouseY) }
     }
 

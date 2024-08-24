@@ -59,8 +59,9 @@ class SummaryElement(
         if (button == MouseButton.LEFT && marker != null && mouseY >= marker.y && mouseY < marker.y + marker.height) {
             actualParent?.open = actualParent?.open?.not() ?: false
             regenerateLayout()
+        } else {
+            super.onMouseClickedInternal(button, mouseX, mouseY)
         }
-        super.onMouseClickedInternal(button, mouseX, mouseY)
     }
 
     companion object {
