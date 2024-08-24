@@ -87,7 +87,10 @@ data class PartialModrinthProject(
     override fun getVersions(): CompletableFuture<List<IVersion>> {
         return (versionsRequest ?: supplyAsync {
             URL("${ModrinthService.API}/project/$slug/version").getJson<List<ModrinthVersion>>()
-                ?.filter { it.hasFile() } ?: error("Failed to fetch versions.")
+                ?.filter { it.hasFile() }
+                // Filter mods (jar files) out of datapack versions
+                ?.filter { projectType != "mod" || it.getLoaders().contains("datapack") }
+                ?: error("Failed to fetch versions.")
         }.apply { versionsRequest = this }) as CompletableFuture<List<IVersion>>
     }
 
