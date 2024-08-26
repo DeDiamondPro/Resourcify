@@ -280,7 +280,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             Platform.reloadResources()
             UMinecraft.getMinecraft().gameSettings.saveOptions()
         }
-        val screen = backScreens.firstOrNull { it !is PaginatedScreen }
+        val screen = backScreens.lastOrNull { it !is PaginatedScreen }
         if (screen == null) {
             displayScreen(null)
         } else {
