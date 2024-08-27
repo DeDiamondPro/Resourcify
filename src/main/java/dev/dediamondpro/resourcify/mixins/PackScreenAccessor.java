@@ -17,6 +17,8 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+//#if MC < 11600
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,3 +30,5 @@ public interface PackScreenAccessor {
     @Accessor("parentScreen")
     GuiScreen getParentScreen();
 }
+
+//#endif

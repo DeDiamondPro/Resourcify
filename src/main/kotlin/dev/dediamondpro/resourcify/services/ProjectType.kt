@@ -17,12 +17,6 @@
 
 package dev.dediamondpro.resourcify.services
 
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.XConstraint
-import gg.essential.elementa.constraints.YConstraint
-import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.dsl.plus
-
 //#if MC >= 11600
 //$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 //$$ import net.minecraft.client.gui.screen.Screen
@@ -31,21 +25,25 @@ import gg.essential.elementa.dsl.plus
 
 enum class ProjectType(
     val displayName: String,
-    val plusX: XConstraint = CenterConstraint()
-            //#if MC >= 12005
-            //$$ + 205.pixels(),
-            //#else
-            + 194.pixels(),
-    //#endif
-    val plusY: YConstraint = 10.pixels(),
+    val plusX: (Int) -> Int = { screenWidth: Int ->
+        (
+                screenWidth / 2
+                //#if MC >= 12005
+                //$$ + 195
+                //#else
+                + 184
+                //#endif
+        )
+    },
+    val plusY: (Int) -> Int = { 10 },
     val hasUpdateButton: Boolean = true
 ) {
     RESOURCE_PACK("resourcify.type.resource_packs"),
     // 1.8.9 only
-    AYCY_RESOURCE_PACK("resourcify.type.resource_packs", plusX = 10.pixels(true)),
+    AYCY_RESOURCE_PACK("resourcify.type.resource_packs", plusX = { it - 30 }),
     DATA_PACK("resourcify.type.data_packs", hasUpdateButton = false),
-    IRIS_SHADER("resourcify.type.shaders", CenterConstraint() + 144.pixels(), 6.pixels()),
-    OPTIFINE_SHADER("resourcify.type.shaders", plusX = 10.pixels(true));
+    IRIS_SHADER("resourcify.type.shaders",  { it / 2 + 134 }, { 6 }),
+    OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 });
 
     //#if MC >= 11600
     //$$ fun getDirectory(screen: Screen): File {

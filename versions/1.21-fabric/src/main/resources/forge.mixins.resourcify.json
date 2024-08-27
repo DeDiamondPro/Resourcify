@@ -6,7 +6,6 @@
     "ScreenMixin",
     "PackScreenAccessor",
     "AbstractResourcePackAccessor",
-    "ResourcePackOrganizerAccessor",
-    "ReloadableResourceManagerMixin"
+    "ResourcePackOrganizerAccessor"
   ]
 }

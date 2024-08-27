@@ -22,7 +22,6 @@ package dev.dediamondpro.resourcify
 //#if MODERN == 0
 import net.minecraftforge.fml.common.Mod
 //#elseif FORGE == 1
-//$$ import dev.dediamondpro.resourcify.platform.EventHandler
 //$$ import net.minecraft.client.Minecraft
 //$$ import net.minecraftforge.fml.ModLoadingContext
 //$$ import dev.dediamondpro.resourcify.config.SettingsPage
@@ -40,20 +39,15 @@ import net.minecraftforge.fml.common.Mod
 //#endif
 
 //#if NEOFORGE == 1 && MODERN == 1
-//$$ import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
-//$$ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 //$$ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 //$$ import net.neoforged.fml.common.Mod
 //$$ import net.minecraft.client.gui.screens.Screen
-//$$ import dev.dediamondpro.resourcify.platform.EventHandler
 //$$ import net.minecraft.client.Minecraft
 //$$ import net.neoforged.fml.ModLoadingContext
 //$$ import dev.dediamondpro.resourcify.config.SettingsPage
 //#elseif FORGE == 1 && MODERN == 1
 //$$ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 //$$ import net.minecraftforge.fml.common.Mod
-//$$ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-//$$ import thedarkcolour.kotlinforforge.forge.MOD_BUS
 //#endif
 
 //#if MC >= 12006 && NEOFORGE == 1
@@ -76,7 +70,6 @@ import net.minecraftforge.fml.common.Mod
 object Resourcify {
     //#if MC > 11202
     //$$ init {
-    //$$     MOD_BUS.addListener(this::onClientInit)
     //$$     //#if MC < 11800
     //$$     ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY) {
     //$$        BiFunction { _: Minecraft?, _: Screen? -> SettingsPage() }
@@ -94,10 +87,6 @@ object Resourcify {
     //$$     //$$     IConfigScreenFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
     //$$     //$$ }
     //$$     //#endif
-    //$$ }
-    //$$
-    //$$ private fun onClientInit(event: FMLClientSetupEvent) {
-    //$$     FORGE_BUS.register(EventHandler)
     //$$ }
     //#endif
 }

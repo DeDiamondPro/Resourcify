@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,9 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+//#if MC < 11600
+
 import dev.dediamondpro.resourcify.elements.MinecraftButton;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,3 +33,5 @@ public class ReloadableResourceManagerMixin {
         MinecraftButton.Companion.reloadTexture();
     }
 }
+
+//#endif

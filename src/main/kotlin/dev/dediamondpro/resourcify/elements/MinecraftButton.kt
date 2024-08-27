@@ -17,6 +17,8 @@
 
 package dev.dediamondpro.resourcify.elements
 
+//#if MC < 11600
+
 import dev.dediamondpro.resourcify.util.Utils
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -135,3 +137,5 @@ class MinecraftButton(text: String? = null) : UIContainer() {
         }
     }
 }
+
+//#endif

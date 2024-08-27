@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,20 +28,12 @@ import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
-import gg.essential.elementa.dsl.childOf
-import gg.essential.elementa.dsl.constrain
-import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.dsl.plus
+import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UResolution
 import gg.essential.universal.UScreen
 import gg.essential.universal.USound
 import java.io.File
-
-//#if MC >= 11600
-//$$ import net.minecraft.util.text.TranslationTextComponent
-//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-//$$ import net.minecraft.client.gui.screen.Screen
-//#endif
 
 object PackScreensAddition {
     private val window = Window(ElementaVersion.V5)
@@ -72,11 +64,11 @@ object PackScreensAddition {
     } childOf updateButton
 
     fun onRender(matrix: UMatrixStack, type: ProjectType) {
-        addButton.setX(type.plusX)
-        addButton.setY(type.plusY)
+        addButton.setX(basicXConstraint { type.plusX(UResolution.scaledWidth).toFloat() })
+        addButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
         if (type.hasUpdateButton) updateButton.unhide()
         else updateButton.hide(true)
-        updateButton.setY(type.plusY)
+        updateButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
         window.draw(matrix)
     }
 
@@ -91,31 +83,4 @@ object PackScreensAddition {
             UScreen.displayScreen(UpdateGui(type, folder))
         }
     }
-
-    fun getType(title: String): ProjectType? {
-        return when (title) {
-            "resourcePack.title" -> ProjectType.RESOURCE_PACK
-            "dataPack.title" -> ProjectType.DATA_PACK
-            "of.options.shadersTitle" -> ProjectType.OPTIFINE_SHADER
-            "options.iris.shaderPackSelection.title" -> ProjectType.IRIS_SHADER
-            else -> return null
-        }
-    }
-
-    //#if MC >= 11600
-    //$$ fun getDirectory(type: ProjectType, screen: Screen): File {
-    //$$     return when(type) {
-    //$$         //#if MC < 11904
-    //$$         ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
-    //$$         ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
-    //$$         //#else
-    //$$         //$$ ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
-    //$$         //$$ ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
-    //$$         //#endif
-    //$$         ProjectType.IRIS_SHADER -> File("./shaderpacks")
-    //$$         ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
-    //$$         else -> error("Unknown project type: $type")
-    //$$     }
-    //$$ }
-    //#endif
 }
