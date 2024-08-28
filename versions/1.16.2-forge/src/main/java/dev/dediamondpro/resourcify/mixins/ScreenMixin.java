@@ -53,7 +53,15 @@ class ScreenMixin {
 
     @Unique private List<Button> resourcifyCustomButtons;
 
-    @Inject(method = "init(Lnet/minecraft/client/Minecraft;II)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;init()V", shift = At.Shift.AFTER))
+    @Inject(method = "init(Lnet/minecraft/client/Minecraft;II)V", at = @At(value = "INVOKE", target =
+            //#if MC < 11800
+            "Lnet/minecraft/client/gui/screen/Screen;init()V",
+            shift = At.Shift.AFTER
+            //#else
+            //$$ "Lnet/minecraft/client/gui/screen/Screen;narrateScreenIfNarrationEnabled(Z)V",
+            //$$ shift = At.Shift.BEFORE
+            //#endif
+            ))
     private void onInit(CallbackInfo ci) {
         handleInit_Resourcify();
     }
