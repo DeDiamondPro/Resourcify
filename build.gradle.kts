@@ -367,7 +367,7 @@ fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion
     12001 -> "1.20" to "1.20.1"
     11904 -> "1.19.4" to "1.19.4"
     11902 -> "1.19" to "1.19.2"
-    11802 -> (if (platform.isForge) "1.18.2" else "1.18") to "1.18.2"
+    11802 -> "1.18" to "1.18.2"
     11602 -> "1.16" to "1.16.5"
     11202 -> "1.12.2" to "1.12.2"
     10809 -> "1.8.9" to "1.8.9"
