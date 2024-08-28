@@ -18,11 +18,16 @@
 package dev.dediamondpro.resourcify.gui.pack
 
 import com.mojang.blaze3d.matrix.MatrixStack
+import com.mojang.blaze3d.systems.RenderSystem
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.AbstractGui
 import net.minecraft.client.gui.widget.button.Button
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.ITextComponent
+
+//#if MC >= 11800
+//$$ import net.minecraft.client.render.GameRenderer
+//#endif
 
 class ImageButton(
     x: Int, y: Int,
@@ -43,10 +48,18 @@ class ImageButton(
         //#endif
         mouseX: Int, mouseY: Int, delta: Float) {
         super.renderButton(context, mouseX, mouseY, delta)
-        UMinecraft.getMinecraft().textureManager.bindTexture(image)
         //#if MC < 12000
+        //#if MC < 11800
+        UMinecraft.getMinecraft().textureManager.bindTexture(image)
+        RenderSystem.color4f(1f, 1f, 1f, 1f)
+        //#else
+        //$$ RenderSystem.setShader(GameRenderer::getPositionTexShader)
+        //$$ RenderSystem.setShaderTexture(0, image)
+        //$$ RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        //#endif
         AbstractGui.blit(context, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
         //#else
+        //$$ RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
         //$$ context.drawTexture(image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
         //#endif
     }

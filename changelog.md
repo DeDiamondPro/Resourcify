@@ -1,22 +1,18 @@
-## Resourcify 1.4.0
+## Resourcify 1.4.1
 
 Please make sure to report any bugs and/or visual anomalies on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in the [Discord](https://discord.gg/XtAuqsJWby).
 
-### Major new features
-- Add support for CurseForge, you can now browse and install resource packs from CurseForge. There is a new dropdown on the browse page to switch between CurseForge and modrinth.
-- Add settings GUI, allowing you to configure the default source. The config can be accessed via the mod menu (on fabric you need the `mod menu` mod to be able to access the config).
-- Support for expandable dropdowns in project descriptions have been added.
-- [MineMark](https://github.com/DeDiamondPro/MineMark) (Resourcify's markdown library) has been updated to [1.1.0](https://github.com/DeDiamondPro/MineMark/releases/1.1.0), adding support for css style tags, like text color and size.
-- Dependencies of a project are now listed below the changelog of a version
+### New Features
+- Added Traditional Chinese translations by [Miku](https://github.com/xMikux), [StarskyXIII](https://github.com/StarskyXIII) and [notlin4](https://github.com/notlin4) ([#48](https://github.com/DeDiamondPro/Resourcify/pull/48))
 
-### Other changes
-
-- Convert backend to an abstract service api, allowing for easier support for more services
-- Fix background breaking when using essential (or another mod with universalcraft) in mc 1.20.5+
-- Fix crash in case of malformed html in markdown
-- Fix localizations not working on 1.12.2 forge
-- Suppress some errors that were causing log spam in some scenarios
-- Added small bisect hosting ad to the top of the browse page, this is to help support the project and can be disabled in the new settings page
+### Changes
+- Made the plus and update buttons behave more like vanilla buttons (1.16+)
+  - This means they now work with other mods like FancyMenu
+  - This also fixes some crashes related to resource reloading with other mods
+- Bumped MineMark to 1.2.3, providing some minor improvements to MarkDown rendering
+- Fix an issue where Resourcify would download the mod version of a datapack from Modrinth
+- Fixed a crash with a table inside an expandable element in MarkDown
+- Fixed update screen sometimes opening the wrong screen after closing it
 
 ----------------------------------------------------------------------------------------------------
 
