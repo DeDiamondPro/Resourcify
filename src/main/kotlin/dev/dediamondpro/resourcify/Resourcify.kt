@@ -72,19 +72,19 @@ object Resourcify {
     //$$ init {
     //$$     //#if MC < 11800
     //$$     ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY) {
-    //$$        BiFunction { _: Minecraft?, _: Screen? -> SettingsPage() }
+    //$$        BiFunction { _, _ -> SettingsPage() }
     //$$     }
     //$$     //#elseif MC < 11900
     //$$     //$$ ModLoadingContext.get().registerExtensionPoint(ConfigGuiFactory::class.java) {
-    //$$     //$$     ConfigGuiFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
+    //$$     //$$     ConfigGuiFactory { _, _ -> SettingsPage() }
     //$$     //$$ }
     //$$     //#elseif MC < 12006 || FORGE == 1
     //$$     //$$ ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory::class.java) {
-    //$$     //$$     ConfigScreenFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
+    //$$     //$$     ConfigScreenFactory { _, _ -> SettingsPage() }
     //$$     //$$ }
     //$$     //#else
     //$$     //$$ ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory::class.java) {
-    //$$     //$$     IConfigScreenFactory { _: Minecraft?, _: Screen? -> SettingsPage() }
+    //$$     //$$     IConfigScreenFactory { _, _ -> SettingsPage() }
     //$$     //$$ }
     //$$     //#endif
     //$$ }
