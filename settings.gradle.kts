@@ -27,7 +27,7 @@ pluginManagement {
         maven("https://repo.polyfrost.org/releases")
         mavenLocal()
     }
-    val egtVersion = "0.6.2"
+    val egtVersion = "0.6.2+diamond.loom1.6.17"
     plugins {
         id("gg.essential.multi-version.root") version egtVersion
     }
