@@ -122,7 +122,7 @@ dependencies {
         modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modImplementation("include"("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")!!)
+        modImplementation("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")
         modCompileOnly(libs.modMenu)
     } else if (platform.isForgeLike) {
         if (platform.isLegacyForge) {
@@ -137,9 +137,10 @@ dependencies {
                 implementation("thedarkcolour:kotlinforforge:$kotlinForForgeVersion")
             }
         }
-        shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
-            isTransitive = false
-        }
+    }
+    // Always shade and relocate universalcraft to avoid any conflict with essential (even on fabric)
+    shade("gg.essential:universalcraft-${universalPlatform ?: platform}:$universalVersion") {
+        isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
     shade("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}") {
@@ -227,13 +228,11 @@ tasks {
         exclude("META-INF/versions/9/**")
 
         mergeServiceFiles()
+        relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
-        if (platform.isForgeLike) {
-            relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
-        }
 
         if (platform.isForge && platform.mcVersion >= 12100) {
             exclude("forge.mixins.resourcify.refmap.json")
