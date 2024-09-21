@@ -115,7 +115,7 @@ val shadeRuntime: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val universalVersion = if (platform.isNeoForge || (platform.isForge && platform.mcVersion == 12100))
+    val universalVersion = if (platform.isNeoForge || (platform.isForge && platform.mcVersion == 12101))
         "363+diamond.neoforge" else libs.versions.universal.get()
     if (platform.isFabric) {
         val fabricApiVersion: String by project
@@ -360,7 +360,7 @@ tasks {
 // Function to get the range of mc versions supported by a version we are building for.
 // First value is start of range, second value is end of range or null to leave the range open
 fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion) {
-    12100 -> "1.21" to null
+    12101 -> "1.21" to null
     12006 -> "1.20.5" to "1.20.6"
     12004 -> "1.20.2" to "1.20.4"
     12001 -> "1.20" to "1.20.1"
@@ -383,7 +383,7 @@ fun getPrettyVersionRange(): String {
 }
 
 fun getFabricMcVersionRange(): String {
-    if (platform.mcVersion == 12100) return "1.21.x"
+    if (platform.mcVersion == 12101) return "1.21.x"
     val supportedVersionRange = getSupportedVersionRange()
     if (supportedVersionRange.first == supportedVersionRange.second) return supportedVersionRange.first
     return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"
