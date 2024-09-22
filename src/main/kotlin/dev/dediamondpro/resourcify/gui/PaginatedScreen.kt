@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,13 +51,14 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         //#if MC<12005
         //#if MC>=12000
-        //$$ renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
+        //$$ val client = UMinecraft.getMinecraft()
+        //$$ (this as Screen).renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
         //#elseif MC>=11904
-        //$$ renderBackgroundTexture(matrixStack.toMC())
+        //$$ (this as Screen).renderBackgroundTexture(matrixStack.toMC())
         //#elseif MC>=11600
-        //$$ renderDirtBackground(0)
+        //$$ (this as Screen).renderDirtBackground(0)
         //#else
-        drawBackground(0)
+        (this as GuiScreen).drawBackground(0)
         //#endif
         //#endif
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
@@ -71,8 +72,9 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
             newGuiScale = updatedScale
             updateGuiScale()
             UMinecraft.guiScale = updatedScale
-            width = UResolution.scaledWidth
-            height = UResolution.scaledHeight
+            // Cast to fix some remapping issues
+            (this as GuiScreen).width = UResolution.scaledWidth
+            (this as GuiScreen).height = UResolution.scaledHeight
         }
         super.onTick()
     }

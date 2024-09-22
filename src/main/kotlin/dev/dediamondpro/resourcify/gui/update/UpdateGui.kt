@@ -86,16 +86,16 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         width = 100.percent() - 8.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
     }.animateBeforeHide {
-        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (-this@UpdateGui.width).pixels())
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (-(this@UpdateGui as GuiScreen).width).pixels())
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox
     private val changelogContainer = UIBlock(Color(0, 0, 0, 100)).constrain {
-        x = this@UpdateGui.width.pixels()
+        x = (this@UpdateGui as GuiScreen).width.pixels()
         width = 100.percent() - 8.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
     }.animateBeforeHide {
-        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, this@UpdateGui.width.pixels())
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (this@UpdateGui as GuiScreen).width.pixels())
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox

@@ -108,9 +108,6 @@ val shade: Configuration by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
-val shadeRuntime: Configuration by configurations.creating {
-    configurations.runtimeOnly.get().extendsFrom(this)
-}
 
 dependencies {
     val elementaPlatform: String? by project
@@ -122,7 +119,7 @@ dependencies {
         modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
-        modImplementation("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")
+        modCompileOnly("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")
         modCompileOnly(libs.modMenu)
     } else if (platform.isForgeLike) {
         if (platform.isLegacyForge) {
@@ -222,7 +219,7 @@ tasks {
     }
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
-        configurations = listOf(shade, shadeRuntime)
+        configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         exclude("META-INF/versions/9/**")

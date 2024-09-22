@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,7 +93,7 @@ class BrowseScreen(
         x = 0.pixels()
         y = SiblingConstraint(padding = 4f)
         width = 100.percent()
-        height = basicHeightConstraint { this@BrowseScreen.height - this.getY() }
+        height = basicHeightConstraint { (this@BrowseScreen as GuiScreen).height - this.getY() }
     } childOf mainBox
 
     private val projectContainer = UIContainer().constrain {
