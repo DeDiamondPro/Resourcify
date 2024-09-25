@@ -27,9 +27,9 @@
   "resourcify.project.wiki": "위키",
   "resourcify.project.discord": "디스코드",
   "resourcify.project.members": "프로젝트 멤버:",
-  "resourcify.project.dependencies": "Dependencies",
-  "resourcify.project.required_dependency": "Required dependency",
-  "resourcify.project.optional_dependency": "Optional dependency",
+  "resourcify.project.dependencies": "종속성",
+  "resourcify.project.required_dependency": "필수 종속성",
+  "resourcify.project.optional_dependency": "선택적 종속성",
 
   "resourcify.version.install": "설치",
   "resourcify.version.install_version": "설치 %s",
