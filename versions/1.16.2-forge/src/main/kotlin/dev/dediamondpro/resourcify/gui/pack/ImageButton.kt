@@ -21,6 +21,7 @@ import com.mojang.blaze3d.matrix.MatrixStack
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.AbstractGui
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.button.Button
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.ITextComponent
@@ -30,15 +31,21 @@ import net.minecraft.util.text.ITextComponent
 //#endif
 
 class ImageButton(
-    x: Int, y: Int,
+    screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
     private val image: ResourceLocation,
     onPress: IPressable,
 ) : Button(
-    x, y, 20, 20, ITextComponent.getTextComponentOrEmpty(null as String?), onPress,
+    xFunc.invoke(screen.width), yFunc.invoke(screen.height),
+    20, 20, ITextComponent.getTextComponentOrEmpty(null as String?), onPress,
     //#if MC >= 11904
     //$$ DEFAULT_NARRATION_SUPPLIER,
     //#endif
 ) {
+
+    fun updateLocation(screen: Screen) {
+        this.x = xFunc.invoke(screen.width)
+        this.y = yFunc.invoke(screen.height)
+    }
 
     override fun renderButton(
         //#if MC < 12000
@@ -46,7 +53,8 @@ class ImageButton(
         //#else
         //$$ context: DrawContext,
         //#endif
-        mouseX: Int, mouseY: Int, delta: Float) {
+        mouseX: Int, mouseY: Int, delta: Float
+    ) {
         super.renderButton(context, mouseX, mouseY, delta)
         //#if MC < 12000
         //#if MC < 11800

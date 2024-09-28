@@ -24,7 +24,6 @@ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.services.ProjectType
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.button.Button
 import net.minecraft.util.ResourceLocation
 import java.io.File
 
@@ -37,15 +36,13 @@ object PackScreensAddition {
     //$$ private val updateImage = Identifier.of("resourcify", "update.png")
     //#endif
 
-    fun getButtons(screen: Screen, type: ProjectType): List<Button> {
+    fun getButtons(screen: Screen, type: ProjectType): List<ImageButton> {
         val folder = type.getDirectory(screen)
-        val buttons = mutableListOf<Button>()
-        val x = type.plusX(screen.width)
-        val y = type.plusY(screen.height)
-        buttons.add(ImageButton(x, y, plusImage) {
+        val buttons = mutableListOf<ImageButton>()
+        buttons.add(ImageButton(screen, type.plusX, type.plusY, plusImage) {
             UScreen.displayScreen(BrowseScreen(type, folder))
         })
-        if (type.hasUpdateButton) buttons.add(ImageButton(x - 28, y, updateImage) {
+        if (type.hasUpdateButton) buttons.add(ImageButton(screen, type.updateX, type.updateY, updateImage) {
             UScreen.displayScreen(UpdateGui(type, folder))
         })
         return buttons

@@ -17,13 +17,13 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
+import dev.dediamondpro.resourcify.gui.pack.ImageButton;
 import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
 import dev.dediamondpro.resourcify.platform.Platform;
 import dev.dediamondpro.resourcify.services.ProjectType;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -51,7 +51,7 @@ class ScreenMixin {
     //$$ @Shadow @Final private List<Element> children;
     //#endif
 
-    @Unique private List<Button> resourcifyCustomButtons;
+    @Unique private List<ImageButton> resourcifyCustomButtons;
 
     @Inject(method = "init(Lnet/minecraft/client/Minecraft;II)V", at = @At(value = "INVOKE", target =
             //#if MC < 11800
@@ -61,7 +61,7 @@ class ScreenMixin {
             //$$ "Lnet/minecraft/client/gui/screen/Screen;narrateScreenIfNarrationEnabled(Z)V",
             //$$ shift = At.Shift.BEFORE
             //#endif
-            ))
+    ))
     private void onInit(CallbackInfo ci) {
         handleInit_Resourcify();
     }
@@ -75,29 +75,37 @@ class ScreenMixin {
 
     @Unique
     private void handleInit_Resourcify() {
-        String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
-        ProjectType type = PackScreensAddition.INSTANCE.getType(title);
-        if (type == null) return;
-        // Remove old elements if they still exist for some reason
-        if (resourcifyCustomButtons != null) {
-            //#if MC < 11800
-            this.buttons.removeAll(resourcifyCustomButtons);
-            this.children.removeAll(resourcifyCustomButtons);
-            //#else
-            //$$ this.children.removeAll(resourcifyCustomButtons);
-            //$$ this.drawables.removeAll(resourcifyCustomButtons);
-            //$$ this.selectables.removeAll(resourcifyCustomButtons);
-            //#endif
+        if (resourcifyCustomButtons == null) {
+            String title = Platform.INSTANCE.getTranslateKey((Screen) (Object) this);
+            ProjectType type = PackScreensAddition.INSTANCE.getType(title);
+            if (type == null) {
+                return;
+            }
+            resourcifyCustomButtons = PackScreensAddition.INSTANCE.getButtons((Screen) (Object) this, type);
+            if (resourcifyCustomButtons == null) {
+                return;
+            }
         }
-        // Add new elements in the correct location
-        resourcifyCustomButtons = PackScreensAddition.INSTANCE.getButtons((Screen) (Object) this, type);
+
+        // Re-add the buttons to all necessary lists if they are no longer in it
         //#if MC < 11800
-        this.buttons.addAll(resourcifyCustomButtons);
-        this.children.addAll(resourcifyCustomButtons);
+        updateButtons_Resourcify(this.buttons);
+        updateButtons_Resourcify(this.children);
         //#else
-        //$$ this.children.addAll(resourcifyCustomButtons);
-        //$$ this.drawables.addAll(resourcifyCustomButtons);
-        //$$ this.selectables.addAll(resourcifyCustomButtons);
+        //$$ updateButtons_Resourcify(this.children);
+        //$$ updateButtons_Resourcify(this.drawables);
+        //$$ updateButtons_Resourcify(this.selectables);
         //#endif
+    }
+
+    @Unique
+    private <T> void updateButtons_Resourcify(List<T> list) {
+        for (ImageButton button : resourcifyCustomButtons) {
+            if (list.contains(button)) {
+                button.updateLocation((Screen) (Object) this);
+                continue;
+            }
+            list.add((T) button);
+        }
     }
 }

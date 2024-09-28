@@ -36,6 +36,8 @@ enum class ProjectType(
         )
     },
     val plusY: (Int) -> Int = { 10 },
+    val updateX: (Int) -> Int = { plusX.invoke(it) - 28 },
+    val updateY: (Int) -> Int = plusY,
     val hasUpdateButton: Boolean = true
 ) {
     RESOURCE_PACK("resourcify.type.resource_packs"),

@@ -68,7 +68,8 @@ object PackScreensAddition {
         addButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
         if (type.hasUpdateButton) updateButton.unhide()
         else updateButton.hide(true)
-        updateButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
+        updateButton.setX(basicXConstraint { type.updateX(UResolution.scaledWidth).toFloat() })
+        updateButton.setY(basicYConstraint { type.updateY(UResolution.scaledHeight).toFloat() })
         window.draw(matrix)
     }
 
