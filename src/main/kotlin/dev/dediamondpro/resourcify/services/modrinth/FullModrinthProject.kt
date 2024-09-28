@@ -122,6 +122,9 @@ data class FullModrinthProject(
     data class DonationUrl(val platform: String, val url: String)
 
     data class GalleryImage(
-        override val url: String, override val title: String?, override val description: String?, val ordering: Long
+        @SerializedName("raw_url") override val url: String,
+        override val title: String?,
+        override val description: String?,
+        val ordering: Long
     ) : IGalleryImage
 }

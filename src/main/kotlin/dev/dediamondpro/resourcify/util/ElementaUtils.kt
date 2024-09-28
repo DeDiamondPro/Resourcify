@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,9 @@ fun UIImage.Companion.ofURL(
     height: Float? = null,
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
     scaleFactor: Float = UResolution.scaleFactor.toFloat(),
-    useCache: Boolean = true
+    useCache: Boolean = true,
+    minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
+    magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
 ): UIImage {
     val url = source.toURL()
     val image = UIImage(
@@ -56,6 +58,8 @@ fun UIImage.Companion.ofURL(
     if (!loadingImage) image.imageHeight = 0.5625f
     if (width != null) image.imageWidth = width * scaleFactor
     if (height != null) image.imageHeight = height * scaleFactor
+    image.textureMinFilter = minFilter
+    image.textureMagFilter = magFilter
     return image
 }
 

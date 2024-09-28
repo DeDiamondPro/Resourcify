@@ -1,15 +1,11 @@
-## Resourcify 1.4.2
+## Resourcify 1.4.3
 
 Please make sure to report any bugs and/or visual anomalies on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in the [Discord](https://discord.gg/XtAuqsJWby).
 
 ### Changes
-This update is mostly to update dependencies and fix some small issues
-
-- (1.21.x NeoForge) Fixed a crash when opening Resourcify's config
-- (Fabric) Shade UniversalCraft instead of including it as a jar to resolve Essential asking for a dependency update (this would usually go away after a relaunch, but for some users it didn't, this update will resolve that)
-- Dependency updates:
-  - Updated UniversalCraft to 363
-  - (1.8.9 and 1.12.2 forge) Updated bundled kotlin to 2.0.20
+- Fix buttons getting re-created too many times, causing the fancy menu widget locator to change
+- Fix modrinth gallery images using low-res images
+- Use linear scaling for images instead of nearest neighbour scaling, fixes modrinth banners and logos looking pixelated due to modrinth switching to lower-resolution images for them.
 
 ----------------------------------------------------------------------------------------------------
 
