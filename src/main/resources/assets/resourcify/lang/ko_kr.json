@@ -11,9 +11,11 @@
   "resourcify.browse.sort.follows": "팔로우 수",
   "resourcify.browse.sort.newest": "최근에 게시됨",
   "resourcify.browse.sort.updated": "최근에 업뎃됨",
+  "resourcify.browse.source": "출처",
   "resourcify.browse.minecraft_version": "마인크래프트 버전",
   "resourcify.browse.minecraft_version.placeholder": "버전 선택",
   "resourcify.browse.by": "정렬 기준 %s",
+  "resourcify.browse.bisect_ad": "§b§lBisectHosting§r에서 서버를 호스팅하고 §b§lDIAMOND§r 코드를 사용하여 첫 달에 25% 할인을 받아보세요!",
 
   "resourcify.project.description": "설명",
   "resourcify.project.gallery": "갤러리",
@@ -25,6 +27,9 @@
   "resourcify.project.wiki": "위키",
   "resourcify.project.discord": "디스코드",
   "resourcify.project.members": "프로젝트 멤버:",
+  "resourcify.project.dependencies": "종속성",
+  "resourcify.project.required_dependency": "필수 종속성",
+  "resourcify.project.optional_dependency": "선택적 종속성",
 
   "resourcify.version.install": "설치",
   "resourcify.version.install_version": "설치 %s",
@@ -47,6 +52,12 @@
   "resourcify.updates.update_singular": "업데이트",
   "resourcify.updates.update_plural": "업데이트",
   "resourcify.updates.changelog": "변경 내역",
+
+  "resourcify.config.title": "Resourcify 모드 설정",
+  "resourcify.config.source.title": "기본 출처",
+  "resourcify.config.source.description": "검색 페이지를 열 때 기본적으로 활성화되는 출처(사이트)를 선택합니다.",
+  "resourcify.config.ads.title": "광고 사용",
+  "resourcify.config.ads.description": "검색 페이지에 작은 광고를 표시하면 Resourcify 모드 개발을 지원할 수 있습니다.",
 
   "resourcify.categories.adventure": "모험",
   "resourcify.categories.categories": "카테고리",
@@ -111,5 +122,18 @@
   "resourcify.categories.reflections": "반사",
   "resourcify.categories.screenshot": "스크린샷",
   "resourcify.categories.semi-realistic": "반사실적",
-  "resourcify.categories.shadows": "그림자"
+  "resourcify.categories.shadows": "그림자",
+
+  "resourcify.categories.512x_and_higher": "512x 또는 그 이상",
+  "resourcify.categories.steampunk": "스팀펑크",
+  "resourcify.categories.data_packs": "데이터팩",
+  "resourcify.categories.traditional": "바닐라",
+  "resourcify.categories.animated": "애니메이션",
+  "resourcify.categories.modern": "모던",
+  "resourcify.categories.mod_support": "모드 지원",
+  "resourcify.categories.miscellaneous": "기타",
+  "resourcify.categories.photo_realistic": "포토 리얼리스틱",
+  "resourcify.categories.font_packs": "폰트",
+  "resourcify.categories.vanilla": "바닐라",
+  "resourcify.categories.medieval": "중세"
 }
