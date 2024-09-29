@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,14 +57,14 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100))
             } childOf Window.of(this)
             background.setFloating(true)
             background.grabWindowFocus()
-            UIImage.ofURL(gallery.url, false).constrain {
+            UIImage.ofURL(gallery.url, true).constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
                 width = ImageFillConstraint()
                 height = ImageFillConstraint()
             } childOf background
         }
-        UIImage.ofURL(gallery.url, false).constrain {
+        UIImage.ofURL(gallery.thumbnailUrl ?: gallery.url, false).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.util.ImageURLUtils
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.*
@@ -60,7 +59,7 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
         } effect ScissorEffect() childOf this
 
         project.getBannerUrl()?.let {
-            UIImage.ofURL(it, false, 262f, bannerHolder.getHeight(), ImageURLUtils.Fit.COVER)
+            UIImage.ofURL(it, false)
                 .constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
@@ -81,15 +80,10 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
         if (iconUrl.isNullOrBlank()) {
             UIImage.ofResource("/assets/resourcify/pack.png")
         } else {
-            UIImage.ofURL(
-                iconUrl,
-                width = imageHolder.getWidth(),
-                height = imageHolder.getHeight(),
-                fit = ImageURLUtils.Fit.COVER
-            )
+            UIImage.ofURL(iconUrl)
         }.constrain {
-            width = 100.percent()
-            height = 100.percent()
+            width = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
+            height = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
         } childOf imageHolder
 
         val titleHolder = UIContainer().constrain {

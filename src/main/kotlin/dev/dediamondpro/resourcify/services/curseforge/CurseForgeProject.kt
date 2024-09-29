@@ -46,8 +46,8 @@ data class CurseForgeProject(
     override fun getId(): String = id.toString()
     override fun getSummary(): String = summary
     override fun getAuthor(): String = authors.firstOrNull()?.name ?: ""
-    override fun getIconUrl(): String? = logo?.url
-    override fun getBannerUrl(): String? = screenshots.firstOrNull()?.url
+    override fun getIconUrl(): String? = logo?.let { it.thumbnailUrl ?: it.url }
+    override fun getBannerUrl(): String? = screenshots.firstOrNull()?.let { it.thumbnailUrl ?: it.url }
 
     override fun getDescription(): CompletableFuture<String> {
         return descriptionRequest ?: supplyAsync {
@@ -96,10 +96,13 @@ data class CurseForgeProject(
         override val avatarUrl: String? = null
     }
 
-    data class Logo(val url: String)
+    data class Logo(val url: String, val thumbnailUrl: String?)
 
     data class ScreenShot(
-        override val url: String, override val title: String, override val description: String
+        override val url: String,
+        override val thumbnailUrl: String?,
+        override val title: String,
+        override val description: String
     ) : IGalleryImage
 
     data class Description(val data: String)

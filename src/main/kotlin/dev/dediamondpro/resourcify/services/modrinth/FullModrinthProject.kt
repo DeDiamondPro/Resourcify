@@ -72,7 +72,7 @@ data class FullModrinthProject(
     override fun getDescription(): CompletableFuture<String> = supply { body }
     override fun getIconUrl(): String? = iconUrl
 
-    override fun getBannerUrl(): String? = gallery.minByOrNull { it.ordering }?.url
+    override fun getBannerUrl(): String? = gallery.minByOrNull { it.ordering }?.let { it.thumbnailUrl ?: it.url }
 
     override fun getBannerColor(): Color? = color?.let { Color(it) }
 
@@ -123,6 +123,7 @@ data class FullModrinthProject(
 
     data class GalleryImage(
         @SerializedName("raw_url") override val url: String,
+        @SerializedName("url") override val thumbnailUrl: String?,
         override val title: String?,
         override val description: String?,
         val ordering: Long
