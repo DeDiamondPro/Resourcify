@@ -34,13 +34,15 @@ class Config {
             return try {
                 configFile.readText().fromJson()
             } catch (e: Exception) {
-                Config()
+                val config = Config()
+                save(config)
+                config
             }
         }
 
-        fun save() {
+        fun save(config: Config = instance) {
             configFile.outputStream().bufferedWriter().use {
-                it.write(instance.toJson())
+                it.write(config.toJson())
             }
         }
     }
