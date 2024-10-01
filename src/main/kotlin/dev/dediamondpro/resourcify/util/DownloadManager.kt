@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
+import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -32,8 +33,11 @@ object DownloadManager {
     @get:Synchronized
     private val downloadsInProgress = mutableMapOf<URL, DownloadData>()
 
-    fun download(file: File, sha512: String? = null, url: URL, callback: (() -> Unit)? = null) {
-        queuedDownloads[url] = QueuedDownload(file, sha512, callback)
+    fun download(
+        file: File, sha512: String? = null, url: URL,
+        extract: Boolean = false, callback: (() -> Unit)? = null,
+    ) {
+        queuedDownloads[url] = QueuedDownload(file, sha512, extract, callback)
         downloadNext()
     }
 
@@ -77,7 +81,27 @@ object DownloadManager {
                 tempFile.delete()
                 error("Hash $hash does not match expected hash $it!")
             }
-            Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            if (queuedDownload.extract) {
+                val targetFolder = queuedDownload.file
+                targetFolder.mkdirs()
+                ZipFile(tempFile).use { zip ->
+                    zip.entries.asSequence().forEach { entry ->
+                        val entryFile = File(targetFolder, entry.name)
+                        if (entry.isDirectory) {
+                            entryFile.mkdirs()
+                            return@forEach
+                        } else {
+                            entryFile.parentFile.mkdirs()
+                        }
+
+                        zip.getInputStream(entry).use {
+                            Files.copy(it, entryFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                        }
+                    }
+                }
+            } else {
+                Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
             queuedDownload.callback?.let { it() }
         }.whenComplete { _, throwable ->
             if (throwable != null) {
@@ -92,6 +116,6 @@ object DownloadManager {
     }
 }
 
-private data class QueuedDownload(val file: File, val sha1: String?, val callback: (() -> Unit)?)
+private data class QueuedDownload(val file: File, val sha1: String?, val extract: Boolean, val callback: (() -> Unit)?)
 
 private data class DownloadData(val future: CompletableFuture<Void>, val file: File, var length: Int? = null)
