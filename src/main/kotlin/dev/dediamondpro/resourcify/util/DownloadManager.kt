@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import java.nio.file.StandardCopyOption
 import java.util.concurrent.CompletableFuture
 
 object DownloadManager {
+    private val tempFolder = File("config/resourcify-temp")
 
     @get:Synchronized
     private val queuedDownloads = mutableMapOf<URL, QueuedDownload>()
@@ -58,28 +59,36 @@ object DownloadManager {
         if (downloadsInProgress.size >= 2) return
         val url = queuedDownloads.keys.firstOrNull() ?: return
         val queuedDownload = queuedDownloads.remove(url) ?: return
+        tempFolder.mkdirs()
+        var tempFile = File(tempFolder, queuedDownload.file.name + ".tmp")
+        val i = 0
+        while (tempFile.exists()) {
+            tempFile = File(tempFolder, queuedDownload.file.name + "-$i.tmp")
+        }
         downloadsInProgress[url] = DownloadData(runAsync {
             val con = url.setupConnection()
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {
-                Files.copy(it!!, queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
             queuedDownload.sha1?.let {
-                val hash = Utils.getSha1(queuedDownload.file)
+                val hash = Utils.getSha1(tempFile)
                 if (hash == it) return@let
-                queuedDownload.file.delete()
+                tempFile.delete()
                 error("Hash $hash does not match expected hash $it!")
             }
+            Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             queuedDownload.callback?.let { it() }
         }.whenComplete { _, throwable ->
             if (throwable != null) {
                 println("Download of $url failed:")
                 throwable.printStackTrace()
+                tempFile.delete()
                 return@whenComplete
             }
             downloadsInProgress.remove(url)
             downloadNext()
-        }, queuedDownload.file)
+        }, tempFile)
     }
 }
 
