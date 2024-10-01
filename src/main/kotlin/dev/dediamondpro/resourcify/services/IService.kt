@@ -26,6 +26,8 @@ import java.util.concurrent.CompletableFuture
 interface IService {
     fun getName(): String
 
+    fun isProjectTypeSupported(type: ProjectType): Boolean
+
     fun search(
         query: String,
         sortBy: String,

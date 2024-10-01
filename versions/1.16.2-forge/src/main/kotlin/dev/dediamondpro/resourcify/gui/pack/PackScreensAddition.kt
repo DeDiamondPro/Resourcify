@@ -54,6 +54,7 @@ object PackScreensAddition {
             "dataPack.title" -> ProjectType.DATA_PACK
             "of.options.shadersTitle" -> ProjectType.OPTIFINE_SHADER
             "options.iris.shaderPackSelection.title" -> ProjectType.IRIS_SHADER
+            "selectWorld.title" -> ProjectType.WORLD
             else -> return null
         }
     }

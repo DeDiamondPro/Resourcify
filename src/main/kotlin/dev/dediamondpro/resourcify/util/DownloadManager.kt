@@ -85,8 +85,32 @@ object DownloadManager {
                 val targetFolder = queuedDownload.file
                 targetFolder.mkdirs()
                 ZipFile(tempFile).use { zip ->
+                    // If all content is actually inside another folder inside the zip file, try to find this folder
+                    // We do this by checking if there is only one folder at the root, and then take this folder
+                    var prefixToRemove: String? = null
+                    for (entry in zip.entries) {
+                        val firstFolder = entry.name.substringBefore("/", "")
+                        // Could be readme file, license file, ...
+                        if (firstFolder.isEmpty()) {
+                            continue
+                        }
+                        if (prefixToRemove == null) {
+                            prefixToRemove = "$firstFolder/"
+                        } else if (prefixToRemove != "$firstFolder/") {
+                            prefixToRemove = null
+                            break
+                        }
+                    }
+
                     zip.entries.asSequence().forEach { entry ->
-                        val entryFile = File(targetFolder, entry.name)
+                        // Remove prefix so when a zip contains a folder which contains the actual files,
+                        // this will handle it
+                        val entryName =
+                            entry.name.let { if (prefixToRemove != null) it.removePrefix(prefixToRemove) else it }
+                        val entryFile = File(targetFolder, entryName)
+                        if (entryFile.startsWith("..") || entryFile.startsWith("/")) {
+                            error("Safety measure tripped for $entryFile, it is trying to go to parent directory")
+                        }
                         if (entry.isDirectory) {
                             entryFile.mkdirs()
                             return@forEach
@@ -102,6 +126,7 @@ object DownloadManager {
             } else {
                 Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
+            tempFile.delete()
             queuedDownload.callback?.let { it() }
         }.whenComplete { _, throwable ->
             if (throwable != null) {

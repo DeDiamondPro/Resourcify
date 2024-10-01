@@ -75,7 +75,7 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf sourceDescriptionBox
         DropDown(
-            ServiceRegistry.getServices().map { it.getName() },
+            ServiceRegistry.getAllServices().map { it.getName() },
             true, mutableListOf(Config.instance.defaultService)
         ).constrain {
             x = 4.pixels(true)

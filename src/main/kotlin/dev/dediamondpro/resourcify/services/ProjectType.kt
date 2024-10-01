@@ -38,14 +38,16 @@ enum class ProjectType(
     val plusY: (Int) -> Int = { 10 },
     val updateX: (Int) -> Int = { plusX.invoke(it) - 28 },
     val updateY: (Int) -> Int = plusY,
-    val hasUpdateButton: Boolean = true
+    val hasUpdateButton: Boolean = true,
+    val shouldExtract: Boolean = false,
 ) {
     RESOURCE_PACK("resourcify.type.resource_packs"),
     // 1.8.9 only
     AYCY_RESOURCE_PACK("resourcify.type.resource_packs", plusX = { it - 30 }),
     DATA_PACK("resourcify.type.data_packs", hasUpdateButton = false),
     IRIS_SHADER("resourcify.type.shaders",  { it / 2 + 134 }, { 6 }),
-    OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 });
+    OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
+    WORLD("resourcify.type.world", hasUpdateButton = false, shouldExtract = true);
 
     //#if MC >= 11600
     //$$ fun getDirectory(screen: Screen): File {
@@ -59,6 +61,7 @@ enum class ProjectType(
     //$$         //#endif
     //$$         IRIS_SHADER -> File("./shaderpacks")
     //$$         OPTIFINE_SHADER -> File("./shaderpacks")
+    //$$         WORLD -> File("./saves")
     //$$         else -> error("Unknown project type: $this")
     //$$     }
     //$$ }

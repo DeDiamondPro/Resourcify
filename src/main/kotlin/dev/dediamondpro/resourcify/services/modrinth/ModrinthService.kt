@@ -31,6 +31,8 @@ object ModrinthService : IService {
     private var categories: CompletableFuture<List<ModrinthCategory>>? = null
 
     override fun getName(): String = "Modrinth"
+    override fun isProjectTypeSupported(type: ProjectType) = type.getProjectType() != null
+
     override fun search(
         query: String,
         sortBy: String,
@@ -119,12 +121,13 @@ object ModrinthService : IService {
         }
     }
 
-    private fun ProjectType.getProjectType(): String = when (this) {
+    private fun ProjectType.getProjectType(): String? = when (this) {
         ProjectType.RESOURCE_PACK -> "resourcepack"
         ProjectType.AYCY_RESOURCE_PACK -> "resourcepack"
         ProjectType.DATA_PACK -> "mod"
         ProjectType.IRIS_SHADER -> "shader"
         ProjectType.OPTIFINE_SHADER -> "shader"
+        else -> null
     }
 
     override fun getSortOptions(): Map<String, String> = mapOf(

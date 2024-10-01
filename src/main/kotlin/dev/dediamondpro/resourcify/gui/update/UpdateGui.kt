@@ -332,9 +332,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             if (hashes.isEmpty()) return
             val loader = when (type) {
                 ProjectType.RESOURCE_PACK, ProjectType.AYCY_RESOURCE_PACK -> "minecraft"
-                ProjectType.DATA_PACK -> "datapack"
                 ProjectType.IRIS_SHADER -> "iris"
                 ProjectType.OPTIFINE_SHADER -> "optifine"
+                else -> return
             }
             val data = ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes)
             val updates: Map<String, ModrinthVersion> =

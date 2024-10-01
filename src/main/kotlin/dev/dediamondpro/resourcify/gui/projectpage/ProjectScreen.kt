@@ -134,11 +134,15 @@ class ProjectScreen(
                     if (installed || it.mouseButton != 0) return@onMouseClick
                     if (DownloadManager.getProgress(url) == null) {
                         text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
-                        var file = File(downloadFolder, version.getFileName())
+                        var fileName = version.getFileName()
+                        if (type.shouldExtract) {
+                            fileName = fileName.removeSuffix(".zip")
+                        }
+                        var file = File(downloadFolder, fileName)
                         if (file.exists()) {
                             file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
                         }
-                        DownloadManager.download(file, version.getSha1(), url) {
+                        DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
                             text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                             installed = true
                         }

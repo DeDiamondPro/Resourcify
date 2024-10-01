@@ -29,16 +29,20 @@ object ServiceRegistry {
         registerService(CurseForgeService)
     }
 
-    fun getServices(): List<IService> {
+    fun getAllServices(): List<IService> {
         return services
     }
 
-    fun getService(name: String): IService? {
-        return services.firstOrNull { it.getName() == name }
+    fun getServices(projectType: ProjectType): List<IService> {
+        return services.filter { it.isProjectTypeSupported(projectType) }
     }
 
-    fun getDefaultService(): IService {
-        return getService(Config.instance.defaultService) ?: services.first()
+    fun getService(name: String, projectType: ProjectType): IService? {
+        return getServices(projectType).firstOrNull { it.getName() == name }
+    }
+
+    fun getDefaultService(projectType: ProjectType): IService {
+        return getService(Config.instance.defaultService, projectType) ?: getServices(projectType).first()
     }
 
     fun registerService(service: IService) {

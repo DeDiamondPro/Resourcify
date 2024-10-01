@@ -69,8 +69,8 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             Window.enqueueRenderOperation {
                 for (version in versions) {
                     VersionCard(
-                        this, version, screen.service,
-                        screen.packHashes.get(), screen.downloadFolder
+                        this, version, screen.service, screen.packHashes.get(),
+                        screen.downloadFolder, screen.type
                     ).constrain {
                         x = 0.pixels()
                         y = SiblingConstraint(padding = 4f)
@@ -96,10 +96,11 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             x = SiblingConstraint()
             y = 8.pixels()
         } childOf changeLogHolder
-        VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder).constrain {
-            x = 4.pixels(true)
-            y = 4.pixels()
-        } childOf changeLogHolder
+        VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder, screen.type)
+            .constrain {
+                x = 4.pixels(true)
+                y = 4.pixels()
+            } childOf changeLogHolder
         version.getChangeLog().thenApply {
             Window.enqueueRenderOperation {
                 var changelog = it

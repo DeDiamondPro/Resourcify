@@ -49,7 +49,7 @@ import java.util.concurrent.CompletableFuture
 class BrowseScreen(
     private val type: ProjectType,
     private val downloadFolder: File,
-    private val service: IService = ServiceRegistry.getDefaultService()
+    private val service: IService = ServiceRegistry.getDefaultService(type)
 ) : PaginatedScreen() {
     private var offset = 0
     private val selectedCategories = mutableListOf<String>()
@@ -140,14 +140,14 @@ class BrowseScreen(
             textScale = 1.5f.pixels()
         } childOf categoryContainer
         DropDown(
-            ServiceRegistry.getServices().map { it.getName() }, onlyOneOption = true,
+            ServiceRegistry.getServices(type).map { it.getName() }, onlyOneOption = true,
             selectedOptions = mutableListOf(service.getName())
         ).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
         }.onSelectionUpdate {
-            val newService = ServiceRegistry.getService(it.first()) ?: return@onSelectionUpdate
+            val newService = ServiceRegistry.getService(it.first(), type) ?: return@onSelectionUpdate
             if (newService == service) return@onSelectionUpdate
             replaceScreen { BrowseScreen(type, downloadFolder, newService) }
         } childOf categoryContainer

@@ -20,6 +20,7 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
+import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
@@ -42,7 +43,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class VersionCard(
-    parent: VersionsPage, val version: IVersion, val service: IService, hashes: List<String>, downloadFolder: File
+    parent: VersionsPage, val version: IVersion, val service: IService,
+    hashes: List<String>, downloadFolder: File, val type: ProjectType,
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
@@ -114,7 +116,7 @@ class VersionCard(
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
 
-        val button = createDownloadButton(version, hashes, downloadFolder) childOf this
+        val button = createDownloadButton(version, hashes, downloadFolder, type) childOf this
         onMouseClick {
             if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
             parent.showChangelog(version)
@@ -175,7 +177,7 @@ class VersionCard(
     }
 
     companion object {
-        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File): UIComponent {
+        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File, type: ProjectType): UIComponent {
             val url = version.getDownloadUrl().toURL()
             var installed = hashes.contains(version.getSha1())
             val buttonText =
@@ -191,11 +193,15 @@ class VersionCard(
                 if (installed || it.mouseButton != 0) return@onMouseClick
                 if (DownloadManager.getProgress(url) == null) {
                     text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
-                    var file = File(downloadFolder, version.getFileName())
+                    var fileName = version.getFileName()
+                    if (type.shouldExtract) {
+                        fileName = fileName.removeSuffix(".zip")
+                    }
+                    var file = File(downloadFolder, fileName)
                     if (file.exists()) {
                         file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
                     }
-                    DownloadManager.download(file, version.getSha1(), url) {
+                    DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
                         text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                         installed = true
                     }
