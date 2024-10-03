@@ -4,6 +4,7 @@
   "resourcify.type.resource_packs": "resource packs",
   "resourcify.type.data_packs": "data packs",
   "resourcify.type.shaders": "shaders",
+  "resourcify.type.world": "worlds",
 
   "resourcify.browse.search": "Search %s...",
   "resourcify.browse.sort.relevance": "Relevance",
@@ -137,5 +138,11 @@
   "resourcify.categories.photo_realistic": "Photo Realistic",
   "resourcify.categories.font_packs": "Font Packs",
   "resourcify.categories.vanilla": "Vanilla",
-  "resourcify.categories.medieval": "Medieval"
+  "resourcify.categories.medieval": "Medieval",
+  "resourcify.categories.game_map": "Game Map",
+  "resourcify.categories.survival": "Survival",
+  "resourcify.categories.parkour": "Parkour",
+  "resourcify.categories.creation": "Creation",
+  "resourcify.categories.puzzle": "Puzzle",
+  "resourcify.categories.modded_world": "Modded World"
 }
