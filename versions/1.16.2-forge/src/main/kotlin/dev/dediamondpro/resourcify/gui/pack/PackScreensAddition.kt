@@ -20,12 +20,10 @@ package dev.dediamondpro.resourcify.gui.pack
 
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.services.ProjectType
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.ResourceLocation
-import java.io.File
 
 object PackScreensAddition {
     //#if MC < 12100
@@ -58,21 +56,4 @@ object PackScreensAddition {
             else -> return null
         }
     }
-
-    //#if MC >= 11600
-    fun getDirectory(type: ProjectType, screen: Screen): File {
-        return when (type) {
-            //#if MC < 11904
-            ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory
-            ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory
-            //#else
-            //$$ ProjectType.RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
-            //$$ ProjectType.DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
-            //#endif
-            ProjectType.IRIS_SHADER -> File("./shaderpacks")
-            ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
-            else -> error("Unknown project type: $type")
-        }
-    }
-    //#endif
 }

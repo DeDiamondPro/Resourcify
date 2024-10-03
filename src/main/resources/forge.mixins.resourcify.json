@@ -5,13 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "AbstractResourcePackAccessor",
+    "AycyResourcePackManagerMixin",
     "GuiScreenResourcePacksMixin",
     "OptifineGuiOFMixin",
     "OptifineGuiShadersAccessor",
     "OptifineGuiShadersMixin",
     "PackScreenAccessor",
     "ReloadableResourceManagerMixin",
-    "AycyResourcePackManagerMixin",
-    "WorldSelectionScreenAccessor"
+    "WorldSelectionScreenAccessor",
+    "WorldSelectionScreenMixin"
   ]
 }
