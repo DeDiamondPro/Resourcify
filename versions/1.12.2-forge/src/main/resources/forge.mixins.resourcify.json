@@ -10,6 +10,7 @@
     "OptifineGuiShadersAccessor",
     "OptifineGuiShadersMixin",
     "PackScreenAccessor",
-    "ReloadableResourceManagerMixin"
+    "ReloadableResourceManagerMixin",
+    "WorldSelectionScreenAccessor"
   ]
 }

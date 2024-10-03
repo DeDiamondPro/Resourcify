@@ -27,6 +27,7 @@ import dev.dediamondpro.resourcify.elements.TextIcon
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
+import dev.dediamondpro.resourcify.mixins.WorldSelectionScreenAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
@@ -39,10 +40,10 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
+import net.minecraft.client.gui.GuiSelectWorld
 import java.awt.Color
 import java.io.File
 import java.net.URI
-import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 class ProjectScreen(
@@ -325,6 +326,14 @@ class ProjectScreen(
                     } childOf membersBox
                 }
             }
+        }
+    }
+
+    override fun afterInitialization() {
+        // Required since world selection screen doesn't automatically update
+        if (type == ProjectType.WORLD) {
+            forwardScreens.replaceAll { if (it is GuiSelectWorld) GuiSelectWorld((it as WorldSelectionScreenAccessor).parentScreen) else it }
+            backScreens.replaceAll { if (it is GuiSelectWorld) GuiSelectWorld((it as WorldSelectionScreenAccessor).parentScreen) else it }
         }
     }
 }

@@ -5,6 +5,7 @@
   "client": [
     "ScreenMixin",
     "PackScreenAccessor",
-    "AbstractResourcePackAccessor"
+    "AbstractResourcePackAccessor",
+    "WorldSelectionScreenAccessor"
   ]
 }

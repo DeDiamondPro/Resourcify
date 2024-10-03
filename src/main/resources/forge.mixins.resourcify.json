@@ -11,6 +11,7 @@
     "OptifineGuiShadersMixin",
     "PackScreenAccessor",
     "ReloadableResourceManagerMixin",
-    "AycyResourcePackManagerMixin"
+    "AycyResourcePackManagerMixin",
+    "WorldSelectionScreenAccessor"
   ]
 }

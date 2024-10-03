@@ -6,6 +6,7 @@
     "ScreenMixin",
     "PackScreenAccessor",
     "AbstractResourcePackAccessor",
-    "ResourcePackOrganizerAccessor"
+    "ResourcePackOrganizerAccessor",
+    "WorldSelectionScreenAccessor"
   ]
 }
