@@ -25,7 +25,7 @@ import java.nio.file.StandardCopyOption
 import java.util.concurrent.CompletableFuture
 
 object DownloadManager {
-    private val tempFolder = File("config/resourcify-temp")
+    private val tempFolder = File("./resourcify-temp")
 
     @get:Synchronized
     private val queuedDownloads = mutableMapOf<URL, QueuedDownload>()
