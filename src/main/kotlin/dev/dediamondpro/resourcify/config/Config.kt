@@ -24,6 +24,7 @@ import java.io.File
 
 class Config {
     var defaultService: String = ModrinthService.getName()
+    var fullResThumbnail: Boolean = false
     var adsEnabled: Boolean = true
 
     companion object {

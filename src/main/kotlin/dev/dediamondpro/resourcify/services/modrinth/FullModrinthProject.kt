@@ -72,7 +72,7 @@ data class FullModrinthProject(
     override fun getDescription(): CompletableFuture<String> = supply { body }
     override fun getIconUrl(): String? = iconUrl
 
-    override fun getBannerUrl(): String? = gallery.minByOrNull { it.ordering }?.let { it.thumbnailUrl ?: it.url }
+    override fun getBannerUrl(): String? = gallery.minByOrNull { it.ordering }?.getThumbnailUrlIfEnabled()
 
     override fun getBannerColor(): Color? = color?.let { Color(it) }
 

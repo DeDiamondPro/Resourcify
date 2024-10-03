@@ -64,7 +64,7 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100))
                 height = ImageFillConstraint()
             } childOf background
         }
-        UIImage.ofURL(gallery.thumbnailUrl ?: gallery.url, false).constrain {
+        UIImage.ofURL(gallery.getThumbnailUrlIfEnabled(), false).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()

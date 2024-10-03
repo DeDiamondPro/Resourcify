@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.config
 
+import dev.dediamondpro.resourcify.config.components.CheckBox
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
@@ -29,9 +30,7 @@ import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
-import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.effects.OutlineEffect
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
@@ -41,12 +40,13 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
     constructor(lastPage: GuiScreen) : this()
     //#endif
 
+    private val mainBox = UIContainer().constrain {
+        x = CenterConstraint()
+        width = min(692.pixels(), basicWidthConstraint { window.getWidth() - 8 })
+        height = 100.percent()
+    } childOf window
+
     init {
-        val mainBox = UIContainer().constrain {
-            x = CenterConstraint()
-            width = min(692.pixels(), basicWidthConstraint { window.getWidth() - 8 })
-            height = 100.percent()
-        } childOf window
         UIText("resourcify.config.title".localize()).constrain {
             x = CenterConstraint()
             y = 8.pixels()
@@ -86,59 +86,44 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
             Config.save()
         } childOf sourceBox
 
+        // Thumbnail quality
+        addCheckBoxOption("resourcify.config.thumbnail", Config.instance.fullResThumbnail) {
+            Config.instance.fullResThumbnail = it
+        }
+
         // Ads
-        val adsBox = UIBlock(Color(0, 0, 0, 100)).constrain {
+        addCheckBoxOption("resourcify.config.ads", Config.instance.adsEnabled) {
+            Config.instance.adsEnabled = it
+        }
+    }
+
+    private fun addCheckBoxOption(localizationString: String, enabled: Boolean, onUpdate: (Boolean) -> Unit) {
+        val box = UIBlock(Color(0, 0, 0, 100)).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
             height = ChildBasedMaxSizeConstraint() + 4.pixels()
         } childOf mainBox
-        val adsDescriptionBox = UIContainer().constrain {
+        val descriptionBox = UIContainer().constrain {
             x = 4.pixels()
             y = 4.pixels()
             width = 100.percent() - 168.pixels()
             height = ChildLocationSizeConstraint()
-        } childOf adsBox
-        UIWrappedText("resourcify.config.ads.title".localize()).constrain {
+        } childOf box
+        UIWrappedText("$localizationString.title".localize()).constrain {
             width = 100.percent()
-        } childOf adsDescriptionBox
-        UIWrappedText("resourcify.config.ads.description".localize()).constrain {
+        } childOf descriptionBox
+        UIWrappedText("$localizationString.description".localize()).constrain {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
             color = Color.LIGHT_GRAY.toConstraint()
-        } childOf adsDescriptionBox
-        val checkBox = UIContainer().constrain {
+        } childOf descriptionBox
+        CheckBox(enabled).constrain {
             x = 4.pixels(alignOpposite = true)
             y = CenterConstraint()
-            width = 14.pixels()
-            height = 14.pixels()
-        } childOf adsBox effect OutlineEffect(Color.LIGHT_GRAY, 1f)
-        val check = UIBlock(Color(192, 192, 192, if (Config.instance.adsEnabled) 255 else 0)).constrain {
-            x = 2.pixels()
-            y = 2.pixels()
-            width = 10.pixels()
-            height = 10.pixels()
-        }.animateBeforeHide {
-            setColorAnimation(
-                Animations.IN_OUT_QUAD,
-                0.15f,
-                Color(192, 192, 192, 0).toConstraint(),
-                0f
-            )
-        }.animateAfterUnhide {
-            setColorAnimation(
-                Animations.IN_OUT_QUAD,
-                0.15f,
-                Color(192, 192, 192, 255).toConstraint(),
-                0f
-            )
-        } childOf checkBox
-        if (!Config.instance.adsEnabled) check.hide(true)
-        checkBox.onMouseClick {
-            val adsEnabled = !Config.instance.adsEnabled
-            Config.instance.adsEnabled = adsEnabled
+        }.onToggle {
+            onUpdate.invoke(it)
             Config.save()
-            if (adsEnabled) check.unhide() else check.hide()
-        }
+        } childOf box
     }
 }

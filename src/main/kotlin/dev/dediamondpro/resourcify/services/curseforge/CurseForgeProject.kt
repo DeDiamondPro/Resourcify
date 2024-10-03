@@ -47,7 +47,7 @@ data class CurseForgeProject(
     override fun getSummary(): String = summary
     override fun getAuthor(): String = authors.firstOrNull()?.name ?: ""
     override fun getIconUrl(): String? = logo?.let { it.thumbnailUrl ?: it.url }
-    override fun getBannerUrl(): String? = screenshots.firstOrNull()?.let { it.thumbnailUrl ?: it.url }
+    override fun getBannerUrl(): String? = screenshots.firstOrNull()?.getThumbnailUrlIfEnabled()
 
     override fun getDescription(): CompletableFuture<String> {
         return descriptionRequest ?: supplyAsync {

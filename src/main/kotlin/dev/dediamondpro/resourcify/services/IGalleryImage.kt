@@ -17,9 +17,16 @@
 
 package dev.dediamondpro.resourcify.services
 
+import dev.dediamondpro.resourcify.config.Config
+
 interface IGalleryImage {
     val url: String
     val thumbnailUrl: String?
     val title: String?
     val description: String?
+
+    fun getThumbnailUrlIfEnabled(): String {
+        if (Config.instance.fullResThumbnail) return url
+        return thumbnailUrl ?: url
+    }
 }
