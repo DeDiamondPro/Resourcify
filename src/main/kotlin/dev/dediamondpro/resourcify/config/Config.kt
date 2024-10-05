@@ -26,6 +26,10 @@ class Config {
     var defaultService: String = ModrinthService.getName()
     var fullResThumbnail: Boolean = false
     var adsEnabled: Boolean = true
+    var resourcePacksEnabled: Boolean = true
+    var dataPacksEnabled: Boolean = true
+    var shaderPacksEnabled: Boolean = true
+    var worldsEnabled: Boolean = true
 
     companion object {
         private val configFile = File("./config/resourcify.json")

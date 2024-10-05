@@ -95,6 +95,20 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
         addCheckBoxOption("resourcify.config.ads", Config.instance.adsEnabled) {
             Config.instance.adsEnabled = it
         }
+
+        // Types
+        addCheckBoxOption("resourcify.config.resource-pack", Config.instance.resourcePacksEnabled) {
+            Config.instance.resourcePacksEnabled = it
+        }
+        addCheckBoxOption("resourcify.config.data-pack", Config.instance.dataPacksEnabled) {
+            Config.instance.dataPacksEnabled = it
+        }
+        addCheckBoxOption("resourcify.config.shader-pack", Config.instance.shaderPacksEnabled) {
+            Config.instance.shaderPacksEnabled = it
+        }
+        addCheckBoxOption("resourcify.config.world", Config.instance.worldsEnabled) {
+            Config.instance.worldsEnabled = it
+        }
     }
 
     private fun addCheckBoxOption(localizationString: String, enabled: Boolean, onUpdate: (Boolean) -> Unit) {

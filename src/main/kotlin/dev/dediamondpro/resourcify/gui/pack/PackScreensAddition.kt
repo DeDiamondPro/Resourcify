@@ -64,6 +64,9 @@ object PackScreensAddition {
     } childOf updateButton
 
     fun onRender(matrix: UMatrixStack, type: ProjectType) {
+        if (!type.isEnabled()) {
+            return
+        }
         addButton.setX(basicXConstraint { type.plusX(UResolution.scaledWidth).toFloat() })
         addButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
         if (type.hasUpdateButton) updateButton.unhide()
@@ -74,6 +77,9 @@ object PackScreensAddition {
     }
 
     fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ProjectType, folder: File) {
+        if (!type.isEnabled()) {
+            return
+        }
         if (addButton.isPointInside(mouseX.toFloat(), mouseY.toFloat()) && button == 0) {
             USound.playButtonPress()
             UScreen.displayScreen(BrowseScreen(type, folder))

@@ -17,6 +17,8 @@
 
 package dev.dediamondpro.resourcify.services
 
+import dev.dediamondpro.resourcify.config.Config
+
 //#if MC >= 11600
 //$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 //$$ import net.minecraft.client.gui.screen.Screen
@@ -48,6 +50,15 @@ enum class ProjectType(
     IRIS_SHADER("resourcify.type.shaders",  { it / 2 + 134 }, { 6 }),
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
     WORLD("resourcify.type.world", hasUpdateButton = false, shouldExtract = true);
+
+    fun isEnabled(): Boolean {
+        return when (this) {
+            RESOURCE_PACK, AYCY_RESOURCE_PACK -> Config.instance.resourcePacksEnabled
+            DATA_PACK -> Config.instance.dataPacksEnabled
+            IRIS_SHADER, OPTIFINE_SHADER -> Config.instance.shaderPacksEnabled
+            WORLD -> Config.instance.worldsEnabled
+        }
+    }
 
     //#if MC >= 11600
     //$$ fun getDirectory(screen: Screen): File {

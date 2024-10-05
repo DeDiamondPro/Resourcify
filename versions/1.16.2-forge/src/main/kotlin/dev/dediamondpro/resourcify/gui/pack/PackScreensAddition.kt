@@ -34,7 +34,10 @@ object PackScreensAddition {
     //$$ private val updateImage = Identifier.of("resourcify", "update.png")
     //#endif
 
-    fun getButtons(screen: Screen, type: ProjectType): List<ImageButton> {
+    fun getButtons(screen: Screen, type: ProjectType): List<ImageButton>? {
+        if (!type.isEnabled()) {
+            return null
+        }
         val folder = type.getDirectory(screen)
         val buttons = mutableListOf<ImageButton>()
         buttons.add(ImageButton(screen, type.plusX, type.plusY, plusImage) {
