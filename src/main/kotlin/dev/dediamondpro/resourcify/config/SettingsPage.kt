@@ -23,10 +23,7 @@ import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIContainer
-import gg.essential.elementa.components.UIText
-import gg.essential.elementa.components.UIWrappedText
+import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
@@ -40,11 +37,15 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
     constructor(lastPage: GuiScreen) : this()
     //#endif
 
+    private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
+        width = 100.percent()
+        height = 100.percent()
+    } childOf window
     private val mainBox = UIContainer().constrain {
         x = CenterConstraint()
         width = min(692.pixels(), basicWidthConstraint { window.getWidth() - 8 })
-        height = 100.percent()
-    } childOf window
+        height = ChildLocationSizeConstraint() + 4.pixels()
+    } childOf scrollBox
 
     init {
         UIText("resourcify.config.title".localize()).constrain {
