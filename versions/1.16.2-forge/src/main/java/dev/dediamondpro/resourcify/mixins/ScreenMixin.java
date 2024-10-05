@@ -101,8 +101,8 @@ class ScreenMixin {
     @Unique
     private <T> void updateButtons_Resourcify(List<T> list) {
         for (ImageButton button : resourcifyCustomButtons) {
+            button.updateLocation((Screen) (Object) this);
             if (list.contains(button)) {
-                button.updateLocation((Screen) (Object) this);
                 continue;
             }
             list.add((T) button);
