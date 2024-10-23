@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 package dev.dediamondpro.resourcify.elements
 
 import dev.dediamondpro.resourcify.util.EmptyImage
-import dev.dediamondpro.resourcify.util.supplyAsync
+import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.constraints.ColorConstraint
@@ -32,7 +32,7 @@ class Icon(icon: String, shadow: Boolean, color: ColorConstraint) : UIContainer(
     init {
         (if (shadow) ShadowImage(icon, color)
         else UIImage(
-            supplyAsync { ImageIO.read(this::class.java.getResourceAsStream(icon)) },
+            supply { ImageIO.read(this::class.java.getResourceAsStream(icon)) },
             EmptyImage, EmptyImage
         )).constrain {
             x = 0.pixels()

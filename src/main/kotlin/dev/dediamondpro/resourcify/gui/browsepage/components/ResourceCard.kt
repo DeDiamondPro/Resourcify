@@ -23,6 +23,7 @@ import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.ofResourceCustom
 import dev.dediamondpro.resourcify.util.ofURL
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -78,7 +79,7 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
 
         val iconUrl = project.getIconUrl()
         if (iconUrl.isNullOrBlank()) {
-            UIImage.ofResource("/assets/resourcify/pack.png")
+            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
         } else {
             UIImage.ofURL(iconUrl)
         }.constrain {

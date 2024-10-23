@@ -24,6 +24,7 @@ import dev.dediamondpro.minemark.elements.ChildMovingElement
 import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.utils.MouseButton
 import dev.dediamondpro.resourcify.util.Utils
+import dev.dediamondpro.resourcify.util.ofResourceCustom
 import gg.essential.elementa.components.UIImage
 import gg.essential.universal.UMatrixStack
 import org.xml.sax.Attributes
@@ -65,8 +66,8 @@ class SummaryElement(
     }
 
     companion object {
-        private val closedImage = UIImage.ofResource("/assets/resourcify/expandable-closed.png")
-        private val openedImage = UIImage.ofResource("/assets/resourcify/expandable-opened.png")
+        private val closedImage = UIImage.ofResourceCustom("/assets/resourcify/expandable-closed.png", loadSync = true)
+        private val openedImage = UIImage.ofResourceCustom("/assets/resourcify/expandable-opened.png", loadSync = true)
         private val iconColor = Color.WHITE
         private val iconShadowColor = Utils.getShadowColor(iconColor)
     }

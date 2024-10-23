@@ -21,10 +21,7 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
 import dev.dediamondpro.resourcify.services.IVersion
-import dev.dediamondpro.resourcify.util.ImageURLUtils
-import dev.dediamondpro.resourcify.util.localize
-import dev.dediamondpro.resourcify.util.markdown
-import dev.dediamondpro.resourcify.util.ofURL
+import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
@@ -129,7 +126,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                         } childOf changeLogHolder
                         val iconUrl = project.getIconUrl()
                         if (iconUrl.isNullOrBlank()) {
-                            UIImage.ofResource("/assets/resourcify/pack.png")
+                            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
                         } else {
                             UIImage.ofURL(
                                 iconUrl,

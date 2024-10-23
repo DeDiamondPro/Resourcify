@@ -59,7 +59,7 @@ class UpdateCard(
 
         val iconUrl = project.getIconUrl()
         if (iconUrl.isNullOrBlank()) {
-            UIImage.ofResource("/assets/resourcify/pack.png")
+            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
         } else {
             UIImage.ofURL(iconUrl)
         }.constrain {

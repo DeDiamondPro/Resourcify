@@ -27,12 +27,18 @@ import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
-import gg.essential.elementa.components.image.DefaultLoadingImage
+import gg.essential.elementa.components.image.ImageProvider
+import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
 import java.awt.Color
+import java.awt.image.BufferedImage
+import java.util.concurrent.CompletableFuture
+import javax.imageio.ImageIO
+import kotlin.math.min
 
 fun UIImage.Companion.ofURL(
     source: String,
@@ -53,11 +59,33 @@ fun UIImage.Companion.ofURL(
             height = height?.times(scaleFactor),
             fit = fit
         ),
-        loadingImage = if (loadingImage) DefaultLoadingImage else EmptyImage
+        loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
     if (width != null) image.imageWidth = width * scaleFactor
     if (height != null) image.imageHeight = height * scaleFactor
+    image.textureMinFilter = minFilter
+    image.textureMagFilter = magFilter
+    return image
+}
+
+fun UIImage.Companion.ofResourceCustom(
+    path: String,
+    loadSync: Boolean = false,
+    loadingImage: Boolean = true,
+    minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
+    magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
+): UIImage {
+    val imageFuture = if (loadSync) {
+        supply { ImageIO.read(this::class.java.getResourceAsStream(path)) }
+    } else {
+        supplyAsync { ImageIO.read(this::class.java.getResourceAsStream(path)) }
+    }
+    val image = UIImage(
+        imageFuture,
+        loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
+    )
+    if (!loadingImage) image.imageHeight = 0.5625f
     image.textureMinFilter = minFilter
     image.textureMagFilter = magFilter
     return image
@@ -88,4 +116,35 @@ object ElementaUtils {
             Color(65, 105, 225), ConfirmingBrowserProvider
         )
     )
+
+    object ElementLoadingImage : ImageProvider {
+        private var image: BufferedImage? =
+            ImageIO.read(this.javaClass.getResourceAsStream("/assets/resourcify/elementa-loading.png"))
+        private lateinit var texture: ReleasedDynamicTexture
+
+        override fun drawImage(
+            matrixStack: UMatrixStack,
+            x: Double,
+            y: Double,
+            width: Double,
+            height: Double,
+            color: Color
+        ) {
+            if (!::texture.isInitialized) {
+                texture = UGraphics.getTexture(image)
+                image = null
+            }
+
+            // Get square size
+            val size = min(width, height)
+            val centerX = x + width / 2.0 - size / 2.0
+            val centerY = y + height / 2.0 - size / 2.0
+
+            Utils.drawTexture(
+                matrixStack, texture,
+                centerX, centerY, 0.0, 0.0,
+                size, size, size, size
+            )
+        }
+    }
 }

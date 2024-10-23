@@ -228,7 +228,7 @@ class ProjectScreen(
             height = ImageAspectConstraint()
         } childOf sideBox
         val iconUrl = project.getIconUrl()
-        (if (iconUrl.isNullOrBlank()) UIImage.ofResource("/assets/resourcify/pack.png")
+        (if (iconUrl.isNullOrBlank()) UIImage.ofResourceCustom("/assets/resourcify/pack.png")
         else UIImage.ofURL(iconUrl))
             .constrain {
                 x = 4.pixels()

@@ -30,6 +30,7 @@ import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.ofResourceCustom
 import dev.dediamondpro.resourcify.util.supplyAsync
 import dev.dediamondpro.resourcify.util.toURI
 import gg.essential.elementa.components.*
@@ -42,6 +43,7 @@ import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.GuiScreen
+import scala.swing.Applet.UI
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -271,7 +273,7 @@ class BrowseScreen(
                 if (it.mouseButton != 0 || guiOpenedTime + 500 > UMinecraft.getTime()) return@onMouseClick
                 UDesktop.browse(adProvider.getUrl().toURI())
             }
-            UIImage.ofResource(adProvider.getImagePath()).constrain {
+            UIImage.ofResourceCustom(adProvider.getImagePath()).constrain {
                 x = 4.pixels()
                 y = 4.pixels()
                 width = 21.pixels()
@@ -282,7 +284,12 @@ class BrowseScreen(
                 y = CenterConstraint()
                 width = 100.percent() - 33.pixels()
             } childOf adBox
-            UIImage.ofResource("/assets/resourcify/advertisement-text.png").constrain {
+            UIImage.ofResourceCustom(
+                "/assets/resourcify/advertisement-text.png",
+                loadSync = true,
+                minFilter = UIImage.TextureScalingMode.NEAREST,
+                magFilter = UIImage.TextureScalingMode.NEAREST
+            ).constrain {
                 x = 1.pixels(alignOpposite = true)
                 y = 1.pixels(alignOpposite = true)
                 width = 58.pixels()
