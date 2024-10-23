@@ -33,15 +33,19 @@ class Config {
 
     companion object {
         private val configFile = File("./config/resourcify.json")
-        val instance: Config = load()
+        val instance: Config
+
+        init {
+            // Load the file and immediately save it so all new values get saved
+            instance = load()
+            save(instance)
+        }
 
         private fun load(): Config {
             return try {
                 configFile.readText().fromJson()
             } catch (e: Exception) {
-                val config = Config()
-                save(config)
-                config
+                return Config()
             }
         }
 
