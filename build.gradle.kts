@@ -400,7 +400,7 @@ fun getForgeMcVersionRange(): String {
 fun getSupportedVersionList(): List<String> {
     val supportedVersionRange = getSupportedVersionRange()
     return when (supportedVersionRange.first) {
-        "1.21.3" -> listOf("1.21.2", "1.21.3")
+        "1.21.2" -> listOf("1.21.2", "1.21.3")
         else -> {
             val minorVersion = supportedVersionRange.first.let {
                 if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")
