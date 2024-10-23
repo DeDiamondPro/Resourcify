@@ -47,9 +47,15 @@ enum class ProjectType(
     // 1.8.9 only
     AYCY_RESOURCE_PACK("resourcify.type.resource_packs", plusX = { it - 30 }),
     DATA_PACK("resourcify.type.data_packs", hasUpdateButton = false),
-    IRIS_SHADER("resourcify.type.shaders",  { it / 2 + 134 }, { 6 }),
+    IRIS_SHADER("resourcify.type.shaders", { it / 2 + 134 }, { 6 }),
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
-    WORLD("resourcify.type.world", hasUpdateButton = false, shouldExtract = true);
+    WORLD("resourcify.type.world", { it / 2 + 134 }, {
+        //#if MC >= 11600
+        //$$ 22
+        //#else
+        10
+        //#endif
+    }, hasUpdateButton = false, shouldExtract = true);
 
     fun isEnabled(): Boolean {
         return when (this) {
