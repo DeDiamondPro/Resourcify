@@ -4,7 +4,7 @@ kotlin = "2.0.20" # Use newest here since we include it in 1.8.9 and 1.12.2
 fabric_language_kotlin = "1.7.1+kotlin.1.6.10" # Use 1.6.10 here since it is the minimum kotlin version we require
 
 # Essential Dependencies
-universal = "363"
+universal = "365"
 elementa = "DIAMOND-9"
 
 # Markdown

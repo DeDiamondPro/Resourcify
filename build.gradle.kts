@@ -116,7 +116,10 @@ dependencies {
         "363+diamond.neoforge" else libs.versions.universal.get()
     if (platform.isFabric) {
         val fabricApiVersion: String by project
-        modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
+        // TODO: re-enable for 1.21.3 once essential loom has updated
+        if (platform.mcVersion <= 12001) {
+            modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion))
+        }
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modCompileOnly("gg.essential:elementa-${elementaPlatform ?: platform}:${libs.versions.elementa.get()}")
         modCompileOnly("gg.essential:universalcraft-${universalPlatform ?: platform}:${universalVersion}")
@@ -357,7 +360,8 @@ tasks {
 // Function to get the range of mc versions supported by a version we are building for.
 // First value is start of range, second value is end of range or null to leave the range open
 fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion) {
-    12101 -> "1.21" to null
+    12103 -> "1.21.2" to null
+    12101 -> "1.21" to "1.21.1"
     12006 -> "1.20.5" to "1.20.6"
     12004 -> "1.20.2" to "1.20.4"
     12001 -> "1.20" to "1.20.1"
@@ -380,7 +384,8 @@ fun getPrettyVersionRange(): String {
 }
 
 fun getFabricMcVersionRange(): String {
-    if (platform.mcVersion == 12101) return "1.21.x"
+    if (platform.mcVersion == 12101) return "1.21.1"
+    else if (platform.mcVersion == 12103) return "1.21.3"
     val supportedVersionRange = getSupportedVersionRange()
     if (supportedVersionRange.first == supportedVersionRange.second) return supportedVersionRange.first
     return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"
@@ -395,7 +400,7 @@ fun getForgeMcVersionRange(): String {
 fun getSupportedVersionList(): List<String> {
     val supportedVersionRange = getSupportedVersionRange()
     return when (supportedVersionRange.first) {
-        "1.21" -> listOf("1.21", "1.21.1")
+        "1.21.3" -> listOf("1.21.2", "1.21.3")
         else -> {
             val minorVersion = supportedVersionRange.first.let {
                 if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")

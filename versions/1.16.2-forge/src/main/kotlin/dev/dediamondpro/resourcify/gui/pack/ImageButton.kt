@@ -29,6 +29,9 @@ import net.minecraft.util.text.ITextComponent
 //#if MC >= 11800
 //$$ import net.minecraft.client.render.GameRenderer
 //#endif
+//#if MC >= 12102
+//$$ import net.minecraft.client.render.RenderLayer
+//#endif
 
 class ImageButton(
     screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
@@ -68,7 +71,11 @@ class ImageButton(
         AbstractGui.blit(context, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
         //#else
         //$$ RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        //$$ //#if MC < 12102
         //$$ context.drawTexture(image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //$$ //#else
+        //$$ //$$ context.drawTexture(RenderLayer::getGuiTextured, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //$$ //#endif
         //#endif
     }
 }

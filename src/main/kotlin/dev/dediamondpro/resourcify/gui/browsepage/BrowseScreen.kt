@@ -43,7 +43,6 @@ import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.GuiScreen
-import scala.swing.Applet.UI
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
