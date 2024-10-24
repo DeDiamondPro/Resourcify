@@ -377,6 +377,8 @@ fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion
 fun getPrettyVersionRange(): String {
     val supportedVersionRange = getSupportedVersionRange()
     return when {
+        supportedVersionRange.first == "1.21.2" -> "1.21.3"
+        supportedVersionRange.first == "1.21.1" -> "1.21.1"
         supportedVersionRange.first == supportedVersionRange.second -> supportedVersionRange.first
         listOf("1.16", "1.18").contains(supportedVersionRange.first) -> "${supportedVersionRange.first}.x"
         else -> "${supportedVersionRange.first}${supportedVersionRange.second?.let { "-$it" } ?: "+"}"
@@ -384,8 +386,6 @@ fun getPrettyVersionRange(): String {
 }
 
 fun getFabricMcVersionRange(): String {
-    if (platform.mcVersion == 12101) return "1.21.1"
-    else if (platform.mcVersion == 12103) return "1.21.3"
     val supportedVersionRange = getSupportedVersionRange()
     if (supportedVersionRange.first == supportedVersionRange.second) return supportedVersionRange.first
     return ">=${supportedVersionRange.first}${supportedVersionRange.second?.let { " <=$it" } ?: ""}"

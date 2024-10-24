@@ -1,3 +1,7 @@
+## Resourcify 1.5.0.1
+- (1.21.2/3 fabric) Fixed mod not being marked as compatible with 1.21.2.
+- (1.21.0/1 fabric) Fixed mod not being marked as compatible with 1.21.0.
+
 ## Resourcify 1.5.0
 
 Please make sure to report any bugs and/or visual anomalies
