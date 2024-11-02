@@ -235,7 +235,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
 
     fun showChangeLog(project: FullModrinthProject, version: IVersion, updateButton: UIComponent) {
         updateContainer.hide()
-        changelogContainer.constrain { x = this@UpdateGui.width.pixels() }
+        changelogContainer.constrain { x = (this@UpdateGui as GuiScreen).width.pixels() }
         changelogContainer.clearChildren()
         UIText("resourcify.updates.updates".localize()).constrain {
             x = 4.pixels()
