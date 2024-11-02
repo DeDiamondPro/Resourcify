@@ -24,7 +24,7 @@ import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofResourceCustom
-import dev.dediamondpro.resourcify.util.ofURL
+import dev.dediamondpro.resourcify.util.ofURLCustom
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
@@ -60,7 +60,7 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
         } effect ScissorEffect() childOf this
 
         project.getBannerUrl()?.let {
-            UIImage.ofURL(it, false)
+            UIImage.ofURLCustom(it, false)
                 .constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
@@ -78,10 +78,10 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
         } childOf this
 
         val iconUrl = project.getIconUrl()
-        if (iconUrl.isNullOrBlank()) {
+        if (iconUrl == null) {
             UIImage.ofResourceCustom("/assets/resourcify/pack.png")
         } else {
-            UIImage.ofURL(iconUrl)
+            UIImage.ofURLCustom(iconUrl)
         }.constrain {
             width = ImageFillConstraint(ImageFillConstraint.FillType.CROP)
             height = ImageFillConstraint(ImageFillConstraint.FillType.CROP)

@@ -45,7 +45,7 @@ data class CurseForgeVersion(
     override fun getVersionNumber(): String? = null
     override fun getProjectId(): String = modId.toString()
     fun hasDownloadUrl(): Boolean = downloadUrl != null
-    override fun getDownloadUrl(): String = downloadUrl ?: error("No download URL.")
+    override fun getDownloadUrl(): URL? = downloadUrl?.toURL()
     override fun getFileName(): String = fileName
     override fun getSha1(): String = hashes.firstOrNull { it.algo == 1 }?.value ?: ""
 
@@ -84,7 +84,7 @@ data class CurseForgeVersion(
         return (dependenciesRequest ?: supplyAsync {
             val deps = dependencies.filter { DependencyType.fromCurseForgeId(it.relationType) != null }
             val projects: ModsResponse = "${CurseForgeService.API}/mods".toURL()
-                .postAndGetJson(
+                ?.postAndGetJson(
                     GetByIdProperty(deps.map { it.modId }),
                     headers = mapOf("x-api-key" to CurseForgeService.API_KEY)
                 ) ?: error("Failed to fetch dependencies.")

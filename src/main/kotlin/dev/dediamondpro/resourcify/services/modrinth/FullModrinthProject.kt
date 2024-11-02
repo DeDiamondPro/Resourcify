@@ -70,9 +70,9 @@ data class FullModrinthProject(
     override fun getBrowserUrl(): String = "https://modrinth.com/$projectType/$slug"
 
     override fun getDescription(): CompletableFuture<String> = supply { body }
-    override fun getIconUrl(): String? = iconUrl
+    override fun getIconUrl(): URL? = iconUrl?.toURL()
 
-    override fun getBannerUrl(): String? = gallery.minByOrNull { it.ordering }?.getThumbnailUrlIfEnabled()
+    override fun getBannerUrl(): URL? = gallery.minByOrNull { it.ordering }?.getThumbnailUrlIfEnabled()
 
     override fun getBannerColor(): Color? = color?.let { Color(it) }
 

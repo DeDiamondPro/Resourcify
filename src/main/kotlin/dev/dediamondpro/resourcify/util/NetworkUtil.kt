@@ -308,4 +308,8 @@ fun String.toURI(): URI = try {
     URI(this.encodeUrl())
 }
 
-fun String.toURL(): URL = this.toURI().toURL()
+fun String.toURL(): URL? = try {
+    this.toURI().toURL()
+} catch (_: Exception) {
+    null
+}

@@ -191,7 +191,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     y = CenterConstraint()
                 } childOf topBar
 
-                cards.addAll(projects.map { (project, newVersion) ->
+                cards.addAll(projects.filter { it.value.getDownloadUrl() != null }.map { (project, newVersion) ->
                     UpdateCard(project, newVersion, hashes.get()[updates.get()[newVersion]]!!, this).constrain {
                         y = SiblingConstraint(padding = 2f)
                         width = 100.percent()

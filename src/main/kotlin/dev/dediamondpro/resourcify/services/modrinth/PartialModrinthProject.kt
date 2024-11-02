@@ -52,8 +52,8 @@ data class PartialModrinthProject(
     override fun getId(): String = id
     override fun getSummary(): String = summary
     override fun getAuthor(): String = author
-    override fun getIconUrl(): String? = iconUrl
-    override fun getBannerUrl(): String? = featuredGallery ?: gallery.firstOrNull()
+    override fun getIconUrl(): URL? = iconUrl?.toURL()
+    override fun getBannerUrl(): URL? = featuredGallery?.toURL() ?: gallery.firstOrNull()?.toURL()
     override fun getBannerColor(): Color? = color?.let { Color(it) }
     override fun getDescription(): CompletableFuture<String> =
         fetchProject().thenApply { it?.getDescription()?.getNow(null) ?: error("Failed to fetch description.") }

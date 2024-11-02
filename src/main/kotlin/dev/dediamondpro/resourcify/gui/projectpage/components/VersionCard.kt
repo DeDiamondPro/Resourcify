@@ -116,10 +116,13 @@ class VersionCard(
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
 
-        val button = createDownloadButton(version, hashes, downloadFolder, type) childOf this
-        onMouseClick {
-            if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
-            parent.showChangelog(version)
+        val button = createDownloadButton(version, hashes, downloadFolder, type)
+        if (button != null) {
+            button childOf this
+            onMouseClick {
+                if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
+                parent.showChangelog(version)
+            }
         }
     }
 
@@ -177,8 +180,8 @@ class VersionCard(
     }
 
     companion object {
-        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File, type: ProjectType): UIComponent {
-            val url = version.getDownloadUrl().toURL()
+        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File, type: ProjectType): UIComponent? {
+            val url = version.getDownloadUrl() ?: return null
             var installed = hashes.contains(version.getSha1())
             val buttonText =
                 "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"

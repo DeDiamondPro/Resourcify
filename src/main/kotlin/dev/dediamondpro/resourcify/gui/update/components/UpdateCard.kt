@@ -48,7 +48,7 @@ class UpdateCard(
     val file: File,
     private val gui: UpdateGui
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
-    private val updateUrl = newVersion.getDownloadUrl().toURL()
+    private val updateUrl = newVersion.getDownloadUrl()!!
     private var progressBox: UIBlock? = null
     private var text: UIText? = null
 
@@ -58,10 +58,10 @@ class UpdateCard(
         }
 
         val iconUrl = project.getIconUrl()
-        if (iconUrl.isNullOrBlank()) {
+        if (iconUrl == null) {
             UIImage.ofResourceCustom("/assets/resourcify/pack.png")
         } else {
-            UIImage.ofURL(iconUrl)
+            UIImage.ofURLCustom(iconUrl)
         }.constrain {
             x = 4.pixels()
             y = 4.pixels()

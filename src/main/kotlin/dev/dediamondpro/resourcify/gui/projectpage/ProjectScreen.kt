@@ -117,7 +117,7 @@ class ProjectScreen(
             val version = versions.firstOrNull {
                 it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
-            val url = version.getDownloadUrl().toURL()
+            val url = version.getDownloadUrl() ?: return@thenAccept
             var installed = packHashes.get().contains(version.getSha1())
             val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
             else version.getVersionNumber()?.let {
@@ -221,15 +221,15 @@ class ProjectScreen(
             height = ChildBasedSizeConstraint() + 4.pixels()
         } childOf sideContainer
         val bannerUrl = project.getBannerUrl()
-        if (bannerUrl != null) UIImage.ofURL(bannerUrl, false).constrain {
+        if (bannerUrl != null) UIImage.ofURLCustom(bannerUrl, false).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
             height = ImageAspectConstraint()
         } childOf sideBox
         val iconUrl = project.getIconUrl()
-        (if (iconUrl.isNullOrBlank()) UIImage.ofResourceCustom("/assets/resourcify/pack.png")
-        else UIImage.ofURL(iconUrl))
+        (if (iconUrl == null) UIImage.ofResourceCustom("/assets/resourcify/pack.png")
+        else UIImage.ofURLCustom(iconUrl))
             .constrain {
                 x = 4.pixels()
                 y = SiblingConstraint(padding = 4f)

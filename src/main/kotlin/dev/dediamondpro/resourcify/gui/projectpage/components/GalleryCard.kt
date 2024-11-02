@@ -20,7 +20,8 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.services.IGalleryImage
-import dev.dediamondpro.resourcify.util.ofURL
+import dev.dediamondpro.resourcify.util.ofURLCustom
+import dev.dediamondpro.resourcify.util.toURL
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIWrappedText
@@ -57,19 +58,23 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100))
             } childOf Window.of(this)
             background.setFloating(true)
             background.grabWindowFocus()
-            UIImage.ofURL(gallery.url, true).constrain {
-                x = CenterConstraint()
-                y = CenterConstraint()
-                width = ImageFillConstraint()
-                height = ImageFillConstraint()
-            } childOf background
+            gallery.url.toURL()?.let { image ->
+                UIImage.ofURLCustom(image, true).constrain {
+                    x = CenterConstraint()
+                    y = CenterConstraint()
+                    width = ImageFillConstraint()
+                    height = ImageFillConstraint()
+                } childOf background
+            }
         }
-        UIImage.ofURL(gallery.getThumbnailUrlIfEnabled(), false).constrain {
-            x = 0.pixels()
-            y = 0.pixels()
-            width = 100.percent()
-            height = ImageAspectConstraint()
-        } childOf this
+        gallery.getThumbnailUrlIfEnabled()?.let { image ->
+            UIImage.ofURLCustom(image, false).constrain {
+                x = 0.pixels()
+                y = 0.pixels()
+                width = 100.percent()
+                height = ImageAspectConstraint()
+            } childOf this
+        }
         if (!gallery.title.isNullOrBlank()) UIWrappedText(gallery.title ?: "").constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)

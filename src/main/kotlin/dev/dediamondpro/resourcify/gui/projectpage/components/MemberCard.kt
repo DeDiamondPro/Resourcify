@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,8 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.util.capitalizeAll
-import dev.dediamondpro.resourcify.util.ofURL
+import dev.dediamondpro.resourcify.util.ofURLCustom
+import dev.dediamondpro.resourcify.util.toURL
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIText
@@ -42,8 +43,8 @@ class MemberCard(member: IMember) : UIContainer() {
             if (it.mouseButton != 0) return@onMouseClick
             UDesktop.browse(URI(member.url))
         }
-        member.avatarUrl?.let {
-            UIImage.ofURL(it).constrain {
+        member.avatarUrl?.toURL()?.let {
+            UIImage.ofURLCustom(it).constrain {
                 x = 0.pixels()
                 y = 0.pixels()
                 width = 32.pixels()

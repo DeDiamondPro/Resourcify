@@ -94,10 +94,12 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             y = 8.pixels()
         } childOf changeLogHolder
         VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder, screen.type)
-            .constrain {
-                x = 4.pixels(true)
-                y = 4.pixels()
-            } childOf changeLogHolder
+            ?.let {
+                it.constrain {
+                    x = 4.pixels(true)
+                    y = 4.pixels()
+                } childOf changeLogHolder
+            }
         version.getChangeLog().thenApply {
             Window.enqueueRenderOperation {
                 var changelog = it
@@ -125,10 +127,10 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                             UScreen.displayScreen(ConfirmLinkScreen(project.getBrowserUrl(), screen))
                         } childOf changeLogHolder
                         val iconUrl = project.getIconUrl()
-                        if (iconUrl.isNullOrBlank()) {
+                        if (iconUrl == null) {
                             UIImage.ofResourceCustom("/assets/resourcify/pack.png")
                         } else {
-                            UIImage.ofURL(
+                            UIImage.ofURLCustom(
                                 iconUrl,
                                 width = 24f,
                                 height = 24f,

@@ -36,12 +36,12 @@ import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
 import java.awt.Color
 import java.awt.image.BufferedImage
-import java.util.concurrent.CompletableFuture
+import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.math.min
 
-fun UIImage.Companion.ofURL(
-    source: String,
+fun UIImage.Companion.ofURLCustom(
+    url: URL,
     loadingImage: Boolean = true,
     width: Float? = null,
     height: Float? = null,
@@ -51,7 +51,6 @@ fun UIImage.Companion.ofURL(
     minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
     magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
 ): UIImage {
-    val url = source.toURL()
     val image = UIImage(
         url.getImageAsync(
             useCache = useCache,
