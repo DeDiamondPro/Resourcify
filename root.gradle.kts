@@ -32,6 +32,7 @@ preprocess {
     val forge12001 = createNode("1.20.1-forge", 12001, "srg")
     val forge12004 = createNode("1.20.4-forge", 12004, "srg")
     val forge12101 = createNode("1.21.1-forge", 12101, "srg")
+    val forge12103 = createNode("1.21.3-forge", 12103, "srg")
 
     val neoforge12004 = createNode("1.20.4-neoforge", 12004, "srg")
     val neoforge12006 = createNode("1.20.6-neoforge", 12006, "srg")
@@ -56,6 +57,7 @@ preprocess {
     forge12001.link(fabric12001)
     forge12004.link(forge12001)
     forge12101.link(fabric12101)
+    forge12103.link(fabric12103)
 
     neoforge12004.link(forge12004)
     neoforge12006.link(fabric12006)

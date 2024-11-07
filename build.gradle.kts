@@ -112,7 +112,7 @@ val shade: Configuration by configurations.creating {
 dependencies {
     val elementaPlatform: String? by project
     val universalPlatform: String? by project
-    val universalVersion = if (platform.isNeoForge || (platform.isForge && platform.mcVersion == 12101))
+    val universalVersion = if (platform.isNeoForge || (platform.isForge && platform.mcVersion >= 12101))
         "363+diamond.neoforge" else libs.versions.universal.get()
     if (platform.isFabric) {
         val fabricApiVersion: String by project
