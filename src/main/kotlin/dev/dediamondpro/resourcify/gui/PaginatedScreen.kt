@@ -87,6 +87,14 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
         }
     }
 
+    override fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
+        when (mouseButton) {
+            3 -> goBack()
+            4 -> goForward()
+            else -> super.onMouseClicked(mouseX, mouseY, mouseButton)
+        }
+    }
+
     open fun goBack() {
         val backScreen = backScreens.removeLastOrNull()
         if (backScreen is PaginatedScreen) forwardScreens.add(this)

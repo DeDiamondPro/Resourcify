@@ -1,9 +1,6 @@
-## Resourcify 1.5.1
+## Resourcify 1.5.2
 
-- Added support for 1.21.3 neoforge and forge! (Note: at the time of writing kotlin for forge does not have a version
-  marked as compatible for 1.21.3, but **kotlin for forge 5.6.0 seems to work for 1.21.3**)
-- Fixed a crash when opening the changelog of a project in the update screen
-- Fixed a crash caused by a project having an invalid image URL
+- Add support for side mouse buttons to go back and forward between pages
 
 ----------------------------------------------------------------------------------------------------
 
