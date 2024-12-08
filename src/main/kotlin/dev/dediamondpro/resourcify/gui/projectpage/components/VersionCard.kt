@@ -44,7 +44,7 @@ import java.util.*
 
 class VersionCard(
     parent: VersionsPage, val version: IVersion, val service: IService,
-    hashes: List<String>, downloadFolder: File, val type: ProjectType,
+    hashes: List<String>?, downloadFolder: File?, val type: ProjectType
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
     private val df = SimpleDateFormat("MMM d, yyyy")
     private val nf = NumberFormat.getInstance()
@@ -116,12 +116,14 @@ class VersionCard(
             color = Color.LIGHT_GRAY.toConstraint()
         } childOf statsContainer
 
-        val button = createDownloadButton(version, hashes, downloadFolder, type)
-        if (button != null) {
-            button childOf this
-            onMouseClick {
-                if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
-                parent.showChangelog(version)
+        if (hashes != null && downloadFolder != null) {
+            val button = createDownloadButton(version, hashes, downloadFolder, type)
+            if (button != null) {
+                button childOf this
+                onMouseClick {
+                    if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
+                    parent.showChangelog(version)
+                }
             }
         }
     }

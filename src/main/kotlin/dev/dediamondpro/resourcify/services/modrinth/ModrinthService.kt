@@ -17,11 +17,13 @@
 
 package dev.dediamondpro.resourcify.services.modrinth
 
+import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
+import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
@@ -118,6 +120,28 @@ object ModrinthService : IService {
                 category.header + if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
                 else category.name.replace(Regex("[^0-9]"), "").toInt().toChar()
             }
+        }
+    }
+
+    override fun canFetchProjectUrl(uri: URI): Boolean {
+        return uri.host == "modrinth.com"
+    }
+
+    override fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>? {
+        val path = uri.path.removePrefix("/").split("/")
+        if (path.size < 2) {
+            return null
+        }
+        val type = when (path[0]) {
+            "resourcepack" -> ProjectType.RESOURCE_PACK
+            "datapack" -> ProjectType.DATA_PACK
+            "shaders" -> ProjectType.IRIS_SHADER // Whether its iris or optifine doesn't matter here
+            "mod", "modpack", "plugin" -> ProjectType.UNKNOWN
+            else -> return null // Probably not a project url
+        }
+        val url = "$API/project/${path[1]}".toURL() ?: return null
+        return type to supplyAsync {
+            url.getJson<FullModrinthProject>()
         }
     }
 

@@ -1,6 +1,7 @@
 ## Resourcify 1.5.2
 
-- Add support for side mouse buttons to go back and forward between pages
+- When possible, links to modrinth in a project description will now be opened in Resourcify.
+- Add support for side mouse buttons to go back and forward between pages.
 
 ----------------------------------------------------------------------------------------------------
 

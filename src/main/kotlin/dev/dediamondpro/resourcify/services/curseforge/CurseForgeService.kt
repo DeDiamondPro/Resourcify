@@ -22,12 +22,14 @@ import dev.dediamondpro.minemark.style.HeadingLevelStyleConfig
 import dev.dediamondpro.minemark.style.HeadingStyleConfig
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
+import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
+import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
@@ -126,6 +128,17 @@ object CurseForgeService : IService {
                     useCache = false
                 )?.data ?: error("Failed to fetch categories.")
         }
+    }
+
+    override fun canFetchProjectUrl(uri: URI): Boolean {
+        return false
+        // return uri.host == "curseforge.com" || uri.host == "legacy.curseforge.com"
+    }
+
+    override fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>? {
+        // I'd like to support this for curseforge, but I can only fetch the project based on project id,
+        // which the URL does not contain (thanks curseforge!)
+        return null
     }
 
     private fun ProjectType.getClassId(): Int? = when (this) {

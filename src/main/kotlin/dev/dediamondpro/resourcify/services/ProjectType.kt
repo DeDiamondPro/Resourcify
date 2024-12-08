@@ -55,7 +55,9 @@ enum class ProjectType(
         //#else
         10
         //#endif
-    }, hasUpdateButton = false, shouldExtract = true);
+    }, hasUpdateButton = false, shouldExtract = true),
+    // Used for when there is a link to a project but we don't know what type it is
+    UNKNOWN("");
 
     fun isEnabled(): Boolean {
         return when (this) {
@@ -63,6 +65,7 @@ enum class ProjectType(
             DATA_PACK -> Config.instance.dataPacksEnabled
             IRIS_SHADER, OPTIFINE_SHADER -> Config.instance.shaderPacksEnabled
             WORLD -> Config.instance.worldsEnabled
+            UNKNOWN -> false
         }
     }
 

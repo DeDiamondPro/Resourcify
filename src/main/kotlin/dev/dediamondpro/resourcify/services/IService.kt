@@ -21,6 +21,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
 import dev.dediamondpro.resourcify.services.ads.IAdProvider
 import dev.dediamondpro.resourcify.util.ElementaUtils
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 interface IService {
@@ -58,4 +59,8 @@ interface IService {
     fun getAdProvider(): IAdProvider = DefaultAdProvider
 
     fun getMarkdownStyle(): MarkdownStyle = ElementaUtils.defaultMarkdownStyle
+
+    fun canFetchProjectUrl(uri: URI): Boolean
+
+    fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>?
 }

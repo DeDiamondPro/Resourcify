@@ -50,10 +50,10 @@ class ProjectScreen(
     val service: IService,
     val project: IProject,
     val type: ProjectType,
-    val downloadFolder: File
+    val downloadFolder: File?
 ) : PaginatedScreen() {
-    val packHashes: CompletableFuture<List<String>> = supplyAsync {
-        PackUtils.getPackHashes(downloadFolder)
+    val packHashes: CompletableFuture<List<String>>? = downloadFolder?.let {
+        supplyAsync { PackUtils.getPackHashes(it) }
     }
 
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
@@ -98,7 +98,7 @@ class ProjectScreen(
 
         // If the project can not be installed by resourcify (because, for example, redistribution is disabled on cf)
         // a link to the website will be displayed
-        if (!project.canBeInstalled()) {
+        if (!project.canBeInstalled() || downloadFolder == null) {
             val text = UIText("${ChatColor.BOLD}${localize("resourcify.version.install")}").constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
@@ -118,7 +118,7 @@ class ProjectScreen(
                 it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
             val url = version.getDownloadUrl() ?: return@thenAccept
-            var installed = packHashes.get().contains(version.getSha1())
+            var installed = packHashes!!.get().contains(version.getSha1())
             val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
             else version.getVersionNumber()?.let {
                 "${ChatColor.BOLD}${localize("resourcify.version.install_version", it)}"
@@ -180,7 +180,8 @@ class ProjectScreen(
         val pages = mutableMapOf<String, (ProjectScreen) -> UIComponent>()
         pages["resourcify.project.description".localize()] = ::DescriptionPage
         if (project.hasGallery()) pages["resourcify.project.gallery".localize()] = ::GalleryPage
-        if (project.canBeInstalled()) pages["resourcify.project.versions".localize()] = ::VersionsPage
+        if (project.canBeInstalled() && downloadFolder != null) pages["resourcify.project.versions".localize()] =
+            ::VersionsPage
         pages.forEach { (text, page) ->
             UIText("${ChatColor.BOLD}$text").constrain {
                 x = if (text == "resourcify.project.description".localize()) 6.pixels()
