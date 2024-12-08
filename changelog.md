@@ -2,6 +2,8 @@
 
 - When possible, links to modrinth in a project description will now be opened in Resourcify.
 - Add support for side mouse buttons to go back and forward between pages.
+- Fix CurseForge version filter using major version instead of exact version.
+- You can now select multiple Minecraft versions when using the CurseForge source.
 
 ----------------------------------------------------------------------------------------------------
 

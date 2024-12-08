@@ -69,9 +69,7 @@ object CurseForgeService : IService {
                     actualCategories.add("5193") // Add data pack category
                 }
                 addParameter("categoryIds", "[${actualCategories.joinToString(",")}]")
-                if (minecraftVersions.isNotEmpty()) {
-                    addParameter("gameVersionTypeId", minecraftVersions.first().split("+")[0])
-                }
+                addParameter("gameVersions", "[${minecraftVersions.joinToString(",") { "\"$it\"" }}]")
             }.build().toURL().getJson<CurseForgeSearchData>(headers = mapOf("x-api-key" to API_KEY)).apply {
                 this?.let { // Filter data packs out of resource packs
                     if (type != ProjectType.RESOURCE_PACK) return@let
@@ -83,8 +81,7 @@ object CurseForgeService : IService {
     override fun getMinecraftVersions(): CompletableFuture<Map<String, String>> {
         fetchMinecraftVersions()
         return minecraftVersions?.thenApply {
-            // Add the name to the id because the id is not unique
-            it.associate { version -> "${version.id}+${version.name}" to version.name }
+            it.associate { version -> version.name to version.name }
         } ?: supply { emptyMap() }
     }
 
@@ -98,8 +95,6 @@ object CurseForgeService : IService {
                 )?.data ?: error("Failed to fetch Minecraft versions.")
         }
     }
-
-    override fun canSelectMultipleMinecraftVersions(): Boolean = false
 
     override fun getCategories(type: ProjectType): CompletableFuture<Map<String, Map<String, String>>> {
         fetchCategories()
