@@ -25,6 +25,7 @@ import java.io.File
 class Config {
     var defaultService: String = ModrinthService.getName()
     var fullResThumbnail: Boolean = false
+    var openLinkInResourcify: Boolean = true
     var adsEnabled: Boolean = true
     var resourcePacksEnabled: Boolean = true
     var dataPacksEnabled: Boolean = true

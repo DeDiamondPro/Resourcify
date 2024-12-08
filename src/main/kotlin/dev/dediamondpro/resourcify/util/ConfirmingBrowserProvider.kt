@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.minemark.providers.BrowserProvider
+import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.services.ProjectType
@@ -37,7 +38,7 @@ object ConfirmingBrowserProvider : BrowserProvider {
         }
 
         val screen = UScreen.currentScreen
-        if (screen is ProjectScreen && tryCreateScreen(actualUrl, screen)) {
+        if (Config.instance.openLinkInResourcify && screen is ProjectScreen && tryCreateScreen(actualUrl, screen)) {
             return // We have opened this in a ProjectScreen
         }
 

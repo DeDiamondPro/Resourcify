@@ -92,6 +92,11 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
             Config.instance.fullResThumbnail = it
         }
 
+        // Open links in Resourcify
+        addCheckBoxOption("resourcify.config.open_link", Config.instance.openLinkInResourcify) {
+            Config.instance.openLinkInResourcify = it
+        }
+
         // Ads
         addCheckBoxOption("resourcify.config.ads", Config.instance.adsEnabled) {
             Config.instance.adsEnabled = it
