@@ -377,7 +377,7 @@ fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion
 fun getPrettyVersionRange(): String {
     val supportedVersionRange = getSupportedVersionRange()
     return when {
-        supportedVersionRange.first == "1.21.2" -> "1.21.3"
+        supportedVersionRange.first == "1.21.2" -> "1.21.3/4"
         supportedVersionRange.first == "1.21.1" -> "1.21.1"
         supportedVersionRange.first == supportedVersionRange.second -> supportedVersionRange.first
         listOf("1.16", "1.18").contains(supportedVersionRange.first) -> "${supportedVersionRange.first}.x"
@@ -400,7 +400,7 @@ fun getForgeMcVersionRange(): String {
 fun getSupportedVersionList(): List<String> {
     val supportedVersionRange = getSupportedVersionRange()
     return when (supportedVersionRange.first) {
-        "1.21.2" -> listOf("1.21.2", "1.21.3")
+        "1.21.2" -> listOf("1.21.2", "1.21.3", "1.21.4")
         else -> {
             val minorVersion = supportedVersionRange.first.let {
                 if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")
