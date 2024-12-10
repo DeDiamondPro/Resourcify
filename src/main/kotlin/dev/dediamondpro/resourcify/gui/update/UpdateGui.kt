@@ -196,10 +196,11 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         for (service in ServiceRegistry.getAllServices()) {
             val future = service.getUpdates(files, type).thenApply { updates ->
                 val ids = updates.values.filterNotNull().map { it.getProjectId() }
-                if (ids.isEmpty()) {
-                    return@thenApply emptyMap()
+                val projects = if (ids.isEmpty()) {
+                    emptyMap()
+                } else {
+                    service.getProjectsFromIds(ids)
                 }
-                val projects = service.getProjectsFromIds(ids)
                 // Add project into map
                 return@thenApply updates.filter { it.value == null || projects.containsKey(it.value!!.getProjectId()) }
                     .map {
