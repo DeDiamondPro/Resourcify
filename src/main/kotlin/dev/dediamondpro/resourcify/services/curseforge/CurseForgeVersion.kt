@@ -34,6 +34,7 @@ data class CurseForgeVersion(
     private val downloadCount: Int,
     private val fileDate: String,
     private val dependencies: List<Dependency>,
+    val fileFingerprint: Long
 ) : IVersion {
     @Transient
     private var changeLogRequest: CompletableFuture<String>? = null

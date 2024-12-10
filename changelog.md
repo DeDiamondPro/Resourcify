@@ -1,7 +1,15 @@
-## Resourcify 1.5.2
+## Resourcify 1.6.0
 
-- When possible, links to modrinth in a project description will now be opened in Resourcify.
+### New features
+
+- Add **CurseForge support for updating**! Resourcify will now check both Modrinth and Curseforge for updates, and you
+  can choose which source to use per project.
+- When possible, links to modrinth in a project description will now be opened in Resourcify (this is configurable in
+  the config).
 - Add support for side mouse buttons to go back and forward between pages.
+
+### Fixes
+
 - Fix CurseForge version filter using major version instead of exact version.
 - You can now select multiple Minecraft versions when using the CurseForge source.
 

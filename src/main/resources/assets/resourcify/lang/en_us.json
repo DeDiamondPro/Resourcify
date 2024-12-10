@@ -53,6 +53,8 @@
   "resourcify.updates.update_singular": "update",
   "resourcify.updates.update_plural": "updates",
   "resourcify.updates.changelog": "Changelog",
+  "resourcify.updates.source": "Source:",
+  "resourcify.updates.up-to-date": "Up to date",
 
   "resourcify.config.title": "Resourcify Config",
   "resourcify.config.source.title": "Default Source",

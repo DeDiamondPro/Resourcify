@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,14 +15,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.gui.update.modrinth
+package dev.dediamondpro.resourcify.services.curseforge
 
-import com.google.gson.annotations.SerializedName
-import dev.dediamondpro.resourcify.platform.Platform
+data class CurseForgeFingerprint(val fingerprints: List<Long>)
 
-data class ModrinthUpdateFormat(
-    val hashes: List<String>,
-    val loaders: List<String>,
-    val algorithm: String = "sha1",
-    @SerializedName("game_versions") val gameVersions: List<String> = listOf(Platform.getMcVersion())
+data class CurseForgeFingerprintResponse(val data: CurseForgeFingerprintMatchResult)
+
+data class CurseForgeFingerprintMatchResult(val exactMatches: List<CurseForgeFingerprintMatch>)
+
+data class CurseForgeFingerprintMatch(
+    val id: Int,
+    val file: CurseForgeVersion,
+    val latestFiles: List<CurseForgeVersion>
 )

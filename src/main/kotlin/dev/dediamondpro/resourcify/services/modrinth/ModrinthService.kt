@@ -17,12 +17,10 @@
 
 package dev.dediamondpro.resourcify.services.modrinth
 
-import dev.dediamondpro.resourcify.services.IProject
-import dev.dediamondpro.resourcify.services.ISearchData
-import dev.dediamondpro.resourcify.services.IService
-import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
+import java.io.File
 import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -142,6 +140,33 @@ object ModrinthService : IService {
         val url = "$API/project/${path[1]}".toURL() ?: return null
         return type to supplyAsync {
             url.getJson<FullModrinthProject>()
+        }
+    }
+
+    override fun getProjectsFromIds(ids: List<String>): Map<String, IProject> {
+        val idString = ids.joinToString(",", "[", "]") { "\"${it}\"" }
+        return URIBuilder("${API}/projects").setParameter("ids", idString)
+            .build().toURL().getJson<List<FullModrinthProject>>()!!
+            .associateBy { project -> ids.first { project.getId() == it } }
+    }
+
+    override fun getUpdates(files: List<File>, type: ProjectType): CompletableFuture<Map<File, IVersion?>> {
+        return supplyAsync {
+            val hashes = files.mapNotNull {
+                val hash = Utils.getSha1(it)
+                if (hash == null) null else hash to it
+            }.toMap()
+            val loader = when (type) {
+                ProjectType.RESOURCE_PACK, ProjectType.AYCY_RESOURCE_PACK -> "minecraft"
+                ProjectType.IRIS_SHADER -> "iris"
+                ProjectType.OPTIFINE_SHADER -> "optifine"
+                else -> error("$type is not supported in updates")
+            }
+            val data: Map<String, ModrinthVersion> = URL("${API}/version_files/update").postAndGetJson<Map<String, ModrinthVersion>, ModrinthUpdateFormat>(
+                ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes.keys.toList())
+            ) ?: error("Failed to fetch updates")
+            // Associate with file, and if we already have the latest version, set the result to null
+            data.map { hashes[it.key]!! to if (it.key == it.value.getSha1()) null else it.value }.toMap()
         }
     }
 

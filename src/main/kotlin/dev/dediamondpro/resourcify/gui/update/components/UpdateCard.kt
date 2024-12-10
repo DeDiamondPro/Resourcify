@@ -17,9 +17,12 @@
 
 package dev.dediamondpro.resourcify.gui.update.components
 
+import dev.dediamondpro.resourcify.config.Config
+import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
-import dev.dediamondpro.resourcify.services.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.IProject
+import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.util.*
@@ -43,12 +46,12 @@ import java.util.concurrent.locks.ReentrantLock
 //#endif
 
 class UpdateCard(
-    project: FullModrinthProject,
-    private val newVersion: IVersion,
+    private val data: Map<IService, UpdateGui.UpdateData?>,
     val file: File,
     private val gui: UpdateGui
 ) : UIBlock(color = Color(0, 0, 0, 100)) {
-    private val updateUrl = newVersion.getDownloadUrl()!!
+    private var selectedService: IService
+    private var selectedData: UpdateGui.UpdateData?
     private var progressBox: UIBlock? = null
     private var text: UIText? = null
 
@@ -57,6 +60,12 @@ class UpdateCard(
             height = 56.pixels()
         }
 
+        selectedService = data.keys.firstOrNull { it.getName() == Config.instance.defaultService } ?: data.keys.first()
+        selectedData = data[selectedService]
+        createCard(getProject(), selectedData?.version)
+    }
+
+    private fun createCard(project: IProject, version: IVersion?) {
         val iconUrl = project.getIconUrl()
         if (iconUrl == null) {
             UIImage.ofResourceCustom("/assets/resourcify/pack.png")
@@ -73,47 +82,83 @@ class UpdateCard(
             y = 8.pixels()
             textScale = 2.pixels()
         } childOf this
-        UIText(newVersion.getName()).constrain {
-            x = 56.pixels()
-            y = SiblingConstraint(padding = 4f)
-        } childOf this
-        val versionNumberHolder = UIContainer().constrain {
-            x = 56.pixels()
-            y = SiblingConstraint(padding = 4f)
-        } childOf this
-        UIText(newVersion.getVersionType().localizedName.localize()).constrain {
-            x = 0.pixels()
-            y = 0.pixels()
-            color = newVersion.getVersionType().color.toConstraint()
-        } childOf versionNumberHolder
-        newVersion.getVersionNumber()?.let {
-            UIText(it).constrain {
-                x = SiblingConstraint(padding = 4f)
+
+        if (version == null) {
+            UIText("${ChatColor.YELLOW}${"resourcify.updates.up-to-date".localize()}").constrain {
+                x = 56.pixels()
+                y = SiblingConstraint(padding = 4f)
+            } childOf this
+        } else {
+            UIText(version.getName()).constrain {
+                x = 56.pixels()
+                y = SiblingConstraint(padding = 4f)
+            } childOf this
+            val versionNumberHolder = UIContainer().constrain {
+                x = 56.pixels()
+                y = SiblingConstraint(padding = 4f)
+            } childOf this
+            UIText(version.getVersionType().localizedName.localize()).constrain {
+                x = 0.pixels()
                 y = 0.pixels()
+                color = version.getVersionType().color.toConstraint()
             } childOf versionNumberHolder
+            version.getVersionNumber()?.let {
+                UIText(it).constrain {
+                    x = SiblingConstraint(padding = 4f)
+                    y = 0.pixels()
+                } childOf versionNumberHolder
+            }
+
+            val buttonHolder = UIContainer().constrain {
+                x = 4.pixels(true)
+                y = 4.pixels()
+                width = 73.pixels()
+                height = 48.pixels()
+            } childOf this
+
+            createUpdateButton() childOf buttonHolder
+
+            val changeLogButton = UIBlock(Color(150, 150, 150)).constrain {
+                y = 0.pixels(true)
+                width = 73.pixels()
+                height = 50.percent() - 2.pixels()
+            }.onMouseClick {
+                gui.showChangeLog(project, version, createUpdateButton())
+            } childOf buttonHolder
+            UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+            } childOf changeLogButton
         }
 
-        val buttonHolder = UIContainer().constrain {
-            x = 4.pixels(true)
+        val sourceHolder = UIContainer().constrain {
+            x = 50.percent() - 50.pixels()
             y = 4.pixels()
-            width = 73.pixels()
+            width = 100.pixels()
             height = 48.pixels()
         } childOf this
-
-        createUpdateButton() childOf buttonHolder
-
-
-        val changeLogButton = UIBlock(Color(150, 150, 150)).constrain {
-            y = 0.pixels(true)
-            width = 73.pixels()
-            height = 50.percent() - 2.pixels()
-        }.onMouseClick {
-            gui.showChangeLog(project, newVersion, createUpdateButton())
-        } childOf buttonHolder
-        UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
-            x = CenterConstraint()
+        val sourceTextHolder = UIContainer().constrain {
+            height = 50.percent()
+        } childOf sourceHolder
+        UIText("resourcify.updates.source".localize()).constrain {
             y = CenterConstraint()
-        } childOf changeLogButton
+        } childOf sourceTextHolder
+
+        DropDown(
+            data.keys.map { it.getName() }, onlyOneOption = true,
+            selectedOptions = mutableListOf(selectedService.getName())
+        ).onSelectionUpdate { newService ->
+            selectedService = data.keys.firstOrNull { it.getName() == newService.first() } ?: return@onSelectionUpdate
+            selectedData = data[selectedService]
+
+            this@UpdateCard.clearChildren()
+            createCard(getProject(), selectedData?.version)
+        }.constrain {
+            x = 0.pixels()
+            y = 0.pixels(true)
+            width = 100.percent()
+            height = 50.percent() - 2.pixels()
+        } childOf sourceHolder
     }
 
     private fun createUpdateButton(): UIComponent {
@@ -124,11 +169,12 @@ class UpdateCard(
         }.onMouseClick {
             downloadUpdate()
         }
+        val downloadUrl = selectedData?.version?.getDownloadUrl() ?: return updateButton
         progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
             x = 0.pixels(true)
             y = 0.pixels()
             width = basicWidthConstraint {
-                val progress = DownloadManager.getProgress(updateUrl)
+                val progress = DownloadManager.getProgress(downloadUrl)
                 if (progress == null) 0f
                 else (1 - progress) * it.parent.getWidth()
             }
@@ -142,6 +188,8 @@ class UpdateCard(
     }
 
     fun downloadUpdate() {
+        val updateUrl = selectedData?.version?.getDownloadUrl() ?: return
+        val newVersion = selectedData?.version ?: return
         if (DownloadManager.getProgress(updateUrl) == null) {
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
@@ -201,7 +249,11 @@ class UpdateCard(
     }
 
     fun getProgress(): Float {
-        return DownloadManager.getProgress(updateUrl) ?: 0f
+        return DownloadManager.getProgress(selectedData?.version?.getDownloadUrl() ?: return 0f) ?: 0f
+    }
+
+    private fun getProject(): IProject {
+        return selectedData?.project ?: data.values.first { it != null }!!.project
     }
 
     companion object {

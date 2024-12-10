@@ -22,13 +22,12 @@ import dev.dediamondpro.minemark.style.HeadingLevelStyleConfig
 import dev.dediamondpro.minemark.style.HeadingStyleConfig
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
-import dev.dediamondpro.resourcify.services.IProject
-import dev.dediamondpro.resourcify.services.ISearchData
-import dev.dediamondpro.resourcify.services.IService
-import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
+import java.io.File
 import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -100,17 +99,18 @@ object CurseForgeService : IService {
         fetchCategories()
         return categories?.thenApply {
             val classId = type.getClassId()
-            mapOf("resourcify.categories.categories".localize() to
-                    it.filter { category -> // Filter out data pack category in resource packs, we handle this automatically
-                        category.classId == classId && category.id != 5193
-                    }.sortedBy { category ->
-                        if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
-                        else category.name.replace(Regex("[^0-9]"), "").toInt().toChar().toString()
-                    }.associate { category ->
-                        category.id.toString() to "resourcify.categories.${
-                            category.name.lowercase().replace(" ", "_")
-                        }".localizeOrDefault(category.name.capitalizeAll())
-                    })
+            mapOf(
+                "resourcify.categories.categories".localize() to
+                        it.filter { category -> // Filter out data pack category in resource packs, we handle this automatically
+                            category.classId == classId && category.id != 5193
+                        }.sortedBy { category ->
+                            if (!category.name.matches(Regex("^[0-9].*"))) "\uFFFF${category.name}"
+                            else category.name.replace(Regex("[^0-9]"), "").toInt().toChar().toString()
+                        }.associate { category ->
+                            category.id.toString() to "resourcify.categories.${
+                                category.name.lowercase().replace(" ", "_")
+                            }".localizeOrDefault(category.name.capitalizeAll())
+                        })
         } ?: supply { emptyMap() }
     }
 
@@ -145,6 +145,82 @@ object CurseForgeService : IService {
         ProjectType.OPTIFINE_SHADER -> 6552
         ProjectType.WORLD -> 17
         else -> null
+    }
+
+    override fun getProjectsFromIds(ids: List<String>): Map<String, IProject> {
+        return URL("$API/mods")
+            .postAndGetJson<CurseForgeModsBatchResponse, CurseForgeModsBatch>(
+                CurseForgeModsBatch(ids.map { it.toInt() }), headers = mapOf("x-api-key" to API_KEY)
+            )?.data?.associateBy { project -> ids.first { it == project.getId() } }
+            ?: error("Failed to fetch mods.")
+
+    }
+
+    override fun getUpdates(files: List<File>, type: ProjectType): CompletableFuture<Map<File, IVersion?>> {
+        return supplyAsync {
+            val hashes = files.associateBy {
+                if (it.length() >= 1024 * 1024 * 512) {
+                    // If this file is larger than 512MiB, we will not attempt to load it since for cf's hashing
+                    // we need to load the entire file in memory
+                    return@associateBy null
+                }
+                val bytes = it.readBytes()
+                MurmurHash2.cfHash(bytes, bytes.size)
+            }.filterKeys { it != null }
+            val mcVersion = Platform.getMcVersion()
+            val result = URL("$API/fingerprints/432")
+                .postAndGetJson<CurseForgeFingerprintResponse, CurseForgeFingerprint>(
+                    CurseForgeFingerprint(hashes.keys.map { it!! }.toList()),
+                    headers = mapOf("x-api-key" to API_KEY)
+                )?.data?.exactMatches?.filter {
+                    hashes.containsKey(it.file.fileFingerprint)
+                            // If there is no download url, we can't download this project so we ignore it
+                            && it.file.hasDownloadUrl()
+                } ?: error("Failed to fetch updates")
+
+            val fileFutures: MutableMap<CurseForgeFingerprintMatch, CompletableFuture<CurseForgeVersion?>> =
+                mutableMapOf()
+            for (match in result) {
+                val fileCandidate = match.latestFiles.firstOrNull { file ->
+                    file.getMinecraftVersions().contains(mcVersion)
+                }
+                if (fileCandidate == null && !match.latestFiles.any { it.fileFingerprint == match.file.fileFingerprint }) {
+                    fileFutures[match] = supplyAsync {
+                        URIBuilder("$API/mods/${match.id}/files")
+                            .addParameter("gameVersion", mcVersion)
+                            // We only care about the most recent match
+                            .addParameter("pageSize", "1")
+                            .build().toURL()
+                            .getJson<CurseForgeProject.Versions>(headers = mapOf("x-api-key" to API_KEY))
+                            ?.data?.firstOrNull() ?: error("Failed to find matching version")
+                    }
+                } else {
+                    // Latest files contains update or file is up to date
+                    fileFutures[match] = supply { fileCandidate }
+                }
+            }
+
+            val updates: MutableMap<File, IVersion?> = mutableMapOf()
+            for ((match, future) in fileFutures) {
+                try {
+                    val file = future.get()
+                    if (file?.hasDownloadUrl() == false) {
+                        continue
+                    }
+                    updates[hashes[match.file.fileFingerprint]!!] = file.let {
+                        // If the file is up to date, return null
+                        if (match.file.fileFingerprint == it?.fileFingerprint) {
+                            null
+                        } else {
+                            it
+                        }
+                    }
+                } catch (_: Exception) {
+                }
+            }
+
+            return@supplyAsync updates
+        }
     }
 
     override fun getSortOptions(): Map<String, String> = mapOf(

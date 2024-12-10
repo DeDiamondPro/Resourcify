@@ -236,7 +236,7 @@ tasks {
 
         if (platform.isForge && platform.mcVersion >= 12100) {
             exclude("forge.mixins.resourcify.refmap.json")
-            archiveFileName.set("$mod_name (${getPrettyVersionRange()}-${platform.loaderStr})-${mod_version}.jar")
+            archiveFileName.set("$mod_name (${getPrettyVersionRange(true)}-${platform.loaderStr})-${mod_version}.jar")
         }
     }
     remapJar {
@@ -247,7 +247,7 @@ tasks {
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
         finalizedBy("copyJar")
-        archiveFileName.set("$mod_name (${getPrettyVersionRange()}-${platform.loaderStr})-${mod_version}.jar")
+        archiveFileName.set("$mod_name (${getPrettyVersionRange(true)}-${platform.loaderStr})-${mod_version}.jar")
         if (platform.isForgeLike && platform.mcVersion >= 12004) {
             atAccessWideners.add("resourcify.accesswidener")
         }
@@ -374,10 +374,10 @@ fun getSupportedVersionRange(): Pair<String, String?> = when (platform.mcVersion
     else -> error("Undefined version range for ${platform.mcVersion}")
 }
 
-fun getPrettyVersionRange(): String {
+fun getPrettyVersionRange(forFile: Boolean = false): String {
     val supportedVersionRange = getSupportedVersionRange()
     return when {
-        supportedVersionRange.first == "1.21.2" -> "1.21.3-4"
+        supportedVersionRange.first == "1.21.2" -> if (forFile) "1.21.3-4" else "1.21.3/4"
         supportedVersionRange.first == "1.21.1" -> "1.21.1"
         supportedVersionRange.first == supportedVersionRange.second -> supportedVersionRange.first
         listOf("1.16", "1.18").contains(supportedVersionRange.first) -> "${supportedVersionRange.first}.x"

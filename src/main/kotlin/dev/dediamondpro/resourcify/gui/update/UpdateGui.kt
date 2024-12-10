@@ -21,14 +21,12 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import dev.dediamondpro.resourcify.gui.update.modrinth.ModrinthUpdateFormat
-import dev.dediamondpro.resourcify.services.modrinth.FullModrinthProject
 import dev.dediamondpro.resourcify.platform.Platform
-import dev.dediamondpro.resourcify.services.IVersion
-import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
-import dev.dediamondpro.resourcify.services.modrinth.ModrinthVersion
-import dev.dediamondpro.resourcify.util.*
+import dev.dediamondpro.resourcify.services.*
+import dev.dediamondpro.resourcify.util.PackUtils
+import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.markdown
+import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -39,34 +37,15 @@ import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.GuiScreen
-import org.apache.http.client.utils.URIBuilder
 import java.awt.Color
 import java.io.File
-import java.net.URL
+import java.util.concurrent.CompletableFuture
 
 //#if MC >= 11904
 //$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
-    private val hashes = supplyAsync {
-        val files = PackUtils.getPackFiles(folder)
-        files.associateBy { Utils.getSha1(it)!! }
-    }
-    private val updates = supplyAsync {
-        getUpdates(type, hashes.get().keys.toList()).map { (k, v) -> v to k }.toMap()
-    }
-    private val mods = updates.thenApply { updates ->
-        if (updates.isEmpty()) return@thenApply emptyMap()
-        val idString = updates.keys.joinToString(",", "[", "]") { "\"${it.getProjectId()}\"" }
-        URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
-            .build().toURL().getJson<List<FullModrinthProject>>()!!
-            .map { project -> project to updates.keys.first { it.getProjectId() == project.getId() } }
-            .sortedBy { (_, newVersion) ->
-                if (Platform.getSelectedResourcePacks().contains(hashes.get()[updates[newVersion]]!!)) 0
-                else 1
-            }.toMap()
-    }
     private val cards = mutableListOf<UpdateCard>()
     private var topText: UIText? = null
     private var startSize = 0
@@ -130,7 +109,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             color = Color.YELLOW.toConstraint()
         } childOf window
 
-        mods.exceptionally {
+        getUpdates().exceptionally {
             it.printStackTrace()
             emptyMap()
         }.thenAccept { projects ->
@@ -191,8 +170,8 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     y = CenterConstraint()
                 } childOf topBar
 
-                cards.addAll(projects.filter { it.value.getDownloadUrl() != null }.map { (project, newVersion) ->
-                    UpdateCard(project, newVersion, hashes.get()[updates.get()[newVersion]]!!, this).constrain {
+                cards.addAll(projects.map { (file, data) ->
+                    UpdateCard(data, file, this).constrain {
                         y = SiblingConstraint(padding = 2f)
                         width = 100.percent()
                     } childOf updateContainer
@@ -206,6 +185,51 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     progressBox.constraints.width.recalculate = true
                 }
             }
+        }
+    }
+
+    private fun getUpdates(): CompletableFuture<Map<File, Map<IService, UpdateData?>>> {
+        val files = PackUtils.getPackFiles(folder)
+
+        // Fetch updates from each service
+        val futures = mutableMapOf<IService, CompletableFuture<Map<File, UpdateData?>>>()
+        for (service in ServiceRegistry.getAllServices()) {
+            val future = service.getUpdates(files, type).thenApply { updates ->
+                val ids = updates.values.filterNotNull().map { it.getProjectId() }
+                if (ids.isEmpty()) {
+                    return@thenApply emptyMap()
+                }
+                val projects = service.getProjectsFromIds(ids)
+                // Add project into map
+                return@thenApply updates.filter { it.value == null || projects.containsKey(it.value!!.getProjectId()) }
+                    .map {
+                        it.key to if (it.value == null) null else UpdateData(
+                            projects[it.value!!.getProjectId()]!!,
+                            it.value!!
+                        )
+                    }
+                    .toMap()
+            }
+            futures[service] = future
+        }
+
+        // Aggregate results
+        return supplyAsync {
+            val updates = mutableMapOf<File, MutableMap<IService, UpdateData?>>()
+            for ((source, future) in futures) {
+                val result = future.exceptionally {
+                    it.printStackTrace()
+                    emptyMap()
+                }.get()
+                for ((file, project) in result) {
+                    if (!updates.containsKey(file)) {
+                        updates[file] = mutableMapOf()
+                    }
+                    updates[file]!![source] = project
+                }
+            }
+            // Do not include it if it is up to date at every available service
+            return@supplyAsync updates.filter { it.value.values.any { data -> data != null } }
         }
     }
 
@@ -233,7 +257,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         }
     }
 
-    fun showChangeLog(project: FullModrinthProject, version: IVersion, updateButton: UIComponent) {
+    fun showChangeLog(project: IProject, version: IVersion, updateButton: UIComponent) {
         updateContainer.hide()
         changelogContainer.constrain { x = (this@UpdateGui as GuiScreen).width.pixels() }
         changelogContainer.clearChildren()
@@ -320,32 +344,5 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         }
     }
 
-    companion object {
-        private val updateInfo = mutableMapOf<String, IVersion?>()
-
-        fun getUpdates(type: ProjectType, hashes: List<String>): Map<String, IVersion> {
-            fetchUpdates(type, hashes.filter { !updateInfo.containsKey(it) }, hashes)
-            return hashes.filter { updateInfo[it] != null }.associateWith { updateInfo[it]!! }
-        }
-
-        private fun fetchUpdates(type: ProjectType, hashes: List<String>, allHashes: List<String>) {
-            if (hashes.isEmpty()) return
-            val loader = when (type) {
-                ProjectType.RESOURCE_PACK, ProjectType.AYCY_RESOURCE_PACK -> "minecraft"
-                ProjectType.IRIS_SHADER -> "iris"
-                ProjectType.OPTIFINE_SHADER -> "optifine"
-                else -> return
-            }
-            val data = ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes)
-            val updates: Map<String, ModrinthVersion> =
-                URL("${ModrinthService.API}/version_files/update").postAndGetJson(data) ?: return
-            hashes.forEach { hash ->
-                updateInfo[hash] = if (updates.containsKey(hash)) {
-                    if (allHashes.contains(updates[hash]!!.getSha1())) null else updates[hash]
-                } else {
-                    null
-                }
-            }
-        }
-    }
+    data class UpdateData(val project: IProject, val version: IVersion)
 }

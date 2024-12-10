@@ -55,37 +55,10 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
         } childOf mainBox
 
         // Source
-        val sourceBox = UIBlock(Color(0, 0, 0, 100)).constrain {
-            x = 0.pixels()
-            y = SiblingConstraint(padding = 4f)
-            width = 100.percent()
-            height = ChildBasedMaxSizeConstraint() + 4.pixels()
-        } childOf mainBox
-        val sourceDescriptionBox = UIContainer().constrain {
-            x = 4.pixels()
-            y = 4.pixels()
-            width = 100.percent() - 168.pixels()
-            height = ChildLocationSizeConstraint()
-        } childOf sourceBox
-        UIWrappedText("resourcify.config.source.title".localize()).constrain {
-            width = 100.percent()
-        } childOf sourceDescriptionBox
-        UIWrappedText("resourcify.config.source.description".localize()).constrain {
-            y = SiblingConstraint(padding = 4f)
-            width = 100.percent()
-            color = Color.LIGHT_GRAY.toConstraint()
-        } childOf sourceDescriptionBox
-        DropDown(
-            ServiceRegistry.getAllServices().map { it.getName() },
-            true, mutableListOf(Config.instance.defaultService)
-        ).constrain {
-            x = 4.pixels(true)
-            y = CenterConstraint()
-            width = 160.pixels()
-        }.onSelectionUpdate {
-            Config.instance.defaultService = it.first()
-            Config.save()
-        } childOf sourceBox
+        val allServices = ServiceRegistry.getAllServices().map { it.getName() }
+        addDropdownOption("resourcify.config.source", allServices, Config.instance.defaultService) {
+            Config.instance.defaultService = it
+        }
 
         // Thumbnail quality
         addCheckBoxOption("resourcify.config.thumbnail", Config.instance.fullResThumbnail) {
@@ -143,6 +116,46 @@ class SettingsPage() : PaginatedScreen(adaptScale = false) {
             y = CenterConstraint()
         }.onToggle {
             onUpdate.invoke(it)
+            Config.save()
+        } childOf box
+    }
+
+    private fun addDropdownOption(
+        localizationString: String,
+        options: List<String>,
+        selectedOption: String,
+        onUpdate: (String) -> Unit
+    ) {
+        val box = UIBlock(Color(0, 0, 0, 100)).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 100.percent()
+            height = ChildBasedMaxSizeConstraint() + 4.pixels()
+        } childOf mainBox
+        val sourceDescriptionBox = UIContainer().constrain {
+            x = 4.pixels()
+            y = 4.pixels()
+            width = 100.percent() - 168.pixels()
+            height = ChildLocationSizeConstraint()
+        } childOf box
+        UIWrappedText("$localizationString.title".localize()).constrain {
+            width = 100.percent()
+        } childOf sourceDescriptionBox
+        UIWrappedText("$localizationString.description".localize()).constrain {
+            y = SiblingConstraint(padding = 4f)
+            width = 100.percent()
+            color = Color.LIGHT_GRAY.toConstraint()
+        } childOf sourceDescriptionBox
+        DropDown(
+            options, true, mutableListOf(
+                if (options.contains(selectedOption)) selectedOption else options.first()
+            )
+        ).constrain {
+            x = 4.pixels(true)
+            y = CenterConstraint()
+            width = 160.pixels()
+        }.onSelectionUpdate {
+            onUpdate(it.first())
             Config.save()
         } childOf box
     }

@@ -21,6 +21,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
 import dev.dediamondpro.resourcify.services.ads.IAdProvider
 import dev.dediamondpro.resourcify.util.ElementaUtils
+import java.io.File
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 
@@ -63,4 +64,12 @@ interface IService {
     fun canFetchProjectUrl(uri: URI): Boolean
 
     fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>?
+
+    fun getProjectsFromIds(ids: List<String>): Map<String, IProject>
+
+    /**
+     * Returning null as the version means the service has the project, but it is already up to date.
+     * If the service does not have the project, it should not be included in the response
+     */
+    fun getUpdates(files: List<File>, type: ProjectType): CompletableFuture<Map<File, IVersion?>>
 }
