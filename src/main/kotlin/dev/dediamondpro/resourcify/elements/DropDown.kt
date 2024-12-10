@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2024 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ class DropDown(
     private val placeHolder: String = "",
     private val canDeSelect: Boolean = !onlyOneOption
 ) : UIContainer() {
-    private val selectionUpdateListeners = mutableListOf<(List<String>) -> Unit>()
+    private val selectionUpdateListeners = mutableListOf<DropDown.(List<String>) -> Unit>()
     private var canOpen = false
 
     private val box = UIBlock(color = Color(0, 0, 0, 200)).constrain {
@@ -126,11 +126,11 @@ class DropDown(
         }
     }
 
-    private fun updateText() {
+    fun updateText() {
         text.setText(selectedOptions.joinToString().ifBlank { placeHolder })
     }
 
-    fun onSelectionUpdate(listener: (List<String>) -> Unit): DropDown {
+    fun onSelectionUpdate(listener: DropDown.(List<String>) -> Unit): DropDown {
         selectionUpdateListeners.add(listener)
         return this
     }

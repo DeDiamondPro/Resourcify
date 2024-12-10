@@ -148,6 +148,15 @@ class UpdateCard(
             data.keys.map { it.getName() }, onlyOneOption = true,
             selectedOptions = mutableListOf(selectedService.getName())
         ).onSelectionUpdate { newService ->
+            val downloadUrl = selectedData?.version?.getDownloadUrl()
+            if (downloadUrl != null && DownloadManager.getProgress(downloadUrl) != null) {
+                // We are currently downloading an update, don't allow changes
+                this.selectedOptions.clear()
+                this.selectedOptions.add(selectedService.getName())
+                this.updateText()
+                return@onSelectionUpdate
+            }
+
             selectedService = data.keys.firstOrNull { it.getName() == newService.first() } ?: return@onSelectionUpdate
             selectedData = data[selectedService]
 
