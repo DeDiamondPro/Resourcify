@@ -14,7 +14,7 @@ Easily view the description, gallery and versions of a pack,<br>when you've foun
 
 ------------------------------------
 
-![Update packs easily right within Minecraft](https://github.com/DeDiamondPro/Resourcify/assets/67508414/278c3916-3865-40b4-a730-8ac3f9572e10)
+![Update packs easily right within Minecraft](https://github.com/user-attachments/assets/cc22855d-16b0-48d2-b446-030e4cc2e69a)
 Easily view available updates and install all of them or just the one you want with one click!
 
 ------------------------------------
