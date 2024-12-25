@@ -4,6 +4,7 @@
   "resourcify.type.resource_packs": "리소스팩",
   "resourcify.type.data_packs": "데이터팩",
   "resourcify.type.shaders": "셰이더",
+  "resourcify.type.world": "맵",
 
   "resourcify.browse.search": "%s 검색",
   "resourcify.browse.sort.relevance": "관련성",
@@ -52,10 +53,24 @@
   "resourcify.updates.update_singular": "업데이트",
   "resourcify.updates.update_plural": "업데이트",
   "resourcify.updates.changelog": "변경 내역",
+  "resourcify.updates.source": "출처:",
+  "resourcify.updates.up-to-date": "최신 상태",
 
   "resourcify.config.title": "Resourcify 모드 설정",
   "resourcify.config.source.title": "기본 출처",
   "resourcify.config.source.description": "검색 페이지를 열 때 기본적으로 활성화되는 출처(사이트)를 선택합니다.",
+  "resourcify.config.thumbnail.title": "고해상도 썸네일",
+  "resourcify.config.thumbnail.description": "사용할 수 있는 경우 저해상도 사진 대신 고해상도의 이미지를 사용합니다. 이 설정은 갤러리 등 일부 항목이 상당히 느린 속도로 로드될 수 있습니다.",
+  "resourcify.config.open_link.title": "Resourcify에서 링크 열기",
+  "resourcify.config.open_link.description": "가능하면 Resourcify에서 열 수 있는 링크(예: Modrinth 프로젝트 페이지)를 클릭하면 해당 링크가 Resourcify에서 열립니다.",
+  "resourcify.config.resource-pack.title": "리소스팩 탐색 활성화",
+  "resourcify.config.resource-pack.description": "리소스팩 화면에서 찾아보기 및 업데이트 버튼을 표시합니다.",
+  "resourcify.config.data-pack.title": "데이터팩 탐색 활성화",
+  "resourcify.config.data-pack.description": "데이터 팩 화면에서 찾아보기 버튼을 표시합니다.",
+  "resourcify.config.shader-pack.title": "셰이더팩 탐색 활성화",
+  "resourcify.config.shader-pack.description": "셰이더팩 화면에서 찾아보기 및 업데이트 버튼을 표시합니다.",
+  "resourcify.config.world.title": "맵 탐색 활성화",
+  "resourcify.config.world.description": "맵 선택 화면에서 찾아보기 버튼을 표시합니다.",
   "resourcify.config.ads.title": "광고 사용",
   "resourcify.config.ads.description": "검색 페이지에 작은 광고를 표시하면 Resourcify 모드 개발을 지원할 수 있습니다.",
 
@@ -135,5 +150,11 @@
   "resourcify.categories.photo_realistic": "포토 리얼리스틱",
   "resourcify.categories.font_packs": "폰트",
   "resourcify.categories.vanilla": "바닐라",
-  "resourcify.categories.medieval": "중세"
+  "resourcify.categories.medieval": "중세",
+  "resourcify.categories.game_map": "게임",
+  "resourcify.categories.survival": "생존",
+  "resourcify.categories.parkour": "파쿠르",
+  "resourcify.categories.creation": "창조",
+  "resourcify.categories.puzzle": "퍼즐",
+  "resourcify.categories.modded_world": "모드"
 }
