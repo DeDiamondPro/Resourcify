@@ -30,10 +30,8 @@ import java.awt.Color
 import java.io.File
 import java.net.URI
 import java.net.URL
-import java.text.DateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.concurrent.CompletableFuture
 
 object CurseForgeService : IService {

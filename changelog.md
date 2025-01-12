@@ -1,17 +1,12 @@
-## Resourcify 1.6.0
+## Resourcify 1.6.1
 
-### New features
-
-- Add **CurseForge support for updating**! Resourcify will now check both Modrinth and Curseforge for updates, and you
-  can choose which source to use per project.
-- When possible, links to modrinth in a project description will now be opened in Resourcify (this is configurable in
-  the config).
-- Add support for side mouse buttons to go back and forward between pages.
-
-### Fixes
-
-- Fix CurseForge version filter using major version instead of exact version.
-- You can now select multiple Minecraft versions when using the CurseForge source.
+- Added French translations. - [AuthenTiiq](https://github.com/AuthenTiiq) ([#62](https://github.com/DeDiamondPro/Resourcify/pull/62))
+- Added Portuguese (Brazil) translations. - [SeriousFreezing](https://github.com/seriousfreezing) ([#58](https://github.com/DeDiamondPro/Resourcify/pull/58))
+- Updated Korean translations. - [Koala0107](https://github.com/Koala0107) ([#57](https://github.com/DeDiamondPro/Resourcify/pull/57))
+- Updated Turkish translations. - [WinTone01](https://github.com/WinTone01) ([#60](https://github.com/DeDiamondPro/Resourcify/pull/60))
+- Fixed Resourcify not showing all Modrinth datapacks due to an API change.
+- Fixed sorting issues in CurseForge updating causing an older version to be shown as the new version.
+- Fixed update all button showing even when no uploads are available, and getting stuck on "updating..." when clicked.
 
 ----------------------------------------------------------------------------------------------------
 

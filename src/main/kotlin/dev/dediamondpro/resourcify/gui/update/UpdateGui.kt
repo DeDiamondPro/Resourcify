@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,7 @@ import java.util.concurrent.CompletableFuture
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
     private val cards = mutableListOf<UpdateCard>()
     private var topText: UIText? = null
+    private var updateText: UIText? = null
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
     private var reloadOnClose = false
@@ -138,34 +139,28 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     width = 73.pixels()
                     height = 100.percent()
                 } childOf topBar
-                var updateText: UIText? = null
                 val progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
                     x = 0.pixels(true)
                     y = 0.pixels()
                     width = basicWidthConstraint {
                         if (startSize == 0) return@basicWidthConstraint 0f
-                        if (cards.isEmpty()) {
+                        val updateCount = cards.count { card -> card.hasUpdate() }
+                        if (updateCount == 0) {
                             startSize = 0
-                            updateText?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update_all")}")
+                            updateText()
                             return@basicWidthConstraint 0f
                         }
-                        val progress = (startSize - cards.size + cards.sumOf { card -> card.getProgress().toDouble() }
+                        val progress = (startSize - updateCount + cards.sumOf { card -> card.getProgress().toDouble() }
                             .toFloat()) / startSize
-                        (1 - progress) * it.parent.getWidth()
+                        return@basicWidthConstraint (1 - progress) * it.parent.getWidth()
                     }
                     height = 100.percent()
                 } childOf updateAllButton
-                updateText = UIText("${ChatColor.BOLD}${localize("resourcify.updates.update_all")}").constrain {
+                updateText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf updateAllButton
-                topText = UIText(
-                    localize(
-                        "resourcify.updates.updates_available",
-                        projects.size,
-                        localize(if (projects.size == 1) "resourcify.updates.update_singular" else "resourcify.updates.update_plural")
-                    )
-                ).constrain {
+                topText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                 } childOf topBar
@@ -178,12 +173,15 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 })
 
                 updateAllButton.onMouseClick {
-                    if (startSize != 0) return@onMouseClick
-                    startSize = cards.size
+                    val updateCount = cards.count { it.hasUpdate() }
+                    if (startSize != 0 || updateCount == 0) return@onMouseClick
+                    startSize = updateCount
                     cards.forEach { it.downloadUpdate() }
-                    updateText.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
+                    updateText?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
                     progressBox.constraints.width.recalculate = true
                 }
+
+                updateText()
             }
         }
     }
@@ -231,6 +229,22 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             }
             // Do not include it if it is up to date at every available service
             return@supplyAsync updates.filter { it.value.values.any { data -> data != null } }
+        }
+    }
+
+    fun updateText() {
+        val updateCount = cards.count { it.hasUpdate() }
+        topText?.setText(
+            localize(
+                "resourcify.updates.updates_available", updateCount,
+                localize(if (updateCount == 1) "resourcify.updates.update_singular" else "resourcify.updates.update_plural")
+            )
+        )
+        if (startSize != 0) return // There are currently updates being downloaded
+        if (updateCount != 0) {
+            updateText?.setText("${ChatColor.BOLD}${"resourcify.updates.update_all".localize()}")
+        } else {
+            updateText?.setText("${ChatColor.BOLD}${"resourcify.updates.up-to-date".localize()}")
         }
     }
 

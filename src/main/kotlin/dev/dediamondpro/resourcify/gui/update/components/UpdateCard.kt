@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -162,12 +162,17 @@ class UpdateCard(
 
             this@UpdateCard.clearChildren()
             createCard(getProject(), selectedData?.version)
+            gui.updateText()
         }.constrain {
             x = 0.pixels()
             y = 0.pixels(true)
             width = 100.percent()
             height = 50.percent() - 2.pixels()
         } childOf sourceHolder
+    }
+
+    fun hasUpdate(): Boolean {
+        return selectedData?.version?.getDownloadUrl() != null
     }
 
     private fun createUpdateButton(): UIComponent {
