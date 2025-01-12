@@ -19,7 +19,7 @@
   "resourcify.browse.bisect_ad": "Héberger votre serveur sur §b§lBisectHosting§r et bénéficier de 25%% de remise sur votre premier mois en utilisant le code §b§lDIAMOND§r.",
 
   "resourcify.project.description": "Description",
-  "resourcify.project.gallery": "Galler!e",
+  "resourcify.project.gallery": "Galerie",
   "resourcify.project.versions": "Versions",
   "resourcify.project.categories": "Catégories:",
   "resourcify.project.external_resources": "Ressources Externe:",
@@ -72,7 +72,7 @@
   "resourcify.config.world.title": "Activer la recherche de monde",
   "resourcify.config.world.description": "Afficher le bouton de navigation et de mise à jour dans l'écran de sélection du monde.",
   "resourcify.config.ads.title": "Activer les publicités",
-  "resourcify.config.ads.description": "Afficher les publicités dans Resourcify.",
+  "resourcify.config.ads.description": "Afficher les publicités dans Resourcify pour aider à soutenir le développement de Resourcify.",
 
   "resourcify.categories.adventure": "Aventure",
   "resourcify.categories.categories": "Catégories",
