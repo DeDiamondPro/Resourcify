@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,7 @@ object ModrinthService : IService {
             append("[")
             append(
                 when (type) {
-                    ProjectType.DATA_PACK -> "[\"project_type:mod\"],[\"categories=datapack\"]"
+                    ProjectType.DATA_PACK -> "[\"project_type:datapack\"]"
                     ProjectType.IRIS_SHADER -> "[\"project_type:shader\"],[\"categories=iris\"]"
                     ProjectType.OPTIFINE_SHADER -> "[\"project_type:shader\"],[\"categories=optifine\"]"
                     else -> "[\"project_type:${type.getProjectType()}\"]"
