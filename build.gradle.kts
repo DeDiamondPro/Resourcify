@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -92,16 +92,16 @@ if (project.platform.mcVersion != 10809) {
 }
 
 repositories {
+    mavenLocal()
+    mavenCentral()
     maven("https://maven.terraformersmc.com/releases/")
-    maven("https://repo.essential.gg/repository/maven-public/")
     maven("https://maven.dediamondpro.dev/releases")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://repo.spongepowered.org/maven/")
     maven("https://api.modrinth.com/maven")
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.terraformersmc.com/releases/")
-    mavenCentral()
-    mavenLocal()
+    maven("https://repo.essential.gg/repository/maven-public/")
 }
 
 val shade: Configuration by configurations.creating {

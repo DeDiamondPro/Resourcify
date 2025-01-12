@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,10 @@ import java.awt.Color
 import java.io.File
 import java.net.URI
 import java.net.URL
+import java.text.DateFormat
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.concurrent.CompletableFuture
 
 object CurseForgeService : IService {
@@ -181,7 +185,9 @@ object CurseForgeService : IService {
             val fileFutures: MutableMap<CurseForgeFingerprintMatch, CompletableFuture<CurseForgeVersion?>> =
                 mutableMapOf()
             for (match in result) {
-                val fileCandidate = match.latestFiles.firstOrNull { file ->
+                val fileCandidate = match.latestFiles.sortedByDescending {
+                    Instant.from(DateTimeFormatter.ISO_INSTANT.parse(it.getReleaseDate()))
+                }.firstOrNull { file ->
                     file.getMinecraftVersions().contains(mcVersion)
                 }
                 if (fileCandidate == null && !match.latestFiles.any { it.fileFingerprint == match.file.fileFingerprint }) {
@@ -192,7 +198,9 @@ object CurseForgeService : IService {
                             .addParameter("pageSize", "1")
                             .build().toURL()
                             .getJson<CurseForgeProject.Versions>(headers = mapOf("x-api-key" to API_KEY))
-                            ?.data?.firstOrNull() ?: error("Failed to find matching version")
+                            ?.data?.sortedByDescending {
+                                Instant.from(DateTimeFormatter.ISO_INSTANT.parse(it.getReleaseDate()))
+                            }?.firstOrNull() ?: error("Failed to find matching version")
                     }
                 } else {
                     // Latest files contains update or file is up to date
