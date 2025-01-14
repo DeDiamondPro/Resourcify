@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,10 +15,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+package dev.dediamondpro.resourcify
+
 //#if FORGELIKE == 1
-//$$
-//$$ package dev.dediamondpro.resourcify
-//$$
 //#if MODERN == 0
 //$$ import net.minecraftforge.fml.common.Mod
 //#elseif FORGE == 1
