@@ -18,20 +18,20 @@
 package dev.dediamondpro.resourcify.mixins;
 
 //#if MC < 11600
-
-import dev.dediamondpro.resourcify.elements.MinecraftButton;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-@Mixin(SimpleReloadableResourceManager.class)
-public class ReloadableResourceManagerMixin {
-    @Inject(method = "notifyReloadListeners", at = @At("HEAD"))
-    void onReload(CallbackInfo ci) {
-        MinecraftButton.Companion.reloadTexture();
-    }
-}
-
+//$$
+//$$ import dev.dediamondpro.resourcify.elements.MinecraftButton;
+//$$ import net.minecraft.client.resources.SimpleReloadableResourceManager;
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import org.spongepowered.asm.mixin.injection.At;
+//$$ import org.spongepowered.asm.mixin.injection.Inject;
+//$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//$$
+//$$ @Mixin(SimpleReloadableResourceManager.class)
+//$$ public class ReloadableResourceManagerMixin {
+//$$     @Inject(method = "notifyReloadListeners", at = @At("HEAD"))
+//$$     void onReload(CallbackInfo ci) {
+//$$         MinecraftButton.Companion.reloadTexture();
+//$$     }
+//$$ }
+//$$
 //#endif

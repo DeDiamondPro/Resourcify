@@ -18,32 +18,32 @@
 package dev.dediamondpro.resourcify.mixins;
 
 //#if MC < 11600
-
-import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
-import dev.dediamondpro.resourcify.services.ProjectType;
-import gg.essential.universal.UMatrixStack;
-import gg.essential.universal.UMinecraft;
-import net.minecraft.client.gui.GuiScreenResourcePacks;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-@Mixin(GuiScreenResourcePacks.class)
-public class GuiScreenResourcePacksMixin {
-
-    @Inject(method = "drawScreen", at = @At("TAIL"))
-    private void drawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ProjectType.RESOURCE_PACK);
-    }
-
-    @Inject(method = "mouseClicked", at = @At("HEAD"))
-    private void mouseClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
-        PackScreensAddition.INSTANCE.onMouseClick(
-                mouseX, mouseY, mouseButton, ProjectType.RESOURCE_PACK,
-                UMinecraft.getMinecraft().getResourcePackRepository().getDirResourcepacks()
-        );
-    }
-}
-
+//$$
+//$$ import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
+//$$ import dev.dediamondpro.resourcify.services.ProjectType;
+//$$ import gg.essential.universal.UMatrixStack;
+//$$ import gg.essential.universal.UMinecraft;
+//$$ import net.minecraft.client.gui.GuiScreenResourcePacks;
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import org.spongepowered.asm.mixin.injection.At;
+//$$ import org.spongepowered.asm.mixin.injection.Inject;
+//$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//$$
+//$$ @Mixin(GuiScreenResourcePacks.class)
+//$$ public class GuiScreenResourcePacksMixin {
+//$$
+//$$     @Inject(method = "drawScreen", at = @At("TAIL"))
+//$$     private void drawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+//$$         PackScreensAddition.INSTANCE.onRender(UMatrixStack.Compat.INSTANCE.get(), ProjectType.RESOURCE_PACK);
+//$$     }
+//$$
+//$$     @Inject(method = "mouseClicked", at = @At("HEAD"))
+//$$     private void mouseClick(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
+//$$         PackScreensAddition.INSTANCE.onMouseClick(
+//$$                 mouseX, mouseY, mouseButton, ProjectType.RESOURCE_PACK,
+//$$                 UMinecraft.getMinecraft().getResourcePackRepository().getDirResourcepacks()
+//$$         );
+//$$     }
+//$$ }
+//$$
 //#endif

@@ -20,9 +20,9 @@ package dev.dediamondpro.resourcify.services
 import dev.dediamondpro.resourcify.config.Config
 
 //#if MC >= 11600
-//$$ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-//$$ import net.minecraft.client.gui.screen.Screen
-//$$ import java.io.File
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+import net.minecraft.client.gui.screen.Screen
+import java.io.File
 //#endif
 
 enum class ProjectType(
@@ -31,9 +31,9 @@ enum class ProjectType(
         (
                 screenWidth / 2
                 //#if MC >= 12005
-                //$$ + 195
+                + 195
                 //#else
-                + 184
+                //$$ + 184
                 //#endif
         )
     },
@@ -51,9 +51,9 @@ enum class ProjectType(
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
     WORLD("resourcify.type.world", { it / 2 + 134 }, {
         //#if MC >= 11600
-        //$$ 22
+        22
         //#else
-        10
+        //$$ 10
         //#endif
     }, hasUpdateButton = false, shouldExtract = true),
     // Used for when there is a link to a project but we don't know what type it is
@@ -70,20 +70,20 @@ enum class ProjectType(
     }
 
     //#if MC >= 11600
-    //$$ fun getDirectory(screen: Screen): File {
-    //$$     return when(this) {
-    //$$         //#if MC < 11904
-    //$$         RESOURCE_PACK -> (screen as PackScreenAccessor).directory
-    //$$         DATA_PACK -> (screen as PackScreenAccessor).directory
-    //$$         //#else
-    //$$         //$$ RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
-    //$$         //$$ DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
-    //$$         //#endif
-    //$$         IRIS_SHADER -> File("./shaderpacks")
-    //$$         OPTIFINE_SHADER -> File("./shaderpacks")
-    //$$         WORLD -> File("./saves")
-    //$$         else -> error("Unknown project type: $this")
-    //$$     }
-    //$$ }
+    fun getDirectory(screen: Screen): File {
+        return when(this) {
+            //#if MC < 11904
+            //$$ RESOURCE_PACK -> (screen as PackScreenAccessor).directory
+            //$$ DATA_PACK -> (screen as PackScreenAccessor).directory
+            //#else
+            RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
+            DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
+            //#endif
+            IRIS_SHADER -> File("./shaderpacks")
+            OPTIFINE_SHADER -> File("./shaderpacks")
+            WORLD -> File("./saves")
+            else -> error("Unknown project type: $this")
+        }
+    }
     //#endif
 }

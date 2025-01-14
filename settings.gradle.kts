@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,23 +49,8 @@ rootProject.name = mod_name
 rootProject.buildFileName = "root.gradle.kts"
 
 listOf(
-    "1.8.9-forge",
-    "1.12.2-forge",
-    "1.16.2-forge",
-    "1.16.2-fabric",
-    "1.18.2-forge",
-    "1.18.2-fabric",
-    "1.19.2-fabric",
-    "1.19.2-forge",
-    "1.19.4-forge",
-    "1.19.4-fabric",
     "1.20.1-forge",
     "1.20.1-fabric",
-    "1.20.4-forge",
-    "1.20.4-neoforge",
-    "1.20.4-fabric",
-    "1.20.6-neoforge",
-    "1.20.6-fabric",
     "1.21.1-forge",
     "1.21.1-neoforge",
     "1.21.1-fabric",

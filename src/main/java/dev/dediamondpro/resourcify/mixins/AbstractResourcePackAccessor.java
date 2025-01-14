@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,19 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-//#if MC <= 11202
-
-import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.resource.ZipResourcePack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.io.File;
 
-@Mixin(AbstractResourcePack.class)
+@Mixin(ZipResourcePack.class)
 public interface AbstractResourcePackAccessor {
-    @Accessor("resourcePackFile")
-    File getResourcePackFile();
+    //#if MC>=12004
+    @Accessor("zipFile")
+    ZipResourcePack.ZipFileWrapper getFileWrapper();
+    //#else
+    //$$ @Accessor("backingZipFile")
+    //$$ File getFile();
+    //#endif
 }
-//#endif

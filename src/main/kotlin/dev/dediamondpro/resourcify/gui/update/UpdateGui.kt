@@ -36,13 +36,13 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.screen.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
 //#if MC >= 11904
-//$$ import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
+import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 //#endif
 
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
@@ -66,16 +66,16 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         width = 100.percent() - 8.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
     }.animateBeforeHide {
-        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (-(this@UpdateGui as GuiScreen).width).pixels())
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (-(this@UpdateGui as Screen).width).pixels())
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox
     private val changelogContainer = UIBlock(Color(0, 0, 0, 100)).constrain {
-        x = (this@UpdateGui as GuiScreen).width.pixels()
+        x = (this@UpdateGui as Screen).width.pixels()
         width = 100.percent() - 8.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
     }.animateBeforeHide {
-        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (this@UpdateGui as GuiScreen).width.pixels())
+        setXAnimation(Animations.IN_OUT_QUAD, 0.2f, (this@UpdateGui as Screen).width.pixels())
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox
@@ -274,7 +274,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
 
     fun showChangeLog(project: IProject, version: IVersion, updateButton: UIComponent) {
         updateContainer.hide()
-        changelogContainer.constrain { x = (this@UpdateGui as GuiScreen).width.pixels() }
+        changelogContainer.constrain { x = (this@UpdateGui as Screen).width.pixels() }
         changelogContainer.clearChildren()
         UIText("resourcify.updates.updates".localize()).constrain {
             x = 4.pixels()
@@ -317,7 +317,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         closing = true // Prevent some button mashing issues
         if (reloadOnClose) {
             Platform.reloadResources()
-            UMinecraft.getMinecraft().gameSettings.saveOptions()
+            UMinecraft.getMinecraft().options.write()
         }
         val screen = backScreens.lastOrNull { it !is PaginatedScreen }
         if (screen == null) {
@@ -326,21 +326,21 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             when (type) {
                 ProjectType.RESOURCE_PACK -> {
                     //#if MC >= 11904
-                    //$$ if (reloadOnClose) {
-                    //$$     ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
-                    //$$ } else {
-                    //$$     displayScreen(screen)
-                    //$$ }
+                    if (reloadOnClose) {
+                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
+                    } else {
+                        displayScreen(screen)
+                    }
                     //#else
-                    displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
+                    //$$ displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
                     //#endif
                 }
                 //#if MC == 10809
-                ProjectType.AYCY_RESOURCE_PACK -> {
-                    val previousScreenField = screen.javaClass.getDeclaredField("previousScreen")
-                    previousScreenField.isAccessible = true
-                    displayScreen(if (reloadOnClose) previousScreenField.get(screen) as GuiScreen else screen)
-                }
+                //$$ ProjectType.AYCY_RESOURCE_PACK -> {
+                //$$     val previousScreenField = screen.javaClass.getDeclaredField("previousScreen")
+                //$$     previousScreenField.isAccessible = true
+                //$$     displayScreen(if (reloadOnClose) previousScreenField.get(screen) as GuiScreen else screen)
+                //$$ }
                 //#endif
                 else -> displayScreen(screen)
             }

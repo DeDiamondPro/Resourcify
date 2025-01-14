@@ -17,31 +17,31 @@
 
 package dev.dediamondpro.resourcify.gui.pack
 
-import com.mojang.blaze3d.matrix.MatrixStack
+import net.minecraft.client.util.math.MatrixStack
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.AbstractGui
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.button.Button
-import net.minecraft.util.ResourceLocation
-import net.minecraft.util.text.ITextComponent
+import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.util.Identifier
+import net.minecraft.text.Text
 
 //#if MC >= 11800
-//$$ import net.minecraft.client.render.GameRenderer
+import net.minecraft.client.render.GameRenderer
 //#endif
 //#if MC >= 12102
-//$$ import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.RenderLayer
 //#endif
 
 class ImageButton(
     screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
-    private val image: ResourceLocation,
-    onPress: IPressable,
-) : Button(
+    private val image: Identifier,
+    onPress: PressAction,
+) : ButtonWidget(
     xFunc.invoke(screen.width), yFunc.invoke(screen.height),
-    20, 20, ITextComponent.getTextComponentOrEmpty(null as String?), onPress,
+    20, 20, Text.of(null as String?), onPress,
     //#if MC >= 11904
-    //$$ DEFAULT_NARRATION_SUPPLIER,
+    DEFAULT_NARRATION_SUPPLIER,
     //#endif
 ) {
 
@@ -50,32 +50,32 @@ class ImageButton(
         this.y = yFunc.invoke(screen.height)
     }
 
-    override fun renderButton(
+    override fun renderWidget(
         //#if MC < 12000
-        context: MatrixStack,
+        //$$ context: MatrixStack,
         //#else
-        //$$ context: DrawContext,
+        context: DrawContext,
         //#endif
         mouseX: Int, mouseY: Int, delta: Float
     ) {
-        super.renderButton(context, mouseX, mouseY, delta)
+        super.renderWidget(context, mouseX, mouseY, delta)
         //#if MC < 12000
         //#if MC < 11800
-        UMinecraft.getMinecraft().textureManager.bindTexture(image)
-        RenderSystem.color4f(1f, 1f, 1f, 1f)
+        //$$ UMinecraft.getMinecraft().textureManager.bindTexture(image)
+        //$$ RenderSystem.color4f(1f, 1f, 1f, 1f)
         //#else
-        //$$ RenderSystem.setShader(GameRenderer::getPositionTexShader)
+        //$$ RenderSystem.setShader(GameRenderer::getPositionTexProgram)
         //$$ RenderSystem.setShaderTexture(0, image)
         //$$ RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
         //#endif
-        AbstractGui.blit(context, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //$$ DrawableHelper.drawTexture(context, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
         //#else
-        //$$ RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        //$$ //#if MC < 12102
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        //#if MC < 12102
         //$$ context.drawTexture(image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
-        //$$ //#else
-        //$$ //$$ context.drawTexture(RenderLayer::getGuiTextured, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
-        //$$ //#endif
+        //#else
+        context.drawTexture(RenderLayer::getGuiTextured, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //#endif
         //#endif
     }
 }

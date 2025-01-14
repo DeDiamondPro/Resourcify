@@ -21,47 +21,47 @@ import dev.dediamondpro.resourcify.util.toURI
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UScreen
-import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.screen.Screen
 
 //#if MC<11600
-import net.minecraft.client.gui.GuiConfirmOpenLink
+//$$ import net.minecraft.client.gui.GuiConfirmOpenLink
 //#else
-//$$ import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen
+import net.minecraft.client.gui.screen.ConfirmLinkScreen
 //#endif
 
 
-class ConfirmLinkScreen(private val url: String, private val previousScreen: GuiScreen?, trusted: Boolean = false):
+class ConfirmLinkScreen(private val url: String, private val previousScreen: Screen?, trusted: Boolean = false):
     //#if MC<11600
-    GuiConfirmOpenLink({ result, _ ->
+    //$$ GuiConfirmOpenLink({ result, _ ->
     //#else
-    //$$ ConfirmOpenLinkScreen({ result ->
+    ConfirmLinkScreen({ result ->
     //#endif
         if (result) UDesktop.browse(url.toURI())
         UScreen.displayScreen(previousScreen)
     }, url,
         //#if MC<11600
-        0,
+        //$$ 0,
         //#endif
         trusted
     ) {
 
     override fun
             //#if MC<11600
-            keyTyped(typedChar: Char, keyCode: Int)
+            //$$ keyTyped(typedChar: Char, keyCode: Int)
             //#else
-            //$$ keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean
+            keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean
             //#endif
     {
         if (keyCode == UKeyboard.KEY_ESCAPE) {
             UScreen.displayScreen(previousScreen)
             //#if MC>=11600
-            //$$ return true
+            return true
             //#endif
         } else {
             //#if MC<11600
-            super.keyTyped(typedChar, keyCode)
+            //$$ super.keyTyped(typedChar, keyCode)
             //#else
-            //$$ return super.keyPressed(keyCode, scanCode, modifiers)
+            return super.keyPressed(keyCode, scanCode, modifiers)
             //#endif
         }
     }

@@ -18,13 +18,13 @@
 package dev.dediamondpro.resourcify.mixins;
 
 //#if MC < 11600
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-
-@Pseudo
-@Mixin(targets = "net.optifine.shaders.gui.GuiShaders", remap = false)
-public interface OptifineGuiShadersAccessor {
-}
-
+//$$
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import org.spongepowered.asm.mixin.Pseudo;
+//$$
+//$$ @Pseudo
+//$$ @Mixin(targets = "net.optifine.shaders.gui.GuiShaders", remap = false)
+//$$ public interface OptifineGuiShadersAccessor {
+//$$ }
+//$$
 //#endif

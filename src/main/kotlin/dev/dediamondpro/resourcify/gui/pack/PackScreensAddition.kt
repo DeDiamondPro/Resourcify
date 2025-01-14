@@ -17,77 +17,46 @@
 
 package dev.dediamondpro.resourcify.gui.pack
 
-import dev.dediamondpro.resourcify.elements.Icon
-import dev.dediamondpro.resourcify.elements.MinecraftButton
+
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.util.Icons
-import dev.dediamondpro.resourcify.util.isHidden
-import gg.essential.elementa.ElementaVersion
-import gg.essential.elementa.components.Window
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
-import gg.essential.elementa.dsl.*
-import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UResolution
 import gg.essential.universal.UScreen
-import gg.essential.universal.USound
-import java.io.File
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.util.Identifier
 
 object PackScreensAddition {
-    private val window = Window(ElementaVersion.V5)
+    //#if MC < 12100
+    //$$ private val plusImage = Identifier("resourcify", "plus.png")
+    //$$ private val updateImage = Identifier("resourcify", "update.png")
+    //#else
+    private val plusImage = Identifier.of("resourcify", "plus.png")
+    private val updateImage = Identifier.of("resourcify", "update.png")
+    //#endif
 
-    private val addButton = MinecraftButton().constrain {
-        x = CenterConstraint() + 194.pixels()
-        y = 10.pixels()
-        width = 20.pixels()
-        height = 20.pixels()
-    } childOf window
-    private val addIcon = Icon(Icons.PLUS, true).constrain {
-        x = CenterConstraint()
-        y = CenterConstraint()
-        width = 16.pixels()
-        height = 16.pixels()
-    } childOf addButton
-    private val updateButton = MinecraftButton().constrain {
-        x = SiblingConstraint(8f, true)
-        y = 10.pixels()
-        width = 20.pixels()
-        height = 20.pixels()
-    } childOf window
-    private val updateIcon = Icon(Icons.UPDATE, true).constrain {
-        x = CenterConstraint()
-        y = CenterConstraint()
-        width = 16.pixels()
-        height = 16.pixels()
-    } childOf updateButton
-
-    fun onRender(matrix: UMatrixStack, type: ProjectType) {
+    fun getButtons(screen: Screen, type: ProjectType): List<ImageButton>? {
         if (!type.isEnabled()) {
-            return
+            return null
         }
-        addButton.setX(basicXConstraint { type.plusX(UResolution.scaledWidth).toFloat() })
-        addButton.setY(basicYConstraint { type.plusY(UResolution.scaledHeight).toFloat() })
-        if (type.hasUpdateButton) updateButton.unhide()
-        else updateButton.hide(true)
-        updateButton.setX(basicXConstraint { type.updateX(UResolution.scaledWidth).toFloat() })
-        updateButton.setY(basicYConstraint { type.updateY(UResolution.scaledHeight).toFloat() })
-        window.draw(matrix)
+        val folder = type.getDirectory(screen)
+        val buttons = mutableListOf<ImageButton>()
+        buttons.add(ImageButton(screen, type.plusX, type.plusY, plusImage) {
+            UScreen.displayScreen(BrowseScreen(type, folder))
+        })
+        if (type.hasUpdateButton) buttons.add(ImageButton(screen, type.updateX, type.updateY, updateImage) {
+            UScreen.displayScreen(UpdateGui(type, folder))
+        })
+        return buttons
     }
 
-    fun onMouseClick(mouseX: Double, mouseY: Double, button: Int, type: ProjectType, folder: File) {
-        if (!type.isEnabled()) {
-            return
-        }
-        if (addButton.isPointInside(mouseX.toFloat(), mouseY.toFloat()) && button == 0) {
-            USound.playButtonPress()
-            UScreen.displayScreen(BrowseScreen(type, folder))
-        } else if (!updateButton.isHidden() && updateButton.isPointInside(mouseX.toFloat(), mouseY.toFloat())
-            && button == 0
-        ) {
-            USound.playButtonPress()
-            UScreen.displayScreen(UpdateGui(type, folder))
+    fun getType(title: String): ProjectType? {
+        return when (title) {
+            "resourcePack.title" -> ProjectType.RESOURCE_PACK
+            "dataPack.title" -> ProjectType.DATA_PACK
+            "of.options.shadersTitle" -> ProjectType.OPTIFINE_SHADER
+            "options.iris.shaderPackSelection.title" -> ProjectType.IRIS_SHADER
+            "selectWorld.title" -> ProjectType.WORLD
+            else -> return null
         }
     }
 }

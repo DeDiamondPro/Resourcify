@@ -24,19 +24,19 @@ import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.UResolution
-import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.screen.Screen
 import kotlin.math.floor
 
 //#if MC>=12000
-//$$ import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.DrawContext
 //#endif
 
 abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowScreen(
     version = ElementaVersion.V5,
     //#if MC>=12005
-    //$$ drawDefaultBackground = true
+    drawDefaultBackground = true
     //#else
-    drawDefaultBackground = false
+    //$$ drawDefaultBackground = false
     //#endif
 ) {
     private var defaultScale = -1
@@ -56,9 +56,9 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
         //#elseif MC>=11904
         //$$ (this as Screen).renderBackgroundTexture(matrixStack.toMC())
         //#elseif MC>=11600
-        //$$ (this as Screen).renderDirtBackground(0)
+        //$$ (this as Screen).renderBackgroundTexture(0)
         //#else
-        (this as GuiScreen).drawBackground(0)
+        //$$ (this as GuiScreen).drawBackground(0)
         //#endif
         //#endif
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
@@ -73,8 +73,8 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
             updateGuiScale()
             UMinecraft.guiScale = updatedScale
             // Cast to fix some remapping issues
-            (this as GuiScreen).width = UResolution.scaledWidth
-            (this as GuiScreen).height = UResolution.scaledHeight
+            (this as Screen).width = UResolution.scaledWidth
+            (this as Screen).height = UResolution.scaledHeight
         }
         super.onTick()
     }
@@ -108,7 +108,7 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
         displayScreen(forwardScreen)
     }
 
-    fun replaceScreen(screen: () -> GuiScreen) {
+    fun replaceScreen(screen: () -> Screen) {
         replacingScreen = true
         displayScreen(screen())
         replacingScreen = false
@@ -116,8 +116,8 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
 
     companion object {
         private var replacingScreen = false
-        val backScreens: MutableList<GuiScreen> = mutableListOf()
-        val forwardScreens: MutableList<GuiScreen> = mutableListOf()
+        val backScreens: MutableList<Screen> = mutableListOf()
+        val forwardScreens: MutableList<Screen> = mutableListOf()
 
         fun cleanUp() {
             backScreens.clear()
@@ -134,19 +134,19 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
             val mc = UMinecraft.getMinecraft()
 
             //#if MC>=11502
-            //$$ return mc.mainWindow.calcGuiScale(guiScale, mc.forceUnicodeFont)
+            return mc.window.calculateScaleFactor(guiScale, mc.forcesUnicodeFont())
             //#else
-            // This is not public in legacy versions, so we have to do it ourselves
-            var i = guiScale
-            var scaleFactor = 1
-            if (i == 0) i = 1000
-            while (scaleFactor < i && UResolution.windowWidth / (scaleFactor + 1) >= 320 && UResolution.windowHeight / (scaleFactor + 1) >= 240) {
-                ++scaleFactor
-            }
-            if (mc.isUnicode && scaleFactor % 2 != 0 && scaleFactor != 1) {
-                --scaleFactor
-            }
-            return scaleFactor
+            //$$ // This is not public in legacy versions, so we have to do it ourselves
+            //$$ var i = guiScale
+            //$$ var scaleFactor = 1
+            //$$ if (i == 0) i = 1000
+            //$$ while (scaleFactor < i && UResolution.windowWidth / (scaleFactor + 1) >= 320 && UResolution.windowHeight / (scaleFactor + 1) >= 240) {
+            //$$     ++scaleFactor
+            //$$ }
+            //$$ if (mc.isUnicode && scaleFactor % 2 != 0 && scaleFactor != 1) {
+            //$$     --scaleFactor
+            //$$ }
+            //$$ return scaleFactor
             //#endif
         }
     }

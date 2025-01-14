@@ -17,19 +17,13 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(GuiSelectWorld.class)
+@Mixin(SelectWorldScreen.class)
 public interface WorldSelectionScreenAccessor {
-    @Accessor(
-            //#if MC >= 11202
-            //$$ "prevScreen"
-            //#else
-            "parentScreen"
-            //#endif
-    )
-    GuiScreen getParentScreen();
+    @Accessor("parent")
+    Screen getParentScreen();
 }

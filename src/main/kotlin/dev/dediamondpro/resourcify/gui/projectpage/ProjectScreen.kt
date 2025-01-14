@@ -40,7 +40,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
-import net.minecraft.client.gui.GuiSelectWorld
+import net.minecraft.client.gui.screen.world.SelectWorldScreen
 import java.awt.Color
 import java.io.File
 import java.net.URI
@@ -333,8 +333,8 @@ class ProjectScreen(
     override fun afterInitialization() {
         // Required since world selection screen doesn't automatically update
         if (type == ProjectType.WORLD) {
-            forwardScreens.replaceAll { if (it is GuiSelectWorld) GuiSelectWorld((it as WorldSelectionScreenAccessor).parentScreen) else it }
-            backScreens.replaceAll { if (it is GuiSelectWorld) GuiSelectWorld((it as WorldSelectionScreenAccessor).parentScreen) else it }
+            forwardScreens.replaceAll { if (it is SelectWorldScreen) SelectWorldScreen((it as WorldSelectionScreenAccessor).parentScreen) else it }
+            backScreens.replaceAll { if (it is SelectWorldScreen) SelectWorldScreen((it as WorldSelectionScreenAccessor).parentScreen) else it }
         }
     }
 }

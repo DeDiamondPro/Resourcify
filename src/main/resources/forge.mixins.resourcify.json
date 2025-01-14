@@ -1,18 +1,12 @@
 {
   "package": "dev.dediamondpro.resourcify.mixins",
-  "refmap": "forge.mixins.resourcify.refmap.json",
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "AbstractResourcePackAccessor",
-    "AycyResourcePackManagerMixin",
-    "GuiScreenResourcePacksMixin",
-    "OptifineGuiOFMixin",
-    "OptifineGuiShadersAccessor",
-    "OptifineGuiShadersMixin",
+    "ScreenMixin",
     "PackScreenAccessor",
-    "ReloadableResourceManagerMixin",
-    "WorldSelectionScreenAccessor",
-    "WorldSelectionScreenMixin"
+    "AbstractResourcePackAccessor",
+    "ResourcePackOrganizerAccessor",
+    "WorldSelectionScreenAccessor"
   ]
 }

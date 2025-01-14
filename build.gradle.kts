@@ -87,7 +87,7 @@ loom {
     }
 }
 
-if (project.platform.mcVersion != 10809) {
+if (project.platform.mcVersion != 12103 || !project.platform.isFabric) {
     tasks.getByName("validateAccessWidener").dependsOn("preprocessResources")
 }
 

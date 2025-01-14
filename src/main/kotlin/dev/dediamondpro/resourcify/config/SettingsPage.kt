@@ -28,13 +28,13 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.screen.Screen
 import java.awt.Color
 
 class SettingsPage() : PaginatedScreen(adaptScale = false) {
 
     //#if FORGE && MC <= 11202
-    constructor(lastPage: GuiScreen) : this()
+    //$$ constructor(lastPage: GuiScreen) : this()
     //#endif
 
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {

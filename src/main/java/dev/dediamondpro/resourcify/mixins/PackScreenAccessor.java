@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2023 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,19 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-//#if MC < 11600
-
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenResourcePacks;
+import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.gui.screen.pack.ResourcePackOrganizer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(GuiScreenResourcePacks.class)
+import java.nio.file.Path;
+
+@Mixin(PackScreen.class)
 public interface PackScreenAccessor {
 
-    @Accessor("parentScreen")
-    GuiScreen getParentScreen();
-}
+    @Accessor("file")
+    Path getDirectory();
 
-//#endif
+    @Accessor("organizer")
+    ResourcePackOrganizer getOrganizer();
+}

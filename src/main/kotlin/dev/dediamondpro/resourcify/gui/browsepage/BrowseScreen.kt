@@ -42,7 +42,7 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.screen.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -94,7 +94,7 @@ class BrowseScreen(
         x = 0.pixels()
         y = SiblingConstraint(padding = 4f)
         width = 100.percent()
-        height = basicHeightConstraint { (this@BrowseScreen as GuiScreen).height - this.getY() }
+        height = basicHeightConstraint { (this@BrowseScreen as Screen).height - this.getY() }
     } childOf mainBox
 
     private val projectContainer = UIContainer().constrain {
@@ -389,14 +389,14 @@ class BrowseScreen(
 
     override fun goBack() {
         //#if MC == 10809
-        if (type == ProjectType.AYCY_RESOURCE_PACK) {
-            val screen = backScreens.lastOrNull()
-            val previousScreenField = screen?.javaClass?.getDeclaredField("previousScreen")
-            previousScreenField?.isAccessible = true
-            displayScreen(previousScreenField?.get(screen) as GuiScreen?)
-            cleanUp()
-            return
-        }
+        //$$ if (type == ProjectType.AYCY_RESOURCE_PACK) {
+        //$$     val screen = backScreens.lastOrNull()
+        //$$     val previousScreenField = screen?.javaClass?.getDeclaredField("previousScreen")
+        //$$     previousScreenField?.isAccessible = true
+        //$$     displayScreen(previousScreenField?.get(screen) as GuiScreen?)
+        //$$     cleanUp()
+        //$$     return
+        //$$ }
         //#endif
         super.goBack()
     }

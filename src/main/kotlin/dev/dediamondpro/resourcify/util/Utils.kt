@@ -20,7 +20,7 @@ package dev.dediamondpro.resourcify.util
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
-import net.minecraft.client.resources.I18n
+import net.minecraft.client.resource.language.I18n
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.io.File
@@ -36,21 +36,21 @@ fun String.capitalizeAll(): String {
 
 @JvmName("localizeExtension")
 fun String.localize(vararg parameters: Any): String {
-    return I18n.format(this, *parameters)
+    return I18n.translate(this, *parameters)
 }
 
 fun localize(key: String, vararg parameters: Any): String {
-    return I18n.format(key, *parameters)
+    return I18n.translate(key, *parameters)
 }
 
 @JvmName("localizeOrDefaultExtension")
 fun String.localizeOrDefault(default: String, vararg parameters: Any): String {
-    val formatted = I18n.format(this, *parameters)
+    val formatted = I18n.translate(this, *parameters)
     return if (formatted == this) default.format(*parameters) else formatted
 }
 
 fun localizeOrDefault(key: String, default: String, vararg parameters: Any): String {
-    val formatted = I18n.format(key, *parameters)
+    val formatted = I18n.translate(key, *parameters)
     return if (formatted == key) default.format(*parameters) else formatted
 }
 
