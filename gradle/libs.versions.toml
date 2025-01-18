@@ -1,10 +1,9 @@
 [versions]
 # Kotlin
-kotlin = "2.0.20" # Use newest here since we include it in 1.8.9 and 1.12.2
-fabric_language_kotlin = "1.7.1+kotlin.1.6.10" # Use 1.6.10 here since it is the minimum kotlin version we require
+kotlin = "2.0.20"
+fabric_language_kotlin = "1.11.0+kotlin.2.0.0" # Use 2.0.0 here since it is the minimum kotlin version we require
 
 # Essential Dependencies
-universal = "365"
 elementa = "DIAMOND-9"
 
 # Markdown
@@ -12,19 +11,11 @@ minemark = "1.2.3"
 commonmark = "0.21.0"
 tagsoup = "1.2.1"
 
-# Mixin (for 1.8.9 and 1.12.2 forge)
-mixin = "0.7.11-SNAPSHOT"
-
-# Publishing
-minotaur = "2.8.0"
-cursegradle = "1.4.0"
-
 # mods
 modMenu = "7.2.1"
 
 # Misc
 shadow = "8.1.1"
-blossom = "1.3.2"
 
 [libraries]
 # Kotlin
@@ -39,9 +30,6 @@ commonmark_ext_striketrough = { module = "org.commonmark:commonmark-ext-gfm-stri
 commonmark_ext_tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 
-# Mixin
-mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
-
 # Mods
 modMenu = { module = "com.terraformersmc:modmenu", version.ref = "modMenu" }
 
@@ -49,13 +37,8 @@ modMenu = { module = "com.terraformersmc:modmenu", version.ref = "modMenu" }
 # Kotlin
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
-# Publishing
-minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
-cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
-
 # Misc
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
-blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 
 [bundles]
 kotlin = [

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.config
 
-//#if FABRIC==1
+//? if fabric {
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi
@@ -33,4 +33,4 @@ class ModMenuIntegration : ModMenuApi {
     }
 }
 
-//#endif
+//#?}

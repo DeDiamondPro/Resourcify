@@ -25,6 +25,8 @@ import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.handlers.IrisHandler
+import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
@@ -33,17 +35,13 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 
-//#if MC >= 11600
-import dev.dediamondpro.resourcify.handlers.IrisHandler
-import dev.dediamondpro.resourcify.gui.PaginatedScreen
-import gg.essential.elementa.components.Window
-//#endif
 
 class UpdateCard(
     private val data: Map<IService, UpdateGui.UpdateData?>,
@@ -232,15 +230,13 @@ class UpdateCard(
                             }
                         }
 
-                        //#if MC >= 11600
                         ProjectType.IRIS_SHADER -> {
                             PaginatedScreen.backScreens.firstOrNull { it !is PaginatedScreen }?.let {
                                 if (IrisHandler.getActiveShader(it) == file.name) {
-                                    Window.enqueueRenderOperation{ IrisHandler.applyShaders(it, downloadFile.name) }
+                                    Window.enqueueRenderOperation { IrisHandler.applyShaders(it, downloadFile.name) }
                                 }
                             }
                         }
-                        //#endif
 
                         else -> {
                             // Other types (Optifine shaders) don't have an implementation to update the selected shader

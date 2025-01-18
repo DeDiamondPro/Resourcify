@@ -22,33 +22,32 @@ pluginManagement {
         maven("https://maven.fabricmc.net")
         maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
-        maven("https://repo.essential.gg/repository/maven-public")
-        maven("https://maven.dediamondpro.dev/releases/")
-        maven("https://repo.polyfrost.org/releases")
-        mavenLocal()
     }
-    val egtVersion = "0.6.2+diamond.loom1.6.17"
-    plugins {
-        id("gg.essential.multi-version.root") version egtVersion
-    }
-    dependencyResolutionManagement {
-        versionCatalogs {
-            create("libs")
-            create("egt") {
-                plugin("multiversion", "gg.essential.multi-version").version(egtVersion)
-                plugin("multiversionRoot", "gg.essential.multi-version.root").version(egtVersion)
-                plugin("defaults", "gg.essential.defaults").version(egtVersion)
-            }
-        }
-    }
+    dependencyResolutionManagement.versionCatalogs.create("libs")
 }
 
-val mod_name: String by settings
+plugins {
+    id("dev.kikugie.stonecutter") version "0.5.1"
+}
 
-rootProject.name = mod_name
-rootProject.buildFileName = "root.gradle.kts"
+//listOf(
+//    "1.20.1-forge",
+//    "1.20.1-fabric",
+//    "1.21.1-forge",
+//    "1.21.1-neoforge",
+//    "1.21.1-fabric",
+//    "1.21.3-forge",
+//    "1.21.3-neoforge",
+//    "1.21.3-fabric",
+//).forEach { version ->
+//    include(":$version")
+//    project(":$version").apply {
+//        projectDir = file("versions/$version")
+//        buildFileName = "../../build.gradle.kts"
+//    }
+//}
 
-listOf(
+val platforms = listOf(
     "1.20.1-forge",
     "1.20.1-fabric",
     "1.21.1-forge",
@@ -57,10 +56,18 @@ listOf(
     "1.21.3-forge",
     "1.21.3-neoforge",
     "1.21.3-fabric",
-).forEach { version ->
-    include(":$version")
-    project(":$version").apply {
-        projectDir = file("versions/$version")
-        buildFileName = "../../build.gradle.kts"
+)
+
+stonecutter {
+    centralScript = "build.gradle.kts"
+    kotlinController = true
+    create(rootProject) {
+        for (version in platforms) {
+            vers(version, version.split('-')[0])
+        }
+        vcsVersion = "1.21.3-fabric"
     }
 }
+
+val mod_name: String by settings
+rootProject.name = mod_name

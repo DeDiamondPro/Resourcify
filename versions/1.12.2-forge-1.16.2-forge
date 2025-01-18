@@ -1,5 +1,0 @@
-net.minecraft.resources.IResourceManager net.minecraft.client.resources.IResourceManager
-net.minecraft.resources.SimpleReloadableResourceManager net.minecraft.client.resources.SimpleReloadableResourceManager
-net.minecraft.client.gui.screen.PackScreen net.minecraft.client.gui.GuiScreenResourcePacks
-net.minecraft.client.gui.screen.Screen net.minecraft.client.gui.GuiScreen
-net.minecraft.client.gui.screen.WorldSelectionScreen net.minecraft.client.gui.GuiWorldSelection

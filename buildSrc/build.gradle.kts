@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024-2025 DeDiamondPro
+ * Copyright (C) 2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,21 +15,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.mixins;
+plugins {
+    `kotlin-dsl`
+}
 
-import net.minecraft.resource.ZipResourcePack;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-
-import java.io.File;
-
-@Mixin(ZipResourcePack.class)
-public interface AbstractResourcePackAccessor {
-    //? if >=1.20.4 {
-    @Accessor("zipFile")
-    ZipResourcePack.ZipFileWrapper getFileWrapper();
-    //?} else {
-    /*@Accessor("backingZipFile")
-      File getFile();
-    *///?}
+repositories {
+    mavenCentral()
 }

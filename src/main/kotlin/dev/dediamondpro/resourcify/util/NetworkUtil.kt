@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,36 +41,8 @@ object NetworkUtil {
     private val cache = ConcurrentHashMap<URL, CacheObject>()
     private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
 
-    //#if MC < 11700
-    //$$ private var sslContext: SSLContext? = null
-    //$$
-    //$$ // In case of MC 1.16.5 or lower, we need to load a custom keystore since the java version bundled with the Minecraft Launcher doesn't have the Let's Encrypt CA
-    //$$ init {
-    //$$     try {
-    //$$         val keyStore = KeyStore.getInstance("JKS")
-    //$$         keyStore.load(
-    //$$             this::class.java.getResourceAsStream("/ssl/resourcify-keystore.jks"),
-    //$$             "Resourcify".toCharArray()
-    //$$         )
-    //$$         val keyManager = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-    //$$         val trustManager = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-    //$$         keyManager.init(keyStore, null)
-    //$$         trustManager.init(keyStore)
-    //$$         sslContext = SSLContext.getInstance("TLS").apply {
-    //$$             init(keyManager.keyManagers, trustManager.trustManagers, null)
-    //$$         }
-    //$$     } catch (e: Exception) {
-    //$$         println("Failed to load Resourcify keystore, api requests may not work properly.")
-    //$$         e.printStackTrace()
-    //$$     }
-    //$$ }
-    //#endif
-
     fun setupConnection(url: URL): HttpsURLConnection {
         val con = url.openConnection() as HttpsURLConnection
-        //#if MC < 11700
-        //$$ sslContext?.let { con.sslSocketFactory = it.socketFactory }
-        //#endif
         con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
         con.setRequestProperty("Accept-Encoding", "gzip, deflate")
         con.connectTimeout = 5000

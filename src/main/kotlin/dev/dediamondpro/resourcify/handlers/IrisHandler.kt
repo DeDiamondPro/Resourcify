@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +18,8 @@
 package dev.dediamondpro.resourcify.handlers
 
 
-//#if MC >= 11802
 import net.minecraft.client.gui.widget.EntryListWidget
-//#endif
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
@@ -89,20 +86,9 @@ object IrisHandler {
         }
     }
 
-    private fun getShaderPackList(screen: Screen):
-    //#if MC >= 11802
-    EntryListWidget<*>?
-    //#else
-    //$$         AlwaysSelectedEntryListWidget<*>?
-    //#endif
-    {
+    private fun getShaderPackList(screen: Screen): EntryListWidget<*>? {
         if (!initialized) return null
-        return shaderPackListField?.get(screen) as
-                //#if MC >= 11802
-                EntryListWidget<*>?
-                //#else
-                //$$ AlwaysSelectedEntryListWidget<*>?
-        //#endif
+        return shaderPackListField?.get(screen) as EntryListWidget<*>?
     }
 
     fun getActiveShader(screen: Screen): String? {

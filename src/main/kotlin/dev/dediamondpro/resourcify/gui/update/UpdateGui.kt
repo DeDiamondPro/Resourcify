@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.PackUtils
@@ -40,10 +41,6 @@ import net.minecraft.client.gui.screen.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
-
-//#if MC >= 11904
-import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
-//#endif
 
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
     private val cards = mutableListOf<UpdateCard>()
@@ -325,23 +322,12 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         } else {
             when (type) {
                 ProjectType.RESOURCE_PACK -> {
-                    //#if MC >= 11904
                     if (reloadOnClose) {
                         ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
                     } else {
                         displayScreen(screen)
                     }
-                    //#else
-                    //$$ displayScreen(if (reloadOnClose) (screen as PackScreenAccessor).parentScreen else screen)
-                    //#endif
                 }
-                //#if MC == 10809
-                //$$ ProjectType.AYCY_RESOURCE_PACK -> {
-                //$$     val previousScreenField = screen.javaClass.getDeclaredField("previousScreen")
-                //$$     previousScreenField.isAccessible = true
-                //$$     displayScreen(if (reloadOnClose) previousScreenField.get(screen) as GuiScreen else screen)
-                //$$ }
-                //#endif
                 else -> displayScreen(screen)
             }
         }

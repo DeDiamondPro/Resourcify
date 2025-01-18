@@ -23,4 +23,4 @@ ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "forge.mixins.resourcify.json"
+config = "mixins.resourcify.json"

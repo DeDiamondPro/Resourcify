@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,13 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
 
 object PackScreensAddition {
-    //#if MC < 12100
-    //$$ private val plusImage = Identifier("resourcify", "plus.png")
-    //$$ private val updateImage = Identifier("resourcify", "update.png")
-    //#else
+    //? if <1.21.0 {
+    /*private val plusImage = Identifier("resourcify", "plus.png")
+    private val updateImage = Identifier("resourcify", "update.png")
+    *///?} else {
     private val plusImage = Identifier.of("resourcify", "plus.png")
     private val updateImage = Identifier.of("resourcify", "update.png")
-    //#endif
+    //?}
 
     fun getButtons(screen: Screen, type: ProjectType): List<ImageButton>? {
         if (!type.isEnabled()) {

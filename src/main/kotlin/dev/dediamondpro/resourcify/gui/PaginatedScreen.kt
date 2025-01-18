@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,11 +33,7 @@ import net.minecraft.client.gui.DrawContext
 
 abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowScreen(
     version = ElementaVersion.V5,
-    //#if MC>=12005
-    drawDefaultBackground = true
-    //#else
-    //$$ drawDefaultBackground = false
-    //#endif
+    drawDefaultBackground = /*? if >=1.20.5 {*/ true /*?} else {*//*false*//*?}*/
 ) {
     private var defaultScale = -1
 
@@ -49,18 +45,10 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
     }
 
     override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        //#if MC<12005
-        //#if MC>=12000
-        //$$ val client = UMinecraft.getMinecraft()
-        //$$ (this as Screen).renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
-        //#elseif MC>=11904
-        //$$ (this as Screen).renderBackgroundTexture(matrixStack.toMC())
-        //#elseif MC>=11600
-        //$$ (this as Screen).renderBackgroundTexture(0)
-        //#else
-        //$$ (this as GuiScreen).drawBackground(0)
-        //#endif
-        //#endif
+        //? <1.20.5 {
+        /*val client = UMinecraft.getMinecraft()
+        (this as Screen).renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
+        *///?}
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
     }
 
@@ -132,22 +120,7 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
 
         private fun calculateScaleFactor(guiScale: Int): Int {
             val mc = UMinecraft.getMinecraft()
-
-            //#if MC>=11502
             return mc.window.calculateScaleFactor(guiScale, mc.forcesUnicodeFont())
-            //#else
-            //$$ // This is not public in legacy versions, so we have to do it ourselves
-            //$$ var i = guiScale
-            //$$ var scaleFactor = 1
-            //$$ if (i == 0) i = 1000
-            //$$ while (scaleFactor < i && UResolution.windowWidth / (scaleFactor + 1) >= 320 && UResolution.windowHeight / (scaleFactor + 1) >= 240) {
-            //$$     ++scaleFactor
-            //$$ }
-            //$$ if (mc.isUnicode && scaleFactor % 2 != 0 && scaleFactor != 1) {
-            //$$     --scaleFactor
-            //$$ }
-            //$$ return scaleFactor
-            //#endif
         }
     }
 }

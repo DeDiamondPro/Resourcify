@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 package dev.dediamondpro.resourcify
 
 object ModInfo {
-    const val NAME = "@NAME@"
-    const val ID = "@ID@"
-    const val VERSION = "@VER@"
+    const val NAME = /*$ mod_name*/ "Resourcify"
+    const val ID = /*$ mod_id*/ "resourcify"
+    const val VERSION = /*$ mod_version*/ "1.6.1"
 }

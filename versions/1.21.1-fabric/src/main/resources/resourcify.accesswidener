@@ -1,4 +1,0 @@
-accessWidener v2 named
-
-accessible class net/minecraft/resource/ZipResourcePack$ZipFileWrapper
-accessible field net/minecraft/resource/ZipResourcePack$ZipFileWrapper file Ljava/io/File;

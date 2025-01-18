@@ -17,77 +17,31 @@
 
 package dev.dediamondpro.resourcify
 
-//#if FORGELIKE == 1
-//#if MODERN == 0
-//$$ import net.minecraftforge.fml.common.Mod
-//#elseif FORGE == 1
-//$$ import net.minecraft.client.Minecraft
-//$$ import net.minecraftforge.fml.ModLoadingContext
-//$$ import dev.dediamondpro.resourcify.config.SettingsPage
-//#if MC < 11800
-//$$ import net.minecraftforge.fml.ExtensionPoint
-//$$ import net.minecraft.client.gui.screen.Screen
-//$$ import java.util.function.BiFunction
-//#elseif MC < 11900
-//$$ import net.minecraft.client.gui.screens.Screen
-//$$ import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory
-//#else
-//$$ import net.minecraft.client.gui.screens.Screen
-//$$ import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
-//#endif
-//#endif
-//$$
-//#if NEOFORGE == 1 && MODERN == 1
-//$$ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-//$$ import net.neoforged.fml.common.Mod
-//$$ import net.minecraft.client.gui.screens.Screen
-//$$ import net.minecraft.client.Minecraft
-//$$ import net.neoforged.fml.ModLoadingContext
-//$$ import dev.dediamondpro.resourcify.config.SettingsPage
-//#elseif FORGE == 1 && MODERN == 1
-//$$ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-//$$ import net.minecraftforge.fml.common.Mod
-//#endif
-//$$
-//#if MC >= 12006 && NEOFORGE == 1
-//$$ import net.neoforged.neoforge.client.gui.IConfigScreenFactory
-//#elseif NEOFORGE == 1
-//$$ import net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory
-//#endif
-//$$
-//#if MODERN == 0
-//$$ @Mod(
-//$$     name = ModInfo.NAME,
-//$$     modid = ModInfo.ID,
-//$$     version = ModInfo.VERSION,
-//$$     guiFactory = "dev.dediamondpro.resourcify.config.ForgeGuiFactory",
-//$$     modLanguageAdapter = "dev.dediamondpro.resourcify.platform.KotlinLanguageAdapter"
-//$$ )
-//#else
-//$$ @Mod(ModInfo.ID)
-//#endif
-//$$ object Resourcify {
-    //#if MC > 11202
-    //$$ init {
-        //#if MC < 11800
-        //$$ ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY) {
-        //$$    BiFunction { _, _ -> SettingsPage() }
-        //$$ }
-        //#elseif MC < 11900
-        //$$ ModLoadingContext.get().registerExtensionPoint(ConfigGuiFactory::class.java) {
-        //$$     ConfigGuiFactory { _, _ -> SettingsPage() }
-        //$$ }
-        //#elseif MC < 12006 || FORGE == 1
-        //$$ ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory::class.java) {
-        //$$     ConfigScreenFactory { _, _ -> SettingsPage() }
-        //$$ }
-        //#else
-        //$$ ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory::class.java) {
-        //$$     IConfigScreenFactory { _, _ -> SettingsPage() }
-        //$$ }
-        //#endif
-    //$$ }
-    //#endif
-//$$ }
-//$$
-//#endif
+//? if !fabric {
+/*import dev.dediamondpro.resourcify.config.SettingsPage
+
+//? if neoforge {
+/^import net.neoforged.fml.common.Mod
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory
+import thedarkcolour.kotlinforforge.neoforge.forge.LOADING_CONTEXT
+^///?} else if forge {
+/^import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory
+import net.minecraftforge.fml.common.Mod
+import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
+^///?}
+
+@Mod(ModInfo.ID)
+object Resourcify {
+    init {
+        //? if neoforge {
+        /^LOADING_CONTEXT.registerExtensionPoint(IConfigScreenFactory::class.java) {
+            IConfigScreenFactory { _, _ -> SettingsPage() }
+        }
+        ^///?} else if forge {
+        /^LOADING_CONTEXT.registerExtensionPoint(ConfigScreenFactory::class.java) {
+            ConfigScreenFactory { _, _ -> SettingsPage() }
+        }
+        ^///?}
+    }
+}
+*///?}

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,11 +36,7 @@ object Platform {
     }
 
     fun getTranslateKey(screen: Screen): String {
-        //#if MC < 11900
-        //$$ val content = screen.title
-        //#else
         val content = screen.title.content
-        //#endif
         if (content !is TranslatableTextContent) {
             val optifineTranslation = I18n.translate("of.options.shadersTitle")
             if (optifineTranslation != "of.options.shadersTitle" && optifineTranslation == screen.title.string) {
@@ -74,11 +70,7 @@ object Platform {
             val index = packs.indexOf(pack)
             if (index != -1) {
                 packs.remove(pack)
-                //#if FORGE == 1 && MC == 11602
-                //$$ repo.setEnabledPacks(packs.map { it.name })
-                //#else
-                repo.setEnabledProfiles(packs.map { it.id })
-                //#endif
+                repo.setEnabledProfiles(packs.map { getPackId(it) })
                 applyResources(repo)
             }
             pack.createResourcePack().close()
@@ -96,11 +88,7 @@ object Platform {
             if (it.createResourcePack() !is ZipResourcePack) return@firstOrNull false
             getResourcePackFile(it.createResourcePack()) == file
         } ?: return)
-        //#if FORGE == 1 && MC == 11602
-        //$$ repo.setEnabledPacks(packs.map { it.name })
-        //#else
-        repo.setEnabledProfiles(packs.map { it.id })
-        //#endif
+        repo.setEnabledProfiles(packs.map { getPackId(it) })
         applyResources(repo)
     }
 
@@ -112,20 +100,26 @@ object Platform {
         while (it.hasNext()) {
             val resourcePackInfo = it.next() as ResourcePackProfile
             if (!resourcePackInfo.isPinned) {
-                UMinecraft.getMinecraft().options.resourcePacks.add(resourcePackInfo.id)
+                UMinecraft.getMinecraft().options.resourcePacks.add(getPackId(resourcePackInfo))
                 if (!resourcePackInfo.compatibility.isCompatible) {
-                    UMinecraft.getMinecraft().options.incompatibleResourcePacks.add(resourcePackInfo.id)
+                    UMinecraft.getMinecraft().options.incompatibleResourcePacks.add(getPackId(resourcePackInfo))
                 }
             }
         }
     }
 
     private fun getResourcePackFile(resourcePack: ResourcePack): File {
-        //#if MC < 12002
-        //$$ return (resourcePack as AbstractResourcePackAccessor).file
-        //#else
-        return (resourcePack as AbstractResourcePackAccessor).fileWrapper.file
-        //#endif
+        //? >=1.21 {
+         return (resourcePack as AbstractResourcePackAccessor).fileWrapper.file
+        //?} else
+        /*return (resourcePack as AbstractResourcePackAccessor).file*/
+    }
+
+    private fun getPackId(pack: ResourcePackProfile): String {
+        //? <1.21 {
+        /*return pack.name
+        *///?} else
+         return pack.id 
     }
 
     fun saveSettings() {

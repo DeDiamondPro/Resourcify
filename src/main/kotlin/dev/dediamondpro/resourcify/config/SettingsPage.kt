@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,15 +28,9 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import net.minecraft.client.gui.screen.Screen
 import java.awt.Color
 
-class SettingsPage() : PaginatedScreen(adaptScale = false) {
-
-    //#if FORGE && MC <= 11202
-    //$$ constructor(lastPage: GuiScreen) : this()
-    //#endif
-
+class SettingsPage : PaginatedScreen(adaptScale = false) {
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
         width = 100.percent()
         height = 100.percent()

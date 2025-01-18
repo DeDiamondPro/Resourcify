@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -385,19 +385,5 @@ class BrowseScreen(
             loadPacks(false)
         }
         super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
-    }
-
-    override fun goBack() {
-        //#if MC == 10809
-        //$$ if (type == ProjectType.AYCY_RESOURCE_PACK) {
-        //$$     val screen = backScreens.lastOrNull()
-        //$$     val previousScreenField = screen?.javaClass?.getDeclaredField("previousScreen")
-        //$$     previousScreenField?.isAccessible = true
-        //$$     displayScreen(previousScreenField?.get(screen) as GuiScreen?)
-        //$$     cleanUp()
-        //$$     return
-        //$$ }
-        //#endif
-        super.goBack()
     }
 }
