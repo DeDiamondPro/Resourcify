@@ -68,6 +68,10 @@ val shadeModImplementation: Configuration by configurations.creating {
 }
 
 // Version definitions
+val javaVersion = VersionDefinition(
+    "1.20.1" to "17",
+    default = "21",
+)
 val parchmentVersion = VersionDefinition(
     "1.20.1" to "1.20.1:2023.09.03",
     "1.21.1" to "1.21.1:2024.11.17",
@@ -217,4 +221,8 @@ tasks {
         from(rootProject.file("LICENSE"))
         from(rootProject.file("LICENSE.LESSER"))
     }
+}
+
+configure<JavaPluginExtension> {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion.get(mcPlatform)))
 }

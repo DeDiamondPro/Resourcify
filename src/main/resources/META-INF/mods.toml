@@ -1,5 +1,5 @@
 modLoader = "kotlinforforge"
-loaderVersion = "[1,)"
+loaderVersion = "[4.11,)" # We need kotlin 2.0+
 license = "LGPL 3.0"
 issueTrackerURL = "https://github.com/DeDiamondPro/Resourcify/issues"
 showAsResourcePack = false

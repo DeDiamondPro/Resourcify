@@ -17,12 +17,12 @@
 
 package dev.dediamondpro.buildsource
 
-class VersionDefinition(vararg pairs: Pair<String, String>) {
+class VersionDefinition(vararg pairs: Pair<String, String>, private val default: String? = null) {
     private val versions = mapOf(*pairs)
 
     fun getOrNull(platform: Platform): String? {
         // Try full platform first, then mc version
-        return versions.get(platform.name) ?: versions.get(platform.versionString)
+        return versions[platform.name] ?: versions[platform.versionString] ?: default
     }
 
     fun get(platform: Platform): String {
