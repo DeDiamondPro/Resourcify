@@ -22,7 +22,8 @@ import dev.dediamondpro.buildsource.VersionRange
 plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.shadow)
-    id("dev.architectury.loom")
+    alias(libs.plugins.arch.loom)
+    alias(libs.plugins.publishing)
 }
 
 buildscript {
@@ -179,6 +180,52 @@ base.archivesName.set(
         mcVersion.get(mcPlatform).getName().replace("/", "-")
     }-${mcPlatform.loaderString})-$mod_version"
 )
+
+publishMods {
+    file.set(tasks.remapJar.get().archiveFile)
+    displayName.set("[${mcVersion.get(mcPlatform).getName()}-${mcPlatform.loaderString}] $mod_name $mod_version")
+    version.set(mod_version)
+    changelog.set(rootProject.file("changelog.md").readText())
+    type.set(STABLE)
+
+    modLoaders.add(mcPlatform.loaderString)
+    if (mcPlatform.isFabric) modLoaders.add("quilt")
+    if (mcPlatform.isForge && mcPlatform.version == 1_20_1) modLoaders.add("neoforge")
+
+    curseforge {
+        projectId.set("870076")
+        accessToken.set(System.getenv("CURSEFORGE_TOKEN"))
+
+        minecraftVersionRange {
+            start = mcVersion.get(mcPlatform).startVersion
+            end = mcVersion.get(mcPlatform).endVersion
+        }
+
+        if (mcPlatform.isFabric) {
+            requires("fabric-api", "fabric-language-kotlin")
+            optional("modmenu")
+        } else if (mcPlatform.isForgeLike) {
+            requires("kotlin-for-forge")
+        }
+    }
+    modrinth {
+        projectId.set("resourcify")
+        accessToken.set(System.getenv("MODRINTH_TOKEN"))
+
+        minecraftVersionRange {
+            start = mcVersion.get(mcPlatform).startVersion
+            end = mcVersion.get(mcPlatform).endVersion
+        }
+
+        if (mcPlatform.isFabric) {
+            requires("fabric-api", "fabric-language-kotlin")
+            optional("modmenu")
+        } else if (mcPlatform.isForgeLike) {
+            requires("kotlin-for-forge")
+        }
+    }
+}
+
 tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")

@@ -18,8 +18,8 @@
 package dev.dediamondpro.buildsource
 
 class VersionRange(
-    private val startVersion: String,
-    private val endVersion: String,
+    val startVersion: String,
+    val endVersion: String,
     private val name: String = "$startVersion-$endVersion",
     private val openEnd: Boolean = false
 ) {
@@ -37,22 +37,5 @@ class VersionRange(
 
     fun getForgeRange(): String {
         return "[$startVersion," + if (!openEnd) "$endVersion]" else ")"
-    }
-
-    fun asList(): List<String> {
-        val minorVersion = startVersion.let {
-            if (it.count { c -> c == '.' } == 1) it else it.substringBeforeLast(".")
-        }
-        val start = startVersion.let {
-            if (it.count { c -> c == '.' } == 1) 0 else it.substringAfterLast(".").toInt()
-        }
-        val end = endVersion.let {
-            if (it.count { c -> c == '.' } == 1) 0 else it.substringAfterLast(".").toInt()
-        }
-        val versions = mutableListOf<String>()
-        for (i in start..end) {
-            versions.add("$minorVersion${if (i == 0) "" else ".$i"}")
-        }
-        return versions
     }
 }

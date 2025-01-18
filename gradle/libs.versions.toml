@@ -3,16 +3,15 @@
 kotlin = "2.0.20"
 fabric_language_kotlin = "1.11.0+kotlin.2.0.0" # Use 2.0.0 here since it is the minimum kotlin version we require
 
-# Essential Dependencies
-elementa = "DIAMOND-9"
+# Build system
+arch_loom = "1.7-SNAPSHOT"
+shadow = "8.1.1"
+publishing = "0.8.3"
 
 # Markdown
 minemark = "1.2.3"
 commonmark = "0.21.0"
 tagsoup = "1.2.1"
-
-# Misc
-shadow = "8.1.1"
 
 [libraries]
 # Kotlin
@@ -31,8 +30,10 @@ tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 # Kotlin
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
-# Misc
+# Build system
+arch_loom = { id = "dev.architectury.loom", version.ref = "arch_loom" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+publishing = { id = "me.modmuss50.mod-publish-plugin", version.ref = "publishing" }
 
 [bundles]
 kotlin = [

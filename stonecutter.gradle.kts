@@ -17,11 +17,16 @@
 
 plugins {
     id("dev.kikugie.stonecutter")
-    id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
+    alias(libs.plugins.arch.loom) apply false
 }
 stonecutter active "1.21.3-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) { 
     group = "project"
     ofTask("build")
+}
+
+stonecutter registerChiseled tasks.register("chiseledPublishMods", stonecutter.chiseled) {
+    group = "project"
+    ofTask("publishMods")
 }
