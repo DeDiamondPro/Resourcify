@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,19 +17,19 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import net.minecraft.client.gui.screen.pack.PackScreen;
-import net.minecraft.client.gui.screen.pack.ResourcePackOrganizer;
+import net.minecraft.client.gui.screens.packs.PackSelectionModel;
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.nio.file.Path;
 
-@Mixin(PackScreen.class)
+@Mixin(PackSelectionScreen.class)
 public interface PackScreenAccessor {
 
-    @Accessor("file")
+    @Accessor("packDir")
     Path getDirectory();
 
-    @Accessor("organizer")
-    ResourcePackOrganizer getOrganizer();
+    @Accessor("model")
+    PackSelectionModel getOrganizer();
 }

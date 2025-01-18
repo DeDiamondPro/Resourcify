@@ -18,8 +18,8 @@
 package dev.dediamondpro.resourcify.handlers
 
 
-import net.minecraft.client.gui.widget.EntryListWidget
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.components.AbstractSelectionList
+import net.minecraft.client.gui.screens.Screen
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
@@ -86,14 +86,14 @@ object IrisHandler {
         }
     }
 
-    private fun getShaderPackList(screen: Screen): EntryListWidget<*>? {
+    private fun getShaderPackList(screen: Screen): AbstractSelectionList<*>? {
         if (!initialized) return null
-        return shaderPackListField?.get(screen) as EntryListWidget<*>?
+        return shaderPackListField?.get(screen) as AbstractSelectionList<*>?
     }
 
     fun getActiveShader(screen: Screen): String? {
         if (!initialized) return null
-        val selected = getShaderPackList(screen)?.selectedOrNull ?: return null
+        val selected = getShaderPackList(screen)?.getSelected() ?: return null
         return packNameField?.get(selected) as String?
     }
 

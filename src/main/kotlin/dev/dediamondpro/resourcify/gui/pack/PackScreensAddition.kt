@@ -22,16 +22,16 @@ import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
 import gg.essential.universal.UScreen
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.resources.ResourceLocation
 
 object PackScreensAddition {
     //? if <1.21.0 {
-    /*private val plusImage = Identifier("resourcify", "plus.png")
-    private val updateImage = Identifier("resourcify", "update.png")
+    /*private val plusImage = ResourceLocation("resourcify", "plus.png")
+    private val updateImage = ResourceLocation("resourcify", "update.png")
     *///?} else {
-    private val plusImage = Identifier.of("resourcify", "plus.png")
-    private val updateImage = Identifier.of("resourcify", "update.png")
+    private val plusImage = ResourceLocation.fromNamespaceAndPath("resourcify", "plus.png")
+    private val updateImage = ResourceLocation.fromNamespaceAndPath("resourcify", "update.png")
     //?}
 
     fun getButtons(screen: Screen, type: ProjectType): List<ImageButton>? {

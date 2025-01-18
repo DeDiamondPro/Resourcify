@@ -19,7 +19,7 @@ package dev.dediamondpro.resourcify.services
 
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import java.io.File
 
 enum class ProjectType(

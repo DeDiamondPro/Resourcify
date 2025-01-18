@@ -37,7 +37,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -314,7 +314,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         closing = true // Prevent some button mashing issues
         if (reloadOnClose) {
             Platform.reloadResources()
-            UMinecraft.getMinecraft().options.write()
+            UMinecraft.getMinecraft().options.save()
         }
         val screen = backScreens.lastOrNull { it !is PaginatedScreen }
         if (screen == null) {
@@ -323,7 +323,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             when (type) {
                 ProjectType.RESOURCE_PACK -> {
                     if (reloadOnClose) {
-                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackManager)
+                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackRepository)
                     } else {
                         displayScreen(screen)
                     }

@@ -25,3 +25,8 @@ stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chisele
     group = "project"
     ofTask("build")
 }
+
+stonecutter registerChiseled tasks.register("chiseledGenSources", stonecutter.chiseled) {
+    group = "project"
+    ofTask("genSourcesWithVineflower")
+}

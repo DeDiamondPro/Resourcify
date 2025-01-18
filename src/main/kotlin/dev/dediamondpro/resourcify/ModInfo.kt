@@ -20,5 +20,5 @@ package dev.dediamondpro.resourcify
 object ModInfo {
     const val NAME = /*$ mod_name*/ "Resourcify"
     const val ID = /*$ mod_id*/ "resourcify"
-    const val VERSION = /*$ mod_version*/ "1.6.1"
+    const val VERSION = /*$ mod_version*/ "1.7.0"
 }

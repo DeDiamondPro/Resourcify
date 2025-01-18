@@ -42,7 +42,7 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture

@@ -20,25 +20,24 @@ package dev.dediamondpro.resourcify.platform
 import com.google.common.collect.Lists
 import dev.dediamondpro.resourcify.mixins.AbstractResourcePackAccessor
 import gg.essential.universal.UMinecraft
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.resource.language.I18n
-import net.minecraft.resource.ZipResourcePack
-import net.minecraft.resource.ResourcePack
-import net.minecraft.resource.ResourcePackProfile
-import net.minecraft.resource.ResourcePackManager
 import net.minecraft.SharedConstants
-import net.minecraft.text.TranslatableTextContent
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.resources.language.I18n
+import net.minecraft.network.chat.contents.TranslatableContents
+import net.minecraft.server.packs.FilePackResources
+import net.minecraft.server.packs.repository.Pack
+import net.minecraft.server.packs.repository.PackRepository
 import java.io.File
 
 object Platform {
     fun getMcVersion(): String {
-        return SharedConstants.getGameVersion().name
+        return SharedConstants.getCurrentVersion().name
     }
 
     fun getTranslateKey(screen: Screen): String {
-        val content = screen.title.content
-        if (content !is TranslatableTextContent) {
-            val optifineTranslation = I18n.translate("of.options.shadersTitle")
+        val content = screen.title.contents
+        if (content !is TranslatableContents) {
+            val optifineTranslation = I18n.get("of.options.shadersTitle")
             if (optifineTranslation != "of.options.shadersTitle" && optifineTranslation == screen.title.string) {
                 return "of.options.shadersTitle"
             }
@@ -48,32 +47,35 @@ object Platform {
     }
 
     fun getSelectedResourcePacks(): List<File> {
-        return UMinecraft.getMinecraft().resourcePackManager.enabledProfiles.mapNotNull {
-            if (it.createResourcePack() !is ZipResourcePack) return@mapNotNull null
-            getResourcePackFile(it.createResourcePack())
+        return UMinecraft.getMinecraft().resourcePackRepository.selectedPacks.mapNotNull {
+            val pack = it.open()
+            val result = if (pack is FilePackResources) getResourcePackFile(pack) else null
+            pack.close()
+            return@mapNotNull result
         }
     }
 
     fun reloadResources() {
-        UMinecraft.getMinecraft().reloadResources()
+        UMinecraft.getMinecraft().reloadResourcePacks()
     }
 
     fun closeResourcePack(file: File): Int {
-        val repo = UMinecraft.getMinecraft().resourcePackManager
-        repo.scanPacks()
-        val packs = Lists.newArrayList(repo.enabledProfiles)
-        val pack = UMinecraft.getMinecraft().resourcePackManager.profiles.firstOrNull {
-            if (it.createResourcePack() !is ZipResourcePack) return@firstOrNull false
-            getResourcePackFile(it.createResourcePack()) == file
+        val repo = UMinecraft.getMinecraft().resourcePackRepository
+        repo.reload()
+        val packs = Lists.newArrayList(repo.selectedPacks)
+        val pack = repo.availablePacks.firstOrNull {
+            val pack = it.open()
+            val result = pack is FilePackResources && getResourcePackFile(pack) == file
+            pack.close()
+            return@firstOrNull result
         }
         if (pack != null) {
             val index = packs.indexOf(pack)
             if (index != -1) {
                 packs.remove(pack)
-                repo.setEnabledProfiles(packs.map { getPackId(it) })
+                repo.setSelected(packs.map { it.id })
                 applyResources(repo)
             }
-            pack.createResourcePack().close()
             return index
         }
 
@@ -81,48 +83,43 @@ object Platform {
     }
 
     fun enableResourcePack(file: File, position: Int) {
-        val repo = UMinecraft.getMinecraft().resourcePackManager
-        repo.scanPacks()
-        val packs = Lists.newArrayList(repo.enabledProfiles)
-        packs.add(position, repo.profiles.firstOrNull {
-            if (it.createResourcePack() !is ZipResourcePack) return@firstOrNull false
-            getResourcePackFile(it.createResourcePack()) == file
+        val repo = UMinecraft.getMinecraft().resourcePackRepository
+        repo.reload()
+        val packs = Lists.newArrayList(repo.selectedPacks)
+        packs.add(position, repo.availablePacks.firstOrNull {
+            val pack = it.open()
+            val result = pack is FilePackResources && getResourcePackFile(pack) == file
+            pack.close()
+            return@firstOrNull result
         } ?: return)
-        repo.setEnabledProfiles(packs.map { getPackId(it) })
+        repo.setSelected(packs.map { it.id })
         applyResources(repo)
     }
 
-    private fun applyResources(arg: ResourcePackManager) {
+    private fun applyResources(arg: PackRepository) {
         UMinecraft.getMinecraft().options.resourcePacks.clear()
         UMinecraft.getMinecraft().options.incompatibleResourcePacks.clear()
-        val it: Iterator<*> = arg.enabledProfiles.iterator()
+        val it: Iterator<*> = arg.selectedPacks.iterator()
 
         while (it.hasNext()) {
-            val resourcePackInfo = it.next() as ResourcePackProfile
-            if (!resourcePackInfo.isPinned) {
-                UMinecraft.getMinecraft().options.resourcePacks.add(getPackId(resourcePackInfo))
+            val resourcePackInfo = it.next() as Pack
+            if (!resourcePackInfo.isFixedPosition) {
+                UMinecraft.getMinecraft().options.resourcePacks.add(resourcePackInfo.id)
                 if (!resourcePackInfo.compatibility.isCompatible) {
-                    UMinecraft.getMinecraft().options.incompatibleResourcePacks.add(getPackId(resourcePackInfo))
+                    UMinecraft.getMinecraft().options.incompatibleResourcePacks.add(resourcePackInfo.id)
                 }
             }
         }
     }
 
-    private fun getResourcePackFile(resourcePack: ResourcePack): File {
+    private fun getResourcePackFile(resourcePack: FilePackResources): File {
         //? >=1.21 {
          return (resourcePack as AbstractResourcePackAccessor).fileWrapper.file
         //?} else
         /*return (resourcePack as AbstractResourcePackAccessor).file*/
     }
 
-    private fun getPackId(pack: ResourcePackProfile): String {
-        //? <1.21 {
-        /*return pack.name
-        *///?} else
-         return pack.id 
-    }
-
     fun saveSettings() {
-        UMinecraft.getMinecraft().options.write()
+        UMinecraft.getMinecraft().options.save()
     }
 }

@@ -39,6 +39,7 @@ base.archivesName.set("$mod_name (${mcPlatform.name})-$mod_version")
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net")
+    maven("https://maven.parchmentmc.org")
     maven("https://maven.minecraftforge.net")
     maven("https://maven.neoforged.net/releases/")
     maven("https://maven.dediamondpro.dev/releases")
@@ -67,10 +68,10 @@ val shadeModImplementation: Configuration by configurations.creating {
 }
 
 // Version definitions
-val yarnVersion = VersionDefinition(
-    "1.20.1" to "1.20.1+build.10",
-    "1.21.1" to "1.21.1+build.3",
-    "1.21.3" to "1.21.3+build.2",
+val parchmentVersion = VersionDefinition(
+    "1.20.1" to "1.20.1:2023.09.03",
+    "1.21.1" to "1.21.1:2024.11.17",
+    "1.21.3" to "1.21.3:2024.12.07"
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -103,15 +104,10 @@ val elementaVersion = VersionDefinition(
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
-    // TODO: replace mappings with mojmap
-    if (mcPlatform.isNeoForge) {
-        mappings(loom.layered {
-            mappings("net.fabricmc:yarn:${yarnVersion.get(mcPlatform)}:v2")
-            mappings("dev.architectury:yarn-mappings-patch-neoforge:1.21+build.4")
-        })
-    } else {
-        mappings("net.fabricmc:yarn:${yarnVersion.get(mcPlatform)}:v2")
-    }
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchmentVersion.get(mcPlatform)}@zip")
+    })
 
     if (mcPlatform.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:0.16.10")

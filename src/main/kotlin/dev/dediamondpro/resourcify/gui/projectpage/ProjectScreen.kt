@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
-import net.minecraft.client.gui.screen.world.SelectWorldScreen
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen
 import java.awt.Color
 import java.io.File
 import java.net.URI

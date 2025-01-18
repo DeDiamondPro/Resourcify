@@ -21,19 +21,15 @@ import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
 import gg.essential.universal.UKeyboard
-import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.UResolution
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import kotlin.math.floor
 
-//#if MC>=12000
-import net.minecraft.client.gui.DrawContext
-//#endif
 
 abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowScreen(
     version = ElementaVersion.V5,
-    drawDefaultBackground = /*? if >=1.20.5 {*/ true /*?} else {*//*false*//*?}*/
+    drawDefaultBackground = true
 ) {
     private var defaultScale = -1
 
@@ -42,14 +38,6 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
             currentScreen?.let { backScreens.add(it) }
             forwardScreens.clear()
         }
-    }
-
-    override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        //? <1.20.5 {
-        /*val client = UMinecraft.getMinecraft()
-        (this as Screen).renderBackgroundTexture(DrawContext(client, client!!.bufferBuilders.entityVertexConsumers))
-        *///?}
-        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
     }
 
     override fun onTick() {
@@ -120,7 +108,7 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
 
         private fun calculateScaleFactor(guiScale: Int): Int {
             val mc = UMinecraft.getMinecraft()
-            return mc.window.calculateScaleFactor(guiScale, mc.forcesUnicodeFont())
+            return mc.window.calculateScale(guiScale, mc.isEnforceUnicode)
         }
     }
 }

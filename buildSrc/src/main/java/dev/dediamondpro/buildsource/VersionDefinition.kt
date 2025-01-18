@@ -20,9 +20,17 @@ package dev.dediamondpro.buildsource
 class VersionDefinition(vararg pairs: Pair<String, String>) {
     private val versions = mapOf(*pairs)
 
-    fun get(platform: Platform): String {
+    fun getOrNull(platform: Platform): String? {
         // Try full platform first, then mc version
         return versions.get(platform.name) ?: versions.get(platform.versionString)
-        ?: error("No version for ${platform.name}")
+    }
+
+    fun get(platform: Platform): String {
+        // Try full platform first, then mc version
+        return this.getOrNull(platform) ?: error("No version for ${platform.name}")
+    }
+
+    fun hasForPlatform(platform: Platform): Boolean {
+        return this.getOrNull(platform) != null
     }
 }

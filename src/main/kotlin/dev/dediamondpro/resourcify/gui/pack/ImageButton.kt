@@ -18,21 +18,21 @@
 package dev.dediamondpro.resourcify.gui.pack
 
 import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.util.Identifier
-import net.minecraft.text.Text
-import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 class ImageButton(
     screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
-    private val image: Identifier,
-    onPress: PressAction,
-) : ButtonWidget(
+    private val image: ResourceLocation,
+    onPress: OnPress,
+) : Button(
     xFunc.invoke(screen.width), yFunc.invoke(screen.height),
-    20, 20, Text.of(null as String?), onPress,
-    DEFAULT_NARRATION_SUPPLIER,
+    20, 20, Component.empty(), onPress,
+    DEFAULT_NARRATION,
 ) {
 
     fun updateLocation(screen: Screen) {
@@ -40,9 +40,9 @@ class ImageButton(
         this.y = yFunc.invoke(screen.height)
     }
 
-    override fun /*? if >=1.21 {*/ renderWidget/*?} else {*//*renderButton*//*?}*/(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
-        super./*? if >=1.21 {*/ renderWidget/*?} else {*//*renderButton*//*?}*/(context, mouseX, mouseY, delta)
+    override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        super.renderWidget(context, mouseX, mouseY, delta)
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        context.drawTexture(/*? >=1.21.2 {*/ RenderLayer::getGuiTextured, /*?}*/ image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        context.blit(/*? >=1.21.2 {*/ RenderType::guiTextured, /*?}*/ image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
     }
 }

@@ -21,8 +21,8 @@ import dev.dediamondpro.resourcify.util.toURI
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UScreen
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.ConfirmLinkScreen
+import net.minecraft.client.gui.screens.ConfirmLinkScreen
+import net.minecraft.client.gui.screens.Screen
 
 
 class ConfirmLinkScreen(private val url: String, private val previousScreen: Screen?, trusted: Boolean = false) :
