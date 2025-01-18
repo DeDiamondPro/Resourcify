@@ -11,9 +11,6 @@ minemark = "1.2.3"
 commonmark = "0.21.0"
 tagsoup = "1.2.1"
 
-# mods
-modMenu = "7.2.1"
-
 # Misc
 shadow = "8.1.1"
 
@@ -29,9 +26,6 @@ commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" 
 commonmark_ext_striketrough = { module = "org.commonmark:commonmark-ext-gfm-strikethrough", version.ref = "commonmark" }
 commonmark_ext_tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
-
-# Mods
-modMenu = { module = "com.terraformersmc:modmenu", version.ref = "modMenu" }
 
 [plugins]
 # Kotlin

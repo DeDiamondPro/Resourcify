@@ -73,6 +73,16 @@ val parchmentVersion = VersionDefinition(
     "1.21.1" to "1.21.1:2024.11.17",
     "1.21.3" to "1.21.3:2024.12.07"
 )
+val fabricApiVersion = VersionDefinition(
+    "1.20.1" to "0.92.3+1.20.1",
+    "1.21.1" to "0.114.0+1.21.1",
+    "1.21.3" to "0.114.0+1.21.3",
+)
+val modMenuVersion = VersionDefinition(
+    "1.20.1" to "7.2.2",
+    "1.21.1" to "11.0.3",
+    "1.21.3" to "12.0.0"
+)
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
     "1.21.3" to "21.3.58",
@@ -113,7 +123,8 @@ dependencies {
         modImplementation("net.fabricmc:fabric-loader:0.16.10")
 
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
-        modCompileOnly(libs.modMenu)
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
+        modImplementation("com.terraformersmc:modmenu:${modMenuVersion.get(mcPlatform)}")
     } else if (mcPlatform.isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${neoForgeVersion.get(mcPlatform)}")
 
@@ -146,6 +157,8 @@ loom {
         convertAccessWideners.set(true)
         mixinConfig("mixins.resourcify.json")
     }
+
+    runConfigs["client"].isIdeConfigGenerated = true
 }
 
 if (mcPlatform.isForge) configurations.configureEach {
