@@ -17,6 +17,7 @@
 
 import dev.dediamondpro.buildsource.Platform
 import dev.dediamondpro.buildsource.VersionDefinition
+import dev.dediamondpro.buildsource.VersionRange
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -34,7 +35,6 @@ val mcPlatform = Platform.fromProject(project)
 val mod_name: String by project
 val mod_version: String by project
 val mod_id: String by project
-base.archivesName.set("$mod_name (${mcPlatform.name})-$mod_version")
 
 repositories {
     mavenCentral()
@@ -68,6 +68,11 @@ val shadeModImplementation: Configuration by configurations.creating {
 }
 
 // Version definitions
+val mcVersion = VersionDefinition(
+    "1.20.1" to VersionRange("1.20", "1.20.1", name = "1.20.1"),
+    "1.21.1" to VersionRange("1.21", "1.21.1", name = "1.21.1"),
+    "1.21.3" to VersionRange("1.21.2", "1.21.4", name = "1.21.3/4"),
+)
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
     default = "21",
@@ -169,6 +174,11 @@ if (mcPlatform.isForge) configurations.configureEach {
     resolutionStrategy.force("net.sf.jopt-simple:jopt-simple:5.0.4")
 }
 
+base.archivesName.set(
+    "$mod_name (${
+        mcVersion.get(mcPlatform).getName().replace("/", "-")
+    }-${mcPlatform.loaderString})-$mod_version"
+)
 tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
@@ -201,9 +211,7 @@ tasks {
             "name" to mod_name,
             "version" to mod_version,
             "aw" to accesWidener,
-            // TODO:
-            "fabricMcVersion" to "", //getFabricMcVersionRange(),
-            "forgeMcVersion" to "[1,)", // getForgeMcVersionRange(),
+            "mcVersion" to mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
         )
 
         properties.forEach { (k, v) -> inputs.property(k, v) }

@@ -16,7 +16,7 @@ displayTest = "IGNORE_ALL_VERSION"
 [[dependencies.resourcify]]
 modId = "minecraft"
 type = "required"
-versionRange = "${forgeMcVersion}"
+versionRange = "${mcVersion}"
 ordering = "NONE"
 side = "BOTH"
 

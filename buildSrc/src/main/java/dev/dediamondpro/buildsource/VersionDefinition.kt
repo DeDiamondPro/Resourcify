@@ -17,16 +17,15 @@
 
 package dev.dediamondpro.buildsource
 
-class VersionDefinition(vararg pairs: Pair<String, String>, private val default: String? = null) {
+class VersionDefinition<T>(vararg pairs: Pair<String, T>, private val default: T? = null) {
     private val versions = mapOf(*pairs)
 
-    fun getOrNull(platform: Platform): String? {
+    fun getOrNull(platform: Platform): T? {
         // Try full platform first, then mc version
         return versions[platform.name] ?: versions[platform.versionString] ?: default
     }
 
-    fun get(platform: Platform): String {
-        // Try full platform first, then mc version
+    fun get(platform: Platform): T {
         return this.getOrNull(platform) ?: error("No version for ${platform.name}")
     }
 

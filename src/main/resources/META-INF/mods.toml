@@ -18,7 +18,7 @@ displayTest = "IGNORE_ALL_VERSION"
 modId = "minecraft"
 mandatory = true
 type = "required"
-versionRange = "${forgeMcVersion}"
+versionRange = "${mcVersion}"
 ordering = "NONE"
 side = "BOTH"
 

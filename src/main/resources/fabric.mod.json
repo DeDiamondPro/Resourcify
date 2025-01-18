@@ -38,6 +38,6 @@
     "fabric-language-kotlin": ">=1.11.0+kotlin.2.0.0",
     "fabricloader": ">=0.15.0",
     "fabric-resource-loader-v0": "*",
-    "minecraft": "${fabricMcVersion}"
+    "minecraft": "${mcVersion}"
   }
 }
