@@ -30,23 +30,6 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.5.1"
 }
 
-//listOf(
-//    "1.20.1-forge",
-//    "1.20.1-fabric",
-//    "1.21.1-forge",
-//    "1.21.1-neoforge",
-//    "1.21.1-fabric",
-//    "1.21.3-forge",
-//    "1.21.3-neoforge",
-//    "1.21.3-fabric",
-//).forEach { version ->
-//    include(":$version")
-//    project(":$version").apply {
-//        projectDir = file("versions/$version")
-//        buildFileName = "../../build.gradle.kts"
-//    }
-//}
-
 val platforms = listOf(
     "1.20.1-forge",
     "1.20.1-fabric",
