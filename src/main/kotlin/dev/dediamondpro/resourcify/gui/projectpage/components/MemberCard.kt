@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.ofURLCustom
@@ -60,12 +61,12 @@ class MemberCard(member: IMember) : UIContainer() {
         UIText("${ChatColor.BOLD}${member.name}").constrain {
             x = 0.pixels()
             y = 0.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf textHolder
         UIText(member.role.capitalizeAll()).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 2f)
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf textHolder
     }
 }

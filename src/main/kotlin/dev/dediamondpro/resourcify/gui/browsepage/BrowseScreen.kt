@@ -25,6 +25,8 @@ import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.browsepage.components.ResourceCard
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
@@ -77,9 +79,9 @@ class BrowseScreen(
         height = 100.percent()
     } childOf contentBox
 
-    private val adBox = UIBlock(color = Color(60, 130, 255, 100)) childOf mainBox
+    private val adBox = UIBlock(Colors.AD_BACKGROUND) childOf mainBox
 
-    private val headerBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+    private val headerBox = UIBlock(Colors.BACKGROUND).constrain {
         x = 0.pixels()
         y = SiblingConstraint() + (if (service.getAdProvider().isAdAvailable()) 4 else 0).pixels()
         width = 100.percent()
@@ -126,7 +128,7 @@ class BrowseScreen(
             height = 100.percent() - 37.pixels()
         } childOf sideContainer
 
-        val categoryContainer = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+        val categoryContainer = UIBlock(Colors.BACKGROUND).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 160.pixels()
@@ -137,6 +139,7 @@ class BrowseScreen(
             x = 4.pixels()
             y = 4.pixels()
             textScale = 1.5f.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf categoryContainer
         DropDown(
             ServiceRegistry.getServices(type).map { it.getName() }, onlyOneOption = true,
@@ -159,11 +162,14 @@ class BrowseScreen(
         } childOf categoryContainer
         service.getCategories(type).thenAccept { categoriesHeaders ->
             Window.enqueueRenderOperation {
+                val enabledColor = Colors.SECONDARY
+                val disabledColor = Color(Colors.SECONDARY.red, Colors.SECONDARY.green, Colors.SECONDARY.blue, 0)
                 for ((header, categories) in categoriesHeaders) {
                     UIText(header).constrain {
                         x = 4.pixels()
                         y = MaxConstraint(4.pixels(), SiblingConstraint(padding = 4f))
                         textScale = 1.5f.pixels()
+                        color = Colors.PRIMARY.toConstraint()
                     } childOf categoriesBox
 
                     for ((id, category) in categories) {
@@ -172,9 +178,9 @@ class BrowseScreen(
                             y = 0.pixels()
                             width = 7.pixels()
                             height = 7.pixels()
-                        } effect OutlineEffect(Color.LIGHT_GRAY, 1f)
+                        } effect OutlineEffect(Colors.SECONDARY, 1f)
 
-                        val check = UIBlock(Color(192, 192, 192, 0)).constrain {
+                        val check = UIBlock(disabledColor).constrain {
                             x = 1.pixels()
                             y = 1.pixels()
                             width = 5.pixels()
@@ -194,7 +200,7 @@ class BrowseScreen(
                                     setColorAnimation(
                                         Animations.IN_OUT_QUAD,
                                         0.15f,
-                                        Color(192, 192, 192, 0).toConstraint(),
+                                        disabledColor.toConstraint(),
                                         0f
                                     )
                                 }
@@ -204,7 +210,7 @@ class BrowseScreen(
                                     setColorAnimation(
                                         Animations.IN_OUT_QUAD,
                                         0.15f,
-                                        Color(192, 192, 192, 255).toConstraint(),
+                                        enabledColor.toConstraint(),
                                         0f
                                     )
                                 }
@@ -216,7 +222,7 @@ class BrowseScreen(
                         UIText(category).constrain {
                             x = SiblingConstraint(padding = 4f)
                             y = 0.pixels()
-                            color = Color.LIGHT_GRAY.toConstraint()
+                            color = Colors.SECONDARY.toConstraint()
                         } childOf categoryBox
                     }
                 }
@@ -235,6 +241,7 @@ class BrowseScreen(
                     x = 4.pixels()
                     y = 0.pixels()
                     textScale = 1.5f.pixels()
+                    color = Colors.PRIMARY.toConstraint()
                 } childOf versionsBox
                 val currVersion = Platform.getMcVersion()
                 versionDropDown = DropDown(
@@ -280,20 +287,25 @@ class BrowseScreen(
                 x = SiblingConstraint(padding = 4f)
                 y = CenterConstraint()
                 width = 100.percent() - 33.pixels()
+                color = Colors.PRIMARY.toConstraint()
             } childOf adBox
             McImage(Icons.ADVERTISEMENT_TEXT).constrain {
                 x = 1.pixels(alignOpposite = true)
                 y = 1.pixels(alignOpposite = true)
                 width = 58.pixels()
                 height = 5.pixels()
-                color = Color.LIGHT_GRAY.toConstraint()
+                color = Colors.SECONDARY.toConstraint()
             } childOf adBox
         }
 
-        searchBox = (UITextInput("resourcify.browse.search".localize(type.displayName.localize())).constrain {
+        searchBox = (UITextInput(
+            "resourcify.browse.search".localize(type.displayName.localize()),
+            cursorColor = Colors.PRIMARY
+        ).constrain {
             x = 6.pixels()
             y = CenterConstraint()
             width = 100.percent() - 89.pixels()
+            color = Colors.PRIMARY.toConstraint()
         }.onUpdate {
             loadPacks()
         }.onMouseClick {

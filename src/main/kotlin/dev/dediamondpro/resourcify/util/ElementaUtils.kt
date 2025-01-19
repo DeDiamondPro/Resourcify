@@ -26,6 +26,8 @@ import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.universal.UMatrixStack
@@ -90,7 +92,7 @@ fun UIComponent.isHidden(): Boolean = !parent.children.contains(this)
 
 fun markdown(
     markdown: String,
-    style: MarkdownStyle = ElementaUtils.defaultMarkdownStyle
+    style: MarkdownStyle = Colors.MARKDOWN_STYLE
 ): MineMarkComponent {
     // Create a MineMark component with our own image and browser provider
     return MineMarkComponent(markdown, style, ElementaUtils.defaultMineMarkCore)
@@ -105,12 +107,6 @@ object ElementaUtils {
             .addElement(ExpandableMarkdownElement.ExpandableElementCreator)
             .addElement(listOf("summary"), ::SummaryElement)
             .build()
-
-    val defaultMarkdownStyle: MarkdownStyle = MarkdownStyle(
-        imageStyle = ImageStyleConfig(SanitizingImageProvider), linkStyle = LinkStyleConfig(
-            Color(65, 105, 225), ConfirmingBrowserProvider
-        )
-    )
 
     val elementaLoadingImage = McImage(Icons.LOADING)
 }

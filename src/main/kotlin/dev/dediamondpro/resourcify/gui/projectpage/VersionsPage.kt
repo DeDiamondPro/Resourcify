@@ -20,6 +20,8 @@ package dev.dediamondpro.resourcify.gui.projectpage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.*
@@ -44,7 +46,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 0.pixels())
     } childOf this
-    private val changeLogHolder = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+    private val changeLogHolder = UIBlock(Colors.BACKGROUND).constrain {
         x = 528.pixels()
         y = 0.pixels()
         width = 100.percent()
@@ -85,7 +87,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
         UIText("Versions ").constrain {
             x = 4.pixels()
             y = 8.pixels()
-            color = Color.BLUE.toConstraint()
+            color = Colors.LINK.toConstraint()
         }.onMouseClick {
             changeLogHolder.hide()
             versionsHolder.unhide()
@@ -93,6 +95,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
         UIText("> ${version.getVersionNumber() ?: version.getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf changeLogHolder
         if (screen.packHashes != null && screen.downloadFolder != null) {
             VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder, screen.type)
@@ -118,10 +121,11 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                     if (it.isNotEmpty()) UIText("resourcify.project.dependencies".localize()).constrain {
                         x = 4.pixels()
                         y = SiblingConstraint(padding = 4f)
+                        color = Colors.PRIMARY.toConstraint()
                     } childOf changeLogHolder
                     it.forEach { dependency ->
                         val project = dependency.project
-                        val dependencyHolder = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+                        val dependencyHolder = UIBlock(Colors.BACKGROUND).constrain {
                             x = 4.pixels()
                             y = SiblingConstraint(padding = 4f)
                             width = 100.percent() - 8.pixels()
@@ -148,12 +152,12 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                         UIText(project.getName()).constrain {
                             x = 32.pixels()
                             y = 4.pixels()
-                            color = Color.LIGHT_GRAY.toConstraint()
+                            color = Colors.SECONDARY.toConstraint()
                         } childOf dependencyHolder
                         UIText(dependency.type.getLocalizedName()).constrain {
                             x = 32.pixels()
                             y = 4.pixels(alignOpposite = true)
-                            color = Color.LIGHT_GRAY.toConstraint()
+                            color = Colors.SECONDARY.toConstraint()
                         } childOf dependencyHolder
                     }
                 }

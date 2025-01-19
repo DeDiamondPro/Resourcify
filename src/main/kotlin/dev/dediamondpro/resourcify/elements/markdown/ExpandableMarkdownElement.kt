@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,10 @@ import dev.dediamondpro.minemark.elements.ChildMovingElement
 import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.elements.creators.ElementCreator
 import dev.dediamondpro.minemark.utils.MouseButton
+import dev.dediamondpro.resourcify.gui.data.Colors
 import gg.essential.elementa.components.UIBlock
 import gg.essential.universal.UMatrixStack
 import org.xml.sax.Attributes
-import java.awt.Color
 
 @Suppress("UnstableApiUsage")
 class ExpandableMarkdownElement(
@@ -103,7 +103,7 @@ class ExpandableMarkdownElement(
 
     override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, matrixStack: UMatrixStack) {
         UIBlock.drawBlockSized(
-            matrixStack, BLOCK_COLOR,
+            matrixStack, Colors.BACKGROUND,
             x.toDouble(), y.toDouble(),
             markerWidth.toDouble(), totalHeight.toDouble()
         )
@@ -146,9 +146,5 @@ class ExpandableMarkdownElement(
         ): Boolean {
             return qName == "details" || (qName == "div" && attributes.getValue("class") == "spoiler")
         }
-    }
-
-    companion object {
-        private val BLOCK_COLOR = Color(0, 0, 0, 150)
     }
 }

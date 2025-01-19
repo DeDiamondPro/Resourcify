@@ -27,6 +27,8 @@ import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
 import dev.dediamondpro.resourcify.mixins.WorldSelectionScreenAccessor
 import dev.dediamondpro.resourcify.platform.Platform
@@ -90,7 +92,7 @@ class ProjectScreen(
 
     private fun mainBody() {
         // top navbar
-        val navigationBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+        val navigationBox = UIBlock(Colors.BACKGROUND).constrain {
             x = 0.pixels(alignOpposite = true)
             y = SiblingConstraint()
             width = 100.percent()
@@ -103,8 +105,9 @@ class ProjectScreen(
             val text = UIText("${ChatColor.BOLD}${localize("resourcify.version.install")}").constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
+                color = Colors.PRIMARY.toConstraint()
             }
-            val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+            val downloadButton = UIBlock(Colors.BUTTON).constrain {
                 x = 6.pixels(true)
                 y = CenterConstraint()
                 width = basicWidthConstraint { text.getWidth() + 8f }
@@ -127,7 +130,7 @@ class ProjectScreen(
             Window.enqueueRenderOperation {
                 var progressBox: UIBlock? = null
                 var text: UIText? = null
-                val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+                val downloadButton = UIBlock(Colors.BUTTON).constrain {
                     x = 6.pixels(true)
                     y = CenterConstraint()
                     width = basicWidthConstraint { (text?.getWidth() ?: 0f) + 8f }
@@ -171,6 +174,7 @@ class ProjectScreen(
                 text = UIText(buttonText).constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
+                    color = Colors.PRIMARY.toConstraint()
                 } childOf downloadButton
             }
         }
@@ -188,6 +192,7 @@ class ProjectScreen(
                 x = if (text == "resourcify.project.description".localize()) 6.pixels()
                 else SiblingConstraint(padding = 8f)
                 y = CenterConstraint()
+                color = Colors.PRIMARY.toConstraint()
             }.onMouseClick {
                 if (page == currentPage || it.mouseButton != 0) return@onMouseClick
                 currentPage = page
@@ -197,7 +202,11 @@ class ProjectScreen(
                 }.unhide()
             } childOf navigationBox
         }
-        TextIcon("${ChatColor.BOLD}${service.getName().localize()}", Icons.EXTERNAL_LINK).constrain {
+        TextIcon(
+            "${ChatColor.BOLD}${service.getName().localize()}",
+            Icons.EXTERNAL_LINK,
+            color = Colors.PRIMARY.toConstraint()
+        ).constrain {
             x = SiblingConstraint(padding = 8f)
             y = CenterConstraint()
             width = ChildLocationSizeConstraint()
@@ -216,7 +225,7 @@ class ProjectScreen(
             height = 29.pixels()
         } childOf sideContainer
 
-        val sideBox = UIBlock(color = Color(0, 0, 0, 100)).constrain {
+        val sideBox = UIBlock(Colors.BACKGROUND).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 160.pixels()
@@ -243,12 +252,13 @@ class ProjectScreen(
             y = SiblingConstraint(padding = 4f)
             width = 152.pixels()
             textScale = 1.5.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf sideBox
         UIWrappedText(project.getSummary()).constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 152.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf sideBox
 
         val categoryHolder = UIContainer().constrain {
@@ -264,13 +274,13 @@ class ProjectScreen(
                 UIText("resourcify.project.categories".localize()).constrain {
                     x = 0.pixels()
                     y = 0.pixels()
-                    color = Color.LIGHT_GRAY.toConstraint()
+                    color = Colors.SECONDARY.toConstraint()
                 } childOf categoryHolder
                 it.forEach { category ->
                     UIText("- ${category.capitalizeAll()}").constrain {
                         x = 0.pixels()
                         y = SiblingConstraint(padding = 2f)
-                        color = Color.LIGHT_GRAY.toConstraint()
+                        color = Colors.SECONDARY.toConstraint()
                     } childOf categoryHolder
                 }
             }
@@ -288,15 +298,15 @@ class ProjectScreen(
                 UIText("resourcify.project.external_resources".localize()).constrain {
                     x = 4.pixels()
                     y = 0.pixels()
-                    color = Color.LIGHT_GRAY.toConstraint()
+                    color = Colors.SECONDARY.toConstraint()
                 } childOf externalResourcesBox
                 markdown(
                     it.map { (name, url) -> "[$name]($url)" }.joinToString(" ● "),
                     style = MarkdownStyle(
                         textStyle = MarkdownTextStyle(
-                            1f, Color.LIGHT_GRAY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
+                            1f, Colors.SECONDARY, 1f, DefaultFonts.VANILLA_FONT_RENDERER
                         ),
-                        linkStyle = LinkStyleConfig(Color.LIGHT_GRAY, ConfirmingBrowserProvider)
+                        linkStyle = LinkStyleConfig(Colors.SECONDARY, ConfirmingBrowserProvider)
                     ),
                 ).constrain {
                     x = 4.pixels()
@@ -318,7 +328,7 @@ class ProjectScreen(
                 UIText("resourcify.project.members".localize()).constrain {
                     x = 4.pixels()
                     y = 0.pixels()
-                    color = Color.LIGHT_GRAY.toConstraint()
+                    color = Colors.SECONDARY.toConstraint()
                 } childOf membersBox
                 it.forEach { member ->
                     MemberCard(member).constrain {

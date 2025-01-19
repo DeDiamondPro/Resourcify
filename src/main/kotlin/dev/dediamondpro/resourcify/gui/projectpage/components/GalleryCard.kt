@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.IGalleryImage
 import dev.dediamondpro.resourcify.util.ofURLCustom
 import dev.dediamondpro.resourcify.util.toURL
@@ -33,7 +34,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.UKeyboard
 import java.awt.Color
 
-class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100)) {
+class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
     init {
         constrain {
             x = 0.pixels()
@@ -80,12 +81,13 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(color = Color(0, 0, 0, 100))
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
             textScale = 1.5.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf this
         if (!gallery.description.isNullOrBlank()) UIWrappedText(gallery.description ?: "").constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf this
     }
 }

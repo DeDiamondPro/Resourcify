@@ -13,6 +13,12 @@
     "issues": "https://github.com/DeDiamondPro/Resourcify/issues"
   },
   "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.dediamondpro.resourcify.Resourcify"
+      }
+    ],
     "modmenu": [
       {
         "adapter": "kotlin",

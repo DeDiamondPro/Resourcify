@@ -1,0 +1,42 @@
+{
+  "primary": {
+    "hex": "#ffffff",
+    "opacity": 1.0
+  },
+  "secondary": {
+    "hex": "#c0c0c0",
+    "opacity": 1.0
+  },
+  "link": {
+    "hex": "#4169e1",
+    "opacity": 1.0
+  },
+  "warn": {
+    "hex": "#ffff00",
+    "opacity": 1.0
+  },
+  "button": {
+    "hex": "#1BD96AFF",
+    "opacity": 1.0
+  },
+  "button_secondary": {
+    "hex": "#878999",
+    "opacity": 1.0
+  },
+  "background": {
+    "hex": "#000000",
+    "opacity": 0.4
+  },
+  "ad_background": {
+    "hex": "#3c82ff",
+    "opacity": 0.4
+  },
+  "dropdown": {
+    "hex": "#000000",
+    "opacity": 0.8
+  },
+  "dropdown_selected": {
+    "hex": "#1bd96a",
+    "opacity": 0.8
+  }
+}

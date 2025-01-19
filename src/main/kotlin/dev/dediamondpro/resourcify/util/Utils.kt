@@ -21,6 +21,7 @@ import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import net.minecraft.client.resources.language.I18n
+import net.minecraft.resources.ResourceLocation
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.io.File
@@ -149,5 +150,12 @@ object Utils {
                 "$fileName (1)"
             }
         }
+    }
+
+    fun createResourceLocation(asset: String): ResourceLocation {
+        //? if <1.21.0 {
+        /*return ResourceLocation("resourcify", asset)
+        *///?} else
+        return ResourceLocation.fromNamespaceAndPath("resourcify", asset)
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,21 +18,21 @@
 package dev.dediamondpro.resourcify.elements
 
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
-import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.dsl.basicColorConstraint
-import gg.essential.elementa.dsl.childOf
-import gg.essential.elementa.dsl.constrain
-import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.dsl.*
 import gg.essential.universal.UScreen
 import java.awt.Color
 
-class Paginator(screen: PaginatedScreen) : UIBlock(color = Color(0, 0, 0, 100)) {
+class Paginator(screen: PaginatedScreen) : UIBlock(Colors.BACKGROUND) {
     init {
-        Icon(Icons.BACK, true).constrain {
+        Icon(Icons.BACK, true, basicColorConstraint {
+            if (PaginatedScreen.backScreens.isEmpty()) Colors.SECONDARY else Colors.PRIMARY
+        }).constrain {
             x = 8.pixels()
             y = CenterConstraint()
             width = 9.pixels()
@@ -41,12 +41,13 @@ class Paginator(screen: PaginatedScreen) : UIBlock(color = Color(0, 0, 0, 100)) 
         UIText("resourcify.screens.close".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
+            color = Colors.PRIMARY.toConstraint()
         }.onMouseClick {
             UScreen.displayScreen(PaginatedScreen.backScreens.findLast { it !is PaginatedScreen })
             PaginatedScreen.cleanUp()
         } childOf this
         Icon(Icons.FORWARD, true, basicColorConstraint {
-            if (PaginatedScreen.forwardScreens.isEmpty()) Color.LIGHT_GRAY else Color.WHITE
+            if (PaginatedScreen.forwardScreens.isEmpty()) Colors.SECONDARY else Colors.PRIMARY
         }).constrain {
             x = 8.pixels(true)
             y = CenterConstraint()

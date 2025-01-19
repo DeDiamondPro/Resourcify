@@ -21,7 +21,7 @@ package dev.dediamondpro.resourcify.gui.pack
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.gui.data.Icons
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.Screen
 

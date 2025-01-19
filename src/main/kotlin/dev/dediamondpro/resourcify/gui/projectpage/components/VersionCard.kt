@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
@@ -36,8 +37,6 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
-import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -45,9 +44,7 @@ import java.util.*
 class VersionCard(
     parent: VersionsPage, val version: IVersion, val service: IService,
     hashes: List<String>?, downloadFolder: File?, val type: ProjectType
-) : UIBlock(color = Color(0, 0, 0, 100)) {
-    private val df = SimpleDateFormat("MMM d, yyyy")
-    private val nf = NumberFormat.getInstance()
+) : UIBlock(Colors.BACKGROUND) {
 
     init {
         constrain {
@@ -62,6 +59,7 @@ class VersionCard(
         UIText(version.getName().trim()).constrain {
             x = 6.pixels()
             y = 0.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf versionInfo
         val infoHolder = UIContainer().constrain {
             x = 6.pixels()
@@ -78,7 +76,7 @@ class VersionCard(
             UIText(it).constrain {
                 x = SiblingConstraint(padding = 4f)
                 y = 0.pixels()
-                color = Color.LIGHT_GRAY.toConstraint()
+                color = Colors.SECONDARY.toConstraint()
             } childOf infoHolder
         }
 
@@ -91,13 +89,13 @@ class VersionCard(
         UIWrappedText(version.getLoaders().joinToString(", ") { it.capitalizeAll() }).constrain {
             y = 0.pixels()
             width = 100.percent()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf mcVersionContainer
         UIWrappedText(getFormattedVersions()).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 2f)
             width = 100.percent()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf mcVersionContainer
 
         val statsContainer = UIContainer().constrain {
@@ -108,12 +106,12 @@ class VersionCard(
         } effect ScissorEffect() childOf this
         UIText("resourcify.version.download_count".localize(version.getDownloadCount())).constrain {
             y = 0.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf statsContainer
         val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.getReleaseDate()))
         UIText("resourcify.version.published_on".localize(Date.from(instant))).constrain {
             y = SiblingConstraint(padding = 2f)
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf statsContainer
 
         if (hashes != null && downloadFolder != null) {
@@ -189,7 +187,7 @@ class VersionCard(
                 "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var progressBox: UIBlock? = null
             var text: UIText? = null
-            val downloadButton = UIBlock(Color(27, 217, 106)).constrain {
+            val downloadButton = UIBlock(Colors.BUTTON).constrain {
                 x = 6.pixels(true)
                 y = CenterConstraint()
                 width = 73.pixels()
@@ -229,6 +227,7 @@ class VersionCard(
             text = UIText(buttonText).constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
+                color = Colors.PRIMARY.toConstraint()
             } childOf downloadButton
             return downloadButton
         }

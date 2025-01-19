@@ -18,15 +18,17 @@
 package dev.dediamondpro.resourcify.services.curseforge
 
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
+import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.HeadingLevelStyleConfig
 import dev.dediamondpro.minemark.style.HeadingStyleConfig
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
+import gg.essential.elementa.font.DefaultFonts
 import org.apache.http.client.utils.URIBuilder
-import java.awt.Color
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -238,8 +240,9 @@ object CurseForgeService : IService {
 
     override fun getMarkdownStyle(): MarkdownStyle {
         return MarkdownStyle(
+            textStyle = MarkdownTextStyle(1f, Colors.PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
             imageStyle = ImageStyleConfig(SanitizingImageProvider),
-            linkStyle = LinkStyleConfig(Color(65, 105, 225), ConfirmingBrowserProvider),
+            linkStyle = LinkStyleConfig(Colors.LINK, ConfirmingBrowserProvider),
             headerStyle = HeadingStyleConfig(
                 HeadingLevelStyleConfig(2f, 12f), // h1
                 HeadingLevelStyleConfig(1.66f, 10f), // h2

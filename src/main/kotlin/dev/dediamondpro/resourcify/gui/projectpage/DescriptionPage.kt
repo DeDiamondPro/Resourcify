@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.util.markdown
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.Window
@@ -25,7 +26,7 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import java.awt.Color
 
-class DescriptionPage(screen: ProjectScreen) : UIBlock(color = Color(0, 0, 0, 100)) {
+class DescriptionPage(screen: ProjectScreen) : UIBlock(Colors.BACKGROUND) {
     init {
         constrain {
             x = 0.pixels()

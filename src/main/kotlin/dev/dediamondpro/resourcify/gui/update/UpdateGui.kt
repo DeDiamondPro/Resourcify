@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.gui.update
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
@@ -67,7 +68,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
     }.animateAfterUnhide {
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox
-    private val changelogContainer = UIBlock(Color(0, 0, 0, 100)).constrain {
+    private val changelogContainer = UIBlock(Colors.BACKGROUND).constrain {
         x = (this@UpdateGui as Screen).width.pixels()
         width = 100.percent() - 8.pixels()
         height = ChildLocationSizeConstraint() + 4.pixels()
@@ -96,7 +97,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
-            color = Color.YELLOW.toConstraint()
+            color = Colors.WARN.toConstraint()
         } childOf stopCloseBox
         stopCloseBox.hide(true)
 
@@ -104,7 +105,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
-            color = Color.YELLOW.toConstraint()
+            color = Colors.WARN.toConstraint()
         } childOf window
 
         getUpdates().exceptionally {
@@ -120,7 +121,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     width = 100.percent() - 8.pixels()
                     height = 22.pixels()
                 } childOf window
-                val closeButton = UIBlock(Color(0, 0, 0, 100)).constrain {
+                val closeButton = UIBlock(Colors.BUTTON_SECONDARY).constrain {
                     y = 0.pixels()
                     x = 0.pixels()
                     width = 73.pixels()
@@ -129,8 +130,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 UIText("${ChatColor.BOLD}${localize("resourcify.screens.close")}").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
+                    color = Colors.PRIMARY.toConstraint()
                 } childOf closeButton
-                val updateAllButton = UIBlock(Color(27, 217, 106)).constrain {
+                val updateAllButton = UIBlock(Colors.BUTTON).constrain {
                     y = 0.pixels()
                     x = 4.pixels(true)
                     width = 73.pixels()
@@ -156,10 +158,12 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 updateText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
+                    color = Colors.PRIMARY.toConstraint()
                 } childOf updateAllButton
                 topText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
+                    color = Colors.PRIMARY.toConstraint()
                 } childOf topBar
 
                 cards.addAll(projects.map { (file, data) ->
@@ -276,7 +280,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         UIText("resourcify.updates.updates".localize()).constrain {
             x = 4.pixels()
             y = 8.pixels()
-            color = Color(65, 105, 225).toConstraint()
+            color = Colors.LINK.toConstraint()
         }.onMouseClick {
             changelogContainer.hide()
             updateContainer.unhide()

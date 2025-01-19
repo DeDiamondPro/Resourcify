@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.config.components.CheckBox
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.*
@@ -46,6 +47,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
             x = CenterConstraint()
             y = 8.pixels()
             textScale = 2.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf mainBox
 
         // Source
@@ -85,7 +87,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
     }
 
     private fun addCheckBoxOption(localizationString: String, enabled: Boolean, onUpdate: (Boolean) -> Unit) {
-        val box = UIBlock(Color(0, 0, 0, 100)).constrain {
+        val box = UIBlock(Colors.BACKGROUND).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
@@ -99,11 +101,12 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
             width = 100.percent()
+            color = Colors.PRIMARY.toConstraint()
         } childOf descriptionBox
         UIWrappedText("$localizationString.description".localize()).constrain {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf descriptionBox
         CheckBox(enabled).constrain {
             x = 4.pixels(alignOpposite = true)
@@ -120,7 +123,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         selectedOption: String,
         onUpdate: (String) -> Unit
     ) {
-        val box = UIBlock(Color(0, 0, 0, 100)).constrain {
+        val box = UIBlock(Colors.BACKGROUND).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
@@ -134,11 +137,12 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
             width = 100.percent()
+            color = Colors.PRIMARY.toConstraint()
         } childOf sourceDescriptionBox
         UIWrappedText("$localizationString.description".localize()).constrain {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf sourceDescriptionBox
         DropDown(
             options, true, mutableListOf(

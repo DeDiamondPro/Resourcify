@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.services
 
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.ads.DefaultAdProvider
 import dev.dediamondpro.resourcify.services.ads.IAdProvider
 import dev.dediamondpro.resourcify.util.ElementaUtils
@@ -59,7 +60,7 @@ interface IService {
 
     fun getAdProvider(): IAdProvider = DefaultAdProvider
 
-    fun getMarkdownStyle(): MarkdownStyle = ElementaUtils.defaultMarkdownStyle
+    fun getMarkdownStyle(): MarkdownStyle = Colors.MARKDOWN_STYLE
 
     fun canFetchProjectUrl(uri: URI): Boolean
 

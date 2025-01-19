@@ -24,7 +24,7 @@ import dev.dediamondpro.minemark.elements.ChildMovingElement
 import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.utils.MouseButton
 import dev.dediamondpro.resourcify.elements.McImage
-import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.util.Utils
 import gg.essential.universal.UMatrixStack
 import org.xml.sax.Attributes

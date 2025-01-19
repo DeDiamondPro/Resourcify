@@ -19,13 +19,13 @@ package dev.dediamondpro.resourcify.gui.browsepage.components
 
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.elements.McImage
+import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
-import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.util.localize
-import dev.dediamondpro.resourcify.util.ofResourceCustom
 import dev.dediamondpro.resourcify.util.ofURLCustom
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -38,7 +38,7 @@ import java.awt.Color
 import java.io.File
 
 class ResourceCard(service: IService, project: IProject, type: ProjectType, downloadFolder: File) :
-    UIBlock(color = Color(0, 0, 0, 100)) {
+    UIBlock(Colors.BACKGROUND) {
 
     init {
         constrain {
@@ -71,7 +71,7 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
                 } childOf bannerHolder
         }
 
-        val imageHolder = UIBlock(color = Color(0, 0, 0, 150)).constrain {
+        val imageHolder = UIBlock(Colors.BACKGROUND).constrain {
             x = 4.pixels()
             y = 62.pixels()
 
@@ -98,17 +98,19 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
 
         UIText(project.getName()).constrain {
             textScale = 1.5f.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } childOf titleHolder
         UIText("resourcify.browse.by".localize(project.getAuthor())).constrain {
             y = SiblingConstraint(padding = 2f)
             textScale = 1.2f.pixels()
-            color = Color.LIGHT_GRAY.toConstraint()
+            color = Colors.SECONDARY.toConstraint()
         } childOf titleHolder
 
         UIWrappedText(project.getSummary()).constrain {
             x = 4.pixels()
             y = 122.pixels()
             width = 100.percent() - 8.pixels()
+            color = Colors.PRIMARY.toConstraint()
         } effect ScissorEffect() childOf this
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,8 @@
 
 package dev.dediamondpro.resourcify.elements
 
-import dev.dediamondpro.resourcify.util.Icons
+import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.data.Icons
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
@@ -38,7 +39,7 @@ class DropDown(
     private val selectionUpdateListeners = mutableListOf<DropDown.(List<String>) -> Unit>()
     private var canOpen = false
 
-    private val box = UIBlock(color = Color(0, 0, 0, 200)).constrain {
+    private val box = UIBlock(Colors.DROPDOWN).constrain {
         x = 0.pixels()
         y = 0.pixels()
         width = 100.percent()
@@ -49,7 +50,7 @@ class DropDown(
         x = 4.pixels()
         y = 4.pixels()
         width = 100.percent() - 21.pixels()
-        color = Color.LIGHT_GRAY.toConstraint()
+        color = Colors.SECONDARY.toConstraint()
     } childOf box
 
     private val dropDownImage = Icon(Icons.DROPDOWN, true, Color.LIGHT_GRAY).constrain {
@@ -142,7 +143,7 @@ class DropDown(
 
     inner class DropDownElement(
         val option: String, var selected: Boolean
-    ) : UIBlock(color = if (selected) Color(27, 217, 106, 200) else Color(0, 0, 0, 220)) {
+    ) : UIBlock(color = if (selected) Colors.DROPDOWN_SELECTED else Colors.DROPDOWN) {
         init {
             constrain {
                 height = 17.pixels()
@@ -150,7 +151,7 @@ class DropDown(
             UIText(option).constrain {
                 x = 4.pixels()
                 y = CenterConstraint()
-                color = Color.LIGHT_GRAY.toConstraint()
+                color = Colors.SECONDARY.toConstraint()
             } childOf this
             onMouseClick {
                 if (it.mouseButton != 0) return@onMouseClick
@@ -160,20 +161,20 @@ class DropDown(
 
         private fun select() {
             if (!onlyOneOption) animate {
-                setColorAnimation(Animations.IN_OUT_QUAD, 0.2f, Color(27, 217, 106, 220).toConstraint())
-            } else setColor(Color(27, 217, 106, 220).toConstraint())
+                setColorAnimation(Animations.IN_OUT_QUAD, 0.2f, Colors.DROPDOWN_SELECTED.toConstraint())
+            } else setColor(Colors.DROPDOWN_SELECTED.toConstraint())
             selected = true
         }
 
         private fun unSelect() {
             animate {
-                setColorAnimation(Animations.IN_OUT_QUAD, 0.2f, Color(0, 0, 0, 220).toConstraint())
+                setColorAnimation(Animations.IN_OUT_QUAD, 0.2f, Colors.DROPDOWN.toConstraint())
             }
             selected = false
         }
 
         fun unSelectInstant() {
-            setColor(Color(0, 0, 0, 220))
+            setColor(Colors.DROPDOWN)
             selected = false
         }
     }

@@ -20,18 +20,27 @@ package dev.dediamondpro.resourcify.elements
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.dsl.toConstraint
 import net.minecraft.resources.ResourceLocation
+import java.awt.Color
 
-class TextIcon(text: String, asset: ResourceLocation, shadow: Boolean = true) : UIContainer() {
+class TextIcon(
+    text: String,
+    asset: ResourceLocation,
+    shadow: Boolean = true,
+    color: ColorConstraint = Color.WHITE.toConstraint()
+) : UIContainer() {
     init {
         UIText(text, shadow).constrain {
             y = CenterConstraint()
+            this.color = color
         } childOf this
-        Icon(asset, shadow).constrain {
+        Icon(asset, shadow, color).constrain {
             x = SiblingConstraint(padding = 2f)
             width = 9.pixels()
             height = 9.pixels()
