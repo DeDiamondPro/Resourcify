@@ -8,6 +8,9 @@ arch_loom = "1.7-SNAPSHOT"
 shadow = "8.1.1"
 publishing = "0.8.3"
 
+# GUI
+elementa = "DIAMOND-10"
+
 # Markdown
 minemark = "1.2.3"
 commonmark = "0.21.0"
@@ -17,6 +20,9 @@ tagsoup = "1.2.1"
 # Kotlin
 kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+# GUI
+elementa = { module = "gg.essential:elementa", version.ref = "elementa" }
 
 # Markdown
 minemark = { module = "dev.dediamondpro:minemark-core", version.ref = "minemark" }
