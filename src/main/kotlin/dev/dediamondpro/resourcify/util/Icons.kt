@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,25 @@
 
 package dev.dediamondpro.resourcify.util
 
+import net.minecraft.resources.ResourceLocation
+
 object Icons {
-    private const val ASSET_LOCATION = "/assets/resourcify"
-    const val EXTERNAL_LINK = "$ASSET_LOCATION/external-link.png"
-    const val PLUS = "$ASSET_LOCATION/plus.png"
-    const val DROPDOWN = "$ASSET_LOCATION/dropdown.png"
-    const val BACK = "$ASSET_LOCATION/back.png"
-    const val FORWARD = "$ASSET_LOCATION/forward.png"
-    const val UPDATE = "$ASSET_LOCATION/update.png"
+    val PLUS = createResourceLocation("plus.png")
+    val UPDATE = createResourceLocation("update.png")
+    val BACK = createResourceLocation("back.png")
+    val FORWARD = createResourceLocation("forward.png")
+    val DROPDOWN = createResourceLocation("dropdown.png")
+    val EXTERNAL_LINK = createResourceLocation("external-link.png")
+    val EXPANDABLE_CLOSED = createResourceLocation("expandable-closed.png")
+    val EXPANDABLE_OPENED = createResourceLocation("expandable-opened.png")
+    val ADVERTISEMENT_TEXT = createResourceLocation("advertisement-text.png")
+    val DEFAULT_ICON = createResourceLocation("default-icon.png")
+    val LOADING = createResourceLocation("loading.png")
+
+    private fun createResourceLocation(asset: String): ResourceLocation {
+        //? if <1.21.0 {
+        /*return ResourceLocation("resourcify", asset)
+        *///?} else
+        return ResourceLocation.fromNamespaceAndPath("resourcify", asset)
+    }
 }

@@ -22,6 +22,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
@@ -229,7 +230,7 @@ class ProjectScreen(
             height = ImageAspectConstraint()
         } childOf sideBox
         val iconUrl = project.getIconUrl()
-        (if (iconUrl == null) UIImage.ofResourceCustom("/assets/resourcify/pack.png")
+        (if (iconUrl == null) McImage(Icons.DEFAULT_ICON)
         else UIImage.ofURLCustom(iconUrl))
             .constrain {
                 x = 4.pixels()

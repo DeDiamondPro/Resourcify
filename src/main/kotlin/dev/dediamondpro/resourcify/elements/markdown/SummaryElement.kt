@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,9 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elements.ChildMovingElement
 import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.utils.MouseButton
+import dev.dediamondpro.resourcify.elements.McImage
+import dev.dediamondpro.resourcify.util.Icons
 import dev.dediamondpro.resourcify.util.Utils
-import dev.dediamondpro.resourcify.util.ofResourceCustom
-import gg.essential.elementa.components.UIImage
 import gg.essential.universal.UMatrixStack
 import org.xml.sax.Attributes
 import java.awt.Color
@@ -40,15 +40,18 @@ class SummaryElement(
     private val actualParent = parent as? ExpandableMarkdownElement
 
     override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, matrixStack: UMatrixStack) {
-        val image = if (actualParent?.open == true) openedImage else closedImage
-        val realY = y + totalHeight / 2f - image.imageHeight / 2f
+        val isOpen = actualParent?.open == true
+        val image = if (isOpen) openedImage else closedImage
+        val imageWidth = if (isOpen) 7.0 else 8.0
+        val imageHeight = if (isOpen) 8.0 else 7.0
+        val realY = y + totalHeight / 2.0 - imageHeight / 2.0
         image.drawImage(
-            matrixStack, x.toDouble() + 1.0, realY.toDouble() + 1.0,
-            image.imageWidth.toDouble(), image.imageHeight.toDouble(), iconShadowColor
+            matrixStack, x.toDouble() + 1.0, realY + 1.0,
+            imageWidth, imageHeight, iconShadowColor
         )
         image.drawImage(
-            matrixStack, x.toDouble(), realY.toDouble(),
-            image.imageWidth.toDouble(), image.imageHeight.toDouble(), iconColor
+            matrixStack, x.toDouble(), realY,
+            imageWidth, imageHeight, iconColor
         )
     }
 
@@ -66,8 +69,8 @@ class SummaryElement(
     }
 
     companion object {
-        private val closedImage = UIImage.ofResourceCustom("/assets/resourcify/expandable-closed.png", loadSync = true)
-        private val openedImage = UIImage.ofResourceCustom("/assets/resourcify/expandable-opened.png", loadSync = true)
+        private val closedImage = McImage(Icons.EXPANDABLE_CLOSED)
+        private val openedImage = McImage(Icons.EXPANDABLE_OPENED)
         private val iconColor = Color.WHITE
         private val iconShadowColor = Utils.getShadowColor(iconColor)
     }

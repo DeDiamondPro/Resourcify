@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.browsepage.components.ResourceCard
@@ -29,10 +30,7 @@ import dev.dediamondpro.resourcify.services.ISearchData
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.services.ServiceRegistry
-import dev.dediamondpro.resourcify.util.localize
-import dev.dediamondpro.resourcify.util.ofResourceCustom
-import dev.dediamondpro.resourcify.util.supplyAsync
-import dev.dediamondpro.resourcify.util.toURI
+import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
@@ -283,12 +281,7 @@ class BrowseScreen(
                 y = CenterConstraint()
                 width = 100.percent() - 33.pixels()
             } childOf adBox
-            UIImage.ofResourceCustom(
-                "/assets/resourcify/advertisement-text.png",
-                loadSync = true,
-                minFilter = UIImage.TextureScalingMode.NEAREST,
-                magFilter = UIImage.TextureScalingMode.NEAREST
-            ).constrain {
+            McImage(Icons.ADVERTISEMENT_TEXT).constrain {
                 x = 1.pixels(alignOpposite = true)
                 y = 1.pixels(alignOpposite = true)
                 width = 58.pixels()

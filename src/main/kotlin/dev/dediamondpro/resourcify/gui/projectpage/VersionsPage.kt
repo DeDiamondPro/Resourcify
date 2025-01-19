@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
 import dev.dediamondpro.resourcify.services.IVersion
@@ -130,7 +131,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                         } childOf changeLogHolder
                         val iconUrl = project.getIconUrl()
                         if (iconUrl == null) {
-                            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
+                            McImage(Icons.DEFAULT_ICON)
                         } else {
                             UIImage.ofURLCustom(
                                 iconUrl,

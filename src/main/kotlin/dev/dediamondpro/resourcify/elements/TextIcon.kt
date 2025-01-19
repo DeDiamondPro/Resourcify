@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,9 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
+import net.minecraft.resources.ResourceLocation
 
-class TextIcon(text: String, asset: String, shadow: Boolean = true) : UIContainer() {
+class TextIcon(text: String, asset: ResourceLocation, shadow: Boolean = true) : UIContainer() {
     init {
         UIText(text, shadow).constrain {
             y = CenterConstraint()

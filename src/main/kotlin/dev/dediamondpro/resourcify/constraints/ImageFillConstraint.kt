@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,14 +33,14 @@ class ImageFillConstraint(val type: FillType = FillType.FILL) : WidthConstraint,
 
     override fun getWidthImpl(component: UIComponent): Float {
         val constraint = constrainTo ?: component.parent
-        if (component !is UIImage) error("Component must be image!")
+        if (component !is UIImage) return constraint.getWidth()
         val scale = getScale(component, constraint)
         return component.imageWidth * scale
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
         val constraint = constrainTo ?: component.parent
-        if (component !is UIImage) error("Component must be image!")
+        if (component !is UIImage) return constraint.getHeight()
         val scale = getScale(component, constraint)
         return component.imageHeight * scale
     }

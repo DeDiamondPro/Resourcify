@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,22 +23,18 @@ import dev.dediamondpro.minemark.elementa.addElementaExtensions
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
-import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
-import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
 import java.awt.Color
-import java.awt.image.BufferedImage
 import java.net.URL
 import javax.imageio.ImageIO
-import kotlin.math.min
 
 fun UIImage.Companion.ofURLCustom(
     url: URL,
@@ -58,7 +54,7 @@ fun UIImage.Companion.ofURLCustom(
             height = height?.times(scaleFactor),
             fit = fit
         ),
-        loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
+        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
     if (width != null) image.imageWidth = width * scaleFactor
@@ -82,7 +78,7 @@ fun UIImage.Companion.ofResourceCustom(
     }
     val image = UIImage(
         imageFuture,
-        loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
+        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
     image.textureMinFilter = minFilter
@@ -116,34 +112,5 @@ object ElementaUtils {
         )
     )
 
-    object ElementLoadingImage : ImageProvider {
-        private var image: BufferedImage? =
-            ImageIO.read(this.javaClass.getResourceAsStream("/assets/resourcify/elementa-loading.png"))
-        private lateinit var texture: ReleasedDynamicTexture
-
-        override fun drawImage(
-            matrixStack: UMatrixStack,
-            x: Double,
-            y: Double,
-            width: Double,
-            height: Double,
-            color: Color
-        ) {
-            if (!::texture.isInitialized) {
-                texture = UGraphics.getTexture(image)
-                image = null
-            }
-
-            // Get square size
-            val size = min(width, height)
-            val centerX = x + width / 2.0 - size / 2.0
-            val centerY = y + height / 2.0 - size / 2.0
-
-            Utils.drawTexture(
-                matrixStack, texture,
-                centerX, centerY, 0.0, 0.0,
-                size, size, size, size
-            )
-        }
-    }
+    val elementaLoadingImage = McImage(Icons.LOADING)
 }

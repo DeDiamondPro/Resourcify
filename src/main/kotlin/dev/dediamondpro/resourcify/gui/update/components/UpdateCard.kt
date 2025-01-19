@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.gui.update.components
 
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.elements.DropDown
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IProject
@@ -66,7 +67,7 @@ class UpdateCard(
     private fun createCard(project: IProject, version: IVersion?) {
         val iconUrl = project.getIconUrl()
         if (iconUrl == null) {
-            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
+            McImage(Icons.DEFAULT_ICON)
         } else {
             UIImage.ofURLCustom(iconUrl)
         }.constrain {

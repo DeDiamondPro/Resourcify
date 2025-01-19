@@ -21,29 +21,21 @@ package dev.dediamondpro.resourcify.gui.pack
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.util.Icons
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.resources.ResourceLocation
 
 object PackScreensAddition {
-    //? if <1.21.0 {
-    /*private val plusImage = ResourceLocation("resourcify", "plus.png")
-    private val updateImage = ResourceLocation("resourcify", "update.png")
-    *///?} else {
-    private val plusImage = ResourceLocation.fromNamespaceAndPath("resourcify", "plus.png")
-    private val updateImage = ResourceLocation.fromNamespaceAndPath("resourcify", "update.png")
-    //?}
-
     fun getButtons(screen: Screen, type: ProjectType): List<ImageButton>? {
         if (!type.isEnabled()) {
             return null
         }
         val folder = type.getDirectory(screen)
         val buttons = mutableListOf<ImageButton>()
-        buttons.add(ImageButton(screen, type.plusX, type.plusY, plusImage) {
+        buttons.add(ImageButton(screen, type.plusX, type.plusY, Icons.PLUS) {
             UScreen.displayScreen(BrowseScreen(type, folder))
         })
-        if (type.hasUpdateButton) buttons.add(ImageButton(screen, type.updateX, type.updateY, updateImage) {
+        if (type.hasUpdateButton) buttons.add(ImageButton(screen, type.updateX, type.updateY, Icons.UPDATE) {
             UScreen.displayScreen(UpdateGui(type, folder))
         })
         return buttons

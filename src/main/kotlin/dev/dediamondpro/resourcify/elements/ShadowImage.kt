@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,41 +17,30 @@
 
 package dev.dediamondpro.resourcify.elements
 
-import dev.dediamondpro.resourcify.util.EmptyImage
 import dev.dediamondpro.resourcify.util.Utils
-import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIContainer
-import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
+import net.minecraft.resources.ResourceLocation
 import java.awt.Color
-import javax.imageio.ImageIO
 
 class ShadowImage(
-    asset: String,
+    asset: ResourceLocation,
     imageColor: ColorConstraint = Color.WHITE.toConstraint(),
     shadowColor: ColorConstraint = ShadowColorConstraint(imageColor),
 ) : UIContainer() {
     init {
-        UIImage(
-            supplyAsync { ImageIO.read(this::class.java.getResourceAsStream(asset)) },
-            EmptyImage,
-            EmptyImage
-        ).constrain {
+        McImage(asset).constrain {
             x = 1.pixels()
             y = 1.pixels()
             width = 100.percent()
             height = 100.percent()
             color = shadowColor
         } childOf this
-        UIImage(
-            supplyAsync { ImageIO.read(this::class.java.getResourceAsStream(asset)) },
-            EmptyImage,
-            EmptyImage
-        ).constrain {
+        McImage(asset).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()

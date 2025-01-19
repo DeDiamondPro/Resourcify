@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,10 +18,12 @@
 package dev.dediamondpro.resourcify.gui.browsepage.components
 
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
+import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.util.Icons
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.ofResourceCustom
 import dev.dediamondpro.resourcify.util.ofURLCustom
@@ -79,7 +81,7 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
 
         val iconUrl = project.getIconUrl()
         if (iconUrl == null) {
-            UIImage.ofResourceCustom("/assets/resourcify/pack.png")
+            McImage(Icons.DEFAULT_ICON)
         } else {
             UIImage.ofURLCustom(iconUrl)
         }.constrain {

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2025 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,24 +17,20 @@
 
 package dev.dediamondpro.resourcify.elements
 
-import dev.dediamondpro.resourcify.util.EmptyImage
-import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.components.UIContainer
-import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.dsl.*
+import net.minecraft.resources.ResourceLocation
 import java.awt.Color
-import javax.imageio.ImageIO
 
-class Icon(icon: String, shadow: Boolean, color: ColorConstraint) : UIContainer() {
-    constructor(icon: String, shadow: Boolean, color: Color = Color.WHITE) : this(icon, shadow, color.toConstraint())
+class Icon(icon: ResourceLocation, shadow: Boolean, color: ColorConstraint) : UIContainer() {
+    constructor(icon: ResourceLocation, shadow: Boolean, color: Color = Color.WHITE) : this(
+        icon, shadow, color.toConstraint()
+    )
 
     init {
         (if (shadow) ShadowImage(icon, color)
-        else UIImage(
-            supply { ImageIO.read(this::class.java.getResourceAsStream(icon)) },
-            EmptyImage, EmptyImage
-        )).constrain {
+        else McImage(icon)).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
