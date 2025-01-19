@@ -108,11 +108,11 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.3" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.20.1" to "1.20.1-${mcPlatform.loaderString}:365",
-    "1.21.1-fabric" to "1.21-fabric:365",
-    "1.21.1" to "1.21-neoforge:363+diamond.neoforge", // forge and neoforge
-    "1.21.3-fabric" to "1.21.2-fabric:365",
-    "1.21.3" to "1.21.3-neoforge:363+diamond.neoforge", // forge and neoforge
+    "1.20.1" to "1.20.1-${mcPlatform.loaderString}:369+diamond",
+    "1.21.1-fabric" to "1.21-fabric:369+diamond",
+    "1.21.1" to "1.21-neoforge:369+diamond", // forge and neoforge
+    "1.21.3-fabric" to "1.21.2-fabric:369+diamond",
+    "1.21.3" to "1.21.3-neoforge:369+diamond", // forge and neoforge
 )
 
 dependencies {
