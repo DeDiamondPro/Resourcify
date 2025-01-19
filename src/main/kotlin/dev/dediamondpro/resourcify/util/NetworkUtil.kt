@@ -25,12 +25,16 @@ import java.net.URI
 import java.net.URL
 import java.net.URLConnection
 import java.net.URLEncoder
+import java.security.KeyStore
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
 import javax.imageio.ImageIO
 import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000

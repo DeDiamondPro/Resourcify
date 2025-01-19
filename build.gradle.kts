@@ -114,6 +114,13 @@ val universalVersion = VersionDefinition(
     "1.21.3-fabric" to "1.21.2-fabric:369+diamond",
     "1.21.3" to "1.21.3-neoforge:369+diamond", // forge and neoforge
 )
+val elementaVersion = VersionDefinition(
+    "1.20.1" to "1.18.1-${mcPlatform.loaderString}:DIAMOND-9",
+    "1.21.1-fabric" to "1.18.1-fabric:DIAMOND-9",
+    "1.21.1" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
+    "1.21.3-fabric" to "1.18.1-fabric:DIAMOND-9",
+    "1.21.3" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
+)
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
@@ -143,7 +150,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shade(libs.elementa) {
+    shadeModImplementation("gg.essential:elementa-${elementaVersion.get(mcPlatform)}") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
