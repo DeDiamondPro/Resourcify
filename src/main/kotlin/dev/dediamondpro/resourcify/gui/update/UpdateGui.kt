@@ -78,7 +78,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         setXAnimation(Animations.IN_OUT_QUAD, 0.2f, 4.pixels())
     } childOf scrollBox
 
-    private val stopCloseBox = UIBlock(color = Color(0, 0, 0, 150)).constrain {
+    private val stopCloseBox = UIBlock(Colors.FULLSCREEN_BACKGROUND).constrain {
         x = 0.pixels()
         y = 0.pixels()
         width = 100.percent()
@@ -97,7 +97,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
-            color = Colors.WARN.toConstraint()
+            color = Colors.TEXT_WARN.toConstraint()
         } childOf stopCloseBox
         stopCloseBox.hide(true)
 
@@ -105,7 +105,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             x = CenterConstraint()
             y = CenterConstraint()
             textScale = 2.pixels()
-            color = Colors.WARN.toConstraint()
+            color = Colors.TEXT_WARN.toConstraint()
         } childOf window
 
         getUpdates().exceptionally {
@@ -130,9 +130,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 UIText("${ChatColor.BOLD}${localize("resourcify.screens.close")}").constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
-                    color = Colors.PRIMARY.toConstraint()
+                    color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf closeButton
-                val updateAllButton = UIBlock(Colors.BUTTON).constrain {
+                val updateAllButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
                     y = 0.pixels()
                     x = 4.pixels(true)
                     width = 73.pixels()
@@ -158,12 +158,12 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 updateText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
-                    color = Colors.PRIMARY.toConstraint()
+                    color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf updateAllButton
                 topText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
-                    color = Colors.PRIMARY.toConstraint()
+                    color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf topBar
 
                 cards.addAll(projects.map { (file, data) ->
@@ -280,7 +280,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         UIText("resourcify.updates.updates".localize()).constrain {
             x = 4.pixels()
             y = 8.pixels()
-            color = Colors.LINK.toConstraint()
+            color = Colors.TEXT_LINK.toConstraint()
         }.onMouseClick {
             changelogContainer.hide()
             updateContainer.unhide()

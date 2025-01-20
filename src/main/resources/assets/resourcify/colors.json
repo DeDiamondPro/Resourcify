@@ -1,42 +1,16 @@
 {
-  "primary": {
-    "hex": "#ffffff",
-    "opacity": 1.0
-  },
-  "secondary": {
-    "hex": "#c0c0c0",
-    "opacity": 1.0
-  },
-  "link": {
-    "hex": "#4169e1",
-    "opacity": 1.0
-  },
-  "warn": {
-    "hex": "#ffff00",
-    "opacity": 1.0
-  },
-  "button": {
-    "hex": "#1BD96AFF",
-    "opacity": 1.0
-  },
-  "button_secondary": {
-    "hex": "#878999",
-    "opacity": 1.0
-  },
-  "background": {
-    "hex": "#000000",
-    "opacity": 0.4
-  },
-  "ad_background": {
-    "hex": "#3c82ff",
-    "opacity": 0.4
-  },
-  "dropdown": {
-    "hex": "#000000",
-    "opacity": 0.8
-  },
-  "dropdown_selected": {
-    "hex": "#1bd96a",
-    "opacity": 0.8
-  }
+  "text_primary": "#ffffffff",
+  "text_secondary": "#c0c0c0ff",
+  "text_link": "#4169e1ff",
+  "text_warn": "#ffff00ff",
+  "button_primary": "#1bd96aff",
+  "button_secondary": "#878999ff",
+  "checkbox": "#c0c0c0ff",
+  "expandable": "#00000066",
+  "background": "#00000066",
+  "ad_background": "#3c82ff66",
+  "fullscreen_background": "#00000099",
+  "dropdown": "#000000cc",
+  "dropdown_selected": "#1bd96acc",
+  "dropdown_border": "#c0c0c0ff"
 }

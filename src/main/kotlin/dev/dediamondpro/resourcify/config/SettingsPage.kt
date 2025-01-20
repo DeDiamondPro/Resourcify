@@ -29,7 +29,6 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import java.awt.Color
 
 class SettingsPage : PaginatedScreen(adaptScale = false) {
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
@@ -47,7 +46,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
             x = CenterConstraint()
             y = 8.pixels()
             textScale = 2.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf mainBox
 
         // Source
@@ -101,12 +100,12 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
             width = 100.percent()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf descriptionBox
         UIWrappedText("$localizationString.description".localize()).constrain {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf descriptionBox
         CheckBox(enabled).constrain {
             x = 4.pixels(alignOpposite = true)
@@ -137,12 +136,12 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
             width = 100.percent()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf sourceDescriptionBox
         UIWrappedText("$localizationString.description".localize()).constrain {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf sourceDescriptionBox
         DropDown(
             options, true, mutableListOf(

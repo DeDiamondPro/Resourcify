@@ -27,8 +27,8 @@ import java.awt.Color
 
 class CheckBox(private var enabled: Boolean) : UIContainer() {
     private val actions: MutableList<(Boolean) -> Unit> = mutableListOf()
-    private val enabledColor = Colors.SECONDARY
-    private val disabledColor = Color(Colors.SECONDARY.red, Colors.SECONDARY.green, Colors.SECONDARY.blue, 0)
+    private val enabledColor = Colors.CHECKBOX
+    private val disabledColor = Color(Colors.CHECKBOX.red, Colors.CHECKBOX.green, Colors.CHECKBOX.blue, 0)
     private val check = UIBlock(if (enabled) enabledColor else disabledColor).constrain {
         x = 2.pixels()
         y = 2.pixels()
@@ -51,7 +51,7 @@ class CheckBox(private var enabled: Boolean) : UIContainer() {
     } childOf this
 
     init {
-        effect(OutlineEffect(Colors.SECONDARY, 1f))
+        effect(OutlineEffect(Colors.CHECKBOX, 1f))
         constrain {
             width = 14.pixels()
             height = 14.pixels()

@@ -103,7 +103,7 @@ class ExpandableMarkdownElement(
 
     override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, matrixStack: UMatrixStack) {
         UIBlock.drawBlockSized(
-            matrixStack, Colors.BACKGROUND,
+            matrixStack, Colors.EXPANDABLE,
             x.toDouble(), y.toDouble(),
             markerWidth.toDouble(), totalHeight.toDouble()
         )

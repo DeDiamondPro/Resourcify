@@ -33,7 +33,6 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.UScreen
-import java.awt.Color
 
 class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
     private val versionsHolder = UIContainer().constrain {
@@ -87,7 +86,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
         UIText("Versions ").constrain {
             x = 4.pixels()
             y = 8.pixels()
-            color = Colors.LINK.toConstraint()
+            color = Colors.TEXT_LINK.toConstraint()
         }.onMouseClick {
             changeLogHolder.hide()
             versionsHolder.unhide()
@@ -95,7 +94,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
         UIText("> ${version.getVersionNumber() ?: version.getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf changeLogHolder
         if (screen.packHashes != null && screen.downloadFolder != null) {
             VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder, screen.type)
@@ -121,7 +120,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                     if (it.isNotEmpty()) UIText("resourcify.project.dependencies".localize()).constrain {
                         x = 4.pixels()
                         y = SiblingConstraint(padding = 4f)
-                        color = Colors.PRIMARY.toConstraint()
+                        color = Colors.TEXT_PRIMARY.toConstraint()
                     } childOf changeLogHolder
                     it.forEach { dependency ->
                         val project = dependency.project
@@ -152,12 +151,12 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                         UIText(project.getName()).constrain {
                             x = 32.pixels()
                             y = 4.pixels()
-                            color = Colors.SECONDARY.toConstraint()
+                            color = Colors.TEXT_SECONDARY.toConstraint()
                         } childOf dependencyHolder
                         UIText(dependency.type.getLocalizedName()).constrain {
                             x = 32.pixels()
                             y = 4.pixels(alignOpposite = true)
-                            color = Colors.SECONDARY.toConstraint()
+                            color = Colors.TEXT_SECONDARY.toConstraint()
                         } childOf dependencyHolder
                     }
                 }

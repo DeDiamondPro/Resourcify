@@ -26,12 +26,11 @@ import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UScreen
-import java.awt.Color
 
 class Paginator(screen: PaginatedScreen) : UIBlock(Colors.BACKGROUND) {
     init {
         Icon(Icons.BACK, true, basicColorConstraint {
-            if (PaginatedScreen.backScreens.isEmpty()) Colors.SECONDARY else Colors.PRIMARY
+            if (PaginatedScreen.backScreens.isEmpty()) Colors.TEXT_SECONDARY else Colors.TEXT_PRIMARY
         }).constrain {
             x = 8.pixels()
             y = CenterConstraint()
@@ -41,13 +40,13 @@ class Paginator(screen: PaginatedScreen) : UIBlock(Colors.BACKGROUND) {
         UIText("resourcify.screens.close".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         }.onMouseClick {
             UScreen.displayScreen(PaginatedScreen.backScreens.findLast { it !is PaginatedScreen })
             PaginatedScreen.cleanUp()
         } childOf this
         Icon(Icons.FORWARD, true, basicColorConstraint {
-            if (PaginatedScreen.forwardScreens.isEmpty()) Colors.SECONDARY else Colors.PRIMARY
+            if (PaginatedScreen.forwardScreens.isEmpty()) Colors.TEXT_SECONDARY else Colors.TEXT_PRIMARY
         }).constrain {
             x = 8.pixels(true)
             y = CenterConstraint()

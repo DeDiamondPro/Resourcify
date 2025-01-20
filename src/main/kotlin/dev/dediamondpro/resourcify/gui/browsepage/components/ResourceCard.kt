@@ -98,19 +98,19 @@ class ResourceCard(service: IService, project: IProject, type: ProjectType, down
 
         UIText(project.getName()).constrain {
             textScale = 1.5f.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf titleHolder
         UIText("resourcify.browse.by".localize(project.getAuthor())).constrain {
             y = SiblingConstraint(padding = 2f)
             textScale = 1.2f.pixels()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf titleHolder
 
         UIWrappedText(project.getSummary()).constrain {
             x = 4.pixels()
             y = 122.pixels()
             width = 100.percent() - 8.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } effect ScissorEffect() childOf this
     }
 }

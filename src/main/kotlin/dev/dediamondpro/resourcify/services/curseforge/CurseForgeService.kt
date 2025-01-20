@@ -240,9 +240,9 @@ object CurseForgeService : IService {
 
     override fun getMarkdownStyle(): MarkdownStyle {
         return MarkdownStyle(
-            textStyle = MarkdownTextStyle(1f, Colors.PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
+            textStyle = MarkdownTextStyle(1f, Colors.TEXT_PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
             imageStyle = ImageStyleConfig(SanitizingImageProvider),
-            linkStyle = LinkStyleConfig(Colors.LINK, ConfirmingBrowserProvider),
+            linkStyle = LinkStyleConfig(Colors.TEXT_LINK, ConfirmingBrowserProvider),
             headerStyle = HeadingStyleConfig(
                 HeadingLevelStyleConfig(2f, 12f), // h1
                 HeadingLevelStyleConfig(1.66f, 10f), // h2

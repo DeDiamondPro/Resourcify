@@ -59,7 +59,7 @@ class VersionCard(
         UIText(version.getName().trim()).constrain {
             x = 6.pixels()
             y = 0.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf versionInfo
         val infoHolder = UIContainer().constrain {
             x = 6.pixels()
@@ -76,7 +76,7 @@ class VersionCard(
             UIText(it).constrain {
                 x = SiblingConstraint(padding = 4f)
                 y = 0.pixels()
-                color = Colors.SECONDARY.toConstraint()
+                color = Colors.TEXT_SECONDARY.toConstraint()
             } childOf infoHolder
         }
 
@@ -89,13 +89,13 @@ class VersionCard(
         UIWrappedText(version.getLoaders().joinToString(", ") { it.capitalizeAll() }).constrain {
             y = 0.pixels()
             width = 100.percent()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf mcVersionContainer
         UIWrappedText(getFormattedVersions()).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 2f)
             width = 100.percent()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf mcVersionContainer
 
         val statsContainer = UIContainer().constrain {
@@ -106,12 +106,12 @@ class VersionCard(
         } effect ScissorEffect() childOf this
         UIText("resourcify.version.download_count".localize(version.getDownloadCount())).constrain {
             y = 0.pixels()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf statsContainer
         val instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(version.getReleaseDate()))
         UIText("resourcify.version.published_on".localize(Date.from(instant))).constrain {
             y = SiblingConstraint(padding = 2f)
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf statsContainer
 
         if (hashes != null && downloadFolder != null) {
@@ -187,7 +187,7 @@ class VersionCard(
                 "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var progressBox: UIBlock? = null
             var text: UIText? = null
-            val downloadButton = UIBlock(Colors.BUTTON).constrain {
+            val downloadButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
                 x = 6.pixels(true)
                 y = CenterConstraint()
                 width = 73.pixels()
@@ -227,7 +227,7 @@ class VersionCard(
             text = UIText(buttonText).constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
-                color = Colors.PRIMARY.toConstraint()
+                color = Colors.TEXT_PRIMARY.toConstraint()
             } childOf downloadButton
             return downloadButton
         }

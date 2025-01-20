@@ -27,7 +27,6 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
-import java.awt.Color
 
 class DropDown(
     val options: List<String>,
@@ -44,16 +43,16 @@ class DropDown(
         y = 0.pixels()
         width = 100.percent()
         height = ChildBasedMaxSizeConstraint() + 8.pixels()
-    } effect OutlineEffect(Color.LIGHT_GRAY, 1f) childOf this
+    } effect OutlineEffect(Colors.DROPDOWN_BORDER, 1f) childOf this
 
     private val text = UIWrappedText().constrain {
         x = 4.pixels()
         y = 4.pixels()
         width = 100.percent() - 21.pixels()
-        color = Colors.SECONDARY.toConstraint()
+        color = Colors.TEXT_SECONDARY.toConstraint()
     } childOf box
 
-    private val dropDownImage = Icon(Icons.DROPDOWN, true, Color.LIGHT_GRAY).constrain {
+    private val dropDownImage = Icon(Icons.DROPDOWN, true, Colors.DROPDOWN_BORDER).constrain {
         x = 4.pixels(alignOpposite = true)
         y = CenterConstraint()
         width = 9.pixels()
@@ -74,7 +73,7 @@ class DropDown(
             }
             width = 100.percent()
             height = ChildBasedSizeConstraint()
-        } effect OutlineEffect(Color.LIGHT_GRAY, 1f) childOf this
+        } effect OutlineEffect(Colors.DROPDOWN_BORDER, 1f) childOf this
         val scrollBox = ScrollComponent(
             pixelsPerScroll = 30f,
             scrollAcceleration = 1.5f,
@@ -151,7 +150,7 @@ class DropDown(
             UIText(option).constrain {
                 x = 4.pixels()
                 y = CenterConstraint()
-                color = Colors.SECONDARY.toConstraint()
+                color = Colors.TEXT_SECONDARY.toConstraint()
             } childOf this
             onMouseClick {
                 if (it.mouseButton != 0) return@onMouseClick

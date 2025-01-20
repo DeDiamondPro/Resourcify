@@ -31,7 +31,6 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
-import java.awt.Color
 import java.net.URI
 
 class MemberCard(member: IMember) : UIContainer() {
@@ -61,12 +60,12 @@ class MemberCard(member: IMember) : UIContainer() {
         UIText("${ChatColor.BOLD}${member.name}").constrain {
             x = 0.pixels()
             y = 0.pixels()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf textHolder
         UIText(member.role.capitalizeAll()).constrain {
             x = 0.pixels()
             y = SiblingConstraint(padding = 2f)
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf textHolder
     }
 }

@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify
 
-import dev.dediamondpro.resourcify.platform.ColorReloadListener
+import dev.dediamondpro.resourcify.platform.ThemeReloadListener
 import dev.dediamondpro.resourcify.config.SettingsPage
 
 //? if fabric {
@@ -58,13 +58,13 @@ object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
 
     //? if forgelike {
     /*fun registerClientReloadListeners(event: RegisterClientReloadListenersEvent) {
-        event.registerReloadListener(ColorReloadListener())
+        event.registerReloadListener(ThemeReloadListener())
     }
     *///?}
 
     //? if fabric {
     override fun onInitializeClient() {
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ColorReloadListener())
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ThemeReloadListener())
     }
     //?}
 }

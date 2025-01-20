@@ -82,20 +82,20 @@ class UpdateCard(
             x = 56.pixels()
             y = 8.pixels()
             textScale = 2.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf this
 
         if (version == null) {
             UIText("resourcify.updates.up-to-date".localize()).constrain {
                 x = 56.pixels()
                 y = SiblingConstraint(padding = 4f)
-                color = Colors.WARN.toConstraint()
+                color = Colors.TEXT_WARN.toConstraint()
             } childOf this
         } else {
             UIText(version.getName()).constrain {
                 x = 56.pixels()
                 y = SiblingConstraint(padding = 4f)
-                color = Colors.PRIMARY.toConstraint()
+                color = Colors.TEXT_PRIMARY.toConstraint()
             } childOf this
             val versionNumberHolder = UIContainer().constrain {
                 x = 56.pixels()
@@ -110,7 +110,7 @@ class UpdateCard(
                 UIText(it).constrain {
                     x = SiblingConstraint(padding = 4f)
                     y = 0.pixels()
-                    color = Colors.PRIMARY.toConstraint()
+                    color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf versionNumberHolder
             }
 
@@ -133,7 +133,7 @@ class UpdateCard(
             UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
-                color = Colors.PRIMARY.toConstraint()
+                color = Colors.TEXT_PRIMARY.toConstraint()
             } childOf changeLogButton
         }
 
@@ -148,7 +148,7 @@ class UpdateCard(
         } childOf sourceHolder
         UIText("resourcify.updates.source".localize()).constrain {
             y = CenterConstraint()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf sourceTextHolder
 
         DropDown(
@@ -183,7 +183,7 @@ class UpdateCard(
     }
 
     private fun createUpdateButton(): UIComponent {
-        val updateButton = UIBlock(Colors.BUTTON).constrain {
+        val updateButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
             y = 0.pixels()
             width = 73.pixels()
             height = 50.percent() - 2.pixels()
@@ -204,7 +204,7 @@ class UpdateCard(
         text = UIText("${ChatColor.BOLD}${localize("resourcify.updates.update")}").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf updateButton
         return updateButton
     }

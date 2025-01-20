@@ -32,7 +32,6 @@ import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UKeyboard
-import java.awt.Color
 
 class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
     init {
@@ -43,7 +42,7 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
         }
         onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            val background = UIBlock(color = Color(0, 0, 0, 150)).constrain {
+            val background = UIBlock(Colors.FULLSCREEN_BACKGROUND).constrain {
                 x = 0.pixels()
                 y = 0.pixels()
                 width = 100.percent()
@@ -81,13 +80,13 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
             textScale = 1.5.pixels()
-            color = Colors.PRIMARY.toConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf this
         if (!gallery.description.isNullOrBlank()) UIWrappedText(gallery.description ?: "").constrain {
             x = 4.pixels()
             y = SiblingConstraint(padding = 4f)
             width = 100.percent() - 8.pixels()
-            color = Colors.SECONDARY.toConstraint()
+            color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf this
     }
 }

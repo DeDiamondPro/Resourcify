@@ -29,28 +29,36 @@ import java.awt.Color
 
 object Colors {
     // Load defaults and set default markdown style
-    private val defaults: Map<String, JsonColor> =
+    private val defaults: Map<String, String> =
         this.javaClass.getResourceAsStream("/assets/resourcify/colors.json")!!.bufferedReader().fromJson()
 
-    lateinit var PRIMARY: Color
+    lateinit var TEXT_PRIMARY: Color
         private set
-    lateinit var SECONDARY: Color
+    lateinit var TEXT_SECONDARY: Color
         private set
-    lateinit var LINK: Color
+    lateinit var TEXT_LINK: Color
         private set
-    lateinit var WARN: Color
+    lateinit var TEXT_WARN: Color
         private set
-    lateinit var BUTTON: Color
+    lateinit var BUTTON_PRIMARY: Color
         private set
     lateinit var BUTTON_SECONDARY: Color
+        private set
+    lateinit var CHECKBOX: Color
+        private set
+    lateinit var EXPANDABLE: Color
         private set
     lateinit var BACKGROUND: Color
         private set
     lateinit var AD_BACKGROUND: Color
         private set
+    lateinit var FULLSCREEN_BACKGROUND: Color
+        private set
     lateinit var DROPDOWN: Color
         private set
     lateinit var DROPDOWN_SELECTED: Color
+        private set
+    lateinit var DROPDOWN_BORDER: Color
         private set
 
     lateinit var MARKDOWN_STYLE: MarkdownStyle
@@ -60,52 +68,44 @@ object Colors {
         load(emptyMap())
     }
 
-    fun load(colors: Map<String, JsonColor>) {
+    fun load(colors: Map<String, String>) {
         // Set everything back to defaults and load the new colors
         loadInternal(defaults)
         loadInternal(colors)
 
         MARKDOWN_STYLE = MarkdownStyle(
-            textStyle = MarkdownTextStyle(1f, PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
+            textStyle = MarkdownTextStyle(1f, TEXT_PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
             imageStyle = ImageStyleConfig(SanitizingImageProvider),
-            linkStyle = LinkStyleConfig(LINK, ConfirmingBrowserProvider)
+            linkStyle = LinkStyleConfig(TEXT_LINK, ConfirmingBrowserProvider)
         )
     }
 
-    private fun loadInternal(colors: Map<String, JsonColor>) {
-        PRIMARY = colors["primary"]?.toColor() ?: PRIMARY
-        SECONDARY = colors["secondary"]?.toColor() ?: SECONDARY
-        LINK = colors["link"]?.toColor() ?: LINK
-        WARN = colors["warn"]?.toColor() ?: WARN
-        BUTTON = colors["button"]?.toColor() ?: BUTTON
+    private fun loadInternal(colors: Map<String, String>) {
+        TEXT_PRIMARY = colors["text_primary"]?.toColor() ?: TEXT_PRIMARY
+        TEXT_SECONDARY = colors["text_secondary"]?.toColor() ?: TEXT_SECONDARY
+        TEXT_LINK = colors["text_link"]?.toColor() ?: TEXT_LINK
+        TEXT_WARN = colors["text_warn"]?.toColor() ?: TEXT_WARN
+        BUTTON_PRIMARY = colors["button_primary"]?.toColor() ?: BUTTON_PRIMARY
         BUTTON_SECONDARY = colors["button_secondary"]?.toColor() ?: BUTTON_SECONDARY
+        CHECKBOX = colors["checkbox"]?.toColor() ?: CHECKBOX
+        EXPANDABLE = colors["expandable"]?.toColor() ?: EXPANDABLE
         BACKGROUND = colors["background"]?.toColor() ?: BACKGROUND
         AD_BACKGROUND = colors["ad_background"]?.toColor() ?: AD_BACKGROUND
+        FULLSCREEN_BACKGROUND = colors["fullscreen_background"]?.toColor() ?: FULLSCREEN_BACKGROUND
         DROPDOWN = colors["dropdown"]?.toColor() ?: DROPDOWN
         DROPDOWN_SELECTED = colors["dropdown_selected"]?.toColor() ?: DROPDOWN_SELECTED
+        DROPDOWN_BORDER = colors["dropdown_border"]?.toColor() ?: DROPDOWN_BORDER
     }
 
-    // Defaults primarily as backup if colors.json is missing a color
-//    private fun setDefaults() {
-//        PRIMARY = Color.WHITE
-//        SECONDARY = Color.LIGHT_GRAY
-//        LINK = Color(65, 105, 225)
-//        WARN = Color.YELLOW
-//        BUTTON = Color(27, 217, 106)
-//        BUTTON_SECONDARY = Color(150, 150, 150)
-//        BACKGROUND = Color(0, 0, 0, 100)
-//        AD_BACKGROUND = Color(60, 130, 255, 100)
-//        DROPDOWN = Color(0, 0, 0, 200)
-//        DROPDOWN_SELECTED = Color(27, 217, 106, 200)
-//    }
-
-    data class JsonColor(val hex: String, val opacity: Float) {
-        fun toColor(): Color {
-            val cleaned = hex.replace("#", "").trim()
-            val r = Integer.parseInt(cleaned.substring(0, 2), 16)
-            val g = Integer.parseInt(cleaned.substring(2, 4), 16)
-            val b = Integer.parseInt(cleaned.substring(4, 6), 16)
-            return Color(r / 255f, g / 255f, b / 255f, opacity.coerceAtLeast(0f).coerceAtMost(1f))
+    private fun String.toColor(): Color {
+        val hex = this.replace("#", "").trim()
+        if (hex.length != 6 && hex.length != 8) {
+            error("Resourcify: Invalid hex color format \"$this\" in a resource pack's colors.json!")
         }
+        val r = Integer.parseInt(hex.substring(0, 2), 16)
+        val g = Integer.parseInt(hex.substring(2, 4), 16)
+        val b = Integer.parseInt(hex.substring(4, 6), 16)
+        val a = if (hex.length == 8) Integer.parseInt(hex.substring(6, 8), 16) else 255
+        return Color(r, g, b, a)
     }
 }
