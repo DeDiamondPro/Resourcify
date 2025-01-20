@@ -1,28 +1,15 @@
-## Resourcify 1.6.1
+## Resourcify 1.7.0
 
-### The future
+- Add theming support for Resource packs and/or Mod packs, for more info see
+  the [readme](https://github.com/DeDiamondPro/Resourcify/blob/master/README.md#theming).
+- Add support for resource packs to overwrite Resourcify's textures.
+- (1.21.2-4) Fix an issue causing a part of the GUI (or all of it with immediatelyfast) to be drawn behind the
+  background.
+- Resourcify now requires kotlin 2.0 or above, so for fabric you will need fabric language kotlin version 
+  "1.11.0+kotlin.2.0.0" or later, and for forge you will need kotlin for forge version 4.11.0 or later.
 
-This will be the last version that supports all the versions currently supported by Resourcify,
-in the next version only the following version will be supported:
-
-- 1.21.2-1.21.4
-- 1.21.0-1.21.1
-- 1.20.0-1.20.1
-
-This decision has been made to streamline the development process, the versions that we are continuing to support
-account for almost 80% of all downloads over the last 30 days. **After this point, all other versions will only receive
-critical updates**, this means if a source API changes or a common crash is found, this will still be fixed. But no new
-features will be added.
-
-### Changes
-
-- Added French translations. - [AuthenTiiq](https://github.com/AuthenTiiq) ([#62](https://github.com/DeDiamondPro/Resourcify/pull/62))
-- Added Portuguese (Brazil) translations. - [SeriousFreezing](https://github.com/seriousfreezing) ([#58](https://github.com/DeDiamondPro/Resourcify/pull/58))
-- Updated Korean translations. - [Koala0107](https://github.com/Koala0107) ([#57](https://github.com/DeDiamondPro/Resourcify/pull/57))
-- Updated Turkish translations. - [WinTone01](https://github.com/WinTone01) ([#60](https://github.com/DeDiamondPro/Resourcify/pull/60))
-- Fixed Resourcify not showing all Modrinth datapacks due to an API change.
-- Fixed sorting issues in CurseForge updating causing an older version to be shown as the new version.
-- Fixed update all button showing even when no uploads are available, and getting stuck on "updating..." when clicked.
+In addition, Resourcify's build system has been entirely rewritten using architectury loom and stonecutter, which will
+speed up future development of Resourcify.
 
 ----------------------------------------------------------------------------------------------------
 
