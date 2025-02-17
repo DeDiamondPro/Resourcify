@@ -21,7 +21,7 @@ import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.util.capitalizeAll
 import dev.dediamondpro.resourcify.util.ofURLCustom
-import dev.dediamondpro.resourcify.util.toURL
+import dev.dediamondpro.resourcify.util.toURIOrNull
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIText
@@ -43,7 +43,7 @@ class MemberCard(member: IMember) : UIContainer() {
             if (it.mouseButton != 0) return@onMouseClick
             UDesktop.browse(URI(member.url))
         }
-        member.avatarUrl?.toURL()?.let {
+        member.avatarUrl?.toURIOrNull()?.let {
             UIImage.ofURLCustom(it).constrain {
                 x = 0.pixels()
                 y = 0.pixels()

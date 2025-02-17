@@ -22,7 +22,7 @@ import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.IGalleryImage
 import dev.dediamondpro.resourcify.util.ofURLCustom
-import dev.dediamondpro.resourcify.util.toURL
+import dev.dediamondpro.resourcify.util.toURIOrNull
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIWrappedText
@@ -58,7 +58,7 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
             } childOf Window.of(this)
             background.setFloating(true)
             background.grabWindowFocus()
-            gallery.url.toURL()?.let { image ->
+            gallery.url.toURIOrNull()?.let { image ->
                 UIImage.ofURLCustom(image, true).constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()

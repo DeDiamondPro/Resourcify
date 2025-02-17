@@ -24,7 +24,7 @@ import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.*
 import java.awt.Color
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 data class PartialModrinthProject(
@@ -52,8 +52,8 @@ data class PartialModrinthProject(
     override fun getId(): String = id
     override fun getSummary(): String = summary
     override fun getAuthor(): String = author
-    override fun getIconUrl(): URL? = iconUrl?.toURL()
-    override fun getBannerUrl(): URL? = featuredGallery?.toURL() ?: gallery.firstOrNull()?.toURL()
+    override fun getIconUrl(): URI? = iconUrl?.toURIOrNull()
+    override fun getBannerUrl(): URI? = featuredGallery?.toURIOrNull() ?: gallery.firstOrNull()?.toURIOrNull()
     override fun getBannerColor(): Color? = color?.let { Color(it) }
     override fun getDescription(): CompletableFuture<String> =
         fetchProject().thenApply { it?.getDescription()?.getNow(null) ?: error("Failed to fetch description.") }
@@ -70,7 +70,7 @@ data class PartialModrinthProject(
 
     private fun fetchProject(): CompletableFuture<FullModrinthProject?> {
         return projectRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug").getJson<FullModrinthProject>()
+            "${ModrinthService.API}/project/$slug".toURI().getJson<FullModrinthProject>()
         }.apply { projectRequest = this }
     }
 
@@ -86,7 +86,7 @@ data class PartialModrinthProject(
 
     override fun getVersions(): CompletableFuture<List<IVersion>> {
         return (versionsRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug/version").getJson<List<ModrinthVersion>>()
+            "${ModrinthService.API}/project/$slug/version".toURI().getJson<List<ModrinthVersion>>()
                 ?.filter { it.hasFile() }
                 // Filter mods (jar files) out of datapack versions
                 ?.filter { projectType != "mod" || it.getLoaders().contains("datapack") }
@@ -96,7 +96,7 @@ data class PartialModrinthProject(
 
     private fun fetchMembers(): CompletableFuture<List<Member>?> {
         return membersRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug/members").getJson<List<Member>>()
+            "${ModrinthService.API}/project/$slug/members".toURI().getJson<List<Member>>()
         }.apply { membersRequest = this }
     }
 

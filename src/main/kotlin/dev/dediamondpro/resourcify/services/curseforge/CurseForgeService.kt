@@ -31,7 +31,6 @@ import gg.essential.elementa.font.DefaultFonts
 import org.apache.http.client.utils.URIBuilder
 import java.io.File
 import java.net.URI
-import java.net.URL
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
@@ -73,7 +72,7 @@ object CurseForgeService : IService {
                 }
                 addParameter("categoryIds", "[${actualCategories.joinToString(",")}]")
                 addParameter("gameVersions", "[${minecraftVersions.joinToString(",") { "\"$it\"" }}]")
-            }.build().toURL().getJson<CurseForgeSearchData>(headers = mapOf("x-api-key" to API_KEY)).apply {
+            }.build().getJson<CurseForgeSearchData>(headers = mapOf("x-api-key" to API_KEY)).apply {
                 this?.let { // Filter data packs out of resource packs
                     if (type != ProjectType.RESOURCE_PACK) return@let
                     projects = projects.filter { !it.getInternalCategories().any { c -> c.id == 5193 } }
@@ -91,7 +90,7 @@ object CurseForgeService : IService {
     private fun fetchMinecraftVersions() {
         if (minecraftVersions != null && minecraftVersions?.isDone == true && minecraftVersions?.isCompletedExceptionally == false) return
         minecraftVersions = supplyAsync {
-            URL("$API/minecraft/version")
+            "$API/minecraft/version".toURI()
                 .getJson<CurseForgeMinecraftVersionsResponse>(
                     headers = mapOf("x-api-key" to API_KEY),
                     useCache = false
@@ -121,7 +120,7 @@ object CurseForgeService : IService {
     private fun fetchCategories() {
         if (categories != null && categories?.isDone == true && categories?.isCompletedExceptionally == false) return
         categories = supplyAsync {
-            URL("$API/categories?gameId=432")
+            "$API/categories?gameId=432".toURI()
                 .getJson<CurseForgeCategoryResponse>(
                     headers = mapOf("x-api-key" to API_KEY),
                     useCache = false
@@ -152,7 +151,7 @@ object CurseForgeService : IService {
     }
 
     override fun getProjectsFromIds(ids: List<String>): Map<String, IProject> {
-        return URL("$API/mods")
+        return "$API/mods".toURI()
             .postAndGetJson<CurseForgeModsBatchResponse, CurseForgeModsBatch>(
                 CurseForgeModsBatch(ids.map { it.toInt() }), headers = mapOf("x-api-key" to API_KEY)
             )?.data?.associateBy { project -> ids.first { it == project.getId() } }
@@ -172,7 +171,7 @@ object CurseForgeService : IService {
                 MurmurHash2.cfHash(bytes, bytes.size)
             }.filterKeys { it != null }
             val mcVersion = Platform.getMcVersion()
-            val result = URL("$API/fingerprints/432")
+            val result = "$API/fingerprints/432".toURI()
                 .postAndGetJson<CurseForgeFingerprintResponse, CurseForgeFingerprint>(
                     CurseForgeFingerprint(hashes.keys.map { it!! }.toList()),
                     headers = mapOf("x-api-key" to API_KEY)
@@ -196,7 +195,7 @@ object CurseForgeService : IService {
                             .addParameter("gameVersion", mcVersion)
                             // We only care about the most recent match
                             .addParameter("pageSize", "1")
-                            .build().toURL()
+                            .build()
                             .getJson<CurseForgeProject.Versions>(headers = mapOf("x-api-key" to API_KEY))
                             ?.data?.sortedByDescending {
                                 Instant.from(DateTimeFormatter.ISO_INSTANT.parse(it.getReleaseDate()))

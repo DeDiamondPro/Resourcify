@@ -35,11 +35,12 @@ import gg.essential.universal.UResolution
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
 import java.awt.Color
+import java.net.URI
 import java.net.URL
 import javax.imageio.ImageIO
 
 fun UIImage.Companion.ofURLCustom(
-    url: URL,
+    uri: URI,
     loadingImage: Boolean = true,
     width: Float? = null,
     height: Float? = null,
@@ -50,7 +51,7 @@ fun UIImage.Companion.ofURLCustom(
     magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
 ): UIImage {
     val image = UIImage(
-        url.getImageAsync(
+        uri.getImageAsync(
             useCache = useCache,
             width = width?.times(scaleFactor),
             height = height?.times(scaleFactor),

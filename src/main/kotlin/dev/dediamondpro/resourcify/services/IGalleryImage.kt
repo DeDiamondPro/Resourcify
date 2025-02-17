@@ -18,8 +18,8 @@
 package dev.dediamondpro.resourcify.services
 
 import dev.dediamondpro.resourcify.config.Config
-import dev.dediamondpro.resourcify.util.toURL
-import java.net.URL
+import dev.dediamondpro.resourcify.util.toURIOrNull
+import java.net.URI
 
 interface IGalleryImage {
     val url: String
@@ -27,8 +27,8 @@ interface IGalleryImage {
     val title: String?
     val description: String?
 
-    fun getThumbnailUrlIfEnabled(): URL? {
-        if (Config.instance.fullResThumbnail) return url.toURL()
-        return thumbnailUrl?.toURL() ?: url.toURL()
+    fun getThumbnailUrlIfEnabled(): URI? {
+        if (Config.instance.fullResThumbnail) return url.toURIOrNull()
+        return thumbnailUrl?.toURIOrNull() ?: url.toURIOrNull()
     }
 }

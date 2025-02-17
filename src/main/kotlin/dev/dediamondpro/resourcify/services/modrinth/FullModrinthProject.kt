@@ -24,7 +24,7 @@ import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.*
 import java.awt.Color
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 data class FullModrinthProject(
@@ -70,9 +70,9 @@ data class FullModrinthProject(
     override fun getBrowserUrl(): String = "https://modrinth.com/$projectType/$slug"
 
     override fun getDescription(): CompletableFuture<String> = supply { body }
-    override fun getIconUrl(): URL? = iconUrl?.toURL()
+    override fun getIconUrl(): URI? = iconUrl?.toURIOrNull()
 
-    override fun getBannerUrl(): URL? = gallery.minByOrNull { it.ordering }?.getThumbnailUrlIfEnabled()
+    override fun getBannerUrl(): URI? = gallery.minByOrNull { it.ordering }?.getThumbnailUrlIfEnabled()
 
     override fun getBannerColor(): Color? = color?.let { Color(it) }
 
@@ -99,7 +99,7 @@ data class FullModrinthProject(
 
     private fun fetchMembers(): CompletableFuture<List<PartialModrinthProject.Member>?> {
         return membersRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug/members").getJson<List<PartialModrinthProject.Member>>()
+            "${ModrinthService.API}/project/$slug/members".toURI().getJson<List<PartialModrinthProject.Member>>()
         }.apply { membersRequest = this }
     }
 
@@ -111,7 +111,7 @@ data class FullModrinthProject(
 
     override fun getVersions(): CompletableFuture<List<IVersion>> {
         return (versionsRequest ?: supplyAsync {
-            URL("${ModrinthService.API}/project/$slug/version").getJson<List<ModrinthVersion>>()
+            "${ModrinthService.API}/project/$slug/version".toURI().getJson<List<ModrinthVersion>>()
                 ?.filter { it.hasFile() }
                 // Filter mods (jar files) out of datapack versions
                 ?.filter { projectType != "mod" || it.getLoaders().contains("datapack") }

@@ -18,7 +18,7 @@
 package dev.dediamondpro.resourcify.services
 
 import java.awt.Color
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 interface IProject {
@@ -26,8 +26,8 @@ interface IProject {
     fun getId(): String
     fun getSummary(): String
     fun getAuthor(): String
-    fun getIconUrl(): URL? = null
-    fun getBannerUrl(): URL? = null
+    fun getIconUrl(): URI? = null
+    fun getBannerUrl(): URI? = null
     fun getBannerColor(): Color? = null
     fun getBrowserUrl(): String
     fun getDescription(): CompletableFuture<String>

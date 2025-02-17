@@ -19,7 +19,7 @@ package dev.dediamondpro.resourcify.util
 
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
-import java.net.URL
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.CompletableFuture
@@ -29,35 +29,35 @@ object DownloadManager {
     private val tempFolder = File("./resourcify-temp")
 
     @get:Synchronized
-    private val queuedDownloads = mutableMapOf<URL, QueuedDownload>()
+    private val queuedDownloads = mutableMapOf<URI, QueuedDownload>()
 
     @get:Synchronized
-    private val downloadsInProgress = mutableMapOf<URL, DownloadData>()
+    private val downloadsInProgress = mutableMapOf<URI, DownloadData>()
 
     fun download(
-        file: File, sha512: String? = null, url: URL,
+        file: File, sha512: String? = null, uri: URI,
         extract: Boolean = false, callback: (() -> Unit)? = null,
     ) {
-        queuedDownloads[url] = QueuedDownload(file, sha512, extract, callback)
+        queuedDownloads[uri] = QueuedDownload(file, sha512, extract, callback)
         downloadNext()
     }
 
-    fun getProgress(url: URL): Float? {
-        if (queuedDownloads.containsKey(url)) return 0f
-        if (!downloadsInProgress.containsKey(url)) return null
-        val length = downloadsInProgress[url]?.length ?: return 0f
-        return (downloadsInProgress[url]?.file?.length()?.toFloat() ?: 0f) / length
+    fun getProgress(uri: URI): Float? {
+        if (queuedDownloads.containsKey(uri)) return 0f
+        if (!downloadsInProgress.containsKey(uri)) return null
+        val length = downloadsInProgress[uri]?.length ?: return 0f
+        return (downloadsInProgress[uri]?.file?.length()?.toFloat() ?: 0f) / length
     }
 
-    fun cancelDownload(url: URL) {
-        if (queuedDownloads.containsKey(url)) {
-            queuedDownloads.remove(url)
+    fun cancelDownload(uri: URI) {
+        if (queuedDownloads.containsKey(uri)) {
+            queuedDownloads.remove(uri)
             return
         }
-        if (!downloadsInProgress.containsKey(url)) return
-        downloadsInProgress[url]?.future?.cancel(true)
-        downloadsInProgress[url]?.file?.delete()
-        downloadsInProgress.remove(url)
+        if (!downloadsInProgress.containsKey(uri)) return
+        downloadsInProgress[uri]?.future?.cancel(true)
+        downloadsInProgress[uri]?.file?.delete()
+        downloadsInProgress.remove(uri)
     }
 
     private fun downloadNext() {
@@ -71,7 +71,7 @@ object DownloadManager {
             tempFile = File(tempFolder, queuedDownload.file.name + "-$i.tmp")
         }
         downloadsInProgress[url] = DownloadData(runAsync {
-            val con = url.setupConnection()
+            val con = url.toURL().setupConnection()
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {
                 Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)

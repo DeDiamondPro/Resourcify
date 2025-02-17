@@ -22,9 +22,9 @@ import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.getJson
 import dev.dediamondpro.resourcify.util.supply
 import dev.dediamondpro.resourcify.util.supplyAsync
-import dev.dediamondpro.resourcify.util.toURL
+import dev.dediamondpro.resourcify.util.toURIOrNull
 import org.apache.http.client.utils.URIBuilder
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 data class ModrinthVersion(
@@ -48,7 +48,7 @@ data class ModrinthVersion(
     override fun getProjectId(): String = projectId
     fun hasFile() = files.isNotEmpty()
     private fun getPrimaryFile() = files.firstOrNull { it.primary } ?: files.first()
-    override fun getDownloadUrl(): URL? = getPrimaryFile().url.toURL()
+    override fun getDownloadUrl(): URI? = getPrimaryFile().url.toURIOrNull()
     override fun getFileName(): String = getPrimaryFile().filename
     override fun getSha1(): String = getPrimaryFile().hashes.sha1
     override fun getChangeLog(): CompletableFuture<String> = supply { changelog }
@@ -68,7 +68,7 @@ data class ModrinthVersion(
             }
             val idString = requiredDependencies.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
             URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
-                .build().toURL().getJson<List<FullModrinthProject>>()?.map {
+                .build().getJson<List<FullModrinthProject>>()?.map {
                     ModrinthDependency(
                         it,
                         DependencyType.fromString(requiredDependencies.first { d -> d.projectId == it.getId() }.dependencyType)!!

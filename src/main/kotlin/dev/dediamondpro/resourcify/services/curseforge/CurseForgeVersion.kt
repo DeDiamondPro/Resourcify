@@ -19,7 +19,7 @@ package dev.dediamondpro.resourcify.services.curseforge
 
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 data class CurseForgeVersion(
@@ -46,13 +46,13 @@ data class CurseForgeVersion(
     override fun getVersionNumber(): String? = null
     override fun getProjectId(): String = modId.toString()
     fun hasDownloadUrl(): Boolean = downloadUrl != null
-    override fun getDownloadUrl(): URL? = downloadUrl?.toURL()
+    override fun getDownloadUrl(): URI? = downloadUrl?.toURIOrNull()
     override fun getFileName(): String = fileName
     override fun getSha1(): String = hashes.firstOrNull { it.algo == 1 }?.value ?: ""
 
     override fun getChangeLog(): CompletableFuture<String> {
         return changeLogRequest ?: supplyAsync {
-            URL("${CurseForgeService.API}/mods/$modId/files/$id/changelog")
+            "${CurseForgeService.API}/mods/$modId/files/$id/changelog".toURI()
                 .getJson<Changelog>(headers = mapOf("x-api-key" to CurseForgeService.API_KEY))
                 ?.data ?: error("Failed to fetch changelog.")
         }.apply { changeLogRequest = this }
@@ -84,7 +84,7 @@ data class CurseForgeVersion(
     override fun getDependencies(): CompletableFuture<List<IDependency>> {
         return (dependenciesRequest ?: supplyAsync {
             val deps = dependencies.filter { DependencyType.fromCurseForgeId(it.relationType) != null }
-            val projects: ModsResponse = "${CurseForgeService.API}/mods".toURL()
+            val projects: ModsResponse = "${CurseForgeService.API}/mods".toURI()
                 ?.postAndGetJson(
                     GetByIdProperty(deps.map { it.modId }),
                     headers = mapOf("x-api-key" to CurseForgeService.API_KEY)

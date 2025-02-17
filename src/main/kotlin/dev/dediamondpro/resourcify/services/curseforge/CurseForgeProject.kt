@@ -22,7 +22,7 @@ import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IMember
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.*
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 data class CurseForgeProject(
@@ -46,12 +46,12 @@ data class CurseForgeProject(
     override fun getId(): String = id.toString()
     override fun getSummary(): String = summary
     override fun getAuthor(): String = authors.firstOrNull()?.name ?: ""
-    override fun getIconUrl(): URL? = logo?.let { it.thumbnailUrl?.toURL() ?: it.url.toURL() }
-    override fun getBannerUrl(): URL? = screenshots.firstOrNull()?.getThumbnailUrlIfEnabled()
+    override fun getIconUrl(): URI? = logo?.let { it.thumbnailUrl?.toURIOrNull() ?: it.url.toURIOrNull() }
+    override fun getBannerUrl(): URI? = screenshots.firstOrNull()?.getThumbnailUrlIfEnabled()
 
     override fun getDescription(): CompletableFuture<String> {
         return descriptionRequest ?: supplyAsync {
-            URL("${CurseForgeService.API}/mods/$id/description")
+            "${CurseForgeService.API}/mods/$id/description".toURI()
                 .getJson<Description>(headers = mapOf("x-api-key" to CurseForgeService.API_KEY))
                 ?.data ?: error("Failed to fetch description.")
         }.apply { descriptionRequest = this }
@@ -83,7 +83,7 @@ data class CurseForgeProject(
     override fun canBeInstalled(): Boolean = allowModDistribution ?: true
     override fun getVersions(): CompletableFuture<List<IVersion>> {
         return (versionsRequest ?: supplyAsync {
-            URL("${CurseForgeService.API}/mods/$id/files")
+            "${CurseForgeService.API}/mods/$id/files".toURI()
                 .getJson<Versions>(headers = mapOf("x-api-key" to CurseForgeService.API_KEY))
                 ?.data?.filter { it.hasDownloadUrl() } ?: error("Failed to fetch versions.")
         }.apply { versionsRequest = this }) as CompletableFuture<List<IVersion>>

@@ -34,8 +34,8 @@ import javax.net.ssl.HttpsURLConnection
 
 object NetworkUtil {
     private const val MAX_CACHE_SIZE = 100_000_000
-    private val cache = ConcurrentHashMap<URL, CacheObject>()
-    private val currentlyFetching = ConcurrentHashMap<URL, CompletableFuture<ByteArray?>>()
+    private val cache = ConcurrentHashMap<URI, CacheObject>()
+    private val currentlyFetching = ConcurrentHashMap<URI, CompletableFuture<ByteArray?>>()
 
     fun setupConnection(url: URL): HttpsURLConnection {
         val con = url.openConnection() as HttpsURLConnection
@@ -46,12 +46,12 @@ object NetworkUtil {
         return con
     }
 
-    fun getOrFetch(url: URL, attempts: Int = 1, headers: Map<String, String> = emptyMap()): ByteArray? {
+    fun getOrFetch(url: URI, attempts: Int = 1, headers: Map<String, String> = emptyMap()): ByteArray? {
         return cache[url]?.getBytes() ?: currentlyFetching[url]?.get() ?: startFetch(url, attempts, headers).get()
     }
 
     fun getOrFetchAsync(
-        url: URL, attempts: Int = 1,
+        url: URI, attempts: Int = 1,
         headers: Map<String, String> = emptyMap()
     ): CompletableFuture<ByteArray?> {
         return cache[url]?.getBytes()?.let {
@@ -60,16 +60,16 @@ object NetworkUtil {
     }
 
     private fun startFetch(
-        url: URL, attempts: Int,
+        uri: URI, attempts: Int,
         headers: Map<String, String> = emptyMap()
     ): CompletableFuture<ByteArray?> {
         return supplyAsync {
             for (i in 0 until attempts) {
                 try {
-                    val result = url.setupConnection().apply {
+                    val result = uri.toURL().setupConnection().apply {
                         headers.forEach { (key, value) -> this.setRequestProperty(key, value) }
                     }.getEncodedInputStream()?.use { it.readBytes() }?.let {
-                        cache[url] = CacheObject(url, it)
+                        cache[uri] = CacheObject(uri, it)
                         it
                     }
                     if (result != null) {
@@ -82,9 +82,9 @@ object NetworkUtil {
             }
             return@supplyAsync null
         }.apply {
-            currentlyFetching[url] = this
+            currentlyFetching[uri] = this
         }.whenComplete { _, _ ->
-            currentlyFetching.remove(url)
+            currentlyFetching.remove(uri)
             pruneCache()
         }
     }
@@ -103,7 +103,7 @@ object NetworkUtil {
     }
 
     private data class CacheObject(
-        val url: URL,
+        val url: URI,
         private val bytes: ByteArray,
         var lastAccess: Long = UMinecraft.getTime()
     ) {
@@ -143,11 +143,11 @@ fun URLConnection.getEncodedInputStream(): InputStream? {
 
 fun URL.getEncodedInputStream(): InputStream? = this.setupConnection().getEncodedInputStream()
 
-fun URL.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<String, String> = emptyMap()): String? {
+fun URI.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<String, String> = emptyMap()): String? {
     if (useCache) return NetworkUtil.getOrFetch(this, attempts, headers)?.decodeToString()
     for (i in 0 until attempts) {
         try {
-            val result = this.setupConnection()
+            val result = this.toURL().setupConnection()
                 .apply { headers.forEach { (key, value) -> this.setRequestProperty(key, value) } }
                 .getEncodedInputStream()?.bufferedReader()?.use { it.readText() }
             if (result != null) {
@@ -162,7 +162,7 @@ fun URL.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<Stri
     return null
 }
 
-fun URL.getStringAsync(
+fun URI.getStringAsync(
     useCache: Boolean = true, attempts: Int = 3,
     headers: Map<String, String> = emptyMap()
 ): CompletableFuture<String?> {
@@ -170,34 +170,34 @@ fun URL.getStringAsync(
     return supplyAsync { this.getString(false, attempts, headers) }
 }
 
-inline fun <reified T> URL.getJson(
+inline fun <reified T> URI.getJson(
     useCache: Boolean = true, attempts: Int = 3,
     headers: Map<String, String> = emptyMap()
 ): T? {
     return this.getString(useCache, attempts, headers)?.fromJson()
 }
 
-inline fun <reified T> URL.getJsonAsync(
+inline fun <reified T> URI.getJsonAsync(
     useCache: Boolean = true, attempts: Int = 3,
     headers: Map<String, String> = emptyMap()
 ): CompletableFuture<T?> {
     return this.getStringAsync(useCache, attempts, headers).thenApply { it?.fromJson() }
 }
 
-fun URL.getImage(
+fun URI.getImage(
     useCache: Boolean = true,
     width: Float? = null,
     height: Float? = null,
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
     attempts: Int = 1
 ): BufferedImage? {
-    val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    if (useCache) return NetworkUtil.getOrFetch(url, attempts)?.inputStream()?.use {
+    val uri = ImageURLUtils.getTransformedImageUrl(this, width, height, fit)
+    if (useCache) return NetworkUtil.getOrFetch(uri, attempts)?.inputStream()?.use {
         ImageIO.read(it)
     }
     for (i in 0 until attempts) {
         try {
-            val result = url.getEncodedInputStream()?.use { ImageIO.read(it) }
+            val result = uri.toURL().getEncodedInputStream()?.use { ImageIO.read(it) }
             if (result != null) {
                 return result
             }
@@ -211,27 +211,27 @@ fun URL.getImage(
 
 }
 
-fun URL.getImageAsync(
+fun URI.getImageAsync(
     useCache: Boolean = true,
     width: Float? = null,
     height: Float? = null,
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
     attempts: Int = 1
 ): CompletableFuture<BufferedImage> {
-    val url = ImageURLUtils.getTransformedImageUrl(this.toURI(), width, height, fit).toURL()
-    return if (useCache) NetworkUtil.getOrFetchAsync(url, attempts)
+    val uri = ImageURLUtils.getTransformedImageUrl(this, width, height, fit)
+    return if (useCache) NetworkUtil.getOrFetchAsync(uri, attempts)
         .thenApply { bytes ->
             bytes?.inputStream()?.use { ImageIO.read(it) }
         } else supplyAsync { this.getImage(false, width, height, fit, attempts)!! }
 }
 
-inline fun <reified S> URL.postAndGetString(
+inline fun <reified S> URI.postAndGetString(
     data: S, attempts: Int = 3,
     headers: Map<String, String> = emptyMap()
 ): String? {
     for (i in 0 until attempts) {
         try {
-            val con = this.setupConnection()
+            val con = this.toURL().setupConnection()
             val output = data.toJson()
             con.setRequestProperty("Content-Type", "application/json")
             con.setRequestProperty("Content-Length", output.length.toString())
@@ -251,7 +251,7 @@ inline fun <reified S> URL.postAndGetString(
     return null
 }
 
-inline fun <reified T, reified S> URL.postAndGetJson(
+inline fun <reified T, reified S> URI.postAndGetJson(
     data: S, attempts: Int = 3,
     headers: Map<String, String> = emptyMap()
 ): T? {
@@ -278,12 +278,6 @@ fun String.toURI(): URI = try {
 
 fun String.toURIOrNull(): URI? = try {
     this.toURI()
-} catch (_: Exception) {
-    null
-}
-
-fun String.toURL(): URL? = try {
-    this.toURI().toURL()
 } catch (_: Exception) {
     null
 }
