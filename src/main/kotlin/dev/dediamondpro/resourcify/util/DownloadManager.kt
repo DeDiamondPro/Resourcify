@@ -17,13 +17,13 @@
 
 package dev.dediamondpro.resourcify.util
 
-import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.CompletableFuture
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 object DownloadManager {
     private val tempFolder = File("./resourcify-temp")
@@ -85,11 +85,11 @@ object DownloadManager {
             if (queuedDownload.extract) {
                 val targetFolder = queuedDownload.file
                 targetFolder.mkdirs()
-                ZipFile.builder().setFile(tempFile).get().use { zip ->
+                ZipFile(tempFile).use { zip ->
                     // If all content is actually inside another folder inside the zip file, try to find this folder
                     // We do this by checking if there is only one folder at the root, and then take this folder
                     var prefixToRemove: String? = null
-                    for (entry in zip.entries) {
+                    for (entry in zip.entries()) {
                         val firstFolder = entry.name.substringBefore("/", "")
                         // Could be readme file, license file, ...
                         if (firstFolder.isEmpty()) {
@@ -103,7 +103,7 @@ object DownloadManager {
                         }
                     }
 
-                    zip.entries.asSequence().forEach { entry ->
+                    zip.entries().asSequence().forEach { entry ->
                         // Remove prefix so when a zip contains a folder which contains the actual files,
                         // this will handle it
                         val entryFile = resolvePath(entry, targetFolder, prefixToRemove)
