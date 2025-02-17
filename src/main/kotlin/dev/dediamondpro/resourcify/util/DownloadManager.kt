@@ -23,6 +23,7 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.CompletableFuture
+import java.util.zip.ZipEntry
 
 object DownloadManager {
     private val tempFolder = File("./resourcify-temp")
@@ -84,7 +85,7 @@ object DownloadManager {
             if (queuedDownload.extract) {
                 val targetFolder = queuedDownload.file
                 targetFolder.mkdirs()
-                ZipFile(tempFile).use { zip ->
+                ZipFile.builder().setFile(tempFile).get().use { zip ->
                     // If all content is actually inside another folder inside the zip file, try to find this folder
                     // We do this by checking if there is only one folder at the root, and then take this folder
                     var prefixToRemove: String? = null
@@ -105,12 +106,7 @@ object DownloadManager {
                     zip.entries.asSequence().forEach { entry ->
                         // Remove prefix so when a zip contains a folder which contains the actual files,
                         // this will handle it
-                        val entryName =
-                            entry.name.let { if (prefixToRemove != null) it.removePrefix(prefixToRemove) else it }
-                        val entryFile = File(targetFolder, entryName)
-                        if (entryFile.startsWith("..") || entryFile.startsWith("/")) {
-                            error("Safety measure tripped for $entryFile, it is trying to go to parent directory")
-                        }
+                        val entryFile = resolvePath(entry, targetFolder, prefixToRemove)
                         if (entry.isDirectory) {
                             entryFile.mkdirs()
                             return@forEach
@@ -133,11 +129,19 @@ object DownloadManager {
                 println("Download of $url failed:")
                 throwable.printStackTrace()
                 tempFile.delete()
-                return@whenComplete
             }
             downloadsInProgress.remove(url)
             downloadNext()
         }, tempFile)
+    }
+
+    private fun resolvePath(entry: ZipEntry, targetDir: File, prefix: String?): File {
+        val entryName = entry.name.let { if (prefix != null) it.removePrefix(prefix) else it }
+        val destination = targetDir.resolve(entryName).normalize()
+        if (!destination.absolutePath.startsWith(targetDir.normalize().absolutePath)) {
+            error("Bad zip entry, ${entry.name} is not in correct directory.")
+        }
+        return destination
     }
 }
 
