@@ -214,6 +214,12 @@ object CurseForgeService : IService {
                     if (file?.hasDownloadUrl() == false) {
                         continue
                     }
+                    // If there is an update, but the update is already present, don't add it to the available updates
+                    if (file != null && match.file.fileFingerprint != file.fileFingerprint
+                        && hashes.containsKey(file.fileFingerprint)
+                    ) {
+                        continue
+                    }
                     updates[hashes[match.file.fileFingerprint]!!] = file.let {
                         // If the file is up to date, return null
                         if (match.file.fileFingerprint == it?.fileFingerprint) {

@@ -167,7 +167,9 @@ object ModrinthService : IService {
                         ModrinthUpdateFormat(loaders = listOf(loader), hashes = hashes.keys.toList())
                     ) ?: error("Failed to fetch updates")
             // Associate with file, and if we already have the latest version, set the result to null
-            data.map { hashes[it.key]!! to if (it.key == it.value.getSha1()) null else it.value }.toMap()
+            data.map { hashes[it.key]!! to if (it.key == it.value.getSha1()) null else it.value }
+                // Filter out update if the updated zip is already present
+                .filter { it.second != null && !hashes.containsKey(it.second!!.getSha1()) }.toMap()
         }
     }
 
