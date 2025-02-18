@@ -42,12 +42,12 @@ class DropDown(
         x = 0.pixels()
         y = 0.pixels()
         width = 100.percent()
-        height = ChildBasedMaxSizeConstraint() + 8.pixels()
+        height = 100.percent()
     } effect OutlineEffect(Colors.DROPDOWN_BORDER, 1f) childOf this
 
     private val text = UIWrappedText().constrain {
         x = 4.pixels()
-        y = 4.pixels()
+        y = CenterConstraint()
         width = 100.percent() - 21.pixels()
         color = Colors.TEXT_SECONDARY.toConstraint()
     } childOf box
@@ -60,7 +60,7 @@ class DropDown(
     } childOf box
 
     init {
-        constrain { height = RelativeConstraint() boundTo box }
+        constrain { height = 17.pixels() }
         updateText()
         val expandContainer = UIContainer().constrain {
             x = 0.pixels()
@@ -111,7 +111,7 @@ class DropDown(
             } childOf scrollBox
         }
         var hidden = true
-        box.onMouseClick {
+        this.onMouseClick {
             if (!hidden || it.mouseButton != 0 || !canOpen) return@onMouseClick
             expandContainer.setFloating(true)
             expandContainer.unhide()
