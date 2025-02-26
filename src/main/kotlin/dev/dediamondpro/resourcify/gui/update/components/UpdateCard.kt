@@ -113,29 +113,31 @@ class UpdateCard(
                     color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf versionNumberHolder
             }
+        }
 
-            val buttonHolder = UIContainer().constrain {
-                x = 4.pixels(true)
-                y = 4.pixels()
-                width = 73.pixels()
-                height = 48.pixels()
-            } childOf this
+        val buttonHolder = UIContainer().constrain {
+            x = 4.pixels(true)
+            y = 4.pixels()
+            width = 73.pixels()
+            height = 48.pixels()
+        } childOf this
 
-            createUpdateButton() childOf buttonHolder
+        createUpdateButton() childOf buttonHolder
 
-            val changeLogButton = UIBlock(Colors.BUTTON_SECONDARY).constrain {
+        val changeLogButton =
+            UIBlock(if (version != null) Colors.BUTTON_SECONDARY else Colors.BUTTON_SECONDARY_DISABLED).constrain {
                 y = 0.pixels(true)
                 width = 73.pixels()
                 height = 50.percent() - 2.pixels()
             }.onMouseClick {
+                if (version == null) return@onMouseClick
                 gui.showChangeLog(project, version, createUpdateButton())
             } childOf buttonHolder
-            UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
-                x = CenterConstraint()
-                y = CenterConstraint()
-                color = Colors.TEXT_PRIMARY.toConstraint()
-            } childOf changeLogButton
-        }
+        UIText("${ChatColor.BOLD}${localize("resourcify.updates.changelog")}").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
+        } childOf changeLogButton
 
         val sourceHolder = UIContainer().constrain {
             x = 50.percent() - 50.pixels()
@@ -183,13 +185,24 @@ class UpdateCard(
     }
 
     private fun createUpdateButton(): UIComponent {
-        val updateButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
-            y = 0.pixels()
-            width = 73.pixels()
-            height = 50.percent() - 2.pixels()
-        }.onMouseClick {
-            downloadUpdate()
-        }
+        val updateButton =
+            UIBlock(if (selectedData != null) Colors.BUTTON_PRIMARY else Colors.BUTTON_PRIMARY_DISABLED).constrain {
+                y = 0.pixels()
+                width = 73.pixels()
+                height = 50.percent() - 2.pixels()
+            }.onMouseClick {
+                if (selectedData == null) return@onMouseClick
+                downloadUpdate()
+            }
+        text = UIText(
+            "${ChatColor.BOLD}${
+                localize(if (selectedData != null) "resourcify.updates.update" else "resourcify.updates.up-to-date")
+            }"
+        ).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
+        } childOf updateButton
         val downloadUrl = selectedData?.version?.getDownloadUrl() ?: return updateButton
         progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
             x = 0.pixels(true)
@@ -200,11 +213,6 @@ class UpdateCard(
                 else (1 - progress) * it.parent.getWidth()
             }
             height = 100.percent()
-        } childOf updateButton
-        text = UIText("${ChatColor.BOLD}${localize("resourcify.updates.update")}").constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-            color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf updateButton
         return updateButton
     }

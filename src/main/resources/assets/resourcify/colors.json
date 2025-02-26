@@ -5,6 +5,8 @@
   "text_warn": "#ffff00ff",
   "button_primary": "#1bd96aff",
   "button_secondary": "#878999ff",
+  "button_primary_disabled": "#094d25ff",
+  "button_secondary_disabled": "#43444dff",
   "checkbox": "#c0c0c0ff",
   "expandable": "#00000066",
   "background": "#00000066",

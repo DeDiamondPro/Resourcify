@@ -25,6 +25,7 @@ import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.PackUtils
 import dev.dediamondpro.resourcify.util.localize
 import dev.dediamondpro.resourcify.util.markdown
@@ -46,6 +47,7 @@ import java.util.concurrent.CompletableFuture
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
     private val cards = mutableListOf<UpdateCard>()
     private var topText: UIText? = null
+    private var updateAllButton: UIBlock? = null
     private var updateText: UIText? = null
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
@@ -132,12 +134,13 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     y = CenterConstraint()
                     color = Colors.TEXT_PRIMARY.toConstraint()
                 } childOf closeButton
-                val updateAllButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
-                    y = 0.pixels()
-                    x = 4.pixels(true)
-                    width = 73.pixels()
-                    height = 100.percent()
-                } childOf topBar
+                updateAllButton =
+                    UIBlock(if (projects.isNotEmpty()) Colors.BUTTON_PRIMARY else Colors.BUTTON_PRIMARY_DISABLED).constrain {
+                        y = 0.pixels()
+                        x = 4.pixels(true)
+                        width = 73.pixels()
+                        height = 100.percent()
+                    } childOf topBar
                 val progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
                     x = 0.pixels(true)
                     y = 0.pixels()
@@ -154,12 +157,12 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                         return@basicWidthConstraint (1 - progress) * it.parent.getWidth()
                     }
                     height = 100.percent()
-                } childOf updateAllButton
+                } childOf updateAllButton!!
                 updateText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
                     color = Colors.TEXT_PRIMARY.toConstraint()
-                } childOf updateAllButton
+                } childOf updateAllButton!!
                 topText = UIText().constrain {
                     x = CenterConstraint()
                     y = CenterConstraint()
@@ -173,7 +176,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     } childOf updateContainer
                 })
 
-                updateAllButton.onMouseClick {
+                updateAllButton!!.onMouseClick {
                     val updateCount = cards.count { it.hasUpdate() }
                     if (startSize != 0 || updateCount == 0) return@onMouseClick
                     startSize = updateCount
@@ -225,7 +228,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                     if (!updates.containsKey(file)) {
                         updates[file] = mutableMapOf()
                     }
-                    updates[file]!![source] = project
+                    updates[file]!![source] = if (source == ModrinthService) project else null
                 }
             }
             // Do not include it if it is up to date at every available service
@@ -243,8 +246,10 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         )
         if (startSize != 0) return // There are currently updates being downloaded
         if (updateCount != 0) {
+            updateAllButton?.setColor(Colors.BUTTON_PRIMARY.toConstraint())
             updateText?.setText("${ChatColor.BOLD}${"resourcify.updates.update_all".localize()}")
         } else {
+            updateAllButton?.setColor(Colors.BUTTON_PRIMARY_DISABLED.toConstraint())
             updateText?.setText("${ChatColor.BOLD}${"resourcify.updates.up-to-date".localize()}")
         }
     }
@@ -327,11 +332,14 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             when (type) {
                 ProjectType.RESOURCE_PACK -> {
                     if (reloadOnClose) {
-                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(UMinecraft.getMinecraft().resourcePackRepository)
+                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(
+                            UMinecraft.getMinecraft().resourcePackRepository
+                        )
                     } else {
                         displayScreen(screen)
                     }
                 }
+
                 else -> displayScreen(screen)
             }
         }

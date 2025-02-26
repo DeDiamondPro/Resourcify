@@ -44,6 +44,10 @@ object Colors {
         private set
     lateinit var BUTTON_SECONDARY: Color
         private set
+    lateinit var BUTTON_PRIMARY_DISABLED: Color
+        private set
+    lateinit var BUTTON_SECONDARY_DISABLED: Color
+        private set
     lateinit var CHECKBOX: Color
         private set
     lateinit var EXPANDABLE: Color
@@ -87,6 +91,8 @@ object Colors {
         TEXT_WARN = colors["text_warn"]?.toColor() ?: TEXT_WARN
         BUTTON_PRIMARY = colors["button_primary"]?.toColor() ?: BUTTON_PRIMARY
         BUTTON_SECONDARY = colors["button_secondary"]?.toColor() ?: BUTTON_SECONDARY
+        BUTTON_PRIMARY_DISABLED = colors["button_primary_disabled"]?.toColor() ?: BUTTON_PRIMARY_DISABLED
+        BUTTON_SECONDARY_DISABLED = colors["button_secondary_disabled"]?.toColor() ?: BUTTON_SECONDARY_DISABLED
         CHECKBOX = colors["checkbox"]?.toColor() ?: CHECKBOX
         EXPANDABLE = colors["expandable"]?.toColor() ?: EXPANDABLE
         BACKGROUND = colors["background"]?.toColor() ?: BACKGROUND

@@ -54,6 +54,8 @@ the different fields influence in the GUI, see below.
   green color.
 - `button_secondary`: The color used for the secondary buttons (for example the changelog button in the update GUI), in
   the default theme this is a light gray color.
+- `button_primary_disabled`: (since 1.7.1) The color used for a primary button if it is disabled.
+- `button_secondary_disabled`: (since 1.7.1) The color used for a secondary button if it is disabled.
 - `checkbox`: The color for checkboxes, used in the filters in the browse page and in the config GUI, this is a light
   gray color in the default theme.
 - `expandable`: The color of an expandable section in a project description (like the one you are reading now), by
