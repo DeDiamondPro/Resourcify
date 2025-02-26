@@ -40,6 +40,7 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import java.awt.Color
 import java.io.File
@@ -67,6 +68,11 @@ class UpdateCard(
     }
 
     private fun createCard(project: IProject, version: IVersion?) {
+        val mainHolder = UIContainer().constrain {
+            width = 100.percent() - 185.pixels()
+            height = 56.pixels()
+        } effect ScissorEffect() childOf this
+
         val iconUrl = project.getIconUrl()
         if (iconUrl == null) {
             McImage(Icons.DEFAULT_ICON)
@@ -77,30 +83,30 @@ class UpdateCard(
             y = 4.pixels()
             width = 48.pixels()
             height = 48.pixels()
-        } childOf this
+        } childOf mainHolder
         UIText(project.getName()).constrain {
             x = 56.pixels()
             y = 8.pixels()
             textScale = 2.pixels()
             color = Colors.TEXT_PRIMARY.toConstraint()
-        } childOf this
+        } childOf mainHolder
 
         if (version == null) {
             UIText("resourcify.updates.up-to-date".localize()).constrain {
                 x = 56.pixels()
                 y = SiblingConstraint(padding = 4f)
                 color = Colors.TEXT_WARN.toConstraint()
-            } childOf this
+            } childOf mainHolder
         } else {
             UIText(version.getName()).constrain {
                 x = 56.pixels()
                 y = SiblingConstraint(padding = 4f)
                 color = Colors.TEXT_PRIMARY.toConstraint()
-            } childOf this
+            } childOf mainHolder
             val versionNumberHolder = UIContainer().constrain {
                 x = 56.pixels()
                 y = SiblingConstraint(padding = 4f)
-            } childOf this
+            } childOf mainHolder
             UIText(version.getVersionType().localizedName.localize()).constrain {
                 x = 0.pixels()
                 y = 0.pixels()
@@ -140,7 +146,7 @@ class UpdateCard(
         } childOf changeLogButton
 
         val sourceHolder = UIContainer().constrain {
-            x = 50.percent() - 50.pixels()
+            x = 81.pixels(true)
             y = 4.pixels()
             width = 100.pixels()
             height = 48.pixels()
@@ -174,9 +180,9 @@ class UpdateCard(
             gui.updateText()
         }.constrain {
             x = 0.pixels()
-            y = 0.pixels(true)
+            y = 1.pixels(true)
             width = 100.percent()
-            height = 50.percent() - 2.pixels()
+            height = 50.percent() - 4.pixels()
         } childOf sourceHolder
     }
 

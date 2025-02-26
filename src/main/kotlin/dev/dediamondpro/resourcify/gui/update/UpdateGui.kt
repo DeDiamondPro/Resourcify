@@ -44,7 +44,7 @@ import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
-class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen() {
+class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen(adaptScale = false) {
     private val cards = mutableListOf<UpdateCard>()
     private var topText: UIText? = null
     private var updateAllButton: UIBlock? = null
