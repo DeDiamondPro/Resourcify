@@ -28,11 +28,11 @@ import net.minecraft.util.profiling.ProfilerFiller
 //? if fabric
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
 
-class ThemeReloadListener : SimplePreparableReloadListener<Map<String, String>>()
+object ThemeReloadListener : SimplePreparableReloadListener<Map<String, String>>()
     //? if fabric
     ,IdentifiableResourceReloadListener
 {
-    private val colorsLocation = Utils.createResourceLocation("colors.json")
+    val colorsLocation = Utils.createResourceLocation("colors.json")
 
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller): Map<String, String> {
         try {

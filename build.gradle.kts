@@ -72,7 +72,9 @@ val shadeModImplementation: Configuration by configurations.creating {
 val mcVersion = VersionDefinition(
     "1.20.1" to VersionRange("1.20", "1.20.1", name = "1.20.1"),
     "1.21.1" to VersionRange("1.21", "1.21.1", name = "1.21.1"),
-    "1.21.3" to VersionRange("1.21.2", "1.21.4", name = "1.21.3/4"),
+    "1.21.4" to VersionRange("1.21.2", "1.21.4", name = "1.21.3/4"),
+    // NeoForge changed stuff going from .3 to .4
+    "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -81,45 +83,47 @@ val javaVersion = VersionDefinition(
 val parchmentVersion = VersionDefinition(
     "1.20.1" to "1.20.1:2023.09.03",
     "1.21.1" to "1.21.1:2024.11.17",
-    "1.21.3" to "1.21.3:2024.12.07"
+    "1.21.4" to "1.21.4:2025.02.16"
 )
 val fabricApiVersion = VersionDefinition(
     "1.20.1" to "0.92.3+1.20.1",
     "1.21.1" to "0.114.0+1.21.1",
-    "1.21.3" to "0.114.0+1.21.3",
+    "1.21.4" to "0.118.0+1.21.4",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
-    "1.21.3" to "12.0.0"
+    "1.21.4" to "13.0.2"
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
-    "1.21.3" to "21.3.58",
+    "1.21.4" to "21.4.99-beta",
+)
+val minimumNeoForgeVersion = VersionDefinition(
+    // We need this version or higher on 1.21.4, on other versions we don't care
+    "1.21.4" to "[21.4.84-beta,)",
+    default = "[1,)"
 )
 val forgeVersion = VersionDefinition(
     "1.20.1" to "1.20.1-47.3.0",
     "1.21.1" to "1.21.1-52.0.40",
-    "1.21.3" to "1.21.3-53.0.37",
+    "1.21.4" to "1.21.4-54.1.0",
 )
 val kotlinForForgeVersion = VersionDefinition(
     "1.20.1" to "4.11.0",
     "1.21.1" to "5.7.0",
-    "1.21.3" to "5.7.0",
+    "1.21.4" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.20.1" to "1.20.1-${mcPlatform.loaderString}:369+diamond",
-    "1.21.1-fabric" to "1.21-fabric:369+diamond",
-    "1.21.1" to "1.21-neoforge:369+diamond", // forge and neoforge
-    "1.21.3-fabric" to "1.21.2-fabric:369+diamond",
-    "1.21.3" to "1.21.3-neoforge:369+diamond", // forge and neoforge
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:373",
+    default = "${mcPlatform.name}:373"
 )
 val elementaVersion = VersionDefinition(
     "1.20.1" to "1.18.1-${mcPlatform.loaderString}:DIAMOND-9",
     "1.21.1-fabric" to "1.18.1-fabric:DIAMOND-9",
     "1.21.1" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
-    "1.21.3-fabric" to "1.18.1-fabric:DIAMOND-9",
-    "1.21.3" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
+    "1.21.4-fabric" to "1.18.1-fabric:DIAMOND-9",
+    "1.21.4" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
 )
 
 dependencies {
@@ -259,6 +263,7 @@ tasks {
             "version" to mod_version,
             "aw" to accesWidener,
             "mcVersion" to mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
+            "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
         )
 
         properties.forEach { (k, v) -> inputs.property(k, v) }

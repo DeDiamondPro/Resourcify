@@ -20,5 +20,12 @@ versionRange = "${mcVersion}"
 ordering = "NONE"
 side = "BOTH"
 
+[[dependencies.resourcify]]
+modId = "neoforge"
+type = "required"
+versionRange = "${minNeoForgeVersion}"
+ordering = "NONE"
+side = "BOTH"
+
 [[mixins]]
 config = "mixins.resourcify.json"

@@ -26,10 +26,13 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.minecraft.server.packs.PackType
 //?} else if neoforge {
 /*import net.neoforged.fml.common.Mod
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory
 import thedarkcolour.kotlinforforge.neoforge.forge.LOADING_CONTEXT
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
+//? if >=1.21.4 {
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
+//?} else
+/^import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent^/
 *///?} else if forge {
 /*import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent
@@ -57,14 +60,17 @@ object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
     }
 
     //? if forgelike {
-    /*fun registerClientReloadListeners(event: RegisterClientReloadListenersEvent) {
-        event.registerReloadListener(ThemeReloadListener())
+    /*fun registerClientReloadListeners(event: /^? if <1.21.4 || forge {^/  /^RegisterClientReloadListenersEvent ^//^?} else {^/ AddClientReloadListenersEvent /^?}^/) {
+        //? if <1.21.4 || forge {
+        /^event.registerReloadListener(ThemeReloadListener)
+        ^///?} else
+        event.addListener(ThemeReloadListener.colorsLocation, ThemeReloadListener)
     }
     *///?}
 
     //? if fabric {
     override fun onInitializeClient() {
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ThemeReloadListener())
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ThemeReloadListener)
     }
     //?}
 }
