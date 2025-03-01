@@ -82,7 +82,7 @@ object ModrinthService : IService {
     }
 
     private fun fetchMinecraftVersions() {
-        if (minecraftVersions != null && minecraftVersions?.isDone == true && minecraftVersions?.isCompletedExceptionally == false) return
+        if (minecraftVersions != null && minecraftVersions?.isCompletedExceptionally == false) return
         minecraftVersions = supplyAsync {
             URL("https://api.modrinth.com/v2/tag/game_version")
                 .getJson<List<ModrinthMinecraftVersion>>(useCache = false)
@@ -108,7 +108,7 @@ object ModrinthService : IService {
             .localizeOrDefault(category.capitalizeAll())
 
     private fun fetchCategories() {
-        if (categories != null && categories?.isDone == true && categories?.isCompletedExceptionally == false) return
+        if (categories != null && categories?.isCompletedExceptionally == false) return
         categories = supplyAsync {
             URL("$API/tag/category")
                 .getJson<List<ModrinthCategory>>(useCache = false)

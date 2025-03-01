@@ -34,9 +34,12 @@ import gg.essential.universal.UResolution
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
+
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.net.URL
+import java.io.ByteArrayInputStream
+import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.min
 
@@ -83,6 +86,28 @@ fun UIImage.Companion.ofResourceCustom(
     val image = UIImage(
         imageFuture,
         loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
+    )
+    if (!loadingImage) image.imageHeight = 0.5625f
+    image.textureMinFilter = minFilter
+    image.textureMagFilter = magFilter
+    return image
+}
+
+fun UIImage.Companion.ofBase64(
+    base64Image: String,
+    loadSync: Boolean = false,
+    loadingImage: Boolean = true,
+    minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
+    magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
+): UIImage {
+    val imageFuture = if (loadSync) {
+        supply { ImageIO.read(ByteArrayInputStream(Base64.getDecoder().decode(base64Image))) }
+    } else {
+        supplyAsync { ImageIO.read(ByteArrayInputStream(Base64.getDecoder().decode(base64Image))) }
+    }
+    val image = UIImage(
+        imageFuture,
+        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
     image.textureMinFilter = minFilter

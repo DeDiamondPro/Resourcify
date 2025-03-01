@@ -17,9 +17,15 @@
 
 package dev.dediamondpro.resourcify.services.ads
 
+import java.util.concurrent.CompletableFuture
+
 interface IAdProvider {
     fun isAdAvailable(): Boolean
-    fun getText(): String
-    fun getImagePath(): String
-    fun getUrl(): String
+    fun get(): CompletableFuture<IAd?>
+
+    interface IAd {
+        fun getText(): String
+        fun getImageBase64(): String?
+        fun getUrl(): String
+    }
 }
