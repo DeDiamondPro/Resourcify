@@ -18,11 +18,47 @@
 package dev.dediamondpro.resourcify.services.ads
 
 import dev.dediamondpro.resourcify.config.Config
-import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.*
+import java.util.concurrent.CompletableFuture
 
 object DefaultAdProvider : IAdProvider {
+    private var ads: CompletableFuture<List<RemoteAd>>? = null
+
     override fun isAdAvailable(): Boolean = Config.instance.adsEnabled
-    override fun getText(): String = "resourcify.browse.bisect_ad".localize()
-    override fun getImagePath(): String = "/assets/resourcify/textures/bisect-logo.png"
-    override fun getUrl(): String = "https://bisecthosting.com/diamond?r=resourcify"
+
+    override fun get(): CompletableFuture<IAdProvider.IAd?> {
+        fetchAds()
+        return ads?.thenApply { it.randomOrNull() } ?: supply { null }
+    }
+
+    private fun fetchAds() {
+        if (ads != null && ads?.isCompletedExceptionally == false) return
+        ads = supplyAsync {
+            "https://api.dediamondpro.dev/resourcify/ads".toURI()
+                .getJson<List<RemoteAd>>(useCache = false)
+                ?: error("Failed to fetch ads.")
+        }
+    }
+
+    class RemoteAd : IAdProvider.IAd {
+        private val text: String = ""
+        private val translate: Boolean? = null
+        private val icon: String? = null
+        private val url: String = ""
+
+        override fun getText(): String {
+            if (translate == true) {
+                return text.localize()
+            }
+            return text
+        }
+
+        override fun getImageBase64(): String? {
+            return icon
+        }
+
+        override fun getUrl(): String {
+            return url
+        }
+    }
 }

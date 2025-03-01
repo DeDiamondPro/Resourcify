@@ -83,7 +83,7 @@ class BrowseScreen(
 
     private val headerBox = UIBlock(Colors.BACKGROUND).constrain {
         x = 0.pixels()
-        y = SiblingConstraint() + (if (service.getAdProvider().isAdAvailable()) 4 else 0).pixels()
+        y = SiblingConstraint()
         width = 100.percent()
         height = 29.pixels()
     } childOf mainBox
@@ -266,7 +266,10 @@ class BrowseScreen(
 
     private fun header() {
         val adProvider = service.getAdProvider()
-        if (adProvider.isAdAvailable()) {
+        if (adProvider.isAdAvailable()) adProvider.get().whenComplete { ad, error ->
+            error?.printStackTrace()
+            if (ad == null) return@whenComplete
+
             adBox.constrain {
                 x = 0.pixels()
                 y = 0.pixels()
@@ -275,16 +278,23 @@ class BrowseScreen(
             }.onMouseClick {
                 // Prevents opening the ad link accidentally right when the GUI is opened
                 if (it.mouseButton != 0 || guiOpenedTime + 500 > UMinecraft.getTime()) return@onMouseClick
-                UDesktop.browse(adProvider.getUrl().toURI())
+                UDesktop.browse(ad.getUrl().toURI())
             }
-            UIImage.ofResourceCustom(adProvider.getImagePath()).constrain {
-                x = 4.pixels()
-                y = 4.pixels()
-                width = 21.pixels()
-                height = 21.pixels()
-            } childOf adBox
-            UIWrappedText(adProvider.getText()).constrain {
-                x = SiblingConstraint(padding = 4f)
+            headerBox.constrain {
+                y = SiblingConstraint(padding = 4f)
+            }
+
+            val image = ad.getImageBase64()
+            image?.let {
+                UIImage.ofBase64(it).constrain {
+                    x = 4.pixels()
+                    y = 4.pixels()
+                    width = 21.pixels()
+                    height = 21.pixels()
+                } childOf adBox
+            }
+            UIWrappedText(ad.getText()).constrain {
+                x = if (image != null) SiblingConstraint(padding = 4f) else 4.pixels()
                 y = CenterConstraint()
                 width = 100.percent() - 33.pixels()
                 color = Colors.TEXT_PRIMARY.toConstraint()
