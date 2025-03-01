@@ -1,1 +1,12 @@
 accessWidener v2 named
+
+# Access to pack from entry
+accessible class net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase
+accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase pack Lnet/minecraft/server/packs/repository/Pack;
+
+# Access to file from pack
+accessible field net/minecraft/server/packs/repository/Pack resources Lnet/minecraft/server/packs/repository/Pack$ResourcesSupplier;
+accessible field net/minecraft/server/packs/FilePackResources file Ljava/io/File;
+accessible method net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase getSelfList ()Ljava/util/List;
+accessible method net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase getOtherList ()Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel onListChanged Ljava/lang/Runnable;

@@ -31,5 +31,5 @@ public interface PackScreenAccessor {
     Path getDirectory();
 
     @Accessor("model")
-    PackSelectionModel getOrganizer();
+    PackSelectionModel getModel();
 }

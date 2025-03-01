@@ -30,6 +30,7 @@ import dev.dediamondpro.resourcify.handlers.IrisHandler
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
+import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
@@ -42,6 +43,9 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
+import net.minecraft.client.gui.screens.packs.PackSelectionModel
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen
+import net.minecraft.server.packs.FilePackResources
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
@@ -227,7 +231,7 @@ class UpdateCard(
         val updateUrl = selectedData?.version?.getDownloadUrl() ?: return
         val newVersion = selectedData?.version ?: return
         if (DownloadManager.getProgress(updateUrl) == null) {
-            gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
+            gui.registerUpdate(this)
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
             var downloadFile = File(file.parentFile, newVersion.getFileName())
             if (downloadFile.exists()) {
@@ -240,15 +244,50 @@ class UpdateCard(
                 try {
                     // Try to update the pack if it is currently selected, not critical if it fails
                     when (gui.type) {
-                        ProjectType.AYCY_RESOURCE_PACK, ProjectType.RESOURCE_PACK -> {
+                        ProjectType.RESOURCE_PACK, ProjectType.DATA_PACK -> {
                             try {
-                                // If multiple threads try to update stuff at the same time things can go very wrong
                                 updateResourcePackLock.lock()
-                                val position = Platform.closeResourcePack(file)
-                                if (position != -1) {
-                                    Platform.enableResourcePack(downloadFile, position)
+
+                                PaginatedScreen.backScreens.firstOrNull { it is PackSelectionScreen }?.let {
+                                    val model = (it as PackScreenAccessor).model
+
+                                    model.findNewPacks()
+
+                                    // Find the original entry
+                                    var isSelected = false
+                                    var index = 0
+                                    for (entry in model.selected) {
+                                        if (entry !is PackSelectionModel.EntryBase) {
+                                            continue
+                                        }
+                                        val entryFile = Platform.getFileFromPackResourceSupplier(entry.pack.resources)
+                                        if (entryFile == null || entryFile != file) {
+                                            continue
+                                        }
+                                        isSelected = true
+                                        index = entry.selfList.indexOf(entry.pack)
+                                        entry.unselect()
+                                        break
+                                    }
+
+                                    // Find the new entry and update accordingly if needed
+                                    if (isSelected) for (entry in model.unselected) {
+                                        if (entry !is PackSelectionModel.EntryBase) {
+                                            continue
+                                        }
+                                        val entryFile = Platform.getFileFromPackResourceSupplier(entry.pack.resources)
+                                        if (entryFile == null || entryFile != downloadFile) {
+                                            continue
+                                        }
+                                        // We have found the pack we downloaded, now select it
+                                        entry.select()
+                                        // Set the index correctly
+                                        entry.otherList.remove(entry.pack)
+                                        entry.otherList.add(index, entry.pack)
+                                        model.onListChanged.run()
+                                        break
+                                    }
                                 }
-                                Platform.saveSettings()
                             } finally {
                                 updateResourcePackLock.unlock()
                             }
@@ -271,7 +310,15 @@ class UpdateCard(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                if (!file.delete()) gui.packsToDelete.add(file)
+                if (!file.delete()) {
+                    gui.packsToDelete.add(file)
+                } else if (gui.type == ProjectType.RESOURCE_PACK || gui.type == ProjectType.DATA_PACK) {
+                    // We have to update the list
+                    PaginatedScreen.backScreens.firstOrNull { it is PackSelectionScreen }?.let {
+                        val model = (it as PackScreenAccessor).model
+                        model.findNewPacks() // this will reload everything
+                    }
+                }
                 gui.removeCard(this)
             }
             progressBox?.constraints?.width?.recalculate = true

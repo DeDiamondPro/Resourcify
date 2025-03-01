@@ -1,5 +1,9 @@
 ## Resourcify 1.7.1
 
+- After updating a Resource Pack, you are now returned to the pack selection GUI, instead of immediately triggering a
+  resource reload.
+- (1.21.4 NeoForge) Fix compatibility with NeoForge 21.4.84-beta and above. (Note: Resourcify now requires NeoForge
+  21.4.84-beta or later on 1.21.4)
 - Improve scaling in the update GUI.
 - Added disabled button colors, these can be changed
   with [themes](https://github.com/DeDiamondPro/Resourcify/blob/master/README.md#theming).
