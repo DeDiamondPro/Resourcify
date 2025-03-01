@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.update.components
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.elements.McImage
@@ -308,7 +309,7 @@ class UpdateCard(
                         }
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Constants.LOGGER.error("Failed to update selected pack", e)
                 }
                 if (!file.delete()) {
                     gui.packsToDelete.add(file)

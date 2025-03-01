@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
+import dev.dediamondpro.resourcify.Constants
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
@@ -126,8 +127,7 @@ object DownloadManager {
             queuedDownload.callback?.let { it() }
         }.whenComplete { _, throwable ->
             if (throwable != null) {
-                println("Download of $url failed:")
-                throwable.printStackTrace()
+                Constants.LOGGER.error("Failed to download '$url'", throwable)
                 tempFile.delete()
             }
             downloadsInProgress.remove(url)

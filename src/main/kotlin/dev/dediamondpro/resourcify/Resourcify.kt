@@ -42,7 +42,7 @@ import thedarkcolour.kotlinforforge.forge.MOD_BUS
 *///?}
 
 //? if forgelike
-/*@Mod(ModInfo.ID)*/
+/*@Mod(Constants.ID)*/
 object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
     init {
         //? if neoforge {

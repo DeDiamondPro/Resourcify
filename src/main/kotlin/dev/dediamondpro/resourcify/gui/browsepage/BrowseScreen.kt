@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.browsepage
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
@@ -266,8 +267,7 @@ class BrowseScreen(
 
     private fun header() {
         val adProvider = service.getAdProvider()
-        if (adProvider.isAdAvailable()) adProvider.get().whenComplete { ad, error ->
-            error?.printStackTrace()
+        if (adProvider.isAdAvailable()) adProvider.get().whenComplete { ad, _ ->
             if (ad == null) return@whenComplete
 
             adBox.constrain {
@@ -353,7 +353,7 @@ class BrowseScreen(
                 type
             )
         }.whenComplete { response, error ->
-            error?.printStackTrace()
+            error?.let { Constants.LOGGER.error("Failed to load packs from \"${service.getName()}\"", it) }
             if (error != null || response == null) return@whenComplete
             totalHits = response.totalCount
             val projects = response.projects

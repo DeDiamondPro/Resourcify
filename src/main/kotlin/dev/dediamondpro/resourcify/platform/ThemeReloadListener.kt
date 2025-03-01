@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.platform
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.util.Utils
 import dev.dediamondpro.resourcify.util.fromJson
@@ -38,8 +39,7 @@ object ThemeReloadListener : SimplePreparableReloadListener<Map<String, String>>
         try {
             return resourceManager.openAsReader(colorsLocation).use { it.fromJson() }
         } catch (e: Exception) {
-            println("Failed to read Resourcify's colors file.")
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to read color file", e)
             return emptyMap()
         }
     }

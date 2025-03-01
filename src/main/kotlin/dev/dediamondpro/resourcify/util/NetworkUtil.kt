@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
-import dev.dediamondpro.resourcify.ModInfo
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.platform.Platform
 import gg.essential.universal.UMinecraft
 import java.awt.image.BufferedImage
@@ -42,7 +42,7 @@ object NetworkUtil {
         val con = url.openConnection() as HttpsURLConnection
         con.setRequestProperty(
             "User-Agent",
-            "${ModInfo.NAME}/${ModInfo.VERSION} (${Platform.getMcVersion()}-${Platform.getLoader()})"
+            "${Constants.NAME}/${Constants.VERSION} (${Platform.getMcVersion()}-${Platform.getLoader()})"
         )
         con.setRequestProperty("Accept-Encoding", "gzip, deflate")
         con.connectTimeout = 5000
@@ -79,7 +79,8 @@ object NetworkUtil {
                     if (result != null) {
                         return@supplyAsync result
                     }
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Constants.LOGGER.error("Failed to fetch \"$this\"", e)
                 }
                 // Wait a bit before trying again
                 Thread.sleep(250)
@@ -158,7 +159,7 @@ fun URI.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<Stri
                 return result
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to fetch string from \"$this\"", e)
         }
         // Wait a bit before trying again
         Thread.sleep(250)
@@ -206,7 +207,7 @@ fun URI.getImage(
                 return result
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to fetch image from \"$this\"", e)
         }
         // Wait a bit before trying again
         Thread.sleep(250)
@@ -247,7 +248,7 @@ inline fun <reified S> URI.postAndGetString(
                 return result
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to post and get string from \"$this\"", e)
         }
         // Wait a bit before trying again
         Thread.sleep(250)

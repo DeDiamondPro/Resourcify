@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
+import dev.dediamondpro.resourcify.Constants
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
@@ -122,9 +123,9 @@ object Utils {
                 return sb.toString()
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to get SHA-1 for file \"$file\"", e)
         } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
+            Constants.LOGGER.error("Failed to get SHA-1 for file \"$file\"", e)
         }
         return null
     }

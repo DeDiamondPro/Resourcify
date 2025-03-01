@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.update
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
@@ -117,7 +118,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         } childOf window
 
         getUpdates().exceptionally {
-            it.printStackTrace()
+            Constants.LOGGER.error("Failed to fetch updates", it)
             emptyMap()
         }.thenAccept { projects ->
             Window.enqueueRenderOperation {
@@ -227,7 +228,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             val updates = mutableMapOf<File, MutableMap<IService, UpdateData?>>()
             for ((source, future) in futures) {
                 val result = future.exceptionally {
-                    it.printStackTrace()
+                    Constants.LOGGER.error("Failed to fetch updates from \"$source\"", it)
                     emptyMap()
                 }.get()
                 for ((file, project) in result) {
@@ -336,7 +337,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         }
         cleanUp()
         packsToDelete.forEach {
-            if (!it.delete()) println("Failed to delete old pack file.")
+            if (!it.delete()) {
+                Constants.LOGGER.warn("Failed to delete '$it'.")
+            }
         }
     }
 

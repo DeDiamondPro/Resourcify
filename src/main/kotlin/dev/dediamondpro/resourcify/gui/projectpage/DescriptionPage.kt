@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.util.markdown
@@ -24,7 +25,6 @@ import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import java.awt.Color
 
 class DescriptionPage(screen: ProjectScreen) : UIBlock(Colors.BACKGROUND) {
     init {
@@ -43,7 +43,7 @@ class DescriptionPage(screen: ProjectScreen) : UIBlock(Colors.BACKGROUND) {
                         width = 100.percent() - 12.pixels()
                     } childOf this
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Constants.LOGGER.error("Error while rendering description", e)
                 }
             }
         }
