@@ -21,9 +21,6 @@ import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.update.components.UpdateCard
-import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
-import dev.dediamondpro.resourcify.mixins.ResourcePackOrganizerAccessor
-import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.PackUtils
 import dev.dediamondpro.resourcify.util.localize
@@ -40,7 +37,6 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
-import gg.essential.universal.UMinecraft
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -52,7 +48,6 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
     private var updateText: UIText? = null
     private var startSize = 0
     private val selectedUpdates = mutableListOf<UpdateCard>()
-    private var reloadOnClose = false
     private var closing = false
     val packsToDelete = mutableListOf<File>()
 
@@ -265,9 +260,8 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         }
     }
 
-    fun registerUpdate(updateCard: UpdateCard, reload: Boolean) {
+    fun registerUpdate(updateCard: UpdateCard) {
         selectedUpdates.add(updateCard)
-        if (reload) reloadOnClose = true
     }
 
     fun cancelUpdate(updateCard: UpdateCard) {
@@ -334,27 +328,11 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             return
         }
         closing = true // Prevent some button mashing issues
-        if (reloadOnClose) {
-            Platform.reloadResources()
-            UMinecraft.getMinecraft().options.save()
-        }
         val screen = backScreens.lastOrNull { it !is PaginatedScreen }
         if (screen == null) {
             displayScreen(null)
         } else {
-            when (type) {
-                ProjectType.RESOURCE_PACK -> {
-                    if (reloadOnClose) {
-                        ((screen as PackScreenAccessor).organizer as ResourcePackOrganizerAccessor).applier.accept(
-                            UMinecraft.getMinecraft().resourcePackRepository
-                        )
-                    } else {
-                        displayScreen(screen)
-                    }
-                }
-
-                else -> displayScreen(screen)
-            }
+            displayScreen(screen)
         }
         cleanUp()
         packsToDelete.forEach {

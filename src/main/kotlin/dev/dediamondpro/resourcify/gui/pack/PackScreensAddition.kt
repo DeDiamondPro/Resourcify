@@ -35,7 +35,7 @@ object PackScreensAddition {
         buttons.add(ImageButton(screen, type.plusX, type.plusY, Icons.PLUS) {
             UScreen.displayScreen(BrowseScreen(type, folder))
         })
-        if (type.hasUpdateButton) buttons.add(ImageButton(screen, type.updateX, type.updateY, Icons.UPDATE) {
+        if (type.hasUpdateButton(folder)) buttons.add(ImageButton(screen, type.updateX, type.updateY, Icons.UPDATE) {
             UScreen.displayScreen(UpdateGui(type, folder))
         })
         return buttons

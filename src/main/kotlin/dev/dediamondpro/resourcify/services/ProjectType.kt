@@ -36,22 +36,23 @@ enum class ProjectType(
     val plusY: (Int) -> Int = { 10 },
     val updateX: (Int) -> Int = { plusX.invoke(it) - 28 },
     val updateY: (Int) -> Int = plusY,
-    val hasUpdateButton: Boolean = true,
+    val hasUpdateButton: (File) -> Boolean = { true },
     val shouldExtract: Boolean = false,
 ) {
     RESOURCE_PACK("resourcify.type.resource_packs"),
-    // 1.8.9 only
-    AYCY_RESOURCE_PACK("resourcify.type.resource_packs", plusX = { it - 30 }),
-    DATA_PACK("resourcify.type.data_packs", hasUpdateButton = false),
+    DATA_PACK("resourcify.type.data_packs", hasUpdateButton = {
+        // If the parent file is saves, some mod is present that makes it possible to edit datapacks
+        it.parentFile?.parentFile?.name == "saves"
+    }),
     IRIS_SHADER("resourcify.type.shaders", { it / 2 + 134 }, { 6 }),
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
-    WORLD("resourcify.type.world", { it / 2 + 134 }, { 22 }, hasUpdateButton = false, shouldExtract = true),
+    WORLD("resourcify.type.world", { it / 2 + 134 }, { 22 }, hasUpdateButton = { false }, shouldExtract = true),
     // Used for when there is a link to a project but we don't know what type it is
     UNKNOWN("");
 
     fun isEnabled(): Boolean {
         return when (this) {
-            RESOURCE_PACK, AYCY_RESOURCE_PACK -> Config.instance.resourcePacksEnabled
+            RESOURCE_PACK -> Config.instance.resourcePacksEnabled
             DATA_PACK -> Config.instance.dataPacksEnabled
             IRIS_SHADER, OPTIFINE_SHADER -> Config.instance.shaderPacksEnabled
             WORLD -> Config.instance.worldsEnabled

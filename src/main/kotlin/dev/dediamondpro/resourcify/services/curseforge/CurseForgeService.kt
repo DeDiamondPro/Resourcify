@@ -141,7 +141,6 @@ object CurseForgeService : IService {
 
     private fun ProjectType.getClassId(): Int? = when (this) {
         ProjectType.RESOURCE_PACK -> 12
-        ProjectType.AYCY_RESOURCE_PACK -> 12
         // Data pack class id is 6945, but all data packs are actually under resource packs for some reason
         ProjectType.DATA_PACK -> 12
         ProjectType.IRIS_SHADER -> 6552

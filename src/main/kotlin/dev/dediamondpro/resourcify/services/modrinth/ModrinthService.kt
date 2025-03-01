@@ -156,9 +156,10 @@ object ModrinthService : IService {
                 if (hash == null) null else hash to it
             }.toMap()
             val loader = when (type) {
-                ProjectType.RESOURCE_PACK, ProjectType.AYCY_RESOURCE_PACK -> "minecraft"
+                ProjectType.RESOURCE_PACK -> "minecraft"
                 ProjectType.IRIS_SHADER -> "iris"
                 ProjectType.OPTIFINE_SHADER -> "optifine"
+                ProjectType.DATA_PACK -> "datapack"
                 else -> error("$type is not supported in updates")
             }
             val data: Map<String, ModrinthVersion> =
@@ -175,7 +176,6 @@ object ModrinthService : IService {
 
     private fun ProjectType.getProjectType(): String? = when (this) {
         ProjectType.RESOURCE_PACK -> "resourcepack"
-        ProjectType.AYCY_RESOURCE_PACK -> "resourcepack"
         ProjectType.DATA_PACK -> "mod"
         ProjectType.IRIS_SHADER -> "shader"
         ProjectType.OPTIFINE_SHADER -> "shader"
