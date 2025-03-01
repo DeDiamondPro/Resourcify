@@ -124,22 +124,19 @@ object ModrinthService : IService {
         return uri.host == "modrinth.com"
     }
 
-    override fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>? {
+    private val knownTypes = listOf("resourcepack", "datapack", "shaders", "mod", "modpack", "plugin")
+
+    override fun fetchProjectFromUrl(uri: URI): CompletableFuture<IProject?>? {
         val path = uri.path.removePrefix("/").split("/")
         if (path.size < 2) {
             return null
         }
-        val type = when (path[0]) {
-            "resourcepack" -> ProjectType.RESOURCE_PACK
-            "datapack" -> ProjectType.DATA_PACK
-            "shaders" -> ProjectType.IRIS_SHADER // Whether its iris or optifine doesn't matter here
-            "mod", "modpack", "plugin" -> ProjectType.UNKNOWN
-            else -> return null // Probably not a project url
+        if (!knownTypes.contains(path[0])) {
+            // We'll leave gathering the actual type to after fetching, but this is to validate the url.
+            return null
         }
         val url = "$API/project/${path[1]}".toURIOrNull() ?: return null
-        return type to supplyAsync {
-            url.getJson<FullModrinthProject>()
-        }
+        return supplyAsync { url.getJson<FullModrinthProject>() }
     }
 
     override fun getProjectsFromIds(ids: List<String>): Map<String, IProject> {

@@ -133,7 +133,7 @@ object CurseForgeService : IService {
         // return uri.host == "curseforge.com" || uri.host == "legacy.curseforge.com"
     }
 
-    override fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>? {
+    override fun fetchProjectFromUrl(uri: URI): CompletableFuture<IProject?>? {
         // I'd like to support this for curseforge, but I can only fetch the project based on project id,
         // which the URL does not contain (thanks curseforge!)
         return null

@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture
 interface IProject {
     fun getName(): String
     fun getId(): String
+    fun getType(): ProjectType
     fun getSummary(): String
     fun getAuthor(): String
     fun getIconUrl(): URI? = null

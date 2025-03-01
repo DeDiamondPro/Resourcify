@@ -18,14 +18,13 @@
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.minemark.providers.BrowserProvider
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
-import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import gg.essential.elementa.components.Window
 import gg.essential.universal.UScreen
-import java.io.File
 import java.net.URLDecoder
 
 object ConfirmingBrowserProvider : BrowserProvider {
@@ -49,23 +48,19 @@ object ConfirmingBrowserProvider : BrowserProvider {
         val uri = url.toURIOrNull() ?: return false
         for (service in ServiceRegistry.getAllServices()) {
             if (service.canFetchProjectUrl(uri)) {
-                val data = service.fetchProjectFromUrl(uri) ?: return false
-                val type = data.first
-                data.second.whenComplete { project, error ->
+                val future = service.fetchProjectFromUrl(uri) ?: return false
+                future.whenComplete { project, error ->
                     Window.enqueueRenderOperation {
                         if (error != null || project == null) {
+                            Constants.LOGGER.warn(
+                                "Failed to fetch project for \"$url\" from source \"${service.getName()}",
+                                error
+                            )
                             UScreen.displayScreen(ConfirmLinkScreen(url, UScreen.currentScreen))
                             return@enqueueRenderOperation
                         }
-                        // Try to get download folder on best effort basis
-                        val downloadFolder = when (type) {
-                            screen.type -> screen.downloadFolder
-                            ProjectType.RESOURCE_PACK -> File("./resourcepacks")
-                            ProjectType.IRIS_SHADER -> File("./shaderpacks")
-                            ProjectType.OPTIFINE_SHADER -> File("./shaderpacks")
-                            ProjectType.WORLD -> File("./saves")
-                            else -> null
-                        }
+                        val type = project.getType()
+                        val downloadFolder = type.getDirectoryFromCurrent(screen.type, screen.downloadFolder)
                         UScreen.displayScreen(ProjectScreen(service, project, type, downloadFolder))
                     }
                 }

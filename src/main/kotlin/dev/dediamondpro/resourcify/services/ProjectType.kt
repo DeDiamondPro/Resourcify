@@ -30,7 +30,7 @@ enum class ProjectType(
                 //? if >=1.20.5 {
                 + 195
                 //?} else
-                 /*+ 184*/ 
+                 /*+ 184*/
         )
     },
     val plusY: (Int) -> Int = { 10 },
@@ -47,7 +47,7 @@ enum class ProjectType(
     IRIS_SHADER("resourcify.type.shaders", { it / 2 + 134 }, { 6 }),
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
     WORLD("resourcify.type.world", { it / 2 + 134 }, { 22 }, hasUpdateButton = { false }, shouldExtract = true),
-    // Used for when there is a link to a project but we don't know what type it is
+    // Used for when there is a link to a project, but we don't know what type it is
     UNKNOWN("");
 
     fun isEnabled(): Boolean {
@@ -68,6 +68,23 @@ enum class ProjectType(
             OPTIFINE_SHADER -> File("./shaderpacks")
             WORLD -> File("./saves")
             else -> error("Unknown project type: $this")
+        }
+    }
+
+    fun getDirectoryFromCurrent(currentType: ProjectType, currentFolder: File?): File? {
+        // Treat both shader types as the same
+        if ((this == IRIS_SHADER && currentType == OPTIFINE_SHADER) || (this == OPTIFINE_SHADER && currentType == IRIS_SHADER)) {
+            return currentFolder
+        }
+
+        return when (this) {
+            currentType -> currentFolder
+            // Get folder on best-effort basis
+            RESOURCE_PACK -> File("./resourcepacks")
+            IRIS_SHADER -> File("./shaderpacks")
+            OPTIFINE_SHADER -> File("./shaderpacks")
+            WORLD -> File("./saves")
+            else -> null
         }
     }
 }

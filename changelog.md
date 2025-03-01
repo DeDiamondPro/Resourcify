@@ -1,9 +1,12 @@
 ## Resourcify 1.7.1
 
+- Add updating support for Datapacks when using a mod
+  like [Datapack/Gamerule Menus](https://modrinth.com/mod/packrule-menus).
 - After updating a Resource Pack, you are now returned to the pack selection GUI, instead of immediately triggering a
   resource reload.
+- Make dependencies open inside Resourcify, instead of opening it in the browser.
 - (1.21.4 NeoForge) Fix compatibility with NeoForge 21.4.84-beta and above. (Note: Resourcify now requires NeoForge
-  21.4.84-beta or later on 1.21.4)
+  21.4.84-beta or later on 1.21.4).
 - Improve scaling in the update GUI.
 - Added disabled button colors, these can be changed
   with [themes](https://github.com/DeDiamondPro/Resourcify/blob/master/README.md#theming).

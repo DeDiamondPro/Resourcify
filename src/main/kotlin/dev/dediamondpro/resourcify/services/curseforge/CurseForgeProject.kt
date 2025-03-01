@@ -17,10 +17,7 @@
 
 package dev.dediamondpro.resourcify.services.curseforge
 
-import dev.dediamondpro.resourcify.services.IGalleryImage
-import dev.dediamondpro.resourcify.services.IProject
-import dev.dediamondpro.resourcify.services.IMember
-import dev.dediamondpro.resourcify.services.IVersion
+import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
 import java.net.URI
 import java.util.concurrent.CompletableFuture
@@ -35,6 +32,7 @@ data class CurseForgeProject(
     private val links: Links,
     private val categories: List<Category>,
     private val allowModDistribution: Boolean?,
+    private val classId: Int,
 ) : IProject {
     @Transient
     private var descriptionRequest: CompletableFuture<String>? = null
@@ -44,6 +42,25 @@ data class CurseForgeProject(
 
     override fun getName(): String = name
     override fun getId(): String = id.toString()
+
+    override fun getType(): ProjectType {
+        return when (classId) {
+            12 -> {
+                // If the categories contain the data pack category, treat it is a data pack
+                if (categories.any { it.id == 5193 }) {
+                    ProjectType.DATA_PACK
+                } else {
+                    ProjectType.RESOURCE_PACK
+                }
+            }
+
+            6945 -> ProjectType.DATA_PACK
+            6552 -> ProjectType.IRIS_SHADER
+            17 -> ProjectType.WORLD
+            else -> ProjectType.UNKNOWN
+        }
+    }
+
     override fun getSummary(): String = summary
     override fun getAuthor(): String = authors.firstOrNull()?.name ?: ""
     override fun getIconUrl(): URI? = logo?.let { it.thumbnailUrl?.toURIOrNull() ?: it.url.toURIOrNull() }

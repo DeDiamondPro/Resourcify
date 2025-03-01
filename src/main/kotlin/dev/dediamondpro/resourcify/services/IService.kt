@@ -64,7 +64,7 @@ interface IService {
 
     fun canFetchProjectUrl(uri: URI): Boolean
 
-    fun fetchProjectFromUrl(uri: URI): Pair<ProjectType, CompletableFuture<IProject?>>?
+    fun fetchProjectFromUrl(uri: URI): CompletableFuture<IProject?>?
 
     fun getProjectsFromIds(ids: List<String>): Map<String, IProject>
 

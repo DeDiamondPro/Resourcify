@@ -85,7 +85,7 @@ data class CurseForgeVersion(
         return (dependenciesRequest ?: supplyAsync {
             val deps = dependencies.filter { DependencyType.fromCurseForgeId(it.relationType) != null }
             val projects: ModsResponse = "${CurseForgeService.API}/mods".toURI()
-                ?.postAndGetJson(
+                .postAndGetJson(
                     GetByIdProperty(deps.map { it.modId }),
                     headers = mapOf("x-api-key" to CurseForgeService.API_KEY)
                 ) ?: error("Failed to fetch dependencies.")

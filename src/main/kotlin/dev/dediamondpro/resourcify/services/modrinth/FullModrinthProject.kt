@@ -18,10 +18,7 @@
 package dev.dediamondpro.resourcify.services.modrinth
 
 import com.google.gson.annotations.SerializedName
-import dev.dediamondpro.resourcify.services.IGalleryImage
-import dev.dediamondpro.resourcify.services.IMember
-import dev.dediamondpro.resourcify.services.IProject
-import dev.dediamondpro.resourcify.services.IVersion
+import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
 import java.awt.Color
 import java.net.URI
@@ -64,6 +61,23 @@ data class FullModrinthProject(
 
     override fun getName(): String = title
     override fun getId(): String = id
+
+    override fun getType(): ProjectType {
+        return when (projectType) {
+            "resourcepack" -> ProjectType.RESOURCE_PACK
+            "datapack" -> ProjectType.DATA_PACK
+            "shader" -> ProjectType.IRIS_SHADER // Whether it's OptiFine or Iris doesn't matter
+            "mod" -> {
+                if (loaders.contains("datapack")) {
+                    return ProjectType.DATA_PACK
+                }
+                return ProjectType.UNKNOWN
+            }
+
+            else -> ProjectType.UNKNOWN
+        }
+    }
+
     override fun getSummary(): String = description
     override fun getAuthor(): String = membersRequest?.getNow(null)?.firstOrNull()?.user?.name ?: ""
 

@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.elements.McImage
-import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
@@ -130,7 +129,9 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                             width = 100.percent() - 8.pixels()
                             height = 32.pixels()
                         }.onMouseClick {
-                            UScreen.displayScreen(ConfirmLinkScreen(project.getBrowserUrl(), screen))
+                            val type = project.getType()
+                            val downloadFolder = type.getDirectoryFromCurrent(screen.type, screen.downloadFolder)
+                            UScreen.displayScreen(ProjectScreen(screen.service, project, type, downloadFolder))
                         } childOf changeLogHolder
                         val iconUrl = project.getIconUrl()
                         if (iconUrl == null) {
