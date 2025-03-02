@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Script to publish everything in a specific order
 ./gradlew publish-1.20.1-forge

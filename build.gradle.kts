@@ -213,7 +213,7 @@ publishMods {
         }
     }
     modrinth {
-        projectId.set("resourcify")
+        projectId.set("RLzHAoZe")
         accessToken.set(System.getenv("MODRINTH_TOKEN"))
 
         minecraftVersionRange {
