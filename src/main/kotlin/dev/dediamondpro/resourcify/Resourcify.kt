@@ -60,11 +60,11 @@ object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
     }
 
     //? if forgelike {
-    /*fun registerClientReloadListeners(event: /^? if <1.21.4 || forge {^/  /^RegisterClientReloadListenersEvent ^//^?} else {^/ AddClientReloadListenersEvent /^?}^/) {
+    /*fun registerClientReloadListeners(event: /^? if <1.21.4 || forge {^/  RegisterClientReloadListenersEvent /^?} else {^/ /^AddClientReloadListenersEvent ^//^?}^/) {
         //? if <1.21.4 || forge {
-        /^event.registerReloadListener(ThemeReloadListener)
-        ^///?} else
-        event.addListener(ThemeReloadListener.colorsLocation, ThemeReloadListener)
+        event.registerReloadListener(ThemeReloadListener)
+        //?} else
+        /^event.addListener(ThemeReloadListener.colorsLocation, ThemeReloadListener)^/
     }
     *///?}
 

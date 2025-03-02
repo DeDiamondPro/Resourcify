@@ -77,6 +77,11 @@ object DownloadManager {
             con.getEncodedInputStream().use {
                 Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
+            if (!downloadsInProgress.containsKey(url)) {
+                // This means the download has been canceled
+                tempFile.delete()
+                return@runAsync
+            }
             queuedDownload.sha1?.let {
                 val hash = Utils.getSha1(tempFile)
                 if (hash == it) return@let

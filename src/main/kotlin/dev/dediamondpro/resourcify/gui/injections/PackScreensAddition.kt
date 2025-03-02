@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.gui.pack
+package dev.dediamondpro.resourcify.gui.injections
 
 
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
@@ -47,7 +47,6 @@ object PackScreensAddition {
             "dataPack.title" -> ProjectType.DATA_PACK
             "of.options.shadersTitle" -> ProjectType.OPTIFINE_SHADER
             "options.iris.shaderPackSelection.title" -> ProjectType.IRIS_SHADER
-            "selectWorld.title" -> ProjectType.WORLD
             else -> return null
         }
     }

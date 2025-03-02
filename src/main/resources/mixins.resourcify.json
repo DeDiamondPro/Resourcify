@@ -3,8 +3,9 @@
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "ScreenMixin",
+    "CreateWorldScreenMixin",
     "PackScreenAccessor",
-    "WorldSelectionScreenAccessor"
+    "ScreenMixin",
+    "TabManagerMixin"
   ]
 }

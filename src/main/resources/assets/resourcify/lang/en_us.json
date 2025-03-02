@@ -56,6 +56,12 @@
   "resourcify.updates.source": "Source:",
   "resourcify.updates.up-to-date": "Up to date",
 
+  "resourcify.world.download": "Download",
+  "resourcify.world.downloading": "Downloading world: %.1f%%",
+  "resourcify.world.cancel": "Cancel",
+  "resourcify.world.failed": "Failed to open world",
+  "resourcify.world.failed.description": "Failed to open the world \"%s\" after downloading.",
+
   "resourcify.config.title": "Resourcify Config",
   "resourcify.config.source.title": "Default Source",
   "resourcify.config.source.description": "The source that will be enabled by default when opening the browse page.",

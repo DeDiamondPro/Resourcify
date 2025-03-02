@@ -17,8 +17,8 @@
 
 package dev.dediamondpro.resourcify.mixins;
 
-import dev.dediamondpro.resourcify.gui.pack.ImageButton;
-import dev.dediamondpro.resourcify.gui.pack.PackScreensAddition;
+import dev.dediamondpro.resourcify.gui.injections.ImageButton;
+import dev.dediamondpro.resourcify.gui.injections.PackScreensAddition;
 import dev.dediamondpro.resourcify.platform.Platform;
 import dev.dediamondpro.resourcify.services.ProjectType;
 import net.minecraft.client.gui.components.Renderable;

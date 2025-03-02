@@ -30,7 +30,7 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
-import dev.dediamondpro.resourcify.mixins.WorldSelectionScreenAccessor
+import dev.dediamondpro.resourcify.gui.world.WorldDownloadingScreen
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
@@ -43,7 +43,6 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
-import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen
 import java.awt.Color
 import java.io.File
 import java.net.URI
@@ -150,6 +149,9 @@ class ProjectScreen(
                         DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
                             text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                             installed = true
+                        }
+                        if (type == ProjectType.WORLD) {
+                            displayScreen(WorldDownloadingScreen(this@ProjectScreen, file, url))
                         }
                         progressBox?.constraints?.width?.recalculate = true
                     } else {
@@ -338,14 +340,6 @@ class ProjectScreen(
                     } childOf membersBox
                 }
             }
-        }
-    }
-
-    override fun afterInitialization() {
-        // Required since world selection screen doesn't automatically update
-        if (type == ProjectType.WORLD) {
-            forwardScreens.replaceAll { if (it is SelectWorldScreen) SelectWorldScreen((it as WorldSelectionScreenAccessor).parentScreen) else it }
-            backScreens.replaceAll { if (it is SelectWorldScreen) SelectWorldScreen((it as WorldSelectionScreenAccessor).parentScreen) else it }
         }
     }
 }
