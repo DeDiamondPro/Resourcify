@@ -14,20 +14,21 @@ import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen
 import net.minecraft.network.chat.Component
 import java.io.File
 import java.net.URI
+import kotlin.math.round
+
 
 //? if >=1.20.5 {
 import net.minecraft.client.gui.screens.GenericMessageScreen
-
 //?} else
 /*import net.minecraft.client.gui.screens.GenericDirtMessageScreen*/
 
 class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val uri: URI) :
 /*? if >=1.20.5 {*/ GenericMessageScreen /*?} else {*/ /*Screen *//*?}*/
-    (Component.translatable("resourcify.world.downloading", 0.0)) {
+    (Component.translatable("resourcify.world.downloading", 0)) {
     private var cancelButton: Button? = null
 
     //? if <1.20.5
-    /*private var textWidget: Component = Component.translatable("resourcify.world.downloading", 0.0)*/
+    /*private var textWidget: Component = Component.translatable("resourcify.world.downloading", 0)*/
     private var triggeredLoad = false
 
     override fun init() {
@@ -56,7 +57,7 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
         super.tick()
         val progress = DownloadManager.getProgress(uri)
         if (progress != null) {
-            updateText(Component.translatable("resourcify.world.downloading", progress * 100.0))
+            updateText(Component.translatable("resourcify.world.downloading", round(progress * 100.0).toInt()))
             this.repositionElements()
             return
         }
