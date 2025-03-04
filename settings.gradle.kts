@@ -27,7 +27,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.5.1"
+    id("dev.kikugie.stonecutter") version "0.5.2"
 }
 
 val platforms = listOf(
