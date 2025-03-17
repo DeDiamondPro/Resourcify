@@ -11,12 +11,6 @@ or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/resourcify) page.
 
 ------------------------------------
 
-# Feedback survey
-
-We'd love to hear your feedback to make Resourcify even better! Please take a moment to fill out [this form](https://forms.gle/NFFqdSrN7AV8gihdA) and share your thoughts. Thank you for your support ❤️!
-
-------------------------------------
-
 # Building
 
 Resourcify uses stonecutter to compile against multiple Minecraft versions and loaders at once, this changes a bit about
