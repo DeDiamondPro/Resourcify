@@ -22,6 +22,8 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UScreen
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 
@@ -34,15 +36,21 @@ class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvi
         height: Double,
         color: Color
     ) {
-        RenderSystem.setShaderTexture(0, texture)
-        val renderer = UGraphics.getFromTessellator()
-
-        renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
-        renderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(color).endVertex()
-        renderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(color).endVertex()
-        renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
-        renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
-        renderer.drawDirect()
+        // TODO: make this work on 1.21.5, maybe add AW/Accessor for GameRenderer.renderBuffers
+        return
+//        //? if <1.21.5 {
+//        /*RenderSystem.setShaderTexture(0, texture)
+//        *///?} else
+//        RenderType.guiTextured(texture)
+//        val renderer = UGraphics.getFromTessellator()
+//
+//
+//        renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
+//        renderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(color).endVertex()
+//        renderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(color).endVertex()
+//        renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
+//        renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
+//        renderer.drawDirect()
     }
 
     override fun draw(matrixStack: UMatrixStack) {

@@ -75,6 +75,7 @@ val mcVersion = VersionDefinition(
     "1.21.4" to VersionRange("1.21.2", "1.21.4", name = "1.21.3/4"),
     // NeoForge changed stuff going from .3 to .4
     "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
+    "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5", openEnd = true),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -89,11 +90,13 @@ val fabricApiVersion = VersionDefinition(
     "1.20.1" to "0.92.3+1.20.1",
     "1.21.1" to "0.114.0+1.21.1",
     "1.21.4" to "0.118.0+1.21.4",
+    "1.21.5" to "0.119.4+1.21.5",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
-    "1.21.4" to "13.0.2"
+    "1.21.4" to "13.0.2",
+    "1.21.5" to "14.0.0-beta.2",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -115,22 +118,21 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.4" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:373",
-    default = "${mcPlatform.name}:373"
-)
-val elementaVersion = VersionDefinition(
-    "1.20.1" to "1.18.1-${mcPlatform.loaderString}:DIAMOND-9",
-    "1.21.1-fabric" to "1.18.1-fabric:DIAMOND-9",
-    "1.21.1" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
-    "1.21.4-fabric" to "1.18.1-fabric:DIAMOND-9",
-    "1.21.4" to "1.20.4-neoforge:DIAMOND-9", // forge and neoforge
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:388+feature-fabric-1.21.5",
+    default = "${mcPlatform.name}:388+feature-fabric-1.21.5"
 )
 
 dependencies {
-    minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
+    var mcVersion = mcPlatform.versionString
+    if (mcVersion == "1.21.5") {
+        mcVersion = "1.21.5-rc2"
+    }
+    minecraft("com.mojang:minecraft:$mcVersion")
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchmentVersion.get(mcPlatform)}@zip")
+        parchmentVersion.getOrNull(mcPlatform)?.let {
+            parchment("org.parchmentmc.data:parchment-$it@zip")
+        }
     })
 
     if (mcPlatform.isFabric) {
@@ -154,7 +156,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shadeModImplementation("gg.essential:elementa-${elementaVersion.get(mcPlatform)}") {
+    shadeModImplementation("gg.essential:elementa:DIAMOND-11") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
@@ -262,7 +264,8 @@ tasks {
             "name" to mod_name,
             "version" to mod_version,
             "aw" to accesWidener,
-            "mcVersion" to mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
+            // TODO: remove allow all mc for 1.21.5
+            "mcVersion" to if (mcPlatform.patch == 5) "*" else mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
             "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
         )
 
