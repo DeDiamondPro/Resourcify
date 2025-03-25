@@ -123,11 +123,7 @@ val universalVersion = VersionDefinition(
 )
 
 dependencies {
-    var mcVersion = mcPlatform.versionString
-    if (mcVersion == "1.21.5") {
-        mcVersion = "1.21.5-rc2"
-    }
-    minecraft("com.mojang:minecraft:$mcVersion")
+    minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
     mappings(loom.layered {
         officialMojangMappings()
         parchmentVersion.getOrNull(mcPlatform)?.let {
