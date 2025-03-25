@@ -22,7 +22,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UScreen
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import java.awt.Color
@@ -36,21 +36,29 @@ class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvi
         height: Double,
         color: Color
     ) {
-        // TODO: make this work on 1.21.5, maybe add AW/Accessor for GameRenderer.renderBuffers
-        return
-//        //? if <1.21.5 {
-//        /*RenderSystem.setShaderTexture(0, texture)
-//        *///?} else
-//        RenderType.guiTextured(texture)
-//        val renderer = UGraphics.getFromTessellator()
-//
-//
-//        renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
-//        renderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(color).endVertex()
-//        renderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(color).endVertex()
-//        renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
-//        renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
-//        renderer.drawDirect()
+        //? if >=1.21.5 {
+        val bufferSource = Minecraft.getInstance().gameRenderer.renderBuffers.bufferSource()
+        val renderType = RenderType.guiTextured(texture)
+        val vertexConsumer = bufferSource.getBuffer(renderType)
+        val pose = matrixStack.toMC().last().pose()
+        val colorInt = color.rgb
+
+        vertexConsumer.addVertex(pose, x.toFloat(), (y + height).toFloat(), 0F).setUv(0F, 1F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, (x + width).toFloat(), (y + height).toFloat(), 0F).setUv(1F, 1F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, (x + width).toFloat(), y.toFloat(), 0F).setUv(1F, 0F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, x.toFloat(), y.toFloat(), 0F).setUv(0F, 0F).setColor(colorInt)
+        bufferSource.endLastBatch()
+        //?} else {
+        /*RenderSystem.setShaderTexture(0, texture)
+        val renderer = UGraphics.getFromTessellator()
+
+        renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
+        renderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(color).endVertex()
+        renderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(color).endVertex()
+        renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
+        renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
+        renderer.drawDirect()
+        *///?}
     }
 
     override fun draw(matrixStack: UMatrixStack) {

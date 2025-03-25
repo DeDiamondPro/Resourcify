@@ -118,8 +118,8 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.4" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:388+feature-fabric-1.21.5",
-    default = "${mcPlatform.name}:388+feature-fabric-1.21.5"
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:389",
+    default = "${mcPlatform.name}:389"
 )
 
 dependencies {
@@ -264,8 +264,7 @@ tasks {
             "name" to mod_name,
             "version" to mod_version,
             "aw" to accesWidener,
-            // TODO: remove allow all mc for 1.21.5
-            "mcVersion" to if (mcPlatform.patch == 5) "*" else mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
+            "mcVersion" to mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
             "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
         )
 
