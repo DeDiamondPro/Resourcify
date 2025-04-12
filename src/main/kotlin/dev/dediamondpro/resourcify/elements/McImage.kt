@@ -22,6 +22,8 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 
@@ -34,7 +36,20 @@ class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvi
         height: Double,
         color: Color
     ) {
-        RenderSystem.setShaderTexture(0, texture)
+        //? if >=1.21.5 {
+        val bufferSource = Minecraft.getInstance().gameRenderer.renderBuffers.bufferSource()
+        val renderType = RenderType.guiTextured(texture)
+        val vertexConsumer = bufferSource.getBuffer(renderType)
+        val pose = matrixStack.toMC().last().pose()
+        val colorInt = color.rgb
+
+        vertexConsumer.addVertex(pose, x.toFloat(), (y + height).toFloat(), 0F).setUv(0F, 1F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, (x + width).toFloat(), (y + height).toFloat(), 0F).setUv(1F, 1F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, (x + width).toFloat(), y.toFloat(), 0F).setUv(1F, 0F).setColor(colorInt)
+        vertexConsumer.addVertex(pose, x.toFloat(), y.toFloat(), 0F).setUv(0F, 0F).setColor(colorInt)
+        bufferSource.endLastBatch()
+        //?} else {
+        /*RenderSystem.setShaderTexture(0, texture)
         val renderer = UGraphics.getFromTessellator()
 
         renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
@@ -43,6 +58,7 @@ class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvi
         renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
         renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
         renderer.drawDirect()
+        *///?}
     }
 
     override fun draw(matrixStack: UMatrixStack) {

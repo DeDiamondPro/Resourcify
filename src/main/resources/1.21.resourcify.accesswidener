@@ -13,3 +13,6 @@ accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel onLis
 
 # Access message in GenericMessageScreen, used for world downloading screen
 accessible field net/minecraft/client/gui/screens/GenericMessageScreen textWidget Lnet/minecraft/client/gui/components/FocusableTextWidget;
+
+# Access to rendering buffer
+accessible field net/minecraft/client/renderer/GameRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
