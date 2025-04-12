@@ -96,11 +96,12 @@ val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
     "1.21.4" to "13.0.2",
-    "1.21.5" to "14.0.0-beta.2",
+    "1.21.5" to "14.0.0-rc.2",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
-    "1.21.4" to "21.4.99-beta",
+    "1.21.4" to "21.4.124",
+    "1.21.5" to "21.5.34-beta"
 )
 val minimumNeoForgeVersion = VersionDefinition(
     // We need this version or higher on 1.21.4, on other versions we don't care
@@ -111,19 +112,23 @@ val forgeVersion = VersionDefinition(
     "1.20.1" to "1.20.1-47.3.0",
     "1.21.1" to "1.21.1-52.0.40",
     "1.21.4" to "1.21.4-54.1.0",
+    "1.21.5" to "1.21.5-55.0.4"
 )
 val kotlinForForgeVersion = VersionDefinition(
     "1.20.1" to "4.11.0",
     "1.21.1" to "5.7.0",
     "1.21.4" to "5.7.0",
+    "1.21.5" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:389",
-    default = "${mcPlatform.name}:389"
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:401",
+    default = "${mcPlatform.name}:401"
 )
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
+
+    @Suppress("UnstableApiUsage")
     mappings(loom.layered {
         officialMojangMappings()
         parchmentVersion.getOrNull(mcPlatform)?.let {

@@ -4,7 +4,7 @@ Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
-- Ported to 1.21.5 fabric
+- Ported to 1.21.5
 
 ----------------------------------------------------------------------------------------------------
 
