@@ -5,6 +5,7 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.runAsync
 import gg.essential.universal.UScreen
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.DisconnectedScreen
@@ -68,27 +69,7 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
         triggeredLoad = true
 
         // We are done downloading, open the world
-        if (!minecraft!!.levelSource.levelExists(world.name)) {
-            Constants.LOGGER.error("Failed to open world $world, it doesn't exist")
-            UScreen.displayScreen(createFailScreen())
-        } else {
-            // This is a stupid way of doing it, but it's the only way I can find that doesn't trigger
-            // Fabric API's post screen tick event's null check (thanks fabric!)
-            // this is basically the same issues as here: https://github.com/FabricMC/fabric/issues/1289
-            runAsync {
-                minecraft!!.execute {
-                    //? if >=1.21 {
-                    minecraft!!.createWorldOpenFlows().openWorld(world.name) {
-                        Constants.LOGGER.error("Failed to open world $world")
-                        UScreen.displayScreen(createFailScreen())
-                    }
-                    //?} else {
-                    /*minecraft!!.forceSetScreen(GenericDirtMessageScreen(Component.translatable("selectWorld.data_read")))
-                    minecraft!!.createWorldOpenFlows().loadLevel(createFailScreen(), world.name)
-                    *///?}
-                }
-            }
-        }
+        openWorld(world.name)
     }
 
     private fun updateText(newText: Component) {
@@ -108,15 +89,6 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
         *///?}
     }
 
-    private fun createFailScreen(): Screen {
-        return DisconnectedScreen(
-            SelectWorldScreen(TitleScreen()),
-            Component.translatable("resourcify.world.failed"),
-            Component.translatable("resourcify.world.failed.description", world.name),
-            Component.translatable("gui.toWorld")
-        )
-    }
-
     private fun getTextWidth(): Int {
         //? if >=1.20.5 {
         return this.textWidget!!.width
@@ -126,5 +98,41 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
 
     override fun shouldCloseOnEsc(): Boolean {
         return false
+    }
+
+    companion object {
+        fun openWorld(name: String) {
+            val minecraft = Minecraft.getInstance()
+            if (!minecraft.levelSource.levelExists(name)) {
+                Constants.LOGGER.error("Failed to open world $name, it doesn't exist")
+                UScreen.displayScreen(createFailScreen(name))
+            } else {
+                // This is a stupid way of doing it, but it's the only way I can find that doesn't trigger
+                // Fabric API's post screen tick event's null check (thanks fabric!)
+                // this is basically the same issues as here: https://github.com/FabricMC/fabric/issues/1289
+                runAsync {
+                    minecraft.execute {
+                        //? if >=1.21 {
+                        minecraft.createWorldOpenFlows().openWorld(name) {
+                            Constants.LOGGER.error("Failed to open world $name")
+                            UScreen.displayScreen(createFailScreen(name))
+                        }
+                        //?} else {
+                        /*minecraft!!.forceSetScreen(GenericDirtMessageScreen(Component.translatable("selectWorld.data_read")))
+                        minecraft!!.createWorldOpenFlows().loadLevel(createFailScreen(), world.name)
+                        *///?}
+                    }
+                }
+            }
+        }
+
+        private fun createFailScreen(name: String): Screen {
+            return DisconnectedScreen(
+                SelectWorldScreen(TitleScreen()),
+                Component.translatable("resourcify.world.failed"),
+                Component.translatable("resourcify.world.failed.description", name),
+                Component.translatable("gui.toWorld")
+            )
+        }
     }
 }

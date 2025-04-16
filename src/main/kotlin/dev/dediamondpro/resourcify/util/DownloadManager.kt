@@ -90,41 +90,7 @@ object DownloadManager {
             }
             if (queuedDownload.extract) {
                 val targetFolder = queuedDownload.file
-                targetFolder.mkdirs()
-                ZipFile(tempFile).use { zip ->
-                    // If all content is actually inside another folder inside the zip file, try to find this folder
-                    // We do this by checking if there is only one folder at the root, and then take this folder
-                    var prefixToRemove: String? = null
-                    for (entry in zip.entries()) {
-                        val firstFolder = entry.name.substringBefore("/", "")
-                        // Could be readme file, license file, ...
-                        if (firstFolder.isEmpty()) {
-                            continue
-                        }
-                        if (prefixToRemove == null) {
-                            prefixToRemove = "$firstFolder/"
-                        } else if (prefixToRemove != "$firstFolder/") {
-                            prefixToRemove = null
-                            break
-                        }
-                    }
-
-                    zip.entries().asSequence().forEach { entry ->
-                        // Remove prefix so when a zip contains a folder which contains the actual files,
-                        // this will handle it
-                        val entryFile = resolvePath(entry, targetFolder, prefixToRemove)
-                        if (entry.isDirectory) {
-                            entryFile.mkdirs()
-                            return@forEach
-                        } else {
-                            entryFile.parentFile.mkdirs()
-                        }
-
-                        zip.getInputStream(entry).use {
-                            Files.copy(it, entryFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                        }
-                    }
-                }
+                extractZip(tempFile, targetFolder)
             } else {
                 Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
@@ -138,6 +104,46 @@ object DownloadManager {
             downloadsInProgress.remove(url)
             downloadNext()
         }, tempFile)
+    }
+
+    fun extractZip(zipFile: File, dest: File) {
+        // If all content is actually inside another folder inside the zip file, try to find this folder
+        // We do this by checking if there is only one folder at the root, and then take this folder
+        dest.mkdirs()
+        ZipFile(zipFile).use { zip ->
+            // If all content is actually inside another folder inside the zip file, try to find this folder
+            // We do this by checking if there is only one folder at the root, and then take this folder
+            var prefixToRemove: String? = null
+            for (entry in zip.entries()) {
+                val firstFolder = entry.name.substringBefore("/", "")
+                // Could be readme file, license file, ...
+                if (firstFolder.isEmpty()) {
+                    continue
+                }
+                if (prefixToRemove == null) {
+                    prefixToRemove = "$firstFolder/"
+                } else if (prefixToRemove != "$firstFolder/") {
+                    prefixToRemove = null
+                    break
+                }
+            }
+
+            zip.entries().asSequence().forEach { entry ->
+                // Remove prefix so when a zip contains a folder which contains the actual files,
+                // this will handle it
+                val entryFile = resolvePath(entry, dest, prefixToRemove)
+                if (entry.isDirectory) {
+                    entryFile.mkdirs()
+                    return@forEach
+                } else {
+                    entryFile.parentFile.mkdirs()
+                }
+
+                zip.getInputStream(entry).use {
+                    Files.copy(it, entryFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                }
+            }
+        }
     }
 
     private fun resolvePath(entry: ZipEntry, targetDir: File, prefix: String?): File {

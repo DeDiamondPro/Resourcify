@@ -56,6 +56,11 @@
   "resourcify.updates.source": "Source:",
   "resourcify.updates.up-to-date": "Up to date",
 
+  "resourcify.manual_download.title": "Resourcify cannot download this project automatically.",
+  "resourcify.manual_download.description": "Click the button below to go to the version page in your web browser,\nAfter downloading the project to your downloads folder Resourcify, will automatically install the project.\n\nCurrently watched folder: \"%s\"",
+  "resourcify.manual_download.open": "Open version page",
+  "resourcify.manual_download.cancel": "Cancel",
+
   "resourcify.world.download": "Download",
   "resourcify.world.downloading": "Downloading world: %d%%",
   "resourcify.world.cancel": "Cancel",

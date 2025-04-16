@@ -34,8 +34,11 @@ data class CurseForgeVersion(
     private val downloadCount: Int,
     private val fileDate: String,
     private val dependencies: List<Dependency>,
-    val fileFingerprint: Long
+    val fileFingerprint: Long,
+    private val fileLength: Long,
 ) : IVersion {
+    var rootProjectLink: String? = null
+
     @Transient
     private var changeLogRequest: CompletableFuture<String>? = null
 
@@ -47,8 +50,10 @@ data class CurseForgeVersion(
     override fun getProjectId(): String = modId.toString()
     fun hasDownloadUrl(): Boolean = downloadUrl != null
     override fun getDownloadUrl(): URI? = downloadUrl?.toURIOrNull()
+    override fun getViewUrl(): URI = "${rootProjectLink ?: error("Root project link not set")}/files/$id".toURI()
     override fun getFileName(): String = fileName
     override fun getSha1(): String = hashes.firstOrNull { it.algo == 1 }?.value ?: ""
+    override fun getFileSize(): Long = fileLength
 
     override fun getChangeLog(): CompletableFuture<String> {
         return changeLogRequest ?: supplyAsync {

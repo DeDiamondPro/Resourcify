@@ -19,10 +19,7 @@ package dev.dediamondpro.resourcify.services.modrinth
 
 import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.services.*
-import dev.dediamondpro.resourcify.util.getJson
-import dev.dediamondpro.resourcify.util.supply
-import dev.dediamondpro.resourcify.util.supplyAsync
-import dev.dediamondpro.resourcify.util.toURIOrNull
+import dev.dediamondpro.resourcify.util.*
 import org.apache.http.client.utils.URIBuilder
 import java.net.URI
 import java.util.concurrent.CompletableFuture
@@ -37,6 +34,7 @@ data class ModrinthVersion(
     @SerializedName("game_versions") private val gameVersions: List<String>,
     private val downloads: Int,
     @SerializedName("date_published") private val datePublished: String,
+    @SerializedName("id") private val versionId: String,
     @SerializedName("project_id") private val projectId: String,
     private val dependencies: List<Dependency>,
 ) : IVersion {
@@ -49,7 +47,9 @@ data class ModrinthVersion(
     fun hasFile() = files.isNotEmpty()
     private fun getPrimaryFile() = files.firstOrNull { it.primary } ?: files.first()
     override fun getDownloadUrl(): URI? = getPrimaryFile().url.toURIOrNull()
+    override fun getViewUrl(): URI = "https://modrinth.com/project/$projectId/version/$versionId".toURI()
     override fun getFileName(): String = getPrimaryFile().filename
+    override fun getFileSize(): Long = getPrimaryFile().size
     override fun getSha1(): String = getPrimaryFile().hashes.sha1
     override fun getChangeLog(): CompletableFuture<String> = supply { changelog }
     override fun getVersionType(): VersionType = VersionType.fromName(versionType)
@@ -77,7 +77,7 @@ data class ModrinthVersion(
         }.apply { dependenciesRequest = this }) as CompletableFuture<List<IDependency>>
     }
 
-    data class File(val url: String, val filename: String, val hashes: Hash, val primary: Boolean)
+    data class File(val url: String, val filename: String, val hashes: Hash, val primary: Boolean, val size: Long)
 
     data class Hash(val sha1: String)
 

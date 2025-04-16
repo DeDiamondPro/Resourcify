@@ -102,7 +102,7 @@ data class CurseForgeProject(
         return (versionsRequest ?: supplyAsync {
             "${CurseForgeService.API}/mods/$id/files".toURI()
                 .getJson<Versions>(headers = mapOf("x-api-key" to CurseForgeService.API_KEY))
-                ?.data?.filter { it.hasDownloadUrl() } ?: error("Failed to fetch versions.")
+                ?.data?.onEach { it.rootProjectLink = getBrowserUrl() } ?: error("Failed to fetch versions.")
         }.apply { versionsRequest = this }) as CompletableFuture<List<IVersion>>
     }
 

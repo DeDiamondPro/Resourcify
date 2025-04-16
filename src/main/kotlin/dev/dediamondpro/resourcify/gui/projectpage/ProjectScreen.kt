@@ -30,7 +30,6 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.MemberCard
-import dev.dediamondpro.resourcify.gui.world.WorldDownloadingScreen
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.IProject
 import dev.dediamondpro.resourcify.services.IService
@@ -98,29 +97,31 @@ class ProjectScreen(
             height = 29.pixels()
         } childOf mainBox
 
-        // If the project can not be installed by resourcify (because, for example, redistribution is disabled on cf)
-        // a link to the website will be displayed
-        if (!project.canBeInstalled() || downloadFolder == null) {
-            val text = UIText("${ChatColor.BOLD}${localize("resourcify.version.install")}").constrain {
-                x = CenterConstraint()
-                y = CenterConstraint()
-                color = Colors.TEXT_PRIMARY.toConstraint()
-            }
-            val downloadButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
-                x = 6.pixels(true)
-                y = CenterConstraint()
-                width = basicWidthConstraint { text.getWidth() + 8f }
-                height = 18.pixels()
-            }.onMouseClick {
-                displayScreen(ConfirmLinkScreen(project.getBrowserUrl(), this@ProjectScreen, true))
-            } childOf navigationBox
-            text childOf downloadButton
-        } else project.getVersions().thenAccept { versions ->
-            if (versions == null) return@thenAccept
-            val version = versions.firstOrNull {
+        project.getVersions().thenAccept { versions ->
+            val version = versions?.firstOrNull {
                 it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
-            val url = version.getDownloadUrl() ?: return@thenAccept
+
+            if (downloadFolder == null) {
+                Window.enqueueRenderOperation {
+                    val text = UIText("${ChatColor.BOLD}${localize("resourcify.version.install")}").constrain {
+                        x = CenterConstraint()
+                        y = CenterConstraint()
+                        color = Colors.TEXT_PRIMARY.toConstraint()
+                    }
+                    val downloadButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
+                        x = 6.pixels(true)
+                        y = CenterConstraint()
+                        width = basicWidthConstraint { text.getWidth() + 8f }
+                        height = 18.pixels()
+                    }.onMouseClick {
+                        displayScreen(ConfirmLinkScreen(version.getViewUrl().toString(), this@ProjectScreen, true))
+                    } childOf navigationBox
+                    text childOf downloadButton
+                }
+                return@thenAccept
+            }
+
             val installed = packHashes!!.get().contains(version.getSha1())
 
             val installText = version.getVersionNumber()?.let {
@@ -148,7 +149,7 @@ class ProjectScreen(
                     x = 0.pixels(true)
                     y = 0.pixels()
                     width = basicWidthConstraint {
-                        val progress = DownloadManager.getProgress(url)
+                        val progress = version.getDownloadUrl()?.let { DownloadManager.getProgress(it) }
                         if (progress == null) 0f
                         else (1 - progress) * it.parent.getWidth()
                     }

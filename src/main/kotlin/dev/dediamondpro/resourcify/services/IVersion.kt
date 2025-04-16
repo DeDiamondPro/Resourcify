@@ -25,7 +25,9 @@ interface IVersion {
     fun getVersionNumber(): String?
     fun getProjectId(): String
     fun getDownloadUrl(): URI?
+    fun getViewUrl(): URI
     fun getFileName(): String
+    fun getFileSize(): Long
     fun getSha1(): String
     fun getChangeLog(): CompletableFuture<String>
     fun getVersionType(): VersionType
