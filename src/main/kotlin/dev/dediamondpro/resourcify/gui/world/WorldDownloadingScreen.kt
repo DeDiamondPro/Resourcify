@@ -119,7 +119,7 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
                         }
                         //?} else {
                         /*minecraft!!.forceSetScreen(GenericDirtMessageScreen(Component.translatable("selectWorld.data_read")))
-                        minecraft!!.createWorldOpenFlows().loadLevel(createFailScreen(), world.name)
+                        minecraft!!.createWorldOpenFlows().loadLevel(createFailScreen(name), name)
                         *///?}
                     }
                 }
