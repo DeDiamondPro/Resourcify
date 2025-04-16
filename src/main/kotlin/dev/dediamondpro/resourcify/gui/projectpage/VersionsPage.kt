@@ -33,7 +33,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.UScreen
 
-class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
+class VersionsPage(val screen: ProjectScreen) : UIContainer() {
     private val versionsHolder = UIContainer().constrain {
         x = 0.pixels()
         y = 0.pixels()
@@ -79,7 +79,7 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
         changeLogHolder.hide(true)
     }
 
-    fun showChangelog(version: IVersion) {
+    fun showChangelog(version: VersionWrapper) {
         versionsHolder.hide()
         changeLogHolder.clearChildren()
         UIText("Versions ").constrain {
@@ -90,13 +90,13 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
             changeLogHolder.hide()
             versionsHolder.unhide()
         } childOf changeLogHolder
-        UIText("> ${version.getVersionNumber() ?: version.getName()}").constrain {
+        UIText("> ${version.get().getVersionNumber() ?: version.get().getName()}").constrain {
             x = SiblingConstraint()
             y = 8.pixels()
             color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf changeLogHolder
         if (screen.packHashes != null && screen.downloadFolder != null) {
-            VersionCard.createDownloadButton(version, screen.packHashes.get(), screen.downloadFolder, screen.type)
+            VersionCard.createDownloadButton(version, screen.downloadFolder, screen)
                 ?.let {
                     it.constrain {
                         x = 4.pixels(true)
@@ -104,17 +104,17 @@ class VersionsPage(private val screen: ProjectScreen) : UIContainer() {
                     } childOf changeLogHolder
                 }
         }
-        version.getChangeLog().thenApply {
+        version.get().getChangeLog().thenApply {
             Window.enqueueRenderOperation {
                 var changelog = it
-                if (version.hasDependencies()) changelog += "\n-----------"
+                if (version.get().hasDependencies()) changelog += "\n-----------"
                 markdown(changelog, screen.service.getMarkdownStyle()).constrain {
                     x = 4.pixels()
                     y = SiblingConstraint(4f)
                     width = 100.percent() - 8.pixels()
                 } childOf changeLogHolder
             }
-            if (version.hasDependencies()) version.getDependencies().thenApply {
+            if (version.get().hasDependencies()) version.get().getDependencies().thenApply {
                 Window.enqueueRenderOperation {
                     if (it.isNotEmpty()) UIText("resourcify.project.dependencies".localize()).constrain {
                         x = 4.pixels()

@@ -1,10 +1,10 @@
-## Resourcify 1.7.1 for 1.21.5
+## Resourcify 1.7.2
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
-- Ported to 1.21.5
+- Fixed world downloading not opening the world when downloading a specific version instead of the suggested version.
 
 ----------------------------------------------------------------------------------------------------
 

@@ -121,13 +121,19 @@ class ProjectScreen(
                 it.getMinecraftVersions().contains(Platform.getMcVersion())
             } ?: return@thenAccept
             val url = version.getDownloadUrl() ?: return@thenAccept
-            var installed = packHashes!!.get().contains(version.getSha1())
-            val buttonText = if (installed) "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
-            else version.getVersionNumber()?.let {
+            val installed = packHashes!!.get().contains(version.getSha1())
+
+            val installText = version.getVersionNumber()?.let {
                 "${ChatColor.BOLD}${localize("resourcify.version.install_version", it)}"
             } ?: "${ChatColor.BOLD}${localize("resourcify.version.install")}"
+            val buttonText = if (installed) {
+                "${ChatColor.BOLD}${localize("resourcify.version.installed")}"
+            } else {
+                installText
+            }
+
+            val versionWrapped = VersionWrapper(version, type, installed)
             Window.enqueueRenderOperation {
-                var progressBox: UIBlock? = null
                 var text: UIText? = null
                 val downloadButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
                     x = 6.pixels(true)
@@ -135,35 +141,10 @@ class ProjectScreen(
                     width = basicWidthConstraint { (text?.getWidth() ?: 0f) + 8f }
                     height = 18.pixels()
                 }.onMouseClick {
-                    if (installed || it.mouseButton != 0) return@onMouseClick
-                    if (DownloadManager.getProgress(url) == null) {
-                        text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
-                        var fileName = version.getFileName()
-                        if (type.shouldExtract) {
-                            fileName = fileName.removeSuffix(".zip")
-                        }
-                        var file = File(downloadFolder, fileName)
-                        if (file.exists()) {
-                            file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
-                        }
-                        DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
-                            text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
-                            installed = true
-                        }
-                        if (type == ProjectType.WORLD) {
-                            displayScreen(WorldDownloadingScreen(this@ProjectScreen, file, url))
-                        }
-                        progressBox?.constraints?.width?.recalculate = true
-                    } else {
-                        DownloadManager.cancelDownload(url)
-                        text?.setText(
-                            version.getVersionNumber()?.let { versionNumber ->
-                                "${ChatColor.BOLD}${localize("resourcify.version.install_version", versionNumber)}"
-                            } ?: "${ChatColor.BOLD}${localize("resourcify.version.install")}"
-                        )
-                    }
+                    if (it.mouseButton != 0) return@onMouseClick
+                    versionWrapped.download(downloadFolder, text, this@ProjectScreen, installText)
                 } childOf navigationBox
-                progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
+                UIBlock(Color(0, 0, 0, 100)).constrain {
                     x = 0.pixels(true)
                     y = 0.pixels()
                     width = basicWidthConstraint {

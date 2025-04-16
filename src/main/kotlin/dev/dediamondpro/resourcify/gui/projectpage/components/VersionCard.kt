@@ -17,7 +17,9 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
+import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
+import dev.dediamondpro.resourcify.gui.projectpage.VersionWrapper
 import dev.dediamondpro.resourcify.gui.projectpage.VersionsPage
 import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.IVersion
@@ -115,12 +117,13 @@ class VersionCard(
         } childOf statsContainer
 
         if (hashes != null && downloadFolder != null) {
-            val button = createDownloadButton(version, hashes, downloadFolder, type)
+            val versionWrapped = VersionWrapper(version, type, hashes.contains(version.getSha1()))
+            val button = createDownloadButton(versionWrapped, downloadFolder, parent.screen)
             if (button != null) {
                 button childOf this
                 onMouseClick {
                     if (button.isPointInside(it.absoluteX, it.absoluteY)) return@onMouseClick
-                    parent.showChangelog(version)
+                    parent.showChangelog(versionWrapped)
                 }
             }
         }
@@ -180,12 +183,9 @@ class VersionCard(
     }
 
     companion object {
-        fun createDownloadButton(version: IVersion, hashes: List<String>, downloadFolder: File, type: ProjectType): UIComponent? {
-            val url = version.getDownloadUrl() ?: return null
-            var installed = hashes.contains(version.getSha1())
+        fun createDownloadButton(version: VersionWrapper, downloadFolder: File, parent: PaginatedScreen): UIComponent? {
             val buttonText =
-                "${ChatColor.BOLD}${if (installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
-            var progressBox: UIBlock? = null
+                "${ChatColor.BOLD}${if (version.installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var text: UIText? = null
             val downloadButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
                 x = 6.pixels(true)
@@ -193,37 +193,21 @@ class VersionCard(
                 width = 73.pixels()
                 height = 18.pixels()
             }.onMouseClick {
-                if (installed || it.mouseButton != 0) return@onMouseClick
-                if (DownloadManager.getProgress(url) == null) {
-                    text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installing")}")
-                    var fileName = version.getFileName()
-                    if (type.shouldExtract) {
-                        fileName = fileName.removeSuffix(".zip")
-                    }
-                    var file = File(downloadFolder, fileName)
-                    if (file.exists()) {
-                        file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
-                    }
-                    DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
-                        text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
-                        installed = true
-                    }
-                    progressBox?.constraints?.width?.recalculate = true
-                } else {
-                    DownloadManager.cancelDownload(url)
-                    text?.setText("${ChatColor.BOLD}${localize("resourcify.version.install")}")
-                }
+                if (it.mouseButton != 0) return@onMouseClick
+                version.download(downloadFolder, text, parent)
             }
-            progressBox = UIBlock(Color(0, 0, 0, 100)).constrain {
-                x = 0.pixels(true)
-                y = 0.pixels()
-                width = basicWidthConstraint {
-                    val progress = DownloadManager.getProgress(url)
-                    if (progress == null) 0f
-                    else (1 - progress) * it.parent.getWidth()
-                }
-                height = 18.pixels()
-            } childOf downloadButton
+            version.get().getDownloadUrl()?.let { url ->
+                UIBlock(Color(0, 0, 0, 100)).constrain {
+                    x = 0.pixels(true)
+                    y = 0.pixels()
+                    width = basicWidthConstraint {
+                        val progress = DownloadManager.getProgress(url)
+                        if (progress == null) 0f
+                        else (1 - progress) * it.parent.getWidth()
+                    }
+                    height = 18.pixels()
+                } childOf downloadButton
+            }
             text = UIText(buttonText).constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()
