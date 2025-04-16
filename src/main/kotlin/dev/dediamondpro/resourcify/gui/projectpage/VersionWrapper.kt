@@ -12,6 +12,8 @@ import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.UIText
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UScreen
+import gg.essential.universal.USound
+import net.minecraft.sounds.SoundEvents
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.deleteIfExists
@@ -34,6 +36,9 @@ class VersionWrapper(private val version: IVersion, private val type: ProjectTyp
             // Use zip as extension since every type we support should download zip files
             val screen = if (DownloadWatcherScreen.isUsable()) {
                 DownloadWatcherScreen(version.getViewUrl(), "zip", version.getFileSize(), version.getSha1(), parent) {
+                    // Play pling sound to signal the file has been detected
+                    USound.playSoundStatic(SoundEvents.NOTE_BLOCK_PLING, 1.0f, 1.0f)
+
                     var file: File
                     if (type.shouldExtract) {
                         file = File(downloadFolder, version.getFileName().removeSuffix(".zip"))
