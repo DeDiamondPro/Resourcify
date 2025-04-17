@@ -95,7 +95,7 @@ class VersionsPage(val screen: ProjectScreen) : UIContainer() {
             y = 8.pixels()
             color = Colors.TEXT_PRIMARY.toConstraint()
         } childOf changeLogHolder
-        if (screen.packHashes != null && screen.downloadFolder != null) {
+        if (screen.packHashes != null) {
             VersionCard.createDownloadButton(version, screen.downloadFolder, screen)
                 ?.let {
                     it.constrain {

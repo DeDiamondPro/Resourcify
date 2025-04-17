@@ -169,8 +169,7 @@ class ProjectScreen(
         val pages = mutableMapOf<String, (ProjectScreen) -> UIComponent>()
         pages["resourcify.project.description".localize()] = ::DescriptionPage
         if (project.hasGallery()) pages["resourcify.project.gallery".localize()] = ::GalleryPage
-        if (project.canBeInstalled() && downloadFolder != null) pages["resourcify.project.versions".localize()] =
-            ::VersionsPage
+        pages["resourcify.project.versions".localize()] = ::VersionsPage
         pages.forEach { (text, page) ->
             UIText("${ChatColor.BOLD}$text").constrain {
                 x = if (text == "resourcify.project.description".localize()) 6.pixels()

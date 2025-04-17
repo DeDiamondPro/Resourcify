@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
+import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.projectpage.VersionWrapper
@@ -37,6 +38,7 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
+import gg.essential.universal.UScreen
 import java.awt.Color
 import java.io.File
 import java.time.Instant
@@ -116,7 +118,7 @@ class VersionCard(
             color = Colors.TEXT_SECONDARY.toConstraint()
         } childOf statsContainer
 
-        if (hashes != null && downloadFolder != null) {
+        if (hashes != null) {
             val versionWrapped = VersionWrapper(version, type, hashes.contains(version.getSha1()))
             val button = createDownloadButton(versionWrapped, downloadFolder, parent.screen)
             if (button != null) {
@@ -183,7 +185,7 @@ class VersionCard(
     }
 
     companion object {
-        fun createDownloadButton(version: VersionWrapper, downloadFolder: File, parent: PaginatedScreen): UIComponent? {
+        fun createDownloadButton(version: VersionWrapper, downloadFolder: File?, parent: PaginatedScreen): UIComponent? {
             val buttonText =
                 "${ChatColor.BOLD}${if (version.installed) "resourcify.version.installed".localize() else "resourcify.version.install".localize()}"
             var text: UIText? = null
@@ -194,7 +196,11 @@ class VersionCard(
                 height = 18.pixels()
             }.onMouseClick {
                 if (it.mouseButton != 0) return@onMouseClick
-                version.download(downloadFolder, text, parent)
+                if (downloadFolder != null) {
+                    version.download(downloadFolder, text, parent)
+                } else {
+                    UScreen.displayScreen(ConfirmLinkScreen(version.get().getViewUrl().toString(), parent, true))
+                }
             }
             version.get().getDownloadUrl()?.let { url ->
                 UIBlock(Color(0, 0, 0, 100)).constrain {
