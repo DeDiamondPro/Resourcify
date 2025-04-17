@@ -31,4 +31,5 @@ object Icons {
     val ADVERTISEMENT_TEXT = Utils.createResourceLocation("textures/advertisement-text.png")
     val DEFAULT_ICON = Utils.createResourceLocation("textures/default-icon.png")
     val LOADING = Utils.createResourceLocation("textures/loading.png")
+    val SETTINGS = Utils.createResourceLocation("textures/settings.png")
 }

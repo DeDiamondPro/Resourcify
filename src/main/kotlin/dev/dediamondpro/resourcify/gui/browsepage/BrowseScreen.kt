@@ -18,10 +18,12 @@
 package dev.dediamondpro.resourcify.gui.browsepage
 
 import dev.dediamondpro.resourcify.Constants
+import dev.dediamondpro.resourcify.config.SettingsPage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
 import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
+import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
@@ -322,12 +324,23 @@ class BrowseScreen(
             if (it.mouseButton != 0) return@onMouseClick
             grabWindowFocus()
         } childOf headerBox) as UITextInput
+
+        // Settings button
+        Icon(Icons.SETTINGS, true, Colors.TEXT_SECONDARY).constrain {
+            x = 3.pixels(true)
+            y = CenterConstraint()
+            width = 17.pixels()
+            height = 17.pixels()
+        }.onMouseClick {
+            displayScreen(SettingsPage())
+        } childOf headerBox
+
         sortDropDown = DropDown(
             service.getSortOptions().map { it.value.localize() },
             onlyOneOption = true,
             selectedOptions = mutableListOf(service.getSortOptions().values.first().localize())
         ).constrain {
-            x = 5.pixels(true)
+            x = SiblingConstraint(5f, true)
             y = CenterConstraint()
             width = 72.pixels()
         }.onSelectionUpdate {
