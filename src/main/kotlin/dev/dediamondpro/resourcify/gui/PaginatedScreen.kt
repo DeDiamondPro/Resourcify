@@ -84,12 +84,6 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true, private v
         displayScreen(forwardScreen)
     }
 
-    fun replaceScreen(screen: () -> Screen) {
-        replacingScreen = true
-        displayScreen(screen())
-        replacingScreen = false
-    }
-
     companion object {
         private var replacingScreen = false
         val backScreens: MutableList<Screen> = mutableListOf()
@@ -99,6 +93,12 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true, private v
             backScreens.clear()
             forwardScreens.clear()
             NetworkUtil.clearCache()
+        }
+
+        fun replaceScreen(screen: () -> Screen) {
+            replacingScreen = true
+            displayScreen(screen())
+            replacingScreen = false
         }
 
         private fun getGuiScale(defaultScale: Int, target: Float): Int {

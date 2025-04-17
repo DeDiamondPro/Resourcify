@@ -51,9 +51,9 @@ import java.io.File
 import java.util.concurrent.CompletableFuture
 
 class BrowseScreen(
-    private val type: ProjectType,
-    private val downloadFolder: File,
-    private val service: IService = ServiceRegistry.getDefaultService(type)
+    val type: ProjectType,
+    val downloadFolder: File,
+    val service: IService = ServiceRegistry.getDefaultService(type)
 ) : PaginatedScreen() {
     private var offset = 0
     private val selectedCategories = mutableListOf<String>()

@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.config.components.CheckBox
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.gui.PaginatedScreen
+import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
@@ -29,6 +30,7 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
+import net.minecraft.client.gui.screens.Screen
 
 class SettingsPage : PaginatedScreen(adaptScale = false) {
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
@@ -82,6 +84,19 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         }
         addCheckBoxOption("resourcify.config.world", Config.instance.worldsEnabled) {
             Config.instance.worldsEnabled = it
+        }
+    }
+
+    override fun goBack() {
+        val screen = backScreens.lastOrNull()
+        if (screen is BrowseScreen) {
+            // Replace the browse screens in case this screen was opened from the browse page
+            // This makes sure the settings apply immediately
+            backScreens.removeLast()
+            forwardScreens.add(this)
+            replaceScreen { BrowseScreen(screen.type, screen.downloadFolder, screen.service) }
+        } else {
+            super.goBack()
         }
     }
 
