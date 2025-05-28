@@ -4,6 +4,11 @@ Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
+- Made installing from CurseForge when automatic downloading is not supported easier, this will now watch your download
+  directory to load the file once it has been downloaded!
+- Added Russian translations
+  by [ReMatrixed](https://github.com/ReMatrixed) ([#76](https://github.com/DeDiamondPro/Resourcify/pull/76))
+- Fixed issues with not being able to close the update GUI
 - Fixed world downloading not opening the world when downloading a specific version instead of the suggested version.
 
 ----------------------------------------------------------------------------------------------------
