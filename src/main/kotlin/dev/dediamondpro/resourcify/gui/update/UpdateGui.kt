@@ -41,6 +41,7 @@ import gg.essential.universal.ChatColor
 import gg.essential.universal.UKeyboard
 import java.awt.Color
 import java.io.File
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScreen(adaptScale = false) {
@@ -273,7 +274,27 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
                 }
             }
             // Do not include it if it is up to date at every available service
-            return@supplyAsync updates.filter { it.value.values.any { data -> data != null } }
+            updates.entries.removeIf { !it.value.values.any { data -> data != null } }
+            // Filter duplicates
+            val updatesUnduplicated = mutableMapOf<File, MutableMap<IService, UpdateData?>>()
+            val foundUpdateLinks = mutableMapOf<IService, MutableList<URI>>()
+            for ((file, data) in updates) {
+                var isDuplicate = false
+                for (service in data) {
+                    val downloadUri = service.value?.version?.getDownloadUrl() ?: continue
+                    val updateLinks = foundUpdateLinks.getOrPut(service.key) { mutableListOf() }
+                    if (updateLinks.contains(downloadUri)) {
+                        isDuplicate = true
+                        continue
+                    }
+                    updateLinks.add(downloadUri)
+                }
+                if (isDuplicate) {
+                    continue
+                }
+                updatesUnduplicated.put(file, data)
+            }
+            return@supplyAsync updatesUnduplicated
         }
     }
 
