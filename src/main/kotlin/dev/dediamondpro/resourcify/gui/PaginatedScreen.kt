@@ -31,7 +31,7 @@ import kotlin.math.floor
 //$$ import net.minecraft.client.gui.DrawContext
 //#endif
 
-abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowScreen(
+abstract class PaginatedScreen(private val adaptScale: Boolean = true, private val minimumWidth: Float = 500f) : WindowScreen(
     version = ElementaVersion.V5,
     //#if MC>=12005
     //$$ drawDefaultBackground = true
@@ -65,9 +65,12 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
     }
 
     override fun onTick() {
-        if (!adaptScale) return
+        if (!adaptScale) {
+            super.onTick()
+            return
+        }
         if (defaultScale == -1) defaultScale = UMinecraft.guiScale
-        val updatedScale = getGuiScale(defaultScale)
+        val updatedScale = getGuiScale(defaultScale, minimumWidth)
         if (updatedScale != UResolution.scaleFactor.toInt()) {
             newGuiScale = updatedScale
             updateGuiScale()
@@ -125,8 +128,8 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true) : WindowS
             NetworkUtil.clearCache()
         }
 
-        private fun getGuiScale(defaultScale: Int): Int {
-            val minScale = floor(UResolution.windowWidth / 692f).toInt()
+        private fun getGuiScale(defaultScale: Int, target: Float): Int {
+            val minScale = floor(UResolution.windowWidth / target).toInt()
             return minScale.coerceAtLeast(1).coerceAtMost(calculateScaleFactor(defaultScale))
         }
 
