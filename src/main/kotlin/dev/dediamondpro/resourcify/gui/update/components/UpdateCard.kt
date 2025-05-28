@@ -208,7 +208,7 @@ class UpdateCard(
             gui.registerUpdate(this, Platform.getSelectedResourcePacks().contains(file))
             text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.updating")}")
             var downloadFile = File(file.parentFile, newVersion.getFileName())
-            if (downloadFile.exists()) {
+            while (downloadFile.exists()) {
                 downloadFile = File(file.parentFile, Utils.incrementFileName(newVersion.getFileName()))
             }
             DownloadManager.download(
