@@ -31,6 +31,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
+import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.constraints.MinConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.constraints.animation.Animations
@@ -92,11 +93,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         y = 0.pixels()
         width = 100.percent()
         height = 100.percent()
-    }.onFocusLost {
-        hide(true)
     }.onKeyType { _, keyCode ->
         if (keyCode != UKeyboard.KEY_ESCAPE) return@onKeyType
-        hide(true)
+        hide()
         releaseWindowFocus()
     } childOf window
 
@@ -108,6 +107,41 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             textScale = 2.pixels()
             color = Colors.TEXT_WARN.toConstraint()
         } childOf stopCloseBox
+        val waitButtonHolder = UIContainer().constrain {
+            x = CenterConstraint()
+            y = SiblingConstraint(16f)
+            width = ChildBasedSizeConstraint(4f)
+            height = 22.pixels()
+        } childOf stopCloseBox
+        val waitButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
+            x = 0.pixels()
+            y = 0.pixels()
+            width = 150.pixels()
+            height = 100.percent()
+        }.onMouseClick {
+            stopCloseBox.hide()
+            stopCloseBox.releaseWindowFocus()
+        } childOf waitButtonHolder
+        UIText("resourcify.updates.wait_button".localize()).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
+        } childOf waitButton
+        val forceCloseButton = UIBlock(Colors.BUTTON_SECONDARY).constrain {
+            x = 0.pixels(true)
+            y = 0.pixels()
+            width = 150.pixels()
+            height = 100.percent()
+        }.onMouseClick {
+            val selectedCopy = selectedUpdates.toMutableList()
+            selectedCopy.forEach { it.cancel() }
+            closeGui(force = true)
+        } childOf waitButtonHolder
+        UIText("resourcify.updates.cancel_close_button".localize()).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            color = Colors.TEXT_PRIMARY.toConstraint()
+        } childOf forceCloseButton
         stopCloseBox.hide(true)
 
         val checkingText = UIText("resourcify.updates.checking".localize()).constrain {
@@ -319,9 +353,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         changelogContainer.unhide()
     }
 
-    private fun closeGui() {
+    private fun closeGui(force: Boolean = false) {
         if (closing) return
-        if (selectedUpdates.isNotEmpty()) {
+        if (selectedUpdates.isNotEmpty() && !force) {
             Window.enqueueRenderOperation {
                 stopCloseBox.unhide(false)
                 stopCloseBox.grabWindowFocus()

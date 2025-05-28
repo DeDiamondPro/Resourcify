@@ -324,10 +324,15 @@ class UpdateCard(
             }
             progressBox?.constraints?.width?.recalculate = true
         } else {
-            gui.cancelUpdate(this)
-            DownloadManager.cancelDownload(updateUrl)
-            text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update")}")
+            cancel()
         }
+    }
+
+    fun cancel() {
+        val updateUrl = selectedData?.version?.getDownloadUrl() ?: return
+        gui.cancelUpdate(this)
+        DownloadManager.cancelDownload(updateUrl)
+        text?.setText("${ChatColor.BOLD}${localize("resourcify.updates.update")}")
     }
 
     fun getProgress(): Float {
