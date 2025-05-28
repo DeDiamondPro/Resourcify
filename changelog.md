@@ -6,6 +6,9 @@ the [Discord](https://discord.gg/XtAuqsJWby).
 
 - Made installing from CurseForge when automatic downloading is not supported easier, this will now watch your download
   directory to load the file once it has been downloaded!
+- Improved GUI scale handling, and added a setting to manually set the GUI scale Resourcify will use.
+- Added Spanish translations
+  by [pilahito](https://github.com/pilahito) ([#87](https://github.com/DeDiamondPro/Resourcify/issues/87))
 - Added Russian translations
   by [ReMatrixed](https://github.com/ReMatrixed) ([#76](https://github.com/DeDiamondPro/Resourcify/pull/76))
 - Fixed issues with not being able to close the update GUI

@@ -21,7 +21,6 @@ import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.config.SettingsPage
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
 import dev.dediamondpro.resourcify.constraints.MaxComponentConstraint
-import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.DropDown
 import dev.dediamondpro.resourcify.elements.Icon
 import dev.dediamondpro.resourcify.elements.McImage
@@ -49,6 +48,7 @@ import net.minecraft.client.gui.screens.Screen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.CompletableFuture
+import kotlin.math.min
 
 class BrowseScreen(
     val type: ProjectType,
@@ -64,7 +64,9 @@ class BrowseScreen(
     private val contentBox = UIContainer().constrain {
         x = CenterConstraint()
         y = 4.pixels()
-        width = ChildBasedSizeConstraint(padding = 4f)
+        width = MinConstraint(ChildBasedSizeConstraint(padding = 4f), basicWidthConstraint {
+            window.getWidth() - 8
+        })
         height = 100.percent()
     } childOf window
 
@@ -78,7 +80,7 @@ class BrowseScreen(
     private val mainBox = UIContainer().constrain {
         x = 0.pixels(alignOpposite = true)
         y = 0.pixels()
-        width = WindowMinConstraint(528.pixels())
+        width = basicWidthConstraint { min(528f, window.getWidth() - 172) }
         height = 100.percent()
     } childOf contentBox
 
