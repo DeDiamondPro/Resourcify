@@ -55,6 +55,8 @@
   "resourcify.updates.changelog": "Changelog",
   "resourcify.updates.source": "Source:",
   "resourcify.updates.up-to-date": "Up to date",
+  "resourcify.updates.wait_button": "Wait",
+  "resourcify.updates.cancel_close_button": "Cancel updates and close",
 
   "resourcify.config.title": "Resourcify Config",
   "resourcify.config.source.title": "Default Source",
