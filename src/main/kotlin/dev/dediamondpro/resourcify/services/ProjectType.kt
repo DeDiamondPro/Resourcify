@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.services
 
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+import dev.dediamondpro.resourcify.platform.Platform
 import net.minecraft.client.gui.screens.Screen
 import java.io.File
 
@@ -64,9 +65,9 @@ enum class ProjectType(
         return when(this) {
             RESOURCE_PACK -> (screen as PackScreenAccessor).directory.toFile()
             DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
-            IRIS_SHADER -> File("./shaderpacks")
-            OPTIFINE_SHADER -> File("./shaderpacks")
-            WORLD -> File("./saves")
+            IRIS_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            OPTIFINE_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            WORLD -> Platform.getFileInGameDir("saves")
             else -> error("Unknown project type: $this")
         }
     }
@@ -80,10 +81,10 @@ enum class ProjectType(
         return when (this) {
             currentType -> currentFolder
             // Get folder on best-effort basis
-            RESOURCE_PACK -> File("./resourcepacks")
-            IRIS_SHADER -> File("./shaderpacks")
-            OPTIFINE_SHADER -> File("./shaderpacks")
-            WORLD -> File("./saves")
+            RESOURCE_PACK -> Platform.getFileInGameDir("resourcepacks")
+            IRIS_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            OPTIFINE_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            WORLD -> Platform.getFileInGameDir("saves")
             else -> null
         }
     }

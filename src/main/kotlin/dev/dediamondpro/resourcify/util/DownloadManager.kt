@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
+import dev.dediamondpro.resourcify.platform.Platform
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
@@ -27,7 +28,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 object DownloadManager {
-    private val tempFolder = File("./resourcify-temp")
+    private val tempFolder = Platform.getFileInGameDir("resourcify-temp")
 
     @get:Synchronized
     private val queuedDownloads = mutableMapOf<URI, QueuedDownload>()

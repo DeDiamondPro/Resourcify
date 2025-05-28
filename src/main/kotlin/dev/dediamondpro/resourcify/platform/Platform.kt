@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.platform
 
 import net.minecraft.SharedConstants
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.resources.language.I18n
 import net.minecraft.network.chat.contents.TranslatableContents
@@ -66,5 +67,9 @@ object Platform {
         }
         return resources.content
         //?}
+    }
+
+    fun getFileInGameDir(name: String): File {
+        return File(Minecraft.getInstance().gameDirectory, name)
     }
 }

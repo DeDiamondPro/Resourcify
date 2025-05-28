@@ -1,13 +1,13 @@
 package dev.dediamondpro.resourcify.gui.world
 
 import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
+import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.ProjectType
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.tabs.Tab
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.network.chat.Component
-import java.io.File
 import java.util.function.Consumer
 
 class DownloadWorldTab : Tab {
@@ -22,6 +22,6 @@ class DownloadWorldTab : Tab {
     }
 
     fun onClick() {
-        UScreen.displayScreen(BrowseScreen(ProjectType.WORLD, File("./saves")))
+        UScreen.displayScreen(BrowseScreen(ProjectType.WORLD, Platform.getFileInGameDir("saves")))
     }
 }

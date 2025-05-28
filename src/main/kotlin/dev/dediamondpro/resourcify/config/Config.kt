@@ -18,11 +18,10 @@
 package dev.dediamondpro.resourcify.config
 
 import dev.dediamondpro.resourcify.Constants
+import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.fromJson
 import dev.dediamondpro.resourcify.util.toJson
-import net.minecraft.client.Minecraft
-import java.io.File
 
 class Config {
     var defaultService: String = ModrinthService.getName()
@@ -36,7 +35,7 @@ class Config {
     var worldsEnabled: Boolean = true
 
     companion object {
-        private val configFile = File("config/resourcify.json", Minecraft.getInstance().gameDirectory.path)
+        private val configFile = Platform.getFileInGameDir("config/resourcify.json")
         val instance: Config
 
         init {
