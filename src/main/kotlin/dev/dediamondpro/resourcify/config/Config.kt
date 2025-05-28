@@ -24,6 +24,7 @@ import java.io.File
 
 class Config {
     var defaultService: String = ModrinthService.getName()
+    var guiScale = -1 // -1 = auto
     var fullResThumbnail: Boolean = false
     var openLinkInResourcify: Boolean = true
     var adsEnabled: Boolean = true
@@ -51,8 +52,13 @@ class Config {
         }
 
         fun save(config: Config = instance) {
-            configFile.outputStream().bufferedWriter().use {
-                it.write(config.toJson())
+            try {
+                configFile.outputStream().bufferedWriter().use {
+                    it.write(config.toJson())
+                }
+            } catch (e: Exception) {
+                println("Resourcify: Could not save config")
+                e.printStackTrace()
             }
         }
     }
