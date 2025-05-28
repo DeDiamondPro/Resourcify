@@ -26,11 +26,12 @@ import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
 import gg.essential.elementa.components.*
+import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
-import net.minecraft.client.gui.screens.Screen
+import gg.essential.elementa.effects.OutlineEffect
 
 class SettingsPage : PaginatedScreen(adaptScale = false) {
     private val scrollBox = ScrollComponent(pixelsPerScroll = 30f, scrollAcceleration = 1.5f).constrain {
@@ -55,6 +56,13 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         val allServices = ServiceRegistry.getAllServices().map { it.getName() }
         addDropdownOption("resourcify.config.source", allServices, Config.instance.defaultService) {
             Config.instance.defaultService = it
+        }
+
+        // GUI scale
+        var default: Int? = Config.instance.guiScale
+        if (default == -1) default = null
+        addNumberInput("resourcify.config.gui-scale", "resourcify.config.gui-scale.auto", default) {
+            Config.instance.guiScale = if (it == -1) it else it.coerceIn(1, 10)
         }
 
         // Thumbnail quality
@@ -110,7 +118,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         val descriptionBox = UIContainer().constrain {
             x = 4.pixels()
             y = 4.pixels()
-            width = 100.percent() - 168.pixels()
+            width = 100.percent() - 170.pixels()
             height = ChildLocationSizeConstraint()
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
@@ -146,7 +154,7 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
         val sourceDescriptionBox = UIContainer().constrain {
             x = 4.pixels()
             y = 4.pixels()
-            width = 100.percent() - 168.pixels()
+            width = 100.percent() - 170.pixels()
             height = ChildLocationSizeConstraint()
         } childOf box
         UIWrappedText("$localizationString.title".localize()).constrain {
@@ -170,5 +178,61 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
             onUpdate(it.first())
             Config.save()
         } childOf box
+    }
+
+    private fun addNumberInput(
+        localizationString: String,
+        placeholder: String,
+        default: Int?,
+        onUpdate: (Int) -> Unit
+    ) {
+        val box = UIBlock(Colors.BACKGROUND).constrain {
+            x = 0.pixels()
+            y = SiblingConstraint(padding = 4f)
+            width = 100.percent()
+            height = ChildBasedMaxSizeConstraint() + 4.pixels()
+        } childOf mainBox
+        val sourceDescriptionBox = UIContainer().constrain {
+            x = 4.pixels()
+            y = 4.pixels()
+            width = 100.percent() - 170.pixels()
+            height = ChildLocationSizeConstraint()
+        } childOf box
+        UIWrappedText("$localizationString.title".localize()).constrain {
+            width = 100.percent()
+            color = Colors.TEXT_PRIMARY.toConstraint()
+        } childOf sourceDescriptionBox
+        UIWrappedText("$localizationString.description".localize()).constrain {
+            y = SiblingConstraint(padding = 4f)
+            width = 100.percent()
+            color = Colors.TEXT_SECONDARY.toConstraint()
+        } childOf sourceDescriptionBox
+        val textBox = UIBlock(Colors.DROPDOWN).constrain {
+            x = 4.pixels(true)
+            y = CenterConstraint()
+            width = 160.pixels()
+            height = 17.pixels()
+        } effect OutlineEffect(Colors.DROPDOWN_BORDER, 1f) childOf box
+        val textInput = UITextInput(placeholder.localize(), cursorColor = Colors.TEXT_SECONDARY).constrain {
+            x = 4.pixels()
+            y = CenterConstraint()
+            width = 100.percent() - 8.pixels()
+            color = Colors.TEXT_SECONDARY.toConstraint()
+        } childOf textBox
+        textInput.onUpdate {
+            if (it.trim().isEmpty()) {
+                onUpdate(-1)
+                Config.save()
+            } else {
+                it.toIntOrNull()?.let { num ->
+                    onUpdate(num)
+                    Config.save()
+                }
+            }
+        }.onMouseClick {
+            if (it.mouseButton != 0) return@onMouseClick
+            grabWindowFocus()
+        }
+        default?.let { textInput.setText(it.toString()) }
     }
 }

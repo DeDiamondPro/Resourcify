@@ -17,13 +17,16 @@
 
 package dev.dediamondpro.resourcify.config
 
+import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.services.modrinth.ModrinthService
 import dev.dediamondpro.resourcify.util.fromJson
 import dev.dediamondpro.resourcify.util.toJson
+import net.minecraft.client.Minecraft
 import java.io.File
 
 class Config {
     var defaultService: String = ModrinthService.getName()
+    var guiScale = -1 // -1 = auto
     var fullResThumbnail: Boolean = false
     var openLinkInResourcify: Boolean = true
     var adsEnabled: Boolean = true
@@ -33,7 +36,7 @@ class Config {
     var worldsEnabled: Boolean = true
 
     companion object {
-        private val configFile = File("./config/resourcify.json")
+        private val configFile = File("config/resourcify.json", Minecraft.getInstance().gameDirectory.path)
         val instance: Config
 
         init {
@@ -51,8 +54,12 @@ class Config {
         }
 
         fun save(config: Config = instance) {
-            configFile.outputStream().bufferedWriter().use {
-                it.write(config.toJson())
+            try {
+                configFile.outputStream().bufferedWriter().use {
+                    it.write(config.toJson())
+                }
+            } catch (e: Exception) {
+                Constants.LOGGER.error("Failed to save Resourcify config to file.", e)
             }
         }
     }

@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.gui
 
+import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
@@ -105,6 +106,9 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true, private v
         }
 
         private fun getGuiScale(defaultScale: Int, target: Float): Int {
+            if (Config.instance.guiScale != -1) {
+                return Config.instance.guiScale.coerceIn(1, 10)
+            }
             val minScale = floor(UResolution.windowWidth / target).toInt()
             return minScale.coerceAtLeast(1).coerceAtMost(calculateScaleFactor(defaultScale))
         }
