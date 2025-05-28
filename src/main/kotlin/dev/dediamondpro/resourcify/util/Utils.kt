@@ -136,7 +136,7 @@ object Utils {
     }
 
     fun incrementFileName(fileName: String): String {
-        val regex = """\((\d+)\)(\.\w+)$""".toRegex()
+        val regex = """\((\d+)\)(\.\w+)?$""".toRegex()
         val matchResult = regex.find(fileName)
 
         return if (matchResult != null) {

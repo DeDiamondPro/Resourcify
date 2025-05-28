@@ -42,15 +42,15 @@ class VersionWrapper(private val version: IVersion, private val type: ProjectTyp
                     var file: File
                     if (type.shouldExtract) {
                         file = File(downloadFolder, version.getFileName().removeSuffix(".zip"))
-                        if (file.exists()) {
-                            file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
+                        while (file.exists()) {
+                            file = File(downloadFolder, Utils.incrementFileName(file.name))
                         }
                         DownloadManager.extractZip(it.toFile(), file)
                         it.deleteIfExists()
                     } else {
                         file = File(downloadFolder, version.getFileName())
-                        if (file.exists()) {
-                            file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
+                        while (file.exists()) {
+                            file = File(downloadFolder, Utils.incrementFileName(file.name))
                         }
                         Files.move(it, file.toPath())
                     }
@@ -76,8 +76,8 @@ class VersionWrapper(private val version: IVersion, private val type: ProjectTyp
                 fileName = fileName.removeSuffix(".zip")
             }
             var file = File(downloadFolder, fileName)
-            if (file.exists()) {
-                file = File(downloadFolder, Utils.incrementFileName(version.getFileName()))
+            while (file.exists()) {
+                file = File(downloadFolder, Utils.incrementFileName(file.name))
             }
             DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
                 text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
