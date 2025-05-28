@@ -4,9 +4,13 @@ Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
+Thank you to everyone who completed Resourcify's feedback survey, this update addresses some common complaints, with
+more to come!
+
 - Made installing from CurseForge when automatic downloading is not supported easier, this will now watch your download
   directory to load the file once it has been downloaded!
 - Improved GUI scale handling, and added a setting to manually set the GUI scale Resourcify will use.
+- Added button to open settings page in the browse screen, next to the search bar
 - Added Spanish translations
   by [pilahito](https://github.com/pilahito) ([#87](https://github.com/DeDiamondPro/Resourcify/issues/87))
 - Added Russian translations
