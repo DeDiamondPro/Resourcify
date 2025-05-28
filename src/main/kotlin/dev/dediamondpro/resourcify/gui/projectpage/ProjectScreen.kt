@@ -21,7 +21,6 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
-import dev.dediamondpro.resourcify.constraints.WindowMinConstraint
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
@@ -45,6 +44,7 @@ import java.awt.Color
 import java.io.File
 import java.net.URI
 import java.util.concurrent.CompletableFuture
+import kotlin.math.min
 
 class ProjectScreen(
     val service: IService,
@@ -64,7 +64,9 @@ class ProjectScreen(
     private val contentBox = UIContainer().constrain {
         x = CenterConstraint()
         y = 4.pixels()
-        width = ChildBasedSizeConstraint(padding = 4f)
+        width = MinConstraint(ChildBasedSizeConstraint(padding = 4f), basicWidthConstraint {
+            window.getWidth() - 8
+        })
         height = ChildLocationSizeConstraint() + 4.pixels()
     } childOf scrollBox
 
@@ -78,7 +80,7 @@ class ProjectScreen(
     private val mainBox = UIContainer().constrain {
         x = 0.pixels(alignOpposite = true)
         y = 0.pixels()
-        width = WindowMinConstraint(528.pixels())
+        width = basicWidthConstraint { min(528f, window.getWidth() - 172) }
         height = ChildLocationSizeConstraint()
     } childOf contentBox
 
