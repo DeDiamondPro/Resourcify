@@ -1,22 +1,14 @@
-## Resourcify 1.7.2
+## Resourcify 1.7.3
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
-Thank you to everyone who completed Resourcify's feedback survey, this update addresses some common complaints, with
-more to come!
-
-- Made installing from CurseForge when automatic downloading is not supported easier, this will now watch your download
-  directory to load the file once it has been downloaded!
-- Improved GUI scale handling, and added a setting to manually set the GUI scale Resourcify will use.
-- Added button to open settings page in the browse screen, next to the search bar
-- Added Spanish translations
-  by [pilahito](https://github.com/pilahito) ([#87](https://github.com/DeDiamondPro/Resourcify/issues/87))
-- Added Russian translations
-  by [ReMatrixed](https://github.com/ReMatrixed) ([#76](https://github.com/DeDiamondPro/Resourcify/pull/76))
-- Fixed issues with not being able to close the update GUI
-- Fixed world downloading not opening the world when downloading a specific version instead of the suggested version.
+- Added support for 1.21.6 fabric
+- Updated Portuguese (Brazil) translations
+  by [seriousfreezing](https://github.com/seriousfreezing) ([#92](https://github.com/DeDiamondPro/Resourcify/pull/92))
+- Improved stability of the manual download system in cases where Resourcify does not have permission to delete the
+  downloaded file.
 
 ----------------------------------------------------------------------------------------------------
 

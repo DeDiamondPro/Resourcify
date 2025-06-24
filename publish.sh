@@ -13,3 +13,4 @@ set -e
 ./gradlew publish-1.21.5-forge
 ./gradlew publish-1.21.5-neoforge
 ./gradlew publish-1.21.5-fabric
+./gradlew publish-1.21.6-fabric
