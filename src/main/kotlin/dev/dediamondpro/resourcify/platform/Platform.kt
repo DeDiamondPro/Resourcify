@@ -28,7 +28,10 @@ import java.io.File
 
 object Platform {
     fun getMcVersion(): String {
-        return SharedConstants.getCurrentVersion().name
+        //? if >= 1.21.6 {
+        return SharedConstants.getCurrentVersion().name()
+        //?} else
+        /*return SharedConstants.getCurrentVersion().name*/
     }
 
     fun getLoader(): String {

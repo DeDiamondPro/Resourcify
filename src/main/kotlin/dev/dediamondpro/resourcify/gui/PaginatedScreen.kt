@@ -29,7 +29,7 @@ import kotlin.math.floor
 
 
 abstract class PaginatedScreen(private val adaptScale: Boolean = true, private val minimumWidth: Float = 500f) : WindowScreen(
-    version = ElementaVersion.V8,
+    version = ElementaVersion.V10,
     drawDefaultBackground = true
 ) {
     private var defaultScale = -1

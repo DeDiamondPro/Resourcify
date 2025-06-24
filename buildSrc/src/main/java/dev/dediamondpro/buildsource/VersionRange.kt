@@ -21,7 +21,8 @@ class VersionRange(
     val startVersion: String,
     val endVersion: String,
     private val name: String = "$startVersion-$endVersion",
-    private val openEnd: Boolean = false
+    private val openEnd: Boolean = false,
+    private val allowAll: Boolean = false, // Mostly used for pre releases and release candidates
 ) {
     fun getName(): String {
         return name;
@@ -32,10 +33,12 @@ class VersionRange(
     }
 
     fun getFabricRange(): String {
+        if (allowAll) return "*"
         return ">=$startVersion" + if (!openEnd) " <=$endVersion" else ""
     }
 
     fun getForgeRange(): String {
+        if (allowAll) return "[1,)"
         return "[$startVersion," + if (!openEnd) "$endVersion]" else ")"
     }
 }

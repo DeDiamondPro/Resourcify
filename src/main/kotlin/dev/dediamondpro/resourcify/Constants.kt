@@ -17,11 +17,12 @@
 
 package dev.dediamondpro.resourcify
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 object Constants {
     const val NAME = /*$ mod_name*/ "Resourcify"
     const val ID = /*$ mod_id*/ "resourcify"
-    const val VERSION = /*$ mod_version*/ "1.7.1"
-    val LOGGER = LoggerFactory.getLogger("Resourcify")
+    const val VERSION = /*$ mod_version*/ "1.7.2"
+    val LOGGER: Logger = LoggerFactory.getLogger("Resourcify")
 }

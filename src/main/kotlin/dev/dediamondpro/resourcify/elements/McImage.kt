@@ -17,17 +17,31 @@
 
 package dev.dediamondpro.resourcify.elements
 
-import com.mojang.blaze3d.systems.RenderSystem
+import dev.dediamondpro.resourcify.util.EmptyImage
+import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.RenderType
+import gg.essential.universal.UMinecraft
 import net.minecraft.resources.ResourceLocation
 import java.awt.Color
+import javax.imageio.ImageIO
 
-class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvider {
+class McImage(texture: ResourceLocation) : UIComponent(), ImageProvider {
+    var backingImage: UIImage? = null
+
+    init {
+        val resource = UMinecraft.getMinecraft().resourceManager.getResource(texture)?.orElse(null)
+        if (resource != null) {
+            backingImage = UIImage(supply {
+                resource.open().use {
+                    return@use ImageIO.read(it)
+                }
+            }, EmptyImage, EmptyImage)
+        }
+    }
+
     override fun drawImage(
         matrixStack: UMatrixStack,
         x: Double,
@@ -36,29 +50,7 @@ class McImage(private val texture: ResourceLocation) : UIComponent(), ImageProvi
         height: Double,
         color: Color
     ) {
-        //? if >=1.21.5 {
-        val bufferSource = Minecraft.getInstance().gameRenderer.renderBuffers.bufferSource()
-        val renderType = RenderType.guiTextured(texture)
-        val vertexConsumer = bufferSource.getBuffer(renderType)
-        val pose = matrixStack.toMC().last().pose()
-        val colorInt = color.rgb
-
-        vertexConsumer.addVertex(pose, x.toFloat(), (y + height).toFloat(), 0F).setUv(0F, 1F).setColor(colorInt)
-        vertexConsumer.addVertex(pose, (x + width).toFloat(), (y + height).toFloat(), 0F).setUv(1F, 1F).setColor(colorInt)
-        vertexConsumer.addVertex(pose, (x + width).toFloat(), y.toFloat(), 0F).setUv(1F, 0F).setColor(colorInt)
-        vertexConsumer.addVertex(pose, x.toFloat(), y.toFloat(), 0F).setUv(0F, 0F).setColor(colorInt)
-        bufferSource.endLastBatch()
-        //?} else {
-        /*RenderSystem.setShaderTexture(0, texture)
-        val renderer = UGraphics.getFromTessellator()
-
-        renderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
-        renderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(color).endVertex()
-        renderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(color).endVertex()
-        renderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(color).endVertex()
-        renderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(color).endVertex()
-        renderer.drawDirect()
-        *///?}
+        backingImage?.drawImage(matrixStack, x, y, width, height, color)
     }
 
     override fun draw(matrixStack: UMatrixStack) {

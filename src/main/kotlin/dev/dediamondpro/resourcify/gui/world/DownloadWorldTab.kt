@@ -15,6 +15,12 @@ class DownloadWorldTab : Tab {
         return Component.translatable("resourcify.world.download")
     }
 
+    //? if >= 1.21.6 {
+    override fun getTabExtraNarration(): Component? {
+        return Component.empty()
+    }
+    //?}
+
     override fun visitChildren(consumer: Consumer<AbstractWidget>) {
     }
 

@@ -69,13 +69,17 @@ val shadeModImplementation: Configuration by configurations.creating {
 }
 
 // Version definitions
-val mcVersion = VersionDefinition(
+val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    default = mcPlatform.versionString
+)
+val compatibleMcVersion = VersionDefinition(
     "1.20.1" to VersionRange("1.20", "1.20.1", name = "1.20.1"),
     "1.21.1" to VersionRange("1.21", "1.21.1", name = "1.21.1"),
     "1.21.4" to VersionRange("1.21.2", "1.21.4", name = "1.21.3/4"),
     // NeoForge changed stuff going from .3 to .4
     "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
-    "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5", openEnd = true),
+    "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
+    "1.21.6" to VersionRange("1.21.6", "1.21.6", name = "1.21.6", openEnd = true)
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -91,12 +95,14 @@ val fabricApiVersion = VersionDefinition(
     "1.21.1" to "0.114.0+1.21.1",
     "1.21.4" to "0.118.0+1.21.4",
     "1.21.5" to "0.119.4+1.21.5",
+    "1.21.6" to "0.126.1+1.21.6",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
     "1.21.4" to "13.0.2",
     "1.21.5" to "14.0.0-rc.2",
+    "1.21.6" to "15.0.0-beta.3",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -121,12 +127,12 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.5" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:401",
-    default = "${mcPlatform.name}:401"
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:414+fix-uscreen-panorama-background-break-drawing",
+    default = "${mcPlatform.name}:414+fix-uscreen-panorama-background-break-drawing"
 )
 
 dependencies {
-    minecraft("com.mojang:minecraft:${mcPlatform.versionString}")
+    minecraft("com.mojang:minecraft:${mcVersion.get(mcPlatform)}")
 
     @Suppress("UnstableApiUsage")
     mappings(loom.layered {
@@ -137,7 +143,7 @@ dependencies {
     })
 
     if (mcPlatform.isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:0.16.10")
+        modImplementation("net.fabricmc:fabric-loader:0.16.13")
 
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
@@ -157,7 +163,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shadeModImplementation("gg.essential:elementa:DIAMOND-11") {
+    shadeModImplementation("gg.essential:elementa:DIAMOND-12") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
@@ -184,13 +190,13 @@ if (mcPlatform.isForge) configurations.configureEach {
 
 base.archivesName.set(
     "$mod_name (${
-        mcVersion.get(mcPlatform).getName().replace("/", "-")
+        compatibleMcVersion.get(mcPlatform).getName().replace("/", "-")
     }-${mcPlatform.loaderString})-$mod_version"
 )
 
 publishMods {
     file.set(tasks.remapJar.get().archiveFile)
-    displayName.set("[${mcVersion.get(mcPlatform).getName()}-${mcPlatform.loaderString}] $mod_name $mod_version")
+    displayName.set("[${compatibleMcVersion.get(mcPlatform).getName()}-${mcPlatform.loaderString}] $mod_name $mod_version")
     version.set(mod_version)
     changelog.set(rootProject.file("changelog.md").readText())
     type.set(STABLE)
@@ -204,8 +210,8 @@ publishMods {
         accessToken.set(System.getenv("CURSEFORGE_TOKEN"))
 
         minecraftVersionRange {
-            start = mcVersion.get(mcPlatform).startVersion
-            end = mcVersion.get(mcPlatform).endVersion
+            start = compatibleMcVersion.get(mcPlatform).startVersion
+            end = compatibleMcVersion.get(mcPlatform).endVersion
         }
 
         if (mcPlatform.isFabric) {
@@ -220,8 +226,8 @@ publishMods {
         accessToken.set(System.getenv("MODRINTH_TOKEN"))
 
         minecraftVersionRange {
-            start = mcVersion.get(mcPlatform).startVersion
-            end = mcVersion.get(mcPlatform).endVersion
+            start = compatibleMcVersion.get(mcPlatform).startVersion
+            end = compatibleMcVersion.get(mcPlatform).endVersion
         }
 
         if (mcPlatform.isFabric) {
@@ -265,7 +271,7 @@ tasks {
             "name" to mod_name,
             "version" to mod_version,
             "aw" to accesWidener,
-            "mcVersion" to mcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
+            "mcVersion" to compatibleMcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
             "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
         )
 

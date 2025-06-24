@@ -25,6 +25,9 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
+//? if >= 1.21.6
+import net.minecraft.client.renderer.RenderPipelines
+
 class ImageButton(
     screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
     private val image: ResourceLocation,
@@ -42,7 +45,13 @@ class ImageButton(
 
     override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         super.renderWidget(context, mouseX, mouseY, delta)
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        context.blit(/*? >=1.21.2 {*/ RenderType::guiTextured, /*?}*/ image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //? if <= 1.21.5
+        /*RenderSystem.setShaderColor(1f, 1f, 1f, 1f)*/
+        //? if >= 1.21.6 {
+        context.blit(RenderPipelines.GUI_TEXTURED, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        //?} else if >= 1.21.2 {
+        /*context.blit(RenderType::guiTextured, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
+        *///?} else
+        /*context.blit(image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)*/
     }
 }
