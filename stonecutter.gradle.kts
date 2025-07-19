@@ -19,7 +19,7 @@ plugins {
     id("dev.kikugie.stonecutter")
     alias(libs.plugins.arch.loom) apply false
 }
-stonecutter active "1.21.6-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.8-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter tasks {
     val ordering = versionComparator.thenComparingInt {
