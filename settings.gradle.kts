@@ -42,6 +42,7 @@ val platforms = listOf(
     "1.21.5-forge",
     "1.21.5-neoforge",
     "1.21.5-fabric",
+    "1.21.8-neoforge",
     "1.21.8-fabric",
 )
 

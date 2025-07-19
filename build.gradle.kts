@@ -107,7 +107,8 @@ val modMenuVersion = VersionDefinition(
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
     "1.21.4" to "21.4.124",
-    "1.21.5" to "21.5.34-beta"
+    "1.21.5" to "21.5.34-beta",
+    "1.21.8" to "21.8.2-beta",
 )
 val minimumNeoForgeVersion = VersionDefinition(
     // We need this version or higher on 1.21.4, on other versions we don't care
@@ -125,10 +126,13 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.1" to "5.7.0",
     "1.21.4" to "5.7.0",
     "1.21.5" to "5.7.0",
+    "1.21.8" to "5.9.0",
 )
 val universalVersion = VersionDefinition(
     "1.21.1" to "1.21-${mcPlatform.loaderString}:421",
     "1.21.8" to "1.21.7-${mcPlatform.loaderString}:421",
+    "1.21.8-forge" to "1.21.7-forge:422+feature-1.21.7-forge-neoforge",
+    "1.21.8-neoforge" to "1.21.7-neoforge:422+feature-1.21.7-forge-neoforge",
     default = "${mcPlatform.name}:421"
 )
 
