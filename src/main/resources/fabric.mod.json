@@ -45,5 +45,8 @@
     "fabricloader": ">=0.15.0",
     "fabric-resource-loader-v0": "*",
     "minecraft": "${mcVersion}"
+  },
+  "breaks": {
+    "vulkanmod": "*"
   }
 }

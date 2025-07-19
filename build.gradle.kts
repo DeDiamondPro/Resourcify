@@ -127,8 +127,8 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.5" to "5.7.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:414+fix-uscreen-panorama-background-break-drawing",
-    default = "${mcPlatform.name}:414+fix-uscreen-panorama-background-break-drawing"
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:421",
+    default = "${mcPlatform.name}:421"
 )
 
 dependencies {
