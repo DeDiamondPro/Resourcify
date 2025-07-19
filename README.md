@@ -13,20 +13,13 @@ or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/resourcify) page.
 
 # Building
 
-Resourcify uses stonecutter to compile against multiple Minecraft versions and loaders at once, this changes a bit about
-how the mod is built. For more info about stonecutter, see their [wiki](https://stonecutter.kikugie.dev/).
+Resourcify uses stonecutter to compile against multiple Minecraft versions and loaders at once. For more info about
+stonecutter, see their [wiki](https://stonecutter.kikugie.dev/).
 
-Before your first build you need to run the following command to put the access wideners in the correct places, you will
-need to run this every time you update an access widener.
-
-```shell
-./gradlew setupChiseledBuild
-```
-
-Then to build the mod run the following command, the mod jars will be in the `jars` folder after the build has finished.
+To build the mod run the following command, the mod jars will be in the `jars` folder after the build has finished.
 
 ```shell
-./gradlew chiseledBuild
+./gradlew build
 ```
 
 ------------------------------------

@@ -50,14 +50,14 @@ repositories {
 }
 
 stonecutter {
-    const("fabric", mcPlatform.isFabric)
-    const("forge", mcPlatform.isForge)
-    const("neoforge", mcPlatform.isNeoForge)
-    const("forgelike", mcPlatform.isForgeLike)
+    constants["fabric"] = mcPlatform.isFabric
+    constants["forge"] = mcPlatform.isForge
+    constants["neoforge"] = mcPlatform.isNeoForge
+    constants["forgelike"] = mcPlatform.isForgeLike
 
-    swap("mod_name", "\"$mod_name\"")
-    swap("mod_id", "\"$mod_id\"")
-    swap("mod_version", "\"$mod_version\"")
+    swaps["mod_name"] = "\"$mod_name\""
+    swaps["mod_id"] = "\"$mod_id\""
+    swaps["mod_version"] = "\"$mod_version\""
 }
 
 val shade: Configuration by configurations.creating {

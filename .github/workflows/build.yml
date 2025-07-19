@@ -26,11 +26,8 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Setup chiseled build # Required to set up access wideners properly
-        run: ./gradlew setupChiseledBuild
-
       - name: Build
-        run: ./gradlew chiseledBuild
+        run: ./gradlew build
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
