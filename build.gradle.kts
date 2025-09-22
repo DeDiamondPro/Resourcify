@@ -70,6 +70,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    "1.21.9" to "1.21.9-pre3",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -79,7 +80,8 @@ val compatibleMcVersion = VersionDefinition(
     // NeoForge changed stuff going from .3 to .4
     "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
     "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
-    "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8", openEnd = true)
+    "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
+    "1.21.9" to VersionRange("1.21.9", "1.21.9", name = "1.21.9", openEnd = true, allowAll = true), // TODO: disable allow all when ready for release
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -88,7 +90,9 @@ val javaVersion = VersionDefinition(
 val parchmentVersion = VersionDefinition(
     "1.20.1" to "1.20.1:2023.09.03",
     "1.21.1" to "1.21.1:2024.11.17",
-    "1.21.4" to "1.21.4:2025.02.16"
+    "1.21.4" to "1.21.4:2025.03.23",
+    "1.21.5" to "1.21.5:2025.06.15",
+    "1.21.8" to "1.21.8:2025.09.14",
 )
 val fabricApiVersion = VersionDefinition(
     "1.20.1" to "0.92.3+1.20.1",
@@ -96,13 +100,15 @@ val fabricApiVersion = VersionDefinition(
     "1.21.4" to "0.118.0+1.21.4",
     "1.21.5" to "0.119.4+1.21.5",
     "1.21.8" to "0.129.0+1.21.8",
+    "1.21.9" to "0.133.10+1.21.9",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
     "1.21.4" to "13.0.2",
     "1.21.5" to "14.0.0-rc.2",
-    "1.21.8" to "15.0.0-beta.3",
+    "1.21.8" to "15.0.0",
+    "1.21.9" to "15.0.0",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -129,10 +135,9 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.8" to "5.9.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:421",
-    "1.21.8" to "1.21.7-${mcPlatform.loaderString}:421",
-    "1.21.8-forge" to "1.21.7-forge:422+feature-1.21.7-forge-neoforge",
-    "1.21.8-neoforge" to "1.21.7-neoforge:422+feature-1.21.7-forge-neoforge",
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:427",
+    "1.21.8" to "1.21.7-${mcPlatform.loaderString}:427",
+    "1.21.9" to "1.21.9-${mcPlatform.loaderString}:428+feature-1.21.9-fabric",
     default = "${mcPlatform.name}:421"
 )
 
@@ -148,7 +153,7 @@ dependencies {
     })
 
     if (mcPlatform.isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:0.16.13")
+        modImplementation("net.fabricmc:fabric-loader:0.17.2")
 
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
@@ -177,7 +182,14 @@ dependencies {
     }
 }
 
-val accesWidener = if (mcPlatform.minor == 21) "1.21.resourcify" else "1.20.resourcify"
+val accesWidener = if (mcPlatform.version >= 1_21_09) {
+    "1.21.9.resourcify"
+} else if (mcPlatform.minor == 21) {
+    "1.21.resourcify"
+} else {
+    "1.20.resourcify"
+}
+
 loom {
     accessWidenerPath = rootProject.file("src/main/resources/$accesWidener.accesswidener")
 

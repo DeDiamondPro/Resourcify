@@ -24,6 +24,9 @@ import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.ConfirmLinkScreen
 import net.minecraft.client.gui.screens.Screen
 
+//? if >=1.21.9
+import net.minecraft.client.input.KeyEvent
+
 
 class ConfirmLinkScreen(private val url: String, private val previousScreen: Screen?, trusted: Boolean = false) :
     ConfirmLinkScreen({ result ->
@@ -31,11 +34,20 @@ class ConfirmLinkScreen(private val url: String, private val previousScreen: Scr
         UScreen.displayScreen(previousScreen)
     }, url, trusted) {
 
-    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        if (keyCode == UKeyboard.KEY_ESCAPE) {
+    override fun keyPressed(
+        //? if <1.21.9 {
+        /*keyCode: Int, scanCode: Int, modifiers: Int
+        *///?} else
+        keyEvent: KeyEvent
+    ): Boolean {
+        val key = /*? if <1.21.9 {*/ /*keyCode *//*?} else {*/ keyEvent.key /*?}*/
+        if (key == UKeyboard.KEY_ESCAPE) {
             UScreen.displayScreen(previousScreen)
             return true
         }
-        return super.keyPressed(keyCode, scanCode, modifiers)
+        //? if <1.21.9 {
+        /*return super.keyPressed(keyCode, scanCode, modifiers)
+        *///?} else
+        return super.keyPressed(keyEvent)
     }
 }

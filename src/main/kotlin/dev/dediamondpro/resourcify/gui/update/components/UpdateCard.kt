@@ -46,7 +46,6 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.universal.ChatColor
 import net.minecraft.client.gui.screens.packs.PackSelectionModel
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen
-import net.minecraft.server.packs.FilePackResources
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
@@ -285,7 +284,12 @@ class UpdateCard(
                                         // Set the index correctly
                                         entry.otherList.remove(entry.pack)
                                         entry.otherList.add(index, entry.pack)
-                                        model.onListChanged.run()
+
+                                        // Call the list change method
+                                        //? if <1.21.9 {
+                                        /*model.onListChanged.run()
+                                        *///?} else
+                                        model.onListChanged.accept(null)
                                         break
                                     }
                                 }
