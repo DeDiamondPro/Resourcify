@@ -70,7 +70,6 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
-    "1.21.9" to "1.21.9-pre3",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -81,7 +80,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
     "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
-    "1.21.9" to VersionRange("1.21.9", "1.21.9", name = "1.21.9", openEnd = true, allowAll = true), // TODO: disable allow all when ready for release
+    "1.21.9" to VersionRange("1.21.9", "1.21.9", name = "1.21.9", openEnd = true),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -100,7 +99,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.4" to "0.118.0+1.21.4",
     "1.21.5" to "0.119.4+1.21.5",
     "1.21.8" to "0.129.0+1.21.8",
-    "1.21.9" to "0.133.10+1.21.9",
+    "1.21.9" to "0.133.14+1.21.9",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -135,10 +134,9 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.8" to "5.9.0",
 )
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:427",
-    "1.21.8" to "1.21.7-${mcPlatform.loaderString}:427",
-    "1.21.9" to "1.21.9-${mcPlatform.loaderString}:428+feature-1.21.9-fabric",
-    default = "${mcPlatform.name}:421"
+    "1.21.1" to "1.21-${mcPlatform.loaderString}:430",
+    "1.21.8" to "1.21.7-${mcPlatform.loaderString}:430",
+    default = "${mcPlatform.name}:430"
 )
 
 dependencies {
