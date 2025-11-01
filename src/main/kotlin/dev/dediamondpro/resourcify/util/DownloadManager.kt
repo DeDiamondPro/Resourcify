@@ -19,13 +19,14 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.platform.Platform
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.util.Stack
 import java.util.concurrent.CompletableFuture
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
 
 object DownloadManager {
     private val tempFolder = Platform.getFileInGameDir("resourcify-temp")
@@ -91,7 +92,7 @@ object DownloadManager {
             }
             if (queuedDownload.extract) {
                 val targetFolder = queuedDownload.file
-                extractZip(tempFile, targetFolder)
+                extractWorldZip(tempFile, targetFolder)
             } else {
                 Files.move(tempFile.toPath(), queuedDownload.file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
@@ -107,35 +108,49 @@ object DownloadManager {
         }, tempFile)
     }
 
-    fun extractZip(zipFile: File, dest: File) {
+    fun extractWorldZip(zipFile: File, dest: File) {
         // If all content is actually inside another folder inside the zip file, try to find this folder
         // We do this by checking if there is only one folder at the root, and then take this folder
         dest.mkdirs()
+
+        // Use the deprecated constructor since 1.20.1 uses an older version of the commons compress library
         ZipFile(zipFile).use { zip ->
-            // If all content is actually inside another folder inside the zip file, try to find this folder
-            // We do this by checking if there is only one folder at the root, and then take this folder
+            // For worlds (which is the only thing currently using this) level.dat should be at the root extracted
+            // folder, every file not in the same folder or a sub folder of level.dat will be ignored
             var prefixToRemove: String? = null
-            for (entry in zip.entries()) {
-                val firstFolder = entry.name.substringBefore("/", "")
-                // Could be readme file, license file, ...
-                if (firstFolder.isEmpty()) {
-                    continue
-                }
-                if (prefixToRemove == null) {
-                    prefixToRemove = "$firstFolder/"
-                } else if (prefixToRemove != "$firstFolder/") {
-                    prefixToRemove = null
+
+            // Prefix finding pass
+            val entriesToExtract = Stack<ZipArchiveEntry>()
+            val entries = zip.entries
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                entriesToExtract.push(entry)
+
+                val fileName = entry.name.substringAfterLast("/")
+                if (fileName == "level.dat") {
+                    prefixToRemove = entry.name.substringBeforeLast("/")
+                    if (prefixToRemove.isEmpty()) {
+                        prefixToRemove = null
+                    } else {
+                        prefixToRemove += "/"
+                    }
                     break
                 }
             }
 
-            zip.entries().asSequence().forEach { entry ->
-                // Remove prefix so when a zip contains a folder which contains the actual files,
-                // this will handle it
+            // Extracting pass
+            while (entriesToExtract.isNotEmpty() || entries.hasMoreElements()) {
+                val entry = if (entriesToExtract.isNotEmpty()) entriesToExtract.pop() else entries.nextElement()
+
+                if (prefixToRemove != null && !entry.name.startsWith(prefixToRemove)) {
+                    // Filter out files
+                    continue
+                }
+
                 val entryFile = resolvePath(entry, dest, prefixToRemove)
                 if (entry.isDirectory) {
                     entryFile.mkdirs()
-                    return@forEach
+                    continue
                 } else {
                     entryFile.parentFile.mkdirs()
                 }
@@ -147,7 +162,7 @@ object DownloadManager {
         }
     }
 
-    private fun resolvePath(entry: ZipEntry, targetDir: File, prefix: String?): File {
+    private fun resolvePath(entry: ZipArchiveEntry, targetDir: File, prefix: String?): File {
         val entryName = entry.name.let { if (prefix != null) it.removePrefix(prefix) else it }
         val destination = targetDir.resolve(entryName).normalize()
         if (!destination.absolutePath.startsWith(targetDir.normalize().absolutePath)) {

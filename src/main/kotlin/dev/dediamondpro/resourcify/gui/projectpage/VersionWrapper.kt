@@ -47,9 +47,8 @@ class VersionWrapper(private val version: IVersion, private val type: ProjectTyp
                                 file = File(downloadFolder, Utils.incrementFileName(file.name))
                             }
                             val sourceFile = it.toFile()
-                            DownloadManager.extractZip(sourceFile, file)
-                            if (sourceFile.canWrite()) {
-                                sourceFile.delete()
+                            DownloadManager.extractWorldZip(sourceFile, file)
+                            if (!sourceFile.delete()) {
                                 Constants.LOGGER.warn("Could not delete world file '$it'.")
                             }
                         } else {
