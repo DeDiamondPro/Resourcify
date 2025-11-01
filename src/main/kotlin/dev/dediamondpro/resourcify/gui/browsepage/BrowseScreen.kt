@@ -316,16 +316,26 @@ class BrowseScreen(
             }
         }
 
-        searchBox = (UITextInput("resourcify.browse.search".localize(type.displayName.localize())).constrain {
+        val searchBoxHitBox = UIContainer().constrain {
             x = 6.pixels()
             y = CenterConstraint()
+            height = 19.pixels()
             width = 100.percent() - 89.pixels()
-        }.onUpdate {
-            loadPacks()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            grabWindowFocus()
-        } childOf headerBox) as UITextInput
+            searchBox.grabWindowFocus()
+        } childOf headerBox
+        searchBox = (UITextInput(
+            "resourcify.browse.search".localize(type.displayName.localize()),
+            cursorColor = Color.WHITE
+        ).constrain {
+            y = CenterConstraint()
+            width = 100.percent()
+            color = Color.WHITE.toConstraint()
+        }.onUpdate {
+            loadPacks()
+        } childOf searchBoxHitBox) as UITextInput
+
         sortDropDown = DropDown(
             service.getSortOptions().map { it.value.localize() },
             onlyOneOption = true,
