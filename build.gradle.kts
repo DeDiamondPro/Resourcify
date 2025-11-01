@@ -112,8 +112,8 @@ val modMenuVersion = VersionDefinition(
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
     "1.21.4" to "21.4.124",
-    "1.21.5" to "21.5.34-beta",
-    "1.21.8" to "21.8.2-beta",
+    "1.21.5" to "21.5.95",
+    "1.21.8" to "21.8.49",
 )
 val minimumNeoForgeVersion = VersionDefinition(
     // We need this version or higher on 1.21.4, on other versions we don't care
