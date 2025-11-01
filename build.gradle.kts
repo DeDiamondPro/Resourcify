@@ -80,7 +80,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.4-neoforge" to VersionRange("1.21.4", "1.21.4", name = "1.21.4"),
     "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
-    "1.21.9" to VersionRange("1.21.9", "1.21.9", name = "1.21.9", openEnd = true),
+    "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -99,7 +99,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.4" to "0.118.0+1.21.4",
     "1.21.5" to "0.119.4+1.21.5",
     "1.21.8" to "0.129.0+1.21.8",
-    "1.21.9" to "0.133.14+1.21.9",
+    "1.21.10" to "0.136.0+1.21.10",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -107,7 +107,7 @@ val modMenuVersion = VersionDefinition(
     "1.21.4" to "13.0.2",
     "1.21.5" to "14.0.0-rc.2",
     "1.21.8" to "15.0.0",
-    "1.21.9" to "15.0.0",
+    "1.21.10" to "16.0.0-rc.1",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -133,10 +133,14 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.5" to "5.7.0",
     "1.21.8" to "5.9.0",
 )
+val universalMcVersion = VersionDefinition(
+    "1.21.1" to "1.21",
+    "1.21.8" to "1.21.7",
+    "1.21.10" to "1.21.9",
+    default = mcPlatform.versionString
+)
 val universalVersion = VersionDefinition(
-    "1.21.1" to "1.21-${mcPlatform.loaderString}:430",
-    "1.21.8" to "1.21.7-${mcPlatform.loaderString}:430",
-    default = "${mcPlatform.name}:430"
+    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:436"
 )
 
 dependencies {
@@ -217,8 +221,6 @@ publishMods {
     type.set(STABLE)
 
     modLoaders.add(mcPlatform.loaderString)
-    if (mcPlatform.isFabric) modLoaders.add("quilt")
-    if (mcPlatform.isForge && mcPlatform.version == 1_20_1) modLoaders.add("neoforge")
 
     curseforge {
         projectId.set("870076")

@@ -44,7 +44,7 @@ val platforms = listOf(
     "1.21.5-fabric",
     "1.21.8-neoforge",
     "1.21.8-fabric",
-    "1.21.9-fabric",
+    "1.21.10-fabric",
 )
 
 stonecutter {
@@ -54,7 +54,7 @@ stonecutter {
         for (version in platforms) {
             vers(version, version.split('-')[0])
         }
-        vcsVersion = "1.21.9-fabric"
+        vcsVersion = "1.21.10-fabric"
     }
 }
 
