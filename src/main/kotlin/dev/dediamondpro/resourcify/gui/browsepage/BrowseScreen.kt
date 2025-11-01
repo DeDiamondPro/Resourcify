@@ -314,20 +314,25 @@ class BrowseScreen(
             }
         }
 
+        val searchBoxHitBox = UIContainer().constrain {
+            x = 6.pixels()
+            y = CenterConstraint()
+            height = 19.pixels()
+            width = 100.percent() - 111.pixels()
+        }.onMouseClick {
+            if (it.mouseButton != 0) return@onMouseClick
+            searchBox.grabWindowFocus()
+        } childOf headerBox
         searchBox = (UITextInput(
             "resourcify.browse.search".localize(type.displayName.localize()),
             cursorColor = Colors.TEXT_PRIMARY
         ).constrain {
-            x = 6.pixels()
             y = CenterConstraint()
-            width = 100.percent() - 89.pixels()
+            width = 100.percent()
             color = Colors.TEXT_PRIMARY.toConstraint()
         }.onUpdate {
             loadPacks()
-        }.onMouseClick {
-            if (it.mouseButton != 0) return@onMouseClick
-            grabWindowFocus()
-        } childOf headerBox) as UITextInput
+        } childOf searchBoxHitBox) as UITextInput
 
         // Settings button
         Icon(Icons.SETTINGS, true, Colors.TEXT_SECONDARY).constrain {

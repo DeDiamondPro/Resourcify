@@ -173,11 +173,12 @@ class ProjectScreen(
         if (project.hasGallery()) pages["resourcify.project.gallery".localize()] = ::GalleryPage
         pages["resourcify.project.versions".localize()] = ::VersionsPage
         pages.forEach { (text, page) ->
-            UIText("${ChatColor.BOLD}$text").constrain {
+            val hitBox = UIContainer().constrain {
                 x = if (text == "resourcify.project.description".localize()) 6.pixels()
                 else SiblingConstraint(padding = 8f)
                 y = CenterConstraint()
-                color = Colors.TEXT_PRIMARY.toConstraint()
+                width = ChildBasedSizeConstraint()
+                height = 19.pixels()
             }.onMouseClick {
                 if (page == currentPage || it.mouseButton != 0) return@onMouseClick
                 currentPage = page
@@ -186,20 +187,30 @@ class ProjectScreen(
                     page(this@ProjectScreen) childOf mainBox
                 }.unhide()
             } childOf navigationBox
+
+            UIText("${ChatColor.BOLD}$text").constrain {
+                y = CenterConstraint()
+                color = Colors.TEXT_PRIMARY.toConstraint()
+            } childOf hitBox
         }
+        val sourceHitbox = UIContainer().constrain {
+            x = SiblingConstraint(padding = 8f)
+            y = CenterConstraint()
+            width = ChildBasedSizeConstraint()
+            height = 19.pixels()
+        }.onMouseClick {
+            if (it.mouseButton != 0) return@onMouseClick
+            UDesktop.browse(URI(project.getBrowserUrl()))
+        } childOf navigationBox
         TextIcon(
             "${ChatColor.BOLD}${service.getName().localize()}",
             Icons.EXTERNAL_LINK,
             color = Colors.TEXT_PRIMARY.toConstraint()
         ).constrain {
-            x = SiblingConstraint(padding = 8f)
             y = CenterConstraint()
             width = ChildLocationSizeConstraint()
             height = ChildBasedMaxSizeConstraint()
-        }.onMouseClick {
-            if (it.mouseButton != 0) return@onMouseClick
-            UDesktop.browse(URI(project.getBrowserUrl()))
-        } childOf navigationBox
+        } childOf sourceHitbox
     }
 
     private fun sideBar() {
