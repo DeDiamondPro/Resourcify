@@ -18,12 +18,8 @@
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
-import gg.essential.universal.UGraphics
-import gg.essential.universal.UMatrixStack
-import gg.essential.universal.utils.ReleasedDynamicTexture
 import net.minecraft.client.resources.language.I18n
 import net.minecraft.resources.ResourceLocation
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.io.File
 import java.io.FileInputStream
@@ -57,55 +53,6 @@ fun localizeOrDefault(key: String, default: String, vararg parameters: Any): Str
 }
 
 object Utils {
-    fun drawTexture(
-        matrixStack: UMatrixStack,
-        texture: ReleasedDynamicTexture,
-        x: Double,
-        y: Double,
-        textureX: Double,
-        textureY: Double,
-        width: Double,
-        height: Double,
-        textureWidth: Double,
-        textureHeight: Double,
-        textureMinFilter: Int = GL11.GL_NEAREST,
-        textureMagFilter: Int = GL11.GL_NEAREST
-    ) {
-        matrixStack.push()
-
-        UGraphics.enableBlend()
-        UGraphics.enableAlpha()
-        matrixStack.scale(1f, 1f, 50f)
-        val glId = texture.dynamicGlId
-        UGraphics.bindTexture(0, glId)
-        val worldRenderer = UGraphics.getFromTessellator()
-        UGraphics.configureTexture(glId) {
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, textureMinFilter)
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, textureMagFilter)
-        }
-
-        worldRenderer.beginWithDefaultShader(
-            UGraphics.DrawMode.QUADS,
-            UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR
-        )
-
-        worldRenderer.pos(matrixStack, x, y + height, 0.0)
-            .tex(textureX / textureWidth, (textureY + height) / textureHeight)
-            .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + width, y + height, 0.0)
-            .tex((textureX + width) / textureWidth, (textureY + height) / textureHeight)
-            .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + width, y, 0.0)
-            .tex((textureX + width) / textureWidth, textureY / textureHeight)
-            .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.pos(matrixStack, x + 0, y + 0, 0.0)
-            .tex((textureX + 0) / textureWidth, (textureY + 0) / textureHeight)
-            .color(1f, 1f, 1f, 1f).endVertex()
-        worldRenderer.drawDirect()
-
-        matrixStack.pop()
-    }
-
     fun getSha1(file: File): String? {
         try {
             FileInputStream(file).use { it ->

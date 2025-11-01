@@ -175,7 +175,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shadeModImplementation("gg.essential:elementa:DIAMOND-12") {
+    shadeModImplementation("gg.essential:elementa:DIAMOND-13") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this

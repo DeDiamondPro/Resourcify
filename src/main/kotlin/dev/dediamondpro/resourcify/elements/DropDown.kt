@@ -113,14 +113,14 @@ class DropDown(
         var hidden = true
         this.onMouseClick {
             if (!hidden || it.mouseButton != 0 || !canOpen) return@onMouseClick
-            expandContainer.setFloating(true)
+            expandContainer.isFloating = true
             expandContainer.unhide()
             expandContainer.grabWindowFocus()
             hidden = false
         }
         expandContainer.onMouseClick { if (canDeSelect || it.mouseButton != 0) grabWindowFocus() }
         expandContainer.onFocusLost {
-            expandContainer.setFloating(false)
+            expandContainer.isFloating = false
             expandContainer.hide()
             hidden = true
         }

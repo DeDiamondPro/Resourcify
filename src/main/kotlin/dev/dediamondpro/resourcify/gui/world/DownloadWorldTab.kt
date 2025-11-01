@@ -16,7 +16,7 @@ class DownloadWorldTab : Tab {
     }
 
     //? if >= 1.21.6 {
-    override fun getTabExtraNarration(): Component? {
+    override fun getTabExtraNarration(): Component {
         return Component.empty()
     }
     //?}

@@ -48,15 +48,15 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
                 width = 100.percent()
                 height = 100.percent()
             }.onFocusLost {
-                setFloating(false)
+                isFloating = false
                 Window.of(this).removeChild(this)
             }.onKeyType { _, keyCode ->
                 if (keyCode != UKeyboard.KEY_ESCAPE) return@onKeyType
                 releaseWindowFocus()
-                setFloating(false)
+                isFloating = false
                 Window.of(this).removeChild(this)
             } childOf Window.of(this)
-            background.setFloating(true)
+            background.isFloating = true
             background.grabWindowFocus()
             gallery.url.toURIOrNull()?.let { image ->
                 UIImage.ofURLCustom(image, true).constrain {
