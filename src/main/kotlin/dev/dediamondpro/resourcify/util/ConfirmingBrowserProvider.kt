@@ -22,8 +22,8 @@ import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.gui.ConfirmLinkScreen
 import dev.dediamondpro.resourcify.gui.projectpage.ProjectScreen
+import dev.dediamondpro.resourcify.platform.TickHandler
 import dev.dediamondpro.resourcify.services.ServiceRegistry
-import gg.essential.elementa.components.Window
 import gg.essential.universal.UScreen
 import java.net.URLDecoder
 
@@ -50,15 +50,16 @@ object ConfirmingBrowserProvider : BrowserProvider {
             if (service.canFetchProjectUrl(uri)) {
                 val future = service.fetchProjectFromUrl(uri) ?: return false
                 future.whenComplete { project, error ->
-                    Window.enqueueRenderOperation {
+                    TickHandler.runAtNextTick {
                         if (error != null || project == null) {
                             Constants.LOGGER.warn(
-                                "Failed to fetch project for \"$url\" from source \"${service.getName()}",
+                                "Failed to fetch project for \"$url\" from source \"${service.getName()}\"",
                                 error
                             )
                             UScreen.displayScreen(ConfirmLinkScreen(url, UScreen.currentScreen))
-                            return@enqueueRenderOperation
+                            return@runAtNextTick
                         }
+
                         val type = project.getType()
                         val downloadFolder = type.getDirectoryFromCurrent(screen.type, screen.downloadFolder)
                         UScreen.displayScreen(ProjectScreen(service, project, type, downloadFolder))
