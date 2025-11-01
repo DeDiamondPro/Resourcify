@@ -19,12 +19,18 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.minemark.MineMarkCore
 import dev.dediamondpro.minemark.elementa.MineMarkComponent
-import dev.dediamondpro.minemark.elementa.addElementaExtensions
+import dev.dediamondpro.minemark.elementa.elements.MarkdownBlockquoteComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownCodeBlockComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownHeadingComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownHorizontalRuleComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownListElementComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownTableCellComponent
+import dev.dediamondpro.minemark.elementa.elements.MarkdownTextComponent
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
-import dev.dediamondpro.minemark.style.ImageStyleConfig
-import dev.dediamondpro.minemark.style.LinkStyleConfig
+import dev.dediamondpro.minemark.elements.Elements
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
+import dev.dediamondpro.resourcify.elements.markdown.ResourcifyMarkdownImageElement
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
@@ -126,7 +132,16 @@ object ElementaUtils {
         MineMarkCore.builder<MarkdownStyle, UMatrixStack>()
             .addExtension(StrikethroughExtension.create())
             .addExtension(TablesExtension.create())
-            .addElementaExtensions()
+            //.addElementaExtensions()
+            .setTextElement(::MarkdownTextComponent)
+            .addElement(Elements.HEADING, ::MarkdownHeadingComponent)
+            .addElement(Elements.IMAGE, ::ResourcifyMarkdownImageElement) // Custom element
+            .addElement(Elements.HORIZONTAL_RULE, ::MarkdownHorizontalRuleComponent)
+            .addElement(Elements.LIST_ELEMENT, ::MarkdownListElementComponent)
+            .addElement(Elements.BLOCKQUOTE, ::MarkdownBlockquoteComponent)
+            .addElement(Elements.CODE_BLOCK, ::MarkdownCodeBlockComponent)
+            .addElement(Elements.TABLE_CELL, ::MarkdownTableCellComponent)
+            // Other elements
             .addElement(ExpandableMarkdownElement.ExpandableElementCreator)
             .addElement(listOf("summary"), ::SummaryElement)
             .build()
