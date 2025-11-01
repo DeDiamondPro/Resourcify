@@ -36,6 +36,7 @@ class DownloadWatcherScreen(
     Component.translatable("resourcify.manual_download.cancel")
 ) {
     private val watchService = FileSystems.getDefault().newWatchService()
+    private var closedWatchService = false
 
     init {
         // Also watch modify since file may be partially written on create, and done on modify
@@ -43,6 +44,12 @@ class DownloadWatcherScreen(
     }
 
     override fun tick() {
+        // This shouldn't ever trigger, but for some reason it is possible to get into this situation,
+        // so we need this check to prevent a crash.
+        if (closedWatchService) {
+            return
+        }
+
         var key = watchService.poll()
         while (key != null) {
             for (event in key.pollEvents()) {
@@ -59,6 +66,7 @@ class DownloadWatcherScreen(
                     }
 
                     fileCallback.accept(absolutePath)
+                    closedWatchService = true
                     watchService.close()
                     super.tick()
                     return
@@ -73,6 +81,7 @@ class DownloadWatcherScreen(
     }
 
     override fun onClose() {
+        closedWatchService = true
         watchService.close()
 
         super.onClose()
