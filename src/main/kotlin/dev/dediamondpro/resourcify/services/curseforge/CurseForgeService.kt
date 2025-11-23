@@ -28,7 +28,6 @@ import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.font.DefaultFonts
-import org.apache.http.client.utils.URIBuilder
 import java.io.File
 import java.net.URI
 import java.time.Instant
@@ -57,7 +56,7 @@ object CurseForgeService : IService {
         offset: Int,
         type: ProjectType
     ): ISearchData? {
-        return URIBuilder("$API/mods/search")
+        return UriBuilder("$API/mods/search")
             .apply {
                 addParameter("searchFilter", query)
                 addParameter("gameId", "432")
@@ -190,7 +189,7 @@ object CurseForgeService : IService {
                 }
                 if (fileCandidate == null && !match.latestFiles.any { it.fileFingerprint == match.file.fileFingerprint }) {
                     fileFutures[match] = supplyAsync {
-                        URIBuilder("$API/mods/${match.id}/files")
+                        UriBuilder("$API/mods/${match.id}/files")
                             .addParameter("gameVersion", mcVersion)
                             // We only care about the most recent match
                             .addParameter("pageSize", "1")

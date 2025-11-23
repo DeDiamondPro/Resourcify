@@ -24,11 +24,15 @@ import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
-import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
+
 class ShadowImage(
-    asset: ResourceLocation,
+    asset: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/,
     imageColor: ColorConstraint = Color.WHITE.toConstraint(),
     shadowColor: ColorConstraint = ShadowColorConstraint(imageColor),
 ) : UIContainer() {

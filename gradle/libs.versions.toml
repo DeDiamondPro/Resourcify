@@ -4,7 +4,7 @@ kotlin = "2.0.20"
 fabric_language_kotlin = "1.11.0+kotlin.2.0.0" # Use 2.0.0 here since it is the minimum kotlin version we require
 
 # Build system
-arch_loom = "1.11-SNAPSHOT"
+arch_loom = "1.13-SNAPSHOT"
 shadow = "8.1.1"
 publishing = "0.8.3"
 

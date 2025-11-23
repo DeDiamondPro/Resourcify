@@ -19,13 +19,17 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
 import net.minecraft.client.resources.language.I18n
-import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
 
 fun String.capitalizeAll(): String {
     return this.split(" ").joinToString(" ") { it.replaceFirstChar { c -> c.titlecase() } }
@@ -100,10 +104,12 @@ object Utils {
         }
     }
 
-    fun createResourceLocation(asset: String): ResourceLocation {
+    fun createResourceLocation(asset: String): /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/ {
         //? if <1.21.0 {
         /*return ResourceLocation("resourcify", asset)
+        *///?} else if <1.21.11 {
+        /*return ResourceLocation.fromNamespaceAndPath("resourcify", asset)
         *///?} else
-        return ResourceLocation.fromNamespaceAndPath("resourcify", asset)
+        return Identifier.fromNamespaceAndPath("resourcify", asset)
     }
 }

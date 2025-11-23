@@ -24,11 +24,17 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
-import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 import javax.imageio.ImageIO
 
-class McImage(texture: ResourceLocation) : UIComponent(), ImageProvider {
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
+
+class McImage(
+    texture: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/
+) : UIComponent(), ImageProvider {
     var backingImage: UIImage? = null
 
     init {

@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify.services.modrinth
 
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
-import org.apache.http.client.utils.URIBuilder
 import java.io.File
 import java.net.URI
 import java.util.concurrent.CompletableFuture
@@ -40,12 +39,12 @@ object ModrinthService : IService {
         offset: Int,
         type: ProjectType
     ): ISearchData? {
-        return URIBuilder("${API}/search")
-            .setParameter("query", query)
-            .setParameter("facets", buildFacets(type, minecraftVersions, categories))
-            .setParameter("limit", "20")
-            .setParameter("offset", offset.toString())
-            .setParameter("index", sortBy)
+        return UriBuilder("${API}/search")
+            .addParameter("query", query)
+            .addParameter("facets", buildFacets(type, minecraftVersions, categories))
+            .addParameter("limit", "20")
+            .addParameter("offset", offset.toString())
+            .addParameter("index", sortBy)
             .build().getJson<ModrinthSearchData>()
     }
 
@@ -141,7 +140,7 @@ object ModrinthService : IService {
 
     override fun getProjectsFromIds(ids: List<String>): Map<String, IProject> {
         val idString = ids.joinToString(",", "[", "]") { "\"${it}\"" }
-        return URIBuilder("${API}/projects").setParameter("ids", idString)
+        return UriBuilder("${API}/projects").addParameter("ids", idString)
             .build().getJson<List<FullModrinthProject>>()!!
             .associateBy { project -> ids.first { project.getId() == it } }
     }

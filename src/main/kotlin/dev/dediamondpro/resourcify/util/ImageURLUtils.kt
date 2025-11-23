@@ -17,7 +17,6 @@
 
 package dev.dediamondpro.resourcify.util
 
-import org.apache.http.client.utils.URIBuilder
 import java.net.URI
 import javax.imageio.ImageIO
 
@@ -57,12 +56,20 @@ object ImageURLUtils {
         val useProxy = !allowedHostNames.contains(url.host) || !canReadType || width != null || height != null
         return if (!useProxy) {
             if (url.host == "img.shields.io") {
-                URIBuilder(url).setHost("raster.shields.io").build()
+                URI(
+                    url.scheme,
+                    url.userInfo,
+                    "raster.shields.io",
+                    url.port,
+                    url.path,
+                    url.query,
+                    url.fragment
+                )
             } else {
                 url
             }
         } else {
-            URIBuilder("https://wsrv.nl/").apply {
+            UriBuilder("https://wsrv.nl/").apply {
                 addParameter("url", url.toString())
                 if (!canReadType) addParameter("output", "png")
                 if (width != null) addParameter("w", width.toString())

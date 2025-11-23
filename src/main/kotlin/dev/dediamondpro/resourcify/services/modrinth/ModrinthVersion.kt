@@ -20,7 +20,6 @@ package dev.dediamondpro.resourcify.services.modrinth
 import com.google.gson.annotations.SerializedName
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
-import org.apache.http.client.utils.URIBuilder
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 
@@ -67,7 +66,7 @@ data class ModrinthVersion(
                 it.projectId != null && DependencyType.fromString(it.dependencyType) != null
             }
             val idString = requiredDependencies.joinToString(",", "[", "]") { "\"${it.projectId}\"" }
-            URIBuilder("${ModrinthService.API}/projects").setParameter("ids", idString)
+            UriBuilder("${ModrinthService.API}/projects").addParameter("ids", idString)
                 .build().getJson<List<FullModrinthProject>>()?.map {
                     ModrinthDependency(
                         it,

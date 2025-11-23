@@ -70,6 +70,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    "1.21.11" to "1.21.11-pre2",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -81,6 +82,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
+    "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11", allowAll = true), // TODO: make strict once final build
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -100,14 +102,16 @@ val fabricApiVersion = VersionDefinition(
     "1.21.5" to "0.119.4+1.21.5",
     "1.21.8" to "0.129.0+1.21.8",
     "1.21.10" to "0.136.0+1.21.10",
+    "1.21.11" to "0.139.1+1.21.11",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
     "1.21.1" to "11.0.3",
     "1.21.4" to "13.0.2",
-    "1.21.5" to "14.0.0-rc.2",
+    "1.21.5" to "14.0.0",
     "1.21.8" to "15.0.0",
     "1.21.10" to "16.0.0-rc.1",
+    "1.21.11" to "17.0.0-alpha.1"
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -140,6 +144,7 @@ val universalMcVersion = VersionDefinition(
     default = mcPlatform.versionString
 )
 val universalVersion = VersionDefinition(
+    "1.21.11" to "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:438+feature-1.21.11-fabric",
     default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:436"
 )
 
@@ -155,7 +160,7 @@ dependencies {
     })
 
     if (mcPlatform.isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:0.17.2")
+        modImplementation("net.fabricmc:fabric-loader:0.17.3")
 
         modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")

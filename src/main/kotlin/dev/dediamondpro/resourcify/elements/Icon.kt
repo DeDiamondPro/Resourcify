@@ -20,11 +20,23 @@ package dev.dediamondpro.resourcify.elements
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.dsl.*
-import net.minecraft.resources.ResourceLocation
 import java.awt.Color
 
-class Icon(icon: ResourceLocation, shadow: Boolean, color: ColorConstraint) : UIContainer() {
-    constructor(icon: ResourceLocation, shadow: Boolean, color: Color = Color.WHITE) : this(
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
+
+class Icon(
+    icon: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/,
+    shadow: Boolean,
+    color: ColorConstraint
+) : UIContainer() {
+    constructor(
+        icon: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/,
+        shadow: Boolean,
+        color: Color = Color.WHITE
+    ) : this(
         icon, shadow, color.toConstraint()
     )
 

@@ -26,12 +26,16 @@ import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.toConstraint
-import net.minecraft.resources.ResourceLocation
 import java.awt.Color
+
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
 
 class TextIcon(
     text: String,
-    asset: ResourceLocation,
+    asset: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/,
     shadow: Boolean = true,
     color: ColorConstraint = Color.WHITE.toConstraint()
 ) : UIContainer() {

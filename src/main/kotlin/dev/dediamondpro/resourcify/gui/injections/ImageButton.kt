@@ -21,16 +21,20 @@ import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 
 //? if >= 1.21.6
 import net.minecraft.client.renderer.RenderPipelines
 
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+import net.minecraft.client.renderer.RenderType
+*///?} else
+import net.minecraft.resources.Identifier
+
 class ImageButton(
     screen: Screen, private val xFunc: (Int) -> Int, private val yFunc: (Int) -> Int,
-    private val image: ResourceLocation,
+    private val image: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/,
     onPress: OnPress,
 ) : Button(
     xFunc.invoke(screen.width), yFunc.invoke(screen.height),
@@ -43,11 +47,20 @@ class ImageButton(
         this.y = yFunc.invoke(screen.height)
     }
 
-    override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
-        super.renderWidget(context, mouseX, mouseY, delta)
+    override fun /*? if <1.21.11 {*/ /*renderWidget *//*?} else {*/ renderContents /*?}*/ (
+        context: GuiGraphics,
+        mouseX: Int,
+        mouseY: Int,
+        delta: Float
+    ) {
+        //? if <1.21.11
+        /*super.renderWidget(context, mouseX, mouseY, delta)*/
+
         //? if <= 1.21.5
         /*RenderSystem.setShaderColor(1f, 1f, 1f, 1f)*/
         //? if >= 1.21.6 {
+        //? if >=1.21.11
+        renderDefaultSprite(context)
         context.blit(RenderPipelines.GUI_TEXTURED, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)
         //?} else if >= 1.21.2 {
         /*context.blit(RenderType::guiTextured, image, x + 2, y + 2, 0f, 0f, width - 4, height - 4, 16, 16)

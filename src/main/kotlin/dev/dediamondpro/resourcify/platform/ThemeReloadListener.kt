@@ -21,13 +21,17 @@ import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.util.Utils
 import dev.dediamondpro.resourcify.util.fromJson
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 
 //? if fabric
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
+
+//? if <1.21.11 {
+/*import net.minecraft.resources.ResourceLocation
+*///?} else
+import net.minecraft.resources.Identifier
 
 object ThemeReloadListener : SimplePreparableReloadListener<Map<String, String>>()
     //? if fabric
@@ -49,7 +53,7 @@ object ThemeReloadListener : SimplePreparableReloadListener<Map<String, String>>
     }
 
     //? if fabric {
-    override fun getFabricId(): ResourceLocation {
+    override fun getFabricId(): /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/ {
         return Utils.createResourceLocation("color-reload-listener")
     }
     //?}
