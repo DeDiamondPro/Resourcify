@@ -70,7 +70,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
-    "1.21.11" to "1.21.11-pre2",
+    "1.21.11" to "1.21.11-rc2",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -102,7 +102,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.5" to "0.119.4+1.21.5",
     "1.21.8" to "0.129.0+1.21.8",
     "1.21.10" to "0.136.0+1.21.10",
-    "1.21.11" to "0.139.1+1.21.11",
+    "1.21.11" to "0.139.4+1.21.11",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -144,8 +144,7 @@ val universalMcVersion = VersionDefinition(
     default = mcPlatform.versionString
 )
 val universalVersion = VersionDefinition(
-    "1.21.11" to "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:438+feature-1.21.11-fabric",
-    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:436"
+    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:445+feature-1.21.11-fabric"
 )
 
 dependencies {
