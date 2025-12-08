@@ -38,16 +38,28 @@ import java.util.List;
 @Mixin(Screen.class)
 abstract
 class ScreenMixin {
-    @Shadow @Final private List<Renderable> renderables;
-    @Shadow @Final private List<NarratableEntry> narratables;
-    @Shadow @Final private List<GuiEventListener> children;
+    @Shadow
+    @Final
+    private List<Renderable> renderables;
+    @Shadow
+    @Final
+    private List<NarratableEntry> narratables;
+    @Shadow
+    @Final
+    private List<GuiEventListener> children;
 
-    @Unique private List<ImageButton> resourcifyCustomButtons;
+    @Unique
+    private List<ImageButton> resourcifyCustomButtons;
 
-    @Inject(method = "init(Lnet/minecraft/client/Minecraft;II)V", at = @At(value = "INVOKE", target =
-            "Lnet/minecraft/client/gui/screens/Screen;triggerImmediateNarration(Z)V",
-            shift = At.Shift.BEFORE
-    ))
+    @Inject(method =
+            //? if >= 1.21.11 {
+            "init(II)V",
+            //?} else
+            /*"init(Lnet/minecraft/client/Minecraft;II)V",*/
+            at = @At(value = "INVOKE", target =
+                    "Lnet/minecraft/client/gui/screens/Screen;triggerImmediateNarration(Z)V",
+                    shift = At.Shift.BEFORE
+            ))
     private void onInit(CallbackInfo ci) {
         handleInit_Resourcify();
     }
