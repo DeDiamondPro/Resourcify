@@ -70,7 +70,6 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
-    "1.21.11" to "1.21.11-rc3",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -82,7 +81,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.5" to VersionRange("1.21.5", "1.21.5", name = "1.21.5"),
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
-    "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11", allowAll = true), // TODO: make strict once final build
+    "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
