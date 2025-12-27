@@ -56,7 +56,7 @@ class BrowseScreen(
     private val selectedCategories = mutableListOf<String>()
     private var fetchingFuture: CompletableFuture<ISearchData?>? = null
     private var totalHits: Int = 0
-    private var guiOpenedTime = UMinecraft.getTime()
+    private var adLoadedTime: Long = -1
 
     private val contentBox = UIContainer().constrain {
         x = CenterConstraint()
@@ -265,46 +265,52 @@ class BrowseScreen(
             error?.printStackTrace()
             if (ad == null) return@whenComplete
 
-            adBox.constrain {
-                x = 0.pixels()
-                y = 0.pixels()
-                width = 100.percent()
-                height = 29.pixels()
-            }.onMouseClick {
-                // Prevents opening the ad link accidentally right when the GUI is opened
-                if (it.mouseButton != 0 || guiOpenedTime + 500 > UMinecraft.getTime()) return@onMouseClick
-                UDesktop.browse(ad.getUrl().toURI())
-            }
-            headerBox.constrain {
-                y = SiblingConstraint(padding = 4f)
-            }
+            Window.enqueueRenderOperation {
+                adLoadedTime = UMinecraft.getTime()
 
-            val image = ad.getImageBase64()
-            image?.let {
-                UIImage.ofBase64(it).constrain {
-                    x = 4.pixels()
-                    y = 4.pixels()
-                    width = 21.pixels()
-                    height = 21.pixels()
+                adBox.constrain {
+                    x = 0.pixels()
+                    y = 0.pixels()
+                    width = 100.percent()
+                    height = 29.pixels()
+                }.onMouseClick {
+                    // Prevents opening the ad link accidentally right after it is loaded when things like search bar shift
+                    if (it.mouseButton != 0 || adLoadedTime == -1L || adLoadedTime + 500 > UMinecraft.getTime()) {
+                        return@onMouseClick
+                    }
+                    UDesktop.browse(ad.getUrl().toURI())
+                }
+                headerBox.constrain {
+                    y = SiblingConstraint(padding = 4f)
+                }
+
+                val image = ad.getImageBase64()
+                image?.let {
+                    UIImage.ofBase64(it).constrain {
+                        x = 4.pixels()
+                        y = 4.pixels()
+                        width = 21.pixels()
+                        height = 21.pixels()
+                    } childOf adBox
+                }
+                UIWrappedText(ad.getText()).constrain {
+                    x = if (image != null) SiblingConstraint(padding = 4f) else 4.pixels()
+                    y = CenterConstraint()
+                    width = 100.percent() - 33.pixels()
+                } childOf adBox
+                UIImage.ofResourceCustom(
+                    "/assets/resourcify/advertisement-text.png",
+                    loadSync = true,
+                    minFilter = UIImage.TextureScalingMode.NEAREST,
+                    magFilter = UIImage.TextureScalingMode.NEAREST
+                ).constrain {
+                    x = 1.pixels(alignOpposite = true)
+                    y = 1.pixels(alignOpposite = true)
+                    width = 58.pixels()
+                    height = 5.pixels()
+                    color = Color.LIGHT_GRAY.toConstraint()
                 } childOf adBox
             }
-            UIWrappedText(ad.getText()).constrain {
-                x = if (image != null) SiblingConstraint(padding = 4f) else 4.pixels()
-                y = CenterConstraint()
-                width = 100.percent() - 33.pixels()
-            } childOf adBox
-            UIImage.ofResourceCustom(
-                "/assets/resourcify/advertisement-text.png",
-                loadSync = true,
-                minFilter = UIImage.TextureScalingMode.NEAREST,
-                magFilter = UIImage.TextureScalingMode.NEAREST
-            ).constrain {
-                x = 1.pixels(alignOpposite = true)
-                y = 1.pixels(alignOpposite = true)
-                width = 58.pixels()
-                height = 5.pixels()
-                color = Color.LIGHT_GRAY.toConstraint()
-            } childOf adBox
         }
 
         searchBox = (UITextInput("resourcify.browse.search".localize(type.displayName.localize())).constrain {
