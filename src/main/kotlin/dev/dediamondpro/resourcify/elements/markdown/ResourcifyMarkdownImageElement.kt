@@ -50,7 +50,7 @@ class ResourcifyMarkdownImageElement(
     ) {
         if (uiImage == null) {
             uiImage = UIImage(CompletableFuture.supplyAsync { image }, EmptyImage)
-            uiImage?.textureMinFilter = UIImage.TextureScalingMode.LINEAR_MIPMAP_LINEAR
+            uiImage?.textureMinFilter = UIImage.TextureScalingMode.LINEAR
             uiImage?.textureMagFilter = UIImage.TextureScalingMode.LINEAR
         }
         uiImage?.drawImage(

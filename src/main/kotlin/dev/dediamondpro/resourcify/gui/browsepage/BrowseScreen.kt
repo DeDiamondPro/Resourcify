@@ -59,7 +59,7 @@ class BrowseScreen(
     private val selectedCategories = mutableListOf<String>()
     private var fetchingFuture: CompletableFuture<ISearchData?>? = null
     private var totalHits: Int = 0
-    private var guiOpenedTime = UMinecraft.getTime()
+    private var adLoadedTime: Long = -1
 
     private val contentBox = UIContainer().constrain {
         x = CenterConstraint()
@@ -275,14 +275,18 @@ class BrowseScreen(
             if (ad == null) return@whenComplete
 
             Window.enqueueRenderOperation {
+                adLoadedTime = UMinecraft.getTime()
+
                 adBox.constrain {
                     x = 0.pixels()
                     y = 0.pixels()
                     width = 100.percent()
                     height = 29.pixels()
                 }.onMouseClick {
-                    // Prevents opening the ad link accidentally right when the GUI is opened
-                    if (it.mouseButton != 0 || guiOpenedTime + 500 > UMinecraft.getTime()) return@onMouseClick
+                    // Prevents opening the ad link accidentally right after it is loaded when things like search bar shift
+                    if (it.mouseButton != 0 || adLoadedTime == -1L || adLoadedTime + 500 > UMinecraft.getTime()) {
+                        return@onMouseClick
+                    }
                     UDesktop.browse(ad.getUrl().toURI())
                 }
                 headerBox.constrain {
