@@ -74,8 +74,8 @@ class UIAnimatedImage(
     private var currentFrame = 0
     private var lastFrameTime = -1L
 
-    override var imageWidth = 0f
-    override var imageHeight = 0f
+    override var imageWidth = 1f
+    override var imageHeight = 1f
     override var textureMinFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
         set(value) {
             field = value
@@ -206,78 +206,82 @@ class UIAnimatedImage(
         private fun provideFrames(stream: InputStream): List<Frame> {
             val reader = getGifReader(ImageIO.createImageInputStream(stream))
 
-            val width = reader.getWidth(0)
-            val height = reader.getHeight(0)
-
-            // Master canvas to draw to for optimized GIFs
-            var masterCanvas = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-
-            val frameCount = reader.getNumImages(true)
             val frames = mutableListOf<Frame>()
-            for (i in 0 until frameCount) {
-                // Extract the frame and it's metadata
-                val frame = reader.read(i)
-                val metadata = reader.getImageMetadata(i)
+            try {
+                val width = reader.getWidth(0)
+                val height = reader.getHeight(0)
 
-                // Metadata defaults
-                var delay = 100
-                var disposal = "none"
-                var x = 0
-                var y = 0
+                // Master canvas to draw to for optimized GIFs
+                var masterCanvas = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
-                // Read the metadata
-                fun walk(node: Node) {
-                    when (node.nodeName) {
-                        "GraphicControlExtension" -> {
-                            node.attributes.getNamedItem("delayTime")?.let { delay = it.nodeValue.toInt() * 10 }
-                            node.attributes.getNamedItem("disposalMethod")?.let { disposal = it.nodeValue }
-                        }
+                val frameCount = reader.getNumImages(true)
+                for (i in 0 until frameCount) {
+                    // Extract the frame and it's metadata
+                    val frame = reader.read(i)
+                    val metadata = reader.getImageMetadata(i)
 
-                        "ImageDescriptor" -> {
-                            node.attributes.getNamedItem("imageLeftPosition")?.let { x = it.nodeValue.toInt() }
-                            node.attributes.getNamedItem("imageTopPosition")?.let { y = it.nodeValue.toInt() }
-                        }
+                    // Metadata defaults
+                    var delay = 100
+                    var disposal = "none"
+                    var x = 0
+                    var y = 0
 
-                        else -> {
-                            var child = node.firstChild
-                            while (child != null) {
-                                walk(child)
-                                child = child.nextSibling
+                    // Read the metadata
+                    fun walk(node: Node) {
+                        when (node.nodeName) {
+                            "GraphicControlExtension" -> {
+                                node.attributes.getNamedItem("delayTime")?.let { delay = it.nodeValue.toInt() * 10 }
+                                node.attributes.getNamedItem("disposalMethod")?.let { disposal = it.nodeValue }
+                            }
+
+                            "ImageDescriptor" -> {
+                                node.attributes.getNamedItem("imageLeftPosition")?.let { x = it.nodeValue.toInt() }
+                                node.attributes.getNamedItem("imageTopPosition")?.let { y = it.nodeValue.toInt() }
+                            }
+
+                            else -> {
+                                var child = node.firstChild
+                                while (child != null) {
+                                    walk(child)
+                                    child = child.nextSibling
+                                }
                             }
                         }
                     }
-                }
-                walk(metadata.getAsTree("javax_imageio_gif_image_1.0"))
-                // If there is no frame delay, we'll use 100 ms
-                if (delay <= 0) {
-                    delay = 100
-                }
-
-                // If we need to restore to the current state, save this state
-                var prevState: BufferedImage? = null
-                if (disposal == "restoreToPrevious") {
-                    prevState = copyImage(masterCanvas);
-                }
-
-                // Draw the current frame on to the master canvas
-                val g = masterCanvas.createGraphics()
-                g.drawImage(frame, x, y, null)
-
-                // Copy the master canvas , this will store the frame
-                frames.add(Frame(copyImage(masterCanvas), delay))
-
-                // Apply the disposal method if needed
-                when (disposal) {
-                    "restoreToBackgroundColor" -> {
-                        g.background = Color(0, 0, 0, 0)
-                        g.clearRect(x, y, frame.width, frame.height)
+                    walk(metadata.getAsTree("javax_imageio_gif_image_1.0"))
+                    // If there is no frame delay, we'll use 100 ms
+                    if (delay <= 0) {
+                        delay = 100
                     }
 
-                    "restoreToPrevious" -> {
-                        prevState?.let { masterCanvas = it }
+                    // If we need to restore to the current state, save this state
+                    var prevState: BufferedImage? = null
+                    if (disposal == "restoreToPrevious") {
+                        prevState = copyImage(masterCanvas);
                     }
+
+                    // Draw the current frame on to the master canvas
+                    val g = masterCanvas.createGraphics()
+                    g.drawImage(frame, x, y, null)
+
+                    // Copy the master canvas , this will store the frame
+                    frames.add(Frame(copyImage(masterCanvas), delay))
+
+                    // Apply the disposal method if needed
+                    when (disposal) {
+                        "restoreToBackgroundColor" -> {
+                            g.background = Color(0, 0, 0, 0)
+                            g.clearRect(x, y, frame.width, frame.height)
+                        }
+
+                        "restoreToPrevious" -> {
+                            prevState?.let { masterCanvas = it }
+                        }
+                    }
+                    g.dispose()
                 }
-                g.dispose()
+            } finally {
+                reader.dispose()
             }
 
             return frames
