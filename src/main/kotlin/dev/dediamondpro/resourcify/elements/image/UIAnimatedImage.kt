@@ -21,6 +21,7 @@ import dev.dediamondpro.resourcify.util.EmptyImage
 import dev.dediamondpro.resourcify.util.supply
 import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.components.UIImage
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.components.image.DefaultFailureImage
 import gg.essential.elementa.components.image.DefaultLoadingImage
 import gg.essential.elementa.components.image.ImageProvider
@@ -31,9 +32,13 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicInteger
 import javax.imageio.ImageIO
 import javax.imageio.ImageReader
 import javax.imageio.stream.ImageInputStream
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 class UIAnimatedImage(
     private val framesFuture: CompletableFuture<List<Frame>>,
@@ -53,20 +58,43 @@ class UIAnimatedImage(
                 uiImage?.textureMagFilter = value
             }
 
-        fun getOrCommit(): UIImage {
-            if (uiImage == null) {
-                commitIfNeed()
-            }
-
-            return uiImage!!
+        fun get(): UIImage? {
+            return uiImage
         }
 
-        fun commitIfNeed() {
-            if (uiImage != null) {
+        fun getOrCommit(forceCommit: Boolean = false): UIImage? {
+            if (uiImage == null) {
+                commitIfNeed(forceCommit)
+                return if (forceCommit) uiImage else null
+            }
+
+            return uiImage
+        }
+
+        private fun commitIfNeed(forceCommit: Boolean = false) {
+            if (uiImage != null || !allowedToCommit() && !forceCommit) {
                 return
             }
+
             uiImage = UIImage(supply { image ?: error("No image provided!") }, loadingImage = EmptyImage)
             image = null // Let the buffered image be garbage collected
+        }
+
+        companion object {
+            private val commitCounter = AtomicInteger(0)
+
+            private fun allowedToCommit(): Boolean {
+                // Commit a max of 1 GIF frames per rendered frame to prevent performance issues
+                val value = commitCounter.getAndIncrement()
+                val allowed = value < 1
+                if (value == 0) {
+                    Window.enqueueRenderOperation {
+                        // Next frame reset the count
+                        commitCounter.set(0)
+                    }
+                }
+                return allowed
+            }
         }
     }
 
@@ -94,14 +122,13 @@ class UIAnimatedImage(
         }.thenAccept {
             frames = it
             it?.firstOrNull()?.let { frame ->
-                imageWidth = frame.getOrCommit().imageWidth
-                imageHeight = frame.getOrCommit().imageHeight
+                imageWidth = frame.getOrCommit(true)!!.imageWidth
+                imageHeight = frame.getOrCommit(true)!!.imageHeight
             }
             it?.forEach { frame ->
                 frame.textureMinFilter = textureMinFilter
                 frame.textureMagFilter = textureMagFilter
             }
-            commitAhead()
         }
     }
 
@@ -113,25 +140,28 @@ class UIAnimatedImage(
         height: Double,
         color: Color
     ) {
+        var frame = frames?.get(currentFrame)?.getOrCommit()
+        // Try to see if any of the previous frames are commited and usable while we wait for this one to commit
+        if (frames != null && frame == null) {
+            var frameI = currentFrame
+            while (--frameI >= 0 && frame == null) {
+                frame = frames?.get(frameI)?.get()
+            }
+        }
+
         when {
-            frames != null -> {
-                frames!![currentFrame].getOrCommit().drawImage(matrixStack, x, y, width, height, color)
+            frame != null -> {
+                frame.drawImage(matrixStack, x, y, width, height, color)
 
                 if (lastFrameTime != -1L) {
                     val now = UMinecraft.getTime()
                     var diff = now - lastFrameTime
 
                     // Make it so we skip frames when needed
-                    var updated = false
                     while (diff >= frames!![currentFrame].frameTime) {
                         diff -= frames!![currentFrame].frameTime
                         currentFrame = (currentFrame + 1) % frames!!.size
-                        updated = true
-                    }
-
-                    if (updated) {
                         lastFrameTime = now
-                        commitAhead()
                     }
                 } else {
                     lastFrameTime = UMinecraft.getTime()
@@ -162,15 +192,6 @@ class UIAnimatedImage(
         this.drawImage(matrixStack, x, y, width, height, color)
 
         super.draw(matrixStack)
-    }
-
-    private fun commitAhead() {
-        if (frames == null) return
-        // Commit 1 frame ahead for smooth playback
-        for (i in 0..1) {
-            val frame = (currentFrame + i) % frames!!.size
-            frames!![frame].commitIfNeed()
-        }
     }
 
     companion object {
@@ -211,11 +232,16 @@ class UIAnimatedImage(
                 val width = reader.getWidth(0)
                 val height = reader.getHeight(0)
 
+                // Limit the frame count to prevent loading huge images into vram
+                // Max frame count => 100MB worth of data
+                val dataSize = width * height * 4
+                val maxFrameCount = max(1, floor(100f * 1024 * 1024 / dataSize.toFloat()).toInt())
+
                 // Master canvas to draw to for optimized GIFs
                 var masterCanvas = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
                 val frameCount = reader.getNumImages(true)
-                for (i in 0 until frameCount) {
+                for (i in 0 until min(frameCount, maxFrameCount)) {
                     // Extract the frame and it's metadata
                     val frame = reader.read(i)
                     val metadata = reader.getImageMetadata(i)
