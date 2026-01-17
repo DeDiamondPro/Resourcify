@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,9 @@ import dev.dediamondpro.minemark.elementa.elements.MarkdownTextComponent
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elements.Elements
 import dev.dediamondpro.resourcify.elements.McImage
+import dev.dediamondpro.resourcify.elements.image.IUIImage
+import dev.dediamondpro.resourcify.elements.image.UIAnimatedImage
+import dev.dediamondpro.resourcify.elements.image.UIImageWrapper
 import dev.dediamondpro.resourcify.elements.markdown.ExpandableMarkdownElement
 import dev.dediamondpro.resourcify.elements.markdown.ResourcifyMarkdownImageElement
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
@@ -55,41 +58,25 @@ fun UIImage.Companion.ofURLCustom(
     useCache: Boolean = true,
     minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
     magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
-): UIImage {
-    val image = UIImage(
-        uri.getImageAsync(
-            useCache = useCache,
-            width = width?.times(scaleFactor),
-            height = height?.times(scaleFactor),
-            fit = fit
-        ),
-        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
-    )
+): IUIImage {
+    val transformedUri = ImageURLUtils.getTransformedImageUrl(uri, width, height, fit)
+
+    val image = if (UIAnimatedImage.supportsExtension(ImageURLUtils.getExtension(transformedUri))) {
+        UIAnimatedImage.fromGif(transformedUri.getBytesAsync(useCache = useCache))
+    } else {
+        UIImageWrapper(
+            UIImage(
+                transformedUri.getBytesAsync(useCache = useCache).thenApply {
+                    it?.let { ImageIO.read(it.inputStream()) }
+                },
+                loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
+            )
+        )
+    }
+
     if (!loadingImage) image.imageHeight = 0.5625f
     if (width != null) image.imageWidth = width * scaleFactor
     if (height != null) image.imageHeight = height * scaleFactor
-    image.textureMinFilter = minFilter
-    image.textureMagFilter = magFilter
-    return image
-}
-
-fun UIImage.Companion.ofResourceCustom(
-    path: String,
-    loadSync: Boolean = false,
-    loadingImage: Boolean = true,
-    minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
-    magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
-): UIImage {
-    val imageFuture = if (loadSync) {
-        supply { ImageIO.read(this::class.java.getResourceAsStream(path)) }
-    } else {
-        supplyAsync { ImageIO.read(this::class.java.getResourceAsStream(path)) }
-    }
-    val image = UIImage(
-        imageFuture,
-        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
-    )
-    if (!loadingImage) image.imageHeight = 0.5625f
     image.textureMinFilter = minFilter
     image.textureMagFilter = magFilter
     return image

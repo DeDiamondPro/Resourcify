@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ object ImageURLUtils {
         height: Float? = null,
         fit: Fit = Fit.INSIDE
     ): URI {
-        val canReadType = hasImageReaderFor(url.rawPath)
+        val canReadType = hasImageReaderFor(url)
         val useProxy = !allowedHostNames.contains(url.host) || !canReadType || width != null || height != null
         return if (!useProxy) {
             if (url.host == "img.shields.io") {
@@ -82,9 +82,17 @@ object ImageURLUtils {
         }
     }
 
-    private fun hasImageReaderFor(url: String): Boolean {
-        val extension = urlExtensionRegex.replace(url, "$1")
-        return extension == url || ImageIO.getImageReadersBySuffix(extension).hasNext()
+    fun getExtension(uri: URI): String {
+        val extension = urlExtensionRegex.replace(uri.rawPath, "$1")
+        if (extension == uri.rawPath) {
+            return ""
+        }
+        return extension
+    }
+
+    private fun hasImageReaderFor(uri: URI): Boolean {
+        val extension = getExtension(uri)
+        return extension.isEmpty() || ImageIO.getImageReadersBySuffix(extension).hasNext()
     }
 
     enum class Fit {

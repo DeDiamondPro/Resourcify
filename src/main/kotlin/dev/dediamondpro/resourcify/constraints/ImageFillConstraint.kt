@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.constraints
 
+import dev.dediamondpro.resourcify.elements.image.IUIImage
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.constraints.ConstraintType
@@ -33,26 +34,52 @@ class ImageFillConstraint(val type: FillType = FillType.FILL) : WidthConstraint,
 
     override fun getWidthImpl(component: UIComponent): Float {
         val constraint = constrainTo ?: component.parent
-        if (component !is UIImage) return constraint.getWidth()
-        val scale = getScale(component, constraint)
-        return component.imageWidth * scale
+
+        var imageWidth: Float
+        val scale = when (component) {
+            is UIImage -> {
+                imageWidth = component.imageWidth
+                getScale(component.imageWidth, component.imageHeight, component.parent)
+            }
+
+            is IUIImage -> {
+                imageWidth = component.imageWidth
+                getScale(component.imageWidth, component.imageHeight, component.parent)
+            }
+
+            else -> return constraint.getWidth()
+        }
+        return imageWidth * scale
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
         val constraint = constrainTo ?: component.parent
-        if (component !is UIImage) return constraint.getHeight()
-        val scale = getScale(component, constraint)
-        return component.imageHeight * scale
+
+        var imageHeight: Float
+        val scale = when (component) {
+            is UIImage -> {
+                imageHeight = component.imageHeight
+                getScale(component.imageWidth, component.imageHeight, component.parent)
+            }
+
+            is IUIImage -> {
+                imageHeight = component.imageHeight
+                getScale(component.imageWidth, component.imageHeight, component.parent)
+            }
+
+            else -> return constraint.getWidth()
+        }
+        return imageHeight * scale
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
-    private fun getScale(image: UIImage, parent: UIComponent): Float {
+    private fun getScale(width: Float, height: Float, parent: UIComponent): Float {
         if (type == FillType.FILL) return min(
-            parent.getWidth() / image.imageWidth,
-            parent.getHeight() / image.imageHeight
+            parent.getWidth() / width,
+            parent.getHeight() / height
         )
-        return max(parent.getWidth() / image.imageWidth, parent.getHeight() / image.imageHeight)
+        return max(parent.getWidth() / width, parent.getHeight() / height)
     }
 
     enum class FillType {

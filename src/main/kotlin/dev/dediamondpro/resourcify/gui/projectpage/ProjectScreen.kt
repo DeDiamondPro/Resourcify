@@ -21,6 +21,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
+import dev.dediamondpro.resourcify.constraints.CustomImageAspectConstraint
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.elements.Paginator
 import dev.dediamondpro.resourcify.elements.TextIcon
@@ -232,7 +233,7 @@ class ProjectScreen(
             x = 0.pixels()
             y = 0.pixels()
             width = 100.percent()
-            height = ImageAspectConstraint()
+            height = CustomImageAspectConstraint()
         } childOf sideBox
         val iconUrl = project.getIconUrl()
         (if (iconUrl == null) McImage(Icons.DEFAULT_ICON)

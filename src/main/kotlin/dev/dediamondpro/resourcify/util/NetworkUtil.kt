@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,6 @@ package dev.dediamondpro.resourcify.util
 import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.platform.Platform
 import gg.essential.universal.UMinecraft
-import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URI
 import java.net.URL
@@ -30,7 +29,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.DeflaterInputStream
 import java.util.zip.GZIPInputStream
-import javax.imageio.ImageIO
 import javax.net.ssl.HttpsURLConnection
 
 object NetworkUtil {
@@ -189,20 +187,15 @@ inline fun <reified T> URI.getJsonAsync(
     return this.getStringAsync(useCache, attempts, headers).thenApply { it?.fromJson() }
 }
 
-fun URI.getImage(
-    useCache: Boolean = true,
-    width: Float? = null,
-    height: Float? = null,
-    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
-    attempts: Int = 1
-): BufferedImage? {
-    val uri = ImageURLUtils.getTransformedImageUrl(this, width, height, fit)
-    if (useCache) return NetworkUtil.getOrFetch(uri, attempts)?.inputStream()?.use {
-        ImageIO.read(it)
+fun URI.getBytes(useCache: Boolean = true, attempts: Int = 1, headers: Map<String, String> = emptyMap()): ByteArray? {
+    if (useCache) {
+        return NetworkUtil.getOrFetch(this, attempts, headers)
     }
     for (i in 0 until attempts) {
         try {
-            val result = uri.toURL().getEncodedInputStream()?.use { ImageIO.read(it) }
+            val result = this.toURL().setupConnection()
+                .apply { headers.forEach { (key, value) -> this.setRequestProperty(key, value) } }
+                .getEncodedInputStream()?.use { it.readBytes() }
             if (result != null) {
                 return result
             }
@@ -213,21 +206,15 @@ fun URI.getImage(
         Thread.sleep(250)
     }
     return null
-
 }
 
-fun URI.getImageAsync(
+fun URI.getBytesAsync(
     useCache: Boolean = true,
-    width: Float? = null,
-    height: Float? = null,
-    fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
-    attempts: Int = 1
-): CompletableFuture<BufferedImage> {
-    val uri = ImageURLUtils.getTransformedImageUrl(this, width, height, fit)
-    return if (useCache) NetworkUtil.getOrFetchAsync(uri, attempts)
-        .thenApply { bytes ->
-            bytes?.inputStream()?.use { ImageIO.read(it) }
-        } else supplyAsync { this.getImage(false, width, height, fit, attempts)!! }
+    attempts: Int = 1,
+    headers: Map<String, String> = emptyMap()
+): CompletableFuture<ByteArray?> {
+    return if (useCache) NetworkUtil.getOrFetchAsync(this, attempts, headers)
+    else supplyAsync { getBytes(useCache, attempts, headers) }
 }
 
 inline fun <reified S> URI.postAndGetString(

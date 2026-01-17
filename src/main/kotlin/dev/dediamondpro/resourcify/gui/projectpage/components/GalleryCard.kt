@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.gui.projectpage.components
 
 import dev.dediamondpro.resourcify.constraints.ChildLocationSizeConstraint
+import dev.dediamondpro.resourcify.constraints.CustomImageAspectConstraint
 import dev.dediamondpro.resourcify.constraints.ImageFillConstraint
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.services.IGalleryImage
@@ -28,7 +29,6 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UKeyboard
@@ -72,7 +72,7 @@ class GalleryCard(gallery: IGalleryImage) : UIBlock(Colors.BACKGROUND) {
                 x = 0.pixels()
                 y = 0.pixels()
                 width = 100.percent()
-                height = ImageAspectConstraint()
+                height = CustomImageAspectConstraint()
             } childOf this
         }
         if (!gallery.title.isNullOrBlank()) UIWrappedText(gallery.title ?: "").constrain {
