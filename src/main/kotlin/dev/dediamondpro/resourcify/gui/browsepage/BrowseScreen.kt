@@ -355,7 +355,7 @@ class BrowseScreen(
         ).constrain {
             x = SiblingConstraint(5f, true)
             y = CenterConstraint()
-            width = 72.pixels()
+            width = 82.pixels()
         }.onSelectionUpdate {
             loadPacks()
         } childOf headerBox
