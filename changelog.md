@@ -1,10 +1,14 @@
-## Resourcify 1.7.6
+## Resourcify 1.8.0
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://discord.gg/XtAuqsJWby).
 
-- Ported to 1.21.11
+- Added GIF support!
+- Massively improved image caching
+- And some other small fixes:
+  - Fix Markdown images using `LINEAR_MIPMAP_LINEAR` scaling instead of `LINEAR`
+  - Made the sort dropdown slightly wider for other fonts and languages
 
 ----------------------------------------------------------------------------------------------------
 
