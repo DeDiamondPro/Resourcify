@@ -22,7 +22,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.util.ConfirmingBrowserProvider
-import dev.dediamondpro.resourcify.util.SanitizingImageProvider
+import dev.dediamondpro.resourcify.util.CachingImageProvider
 import dev.dediamondpro.resourcify.util.fromJson
 import gg.essential.elementa.font.DefaultFonts
 import java.awt.Color
@@ -79,7 +79,7 @@ object Colors {
 
         MARKDOWN_STYLE = MarkdownStyle(
             textStyle = MarkdownTextStyle(1f, TEXT_PRIMARY, 2f, DefaultFonts.VANILLA_FONT_RENDERER),
-            imageStyle = ImageStyleConfig(SanitizingImageProvider),
+            imageStyle = ImageStyleConfig(CachingImageProvider),
             linkStyle = LinkStyleConfig(TEXT_LINK, ConfirmingBrowserProvider)
         )
     }

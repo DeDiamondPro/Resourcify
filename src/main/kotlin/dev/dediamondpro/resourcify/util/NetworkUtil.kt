@@ -146,6 +146,9 @@ fun URLConnection.getEncodedInputStream(): InputStream? {
 
 fun URL.getEncodedInputStream(): InputStream? = this.setupConnection().getEncodedInputStream()
 
+fun URL.getImageInputStream(): InputStream? =
+    this.setupConnection().apply { setRequestProperty("Accept", "image/*") }.getEncodedInputStream()
+
 fun URI.getString(useCache: Boolean = true, attempts: Int = 3, headers: Map<String, String> = emptyMap()): String? {
     if (useCache) return NetworkUtil.getOrFetch(this, attempts, headers)?.decodeToString()
     for (i in 0 until attempts) {

@@ -55,28 +55,40 @@ fun UIImage.Companion.ofURLCustom(
     height: Float? = null,
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
     scaleFactor: Float = UResolution.scaleFactor.toFloat(),
-    useCache: Boolean = true,
     minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
     magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
 ): IUIImage {
     val transformedUri = ImageURLUtils.getTransformedImageUrl(uri, width, height, fit)
 
     val image = if (UIAnimatedImage.supportsExtension(ImageURLUtils.getExtension(transformedUri))) {
-        UIAnimatedImage.fromGif(transformedUri.getBytesAsync(useCache = useCache))
+        UIAnimatedImage(
+            framesFuture = AnimatedImageCache.get(transformedUri)?.let { supply { it } }
+                ?: supplyAsync {
+                    AnimatedImageCache.getOrPut(transformedUri, {
+                        UIAnimatedImage.provideFrames(
+                            transformedUri.toURL().getImageInputStream() ?: error("Failed to setup connection")
+                        )
+                    })
+                },
+            loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
+        )
     } else {
         UIImageWrapper(
-            UIImage(
-                transformedUri.getBytesAsync(useCache = useCache).thenApply {
-                    it?.let { ImageIO.read(it.inputStream()) }
-                },
-                loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
-            )
+            ImageCache.getOrPut(transformedUri, {
+                UIImage(
+                    supplyAsync { ImageIO.read(transformedUri.toURL().getImageInputStream()) },
+                    loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
+                )
+            })
         )
     }
 
-    if (!loadingImage) image.imageHeight = 0.5625f
-    if (width != null) image.imageWidth = width * scaleFactor
-    if (height != null) image.imageHeight = height * scaleFactor
+    if (!image.isLoaded() && image.imageWidth == 1f && image.imageHeight == 1f) {
+        if (!loadingImage && image.imageHeight == 1f) image.imageHeight = 0.5625f
+        if (width != null) image.imageWidth = width * scaleFactor
+        if (height != null) image.imageHeight = height * scaleFactor
+    }
+
     image.textureMinFilter = minFilter
     image.textureMagFilter = magFilter
     return image
@@ -98,7 +110,7 @@ fun UIImage.Companion.ofBase64(
         imageFuture,
         loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
     )
-    if (!loadingImage) image.imageHeight = 0.5625f
+
     image.textureMinFilter = minFilter
     image.textureMagFilter = magFilter
     return image

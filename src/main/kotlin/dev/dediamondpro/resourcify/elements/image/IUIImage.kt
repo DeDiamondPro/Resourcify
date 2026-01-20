@@ -25,6 +25,8 @@ import gg.essential.elementa.components.image.ImageProvider
  * Wrapping class so a normal UIImage and animated UIImage can be controlled with the same parameters
  */
 abstract class IUIImage: UIComponent(), ImageProvider {
+    abstract fun isLoaded(): Boolean
+
     abstract var imageWidth: Float
     abstract var imageHeight: Float
     abstract var textureMinFilter: UIImage.TextureScalingMode

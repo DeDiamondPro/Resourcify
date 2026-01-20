@@ -43,6 +43,10 @@ class UIImageWrapper(val image: UIImage) : IUIImage() {
             image.textureMagFilter = value
         }
 
+    override fun isLoaded(): Boolean {
+        return image.isLoaded
+    }
+
     override fun draw(matrixStack: UMatrixStack) {
         beforeDrawCompat(matrixStack)
 

@@ -115,6 +115,10 @@ class UIAnimatedImage(
             frames?.forEach { it.textureMagFilter = value }
         }
 
+    override fun isLoaded(): Boolean {
+        return frames?.firstOrNull()?.get()?.isLoaded ?: false
+    }
+
     init {
         framesFuture.exceptionally {
             it.printStackTrace()
@@ -195,36 +199,11 @@ class UIAnimatedImage(
     }
 
     companion object {
-        fun fromGif(
-            stream: InputStream,
-            loadAsync: Boolean = true,
-            loadingImage: ImageProvider = DefaultLoadingImage,
-            failureImage: ImageProvider = DefaultFailureImage,
-        ): UIAnimatedImage {
-            return UIAnimatedImage(
-                if (loadAsync) supplyAsync { provideFrames(stream) }
-                else supply { provideFrames(stream) },
-                loadingImage, failureImage
-            )
-        }
-
-        fun fromGif(
-            bytes: CompletableFuture<ByteArray?>,
-            loadingImage: ImageProvider = DefaultLoadingImage,
-            failureImage: ImageProvider = DefaultFailureImage,
-        ): UIAnimatedImage {
-            return UIAnimatedImage(
-                bytes.thenApply {
-                    provideFrames(it?.inputStream() ?: error("Failed to load bytes"))
-                }, loadingImage, failureImage
-            )
-        }
-
         fun supportsExtension(extension: String): Boolean {
             return extension == "gif"
         }
 
-        private fun provideFrames(stream: InputStream): List<Frame> {
+        fun provideFrames(stream: InputStream): List<Frame> {
             val reader = getGifReader(ImageIO.createImageInputStream(stream))
 
             val frames = mutableListOf<Frame>()
