@@ -54,6 +54,10 @@ abstract class Cache<T> {
     fun getOrPut(identifier: URI, imageSupplier: () -> T): T {
         return getOrPut(identifier.toString(), imageSupplier)
     }
+
+    fun clear() {
+        cache.clear()
+    }
 }
 
 object ImageCache : Cache<UIImage>();

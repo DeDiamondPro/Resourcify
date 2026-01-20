@@ -89,6 +89,8 @@
   "resourcify.config.world.description": "Show the browse button in the world selection screen.",
   "resourcify.config.ads.title": "Enable Ads",
   "resourcify.config.ads.description": "Show a small ad on the browse page to help support the development of Resourcify.",
+  "resourcify.config.disable-gifs.title": "Disable GIF Rendering",
+  "resourcify.config.disable-gifs.description": "Disable Resourcify's GIF rendering, this can help alleviate stuttering issues while loading images.",
 
   "resourcify.categories.adventure": "Adventure",
   "resourcify.categories.categories": "Categories",

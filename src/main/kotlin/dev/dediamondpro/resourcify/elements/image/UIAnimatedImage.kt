@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.elements.image
 
+import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.util.EmptyImage
 import dev.dediamondpro.resourcify.util.supply
 import dev.dediamondpro.resourcify.util.supplyAsync
@@ -200,7 +201,7 @@ class UIAnimatedImage(
 
     companion object {
         fun supportsExtension(extension: String): Boolean {
-            return extension == "gif"
+            return extension == "gif" && !Config.instance.gifsDisabled
         }
 
         fun provideFrames(stream: InputStream): List<Frame> {

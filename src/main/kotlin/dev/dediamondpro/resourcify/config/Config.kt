@@ -33,6 +33,7 @@ class Config {
     var dataPacksEnabled: Boolean = true
     var shaderPacksEnabled: Boolean = true
     var worldsEnabled: Boolean = true
+    var gifsDisabled: Boolean = false
 
     companion object {
         private val configFile = Platform.getFileInGameDir("config/resourcify.json")

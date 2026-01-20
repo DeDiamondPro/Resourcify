@@ -18,6 +18,8 @@
 package dev.dediamondpro.resourcify.gui
 
 import dev.dediamondpro.resourcify.config.Config
+import dev.dediamondpro.resourcify.util.AnimatedImageCache
+import dev.dediamondpro.resourcify.util.ImageCache
 import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
@@ -97,6 +99,8 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true, private v
             backScreens.clear()
             forwardScreens.clear()
             NetworkUtil.clearCache()
+            ImageCache.clear()
+            AnimatedImageCache.clear()
         }
 
         fun replaceScreen(screen: () -> Screen) {

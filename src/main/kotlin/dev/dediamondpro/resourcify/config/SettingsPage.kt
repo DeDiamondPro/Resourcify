@@ -80,6 +80,11 @@ class SettingsPage : PaginatedScreen(adaptScale = false) {
             Config.instance.adsEnabled = it
         }
 
+        // Gifs
+        addCheckBoxOption("resourcify.config.disable-gifs", Config.instance.gifsDisabled) {
+            Config.instance.gifsDisabled = it
+        }
+
         // Types
         addCheckBoxOption("resourcify.config.resource-pack", Config.instance.resourcePacksEnabled) {
             Config.instance.resourcePacksEnabled = it
