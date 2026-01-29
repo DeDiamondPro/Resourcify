@@ -20,11 +20,9 @@ package dev.dediamondpro.resourcify.elements.image
 import dev.dediamondpro.resourcify.config.Config
 import dev.dediamondpro.resourcify.util.EmptyImage
 import dev.dediamondpro.resourcify.util.supply
-import dev.dediamondpro.resourcify.util.supplyAsync
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.components.image.DefaultFailureImage
-import gg.essential.elementa.components.image.DefaultLoadingImage
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
@@ -46,7 +44,7 @@ class UIAnimatedImage(
     private val loadingImage: ImageProvider = DefaultFailureImage,
     private val failureImage: ImageProvider = DefaultFailureImage,
 ) : IUIImage() {
-    data class Frame(var image: BufferedImage?, val frameTime: Int) {
+    data class Frame(private var image: BufferedImage?, val frameTime: Int) {
         private var uiImage: UIImage? = null
         var textureMinFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
             set(value) {
@@ -60,16 +58,20 @@ class UIAnimatedImage(
             }
 
         fun get(): UIImage? {
+            commitIfNeed()
             return uiImage
         }
 
-        fun getOrCommit(forceCommit: Boolean = false): UIImage? {
-            if (uiImage == null) {
-                commitIfNeed(forceCommit)
-                return if (forceCommit) uiImage else null
-            }
+        fun getIfLoaded(): UIImage? {
+            return get()?.let { if (it.isLoaded) it else null }
+        }
 
-            return uiImage
+        fun getWidth(): Float {
+            return image?.width?.toFloat() ?: uiImage?.imageWidth ?: 1f
+        }
+
+        fun getHeight(): Float {
+            return image?.height?.toFloat() ?: uiImage?.imageHeight ?: 1f
         }
 
         private fun commitIfNeed(forceCommit: Boolean = false) {
@@ -78,6 +80,8 @@ class UIAnimatedImage(
             }
 
             uiImage = UIImage(supply { image ?: error("No image provided!") }, loadingImage = EmptyImage)
+            uiImage!!.textureMinFilter = textureMinFilter
+            uiImage!!.textureMagFilter = textureMagFilter
             image = null // Let the buffered image be garbage collected
         }
 
@@ -127,8 +131,8 @@ class UIAnimatedImage(
         }.thenAccept {
             frames = it
             it?.firstOrNull()?.let { frame ->
-                imageWidth = frame.getOrCommit(true)!!.imageWidth
-                imageHeight = frame.getOrCommit(true)!!.imageHeight
+                imageWidth = frame.getWidth()
+                imageHeight = frame.getHeight()
             }
             it?.forEach { frame ->
                 frame.textureMinFilter = textureMinFilter
@@ -145,12 +149,12 @@ class UIAnimatedImage(
         height: Double,
         color: Color
     ) {
-        var frame = frames?.get(currentFrame)?.getOrCommit()
+        var frame = frames?.get(currentFrame)?.getIfLoaded()
         // Try to see if any of the previous frames are commited and usable while we wait for this one to commit
         if (frames != null && frame == null) {
             var frameI = currentFrame
             while (--frameI >= 0 && frame == null) {
-                frame = frames?.get(frameI)?.get()
+                frame = frames?.get(frameI)?.getIfLoaded()
             }
         }
 
@@ -263,7 +267,7 @@ class UIAnimatedImage(
                     // If we need to restore to the current state, save this state
                     var prevState: BufferedImage? = null
                     if (disposal == "restoreToPrevious") {
-                        prevState = copyImage(masterCanvas);
+                        prevState = copyImage(masterCanvas)
                     }
 
                     // Draw the current frame on to the master canvas
