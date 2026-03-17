@@ -32,16 +32,6 @@ class UIImageWrapper(val image: UIImage) : IUIImage() {
         set(value) {
             image.imageHeight = value
         }
-    override var textureMinFilter: UIImage.TextureScalingMode
-        get() = image.textureMinFilter
-        set(value) {
-            image.textureMinFilter = value
-        }
-    override var textureMagFilter: UIImage.TextureScalingMode
-        get() = image.textureMagFilter
-        set(value) {
-            image.textureMagFilter = value
-        }
 
     override fun isLoaded(): Boolean {
         return image.isLoaded

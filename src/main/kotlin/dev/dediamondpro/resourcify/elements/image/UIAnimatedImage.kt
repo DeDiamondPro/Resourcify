@@ -18,7 +18,8 @@
 package dev.dediamondpro.resourcify.elements.image
 
 import dev.dediamondpro.resourcify.config.Config
-import dev.dediamondpro.resourcify.util.EmptyImage
+import dev.dediamondpro.resourcify.util.image.EmptyImage
+import dev.dediamondpro.resourcify.util.image.isPixelArt
 import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.Window
@@ -38,24 +39,15 @@ import javax.imageio.stream.ImageInputStream
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.properties.Delegates
 
 class UIAnimatedImage(
     private val framesFuture: CompletableFuture<List<Frame>>,
     private val loadingImage: ImageProvider = DefaultFailureImage,
     private val failureImage: ImageProvider = DefaultFailureImage,
 ) : IUIImage() {
-    data class Frame(private var image: BufferedImage?, val frameTime: Int) {
+    data class Frame(private var image: BufferedImage?, val frameTime: Int, private val pixelArt: Boolean) {
         private var uiImage: UIImage? = null
-        var textureMinFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
-            set(value) {
-                field = value
-                uiImage?.textureMinFilter = value
-            }
-        var textureMagFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
-            set(value) {
-                field = value
-                uiImage?.textureMagFilter = value
-            }
 
         fun get(): UIImage? {
             commitIfNeed()
@@ -80,8 +72,14 @@ class UIAnimatedImage(
             }
 
             uiImage = UIImage(supply { image ?: error("No image provided!") }, loadingImage = EmptyImage)
-            uiImage!!.textureMinFilter = textureMinFilter
-            uiImage!!.textureMagFilter = textureMagFilter
+            // Apply scaling mode
+            if (pixelArt) {
+                uiImage!!.textureMinFilter = UIImage.TextureScalingMode.NEAREST
+                uiImage!!.textureMagFilter = UIImage.TextureScalingMode.NEAREST
+            } else {
+                uiImage!!.textureMinFilter = UIImage.TextureScalingMode.LINEAR
+                uiImage!!.textureMagFilter = UIImage.TextureScalingMode.LINEAR
+            }
             image = null // Let the buffered image be garbage collected
         }
 
@@ -109,16 +107,6 @@ class UIAnimatedImage(
 
     override var imageWidth = 1f
     override var imageHeight = 1f
-    override var textureMinFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
-        set(value) {
-            field = value
-            frames?.forEach { it.textureMinFilter = value }
-        }
-    override var textureMagFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.NEAREST
-        set(value) {
-            field = value
-            frames?.forEach { it.textureMagFilter = value }
-        }
 
     override fun isLoaded(): Boolean {
         return frames?.firstOrNull()?.get()?.isLoaded ?: false
@@ -133,10 +121,6 @@ class UIAnimatedImage(
             it?.firstOrNull()?.let { frame ->
                 imageWidth = frame.getWidth()
                 imageHeight = frame.getHeight()
-            }
-            it?.forEach { frame ->
-                frame.textureMinFilter = textureMinFilter
-                frame.textureMagFilter = textureMagFilter
             }
         }
     }
@@ -225,10 +209,16 @@ class UIAnimatedImage(
                 var masterCanvas = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
                 val frameCount = reader.getNumImages(true)
+                var pixelArt = false
                 for (i in 0 until min(frameCount, maxFrameCount)) {
                     // Extract the frame and it's metadata
                     val frame = reader.read(i)
                     val metadata = reader.getImageMetadata(i)
+
+                    // Check if this GIF is pixel art if this is the first frame
+                    if (i == 0) {
+                        pixelArt = frame.isPixelArt()
+                    }
 
                     // Metadata defaults
                     var delay = 100
@@ -275,7 +265,7 @@ class UIAnimatedImage(
                     g.drawImage(frame, x, y, null)
 
                     // Copy the master canvas , this will store the frame
-                    frames.add(Frame(copyImage(masterCanvas), delay))
+                    frames.add(Frame(copyImage(masterCanvas), delay, pixelArt))
 
                     // Apply the disposal method if needed
                     when (disposal) {

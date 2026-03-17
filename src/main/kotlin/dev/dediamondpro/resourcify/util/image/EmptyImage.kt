@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.util
+package dev.dediamondpro.resourcify.util.image
 
 import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.universal.UMatrixStack

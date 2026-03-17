@@ -18,8 +18,8 @@
 package dev.dediamondpro.resourcify.gui
 
 import dev.dediamondpro.resourcify.config.Config
-import dev.dediamondpro.resourcify.util.AnimatedImageCache
-import dev.dediamondpro.resourcify.util.ImageCache
+import dev.dediamondpro.resourcify.util.image.AnimatedImageCache
+import dev.dediamondpro.resourcify.util.image.ImageCache
 import dev.dediamondpro.resourcify.util.NetworkUtil
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen

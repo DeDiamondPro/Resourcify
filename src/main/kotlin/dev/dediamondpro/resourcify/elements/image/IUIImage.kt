@@ -18,7 +18,6 @@
 package dev.dediamondpro.resourcify.elements.image
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.ImageProvider
 
 /**
@@ -29,6 +28,4 @@ abstract class IUIImage: UIComponent(), ImageProvider {
 
     abstract var imageWidth: Float
     abstract var imageHeight: Float
-    abstract var textureMinFilter: UIImage.TextureScalingMode
-    abstract var textureMagFilter: UIImage.TextureScalingMode
 }

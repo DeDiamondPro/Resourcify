@@ -22,8 +22,8 @@ import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.gui.projectpage.components.VersionCard
-import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.util.*
+import dev.dediamondpro.resourcify.util.image.ImageURLUtils
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint

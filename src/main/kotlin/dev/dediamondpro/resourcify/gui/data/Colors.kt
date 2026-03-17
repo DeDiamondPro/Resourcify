@@ -22,7 +22,7 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownTextStyle
 import dev.dediamondpro.minemark.style.ImageStyleConfig
 import dev.dediamondpro.minemark.style.LinkStyleConfig
 import dev.dediamondpro.resourcify.util.ConfirmingBrowserProvider
-import dev.dediamondpro.resourcify.util.CachingImageProvider
+import dev.dediamondpro.resourcify.util.image.CachingImageProvider
 import dev.dediamondpro.resourcify.util.fromJson
 import gg.essential.elementa.font.DefaultFonts
 import java.awt.Color

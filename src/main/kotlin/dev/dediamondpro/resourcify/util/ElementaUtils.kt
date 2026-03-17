@@ -37,6 +37,11 @@ import dev.dediamondpro.resourcify.elements.markdown.ResourcifyMarkdownImageElem
 import dev.dediamondpro.resourcify.elements.markdown.SummaryElement
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
+import dev.dediamondpro.resourcify.util.image.AnimatedImageCache
+import dev.dediamondpro.resourcify.util.image.EmptyImage
+import dev.dediamondpro.resourcify.util.image.ImageCache
+import dev.dediamondpro.resourcify.util.image.ImageURLUtils
+import dev.dediamondpro.resourcify.util.image.isPixelArt
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.universal.UMatrixStack
@@ -55,8 +60,6 @@ fun UIImage.Companion.ofURLCustom(
     height: Float? = null,
     fit: ImageURLUtils.Fit = ImageURLUtils.Fit.INSIDE,
     scaleFactor: Float = UResolution.scaleFactor.toFloat(),
-    minFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
-    magFilter: UIImage.TextureScalingMode = UIImage.TextureScalingMode.LINEAR,
 ): IUIImage {
     val transformedUri = ImageURLUtils.getTransformedImageUrl(uri, width, height, fit)
 
@@ -75,10 +78,21 @@ fun UIImage.Companion.ofURLCustom(
     } else {
         UIImageWrapper(
             ImageCache.getOrPut(transformedUri, {
+                val future = supplyAsync { ImageIO.read(transformedUri.toURL().getImageInputStream()) }
                 UIImage(
-                    supplyAsync { ImageIO.read(transformedUri.toURL().getImageInputStream()) },
+                    future,
                     loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
-                )
+                ).apply {
+                    future.thenAccept {
+                        if (it.isPixelArt()) {
+                            textureMinFilter = UIImage.TextureScalingMode.NEAREST
+                            textureMagFilter = UIImage.TextureScalingMode.NEAREST
+                        } else {
+                            textureMinFilter = UIImage.TextureScalingMode.LINEAR
+                            textureMagFilter = UIImage.TextureScalingMode.LINEAR
+                        }
+                    }
+                }
             })
         )
     }
@@ -89,8 +103,6 @@ fun UIImage.Companion.ofURLCustom(
         if (height != null) image.imageHeight = height * scaleFactor
     }
 
-    image.textureMinFilter = minFilter
-    image.textureMagFilter = magFilter
     return image
 }
 

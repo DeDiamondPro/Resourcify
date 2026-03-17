@@ -27,6 +27,7 @@ import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.platform.Platform
 import dev.dediamondpro.resourcify.services.*
 import dev.dediamondpro.resourcify.util.*
+import dev.dediamondpro.resourcify.util.image.CachingImageProvider
 import gg.essential.elementa.font.DefaultFonts
 import java.io.File
 import java.net.URI

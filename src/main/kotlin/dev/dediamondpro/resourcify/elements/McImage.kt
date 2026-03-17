@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.elements
 
-import dev.dediamondpro.resourcify.util.EmptyImage
+import dev.dediamondpro.resourcify.util.image.EmptyImage
 import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage

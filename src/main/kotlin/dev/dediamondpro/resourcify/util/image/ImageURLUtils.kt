@@ -15,8 +15,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.util
+package dev.dediamondpro.resourcify.util.image
 
+import dev.dediamondpro.resourcify.util.UriBuilder
 import java.net.URI
 import javax.imageio.ImageIO
 

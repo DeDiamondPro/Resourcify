@@ -15,14 +15,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.resourcify.util
+package dev.dediamondpro.resourcify.util.image
 
 import dev.dediamondpro.minemark.providers.ImageProvider
 import dev.dediamondpro.resourcify.elements.image.IUIImage
 import dev.dediamondpro.resourcify.elements.image.UIAnimatedImage
 import dev.dediamondpro.resourcify.elements.image.UIImageWrapper
+import dev.dediamondpro.resourcify.util.getImageInputStream
+import dev.dediamondpro.resourcify.util.runAsync
+import dev.dediamondpro.resourcify.util.supply
+import dev.dediamondpro.resourcify.util.toURI
 import gg.essential.elementa.components.UIImage
-import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import javax.imageio.ImageIO
 
@@ -32,7 +35,7 @@ object CachingImageProvider : ImageProvider<IUIImage> {
         dimensionCallback: Consumer<ImageProvider.Dimension>,
         imageCallback: Consumer<IUIImage>
     ) {
-        CompletableFuture.runAsync {
+        runAsync {
             val transformedUri = ImageURLUtils.getTransformedImageUrl(src.toURI())
             if (UIAnimatedImage.supportsExtension(ImageURLUtils.getExtension(transformedUri))) {
                 val frames = AnimatedImageCache.getOrPut(transformedUri) {
@@ -46,10 +49,19 @@ object CachingImageProvider : ImageProvider<IUIImage> {
             } else {
                 val image = UIImageWrapper(
                     ImageCache.getOrPut(transformedUri, {
-                        UIImage(
-                            supply { ImageIO.read(transformedUri.toURL().getImageInputStream()) },
-                            loadingImage =  EmptyImage
-                        )
+                        val image = ImageIO.read(transformedUri.toURL().getImageInputStream())
+                         UIImage(
+                            supply { image },
+                            loadingImage = EmptyImage
+                        ).apply {
+                            if (image.isPixelArt()) {
+                                textureMinFilter = UIImage.TextureScalingMode.NEAREST
+                                textureMagFilter = UIImage.TextureScalingMode.NEAREST
+                            } else {
+                                textureMinFilter = UIImage.TextureScalingMode.LINEAR
+                                textureMagFilter = UIImage.TextureScalingMode.LINEAR
+                            }
+                         }
                     })
                 )
                 dimensionCallback.accept(ImageProvider.Dimension(image.imageWidth, image.imageHeight))
