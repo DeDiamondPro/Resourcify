@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.elements.markdown
 
 import dev.dediamondpro.minemark.LayoutData
 import dev.dediamondpro.minemark.LayoutStyle
+import dev.dediamondpro.minemark.data.ViewPort
 import dev.dediamondpro.minemark.elementa.elements.MarkdownTextComponent
 import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elements.ChildMovingElement
@@ -56,19 +57,35 @@ class ExpandableMarkdownElement(
         children.forEach { if (it != summary) it.generateLayoutInternal(layoutData, renderData) }
     }
 
-    override fun drawInternal(xOffset: Float, yOffset: Float, mouseX: Float, mouseY: Float, renderData: UMatrixStack) {
+    override fun drawInternal(
+        xOffset: Float,
+        yOffset: Float,
+        mouseX: Float,
+        mouseY: Float,
+        viewPort: ViewPort?,
+        renderData: UMatrixStack
+    ) {
         val actualX = xOffset + extraXOffset
         val actualY = yOffset + extraYOffset
         val actualMouseX = mouseX - extraXOffset
         val actualMouseY = mouseY - extraYOffset
+
         marker?.let { drawMarker(it.x + xOffset, it.y + yOffset, it.width, it.height, renderData) }
+
         val summary = children.firstOrNull { it is SummaryElement } as? SummaryElement?
-        summary?.drawInternal(actualX, actualY, actualMouseX, actualMouseY, renderData)
+        summary?.let {
+            if (viewPort == null || it.shouldDraw(viewPort, actualX, actualY)) {
+                it.drawInternal(actualX, actualY, actualMouseX, actualMouseY, viewPort, renderData)
+            }
+        }
+
         if (!open) return
         children.forEach {
-            if (it != summary) it.drawInternal(
-                actualX, actualY, actualMouseX, actualMouseY, renderData
-            )
+            if (it != summary && (viewPort == null || it.shouldDraw(viewPort, actualX, actualY))) {
+                it.drawInternal(
+                    actualX, actualY, actualMouseX, actualMouseY, viewPort, renderData
+                )
+            }
         }
     }
 
