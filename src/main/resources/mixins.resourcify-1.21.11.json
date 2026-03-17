@@ -1,0 +1,14 @@
+{
+  "package": "dev.dediamondpro.resourcify.mixins",
+  "minVersion": "0.7",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "CreateWorldScreenMixin",
+    "MinecraftMixin",
+    "MixinURenderPass",
+    "MixinUIImage",
+    "PackScreenAccessor",
+    "ScreenMixin",
+    "TabManagerMixin"
+  ]
+}

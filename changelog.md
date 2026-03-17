@@ -5,7 +5,8 @@ on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or i
 the [Discord](https://discord.gg/XtAuqsJWby).
 
 - Made pixel art use nearest neighbor scaling instead of linear, based on best effort detection of if an image is pixel
-  art (I am aware linear scaling currently does not work in MC 1.21.11, but unfortunately this is not an easy fix).
+  art.
+- Fixed scaling filters not applying in 1.21.11
 - Fixed (very) rare flashing in GIFs
 
 ----------------------------------------------------------------------------------------------------

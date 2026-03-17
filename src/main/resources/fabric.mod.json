@@ -27,7 +27,7 @@
     ]
   },
   "mixins": [
-    "mixins.${id}.json"
+    "${mixinPath}"
   ],
   "accessWidener": "${aw}.accesswidener",
   "custom": {

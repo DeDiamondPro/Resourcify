@@ -195,12 +195,18 @@ val accesWidener = if (mcPlatform.version >= 1_21_09) {
     "1.20.resourcify"
 }
 
+val mixinPath = if (mcPlatform.version >= 1_21_11) {
+    "mixins.resourcify-1.21.11.json"
+} else {
+    "mixins.resourcify.json"
+}
+
 loom {
     accessWidenerPath = rootProject.file("src/main/resources/$accesWidener.accesswidener")
 
     if (mcPlatform.isForge) forge {
         convertAccessWideners.set(true)
-        mixinConfig("mixins.resourcify.json")
+        mixinConfig(mixinPath)
     }
 
     runConfigs["client"].isIdeConfigGenerated = true
@@ -291,6 +297,7 @@ tasks {
             "name" to mod_name,
             "version" to mod_version,
             "aw" to accesWidener,
+            "mixinPath" to mixinPath,
             "mcVersion" to compatibleMcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
             "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
         )
