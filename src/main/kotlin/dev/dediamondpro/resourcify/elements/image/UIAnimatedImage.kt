@@ -35,11 +35,11 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicInteger
 import javax.imageio.ImageIO
 import javax.imageio.ImageReader
+import javax.imageio.metadata.IIOMetadataNode
 import javax.imageio.stream.ImageInputStream
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.properties.Delegates
 
 class UIAnimatedImage(
     private val framesFuture: CompletableFuture<List<Frame>>,
@@ -197,8 +197,16 @@ class UIAnimatedImage(
 
             val frames = mutableListOf<Frame>()
             try {
-                val width = reader.getWidth(0)
-                val height = reader.getHeight(0)
+                var width = reader.getWidth(0)
+                var height = reader.getHeight(0)
+
+                // Try to get size from metadata
+                val metadata = reader.streamMetadata
+                val tree = metadata.getAsTree("javax_imageio_gif_stream_1.0") as? IIOMetadataNode?
+                (tree?.getElementsByTagName("LogicalScreenDescriptor")?.item(0) as? IIOMetadataNode?)?.let { node ->
+                    node.attributes.getNamedItem("logicalScreenWidth")?.let { width = it.nodeValue.toInt() }
+                    node.attributes.getNamedItem("logicalScreenHeight")?.let { height = it.nodeValue.toInt() }
+                }
 
                 // Limit the frame count to prevent loading huge images into vram
                 // Max frame count => 100MB worth of data
