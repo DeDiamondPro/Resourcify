@@ -114,7 +114,6 @@ class UIAnimatedImage(
 
     init {
         framesFuture.exceptionally {
-            it.printStackTrace()
             return@exceptionally null
         }.thenAccept {
             frames = it

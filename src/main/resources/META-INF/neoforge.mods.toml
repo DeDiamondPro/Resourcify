@@ -28,4 +28,4 @@ ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "mixins.resourcify.json"
+config = "${mixinPath}"
