@@ -83,6 +83,10 @@ public class Platform {
         return loader.isForgeLike();
     }
 
+    public boolean isObfuscated() {
+        return major == 1;
+    }
+
     public String getName() {
         return getVersionString() + "-" + loader.toString().toLowerCase();
     }

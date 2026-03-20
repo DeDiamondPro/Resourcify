@@ -15,9 +15,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.dediamondpro.buildsource.Platform
 import dev.dediamondpro.buildsource.VersionDefinition
 import dev.dediamondpro.buildsource.VersionRange
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -68,7 +70,8 @@ val shade: Configuration by configurations.creating {
 }
 
 val shadeModImplementation: Configuration by configurations.creating {
-    configurations.modImplementation.get().extendsFrom(this)
+    val parent = if (mcPlatform.isObfuscated) "modImplementation" else "implementation"
+    configurations.getByName(parent).extendsFrom(this)
 }
 
 // Version definitions
@@ -144,22 +147,19 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.5" to "5.7.0",
     "1.21.8" to "5.9.0",
 )
-val universalMcVersion = VersionDefinition(
+val universalVersion = VersionDefinition(
     "1.21.1" to "1.21",
     "1.21.8" to "1.21.7",
     "1.21.10" to "1.21.9",
     default = mcPlatform.versionString
-)
-val universalVersion = VersionDefinition(
-    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:466"
-)
+).let { VersionDefinition(default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:466") }
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion.get(mcPlatform)}")
 
-    if (mcPlatform.major == 1) {
+    if (mcPlatform.isObfuscated) {
         @Suppress("UnstableApiUsage")
-        mappings(loom.layered {
+        add("mappings", loom.layered {
             officialMojangMappings()
             parchmentVersion.getOrNull(mcPlatform)?.let {
                 parchment("org.parchmentmc.data:parchment-$it@zip")
@@ -168,18 +168,16 @@ dependencies {
     }
 
     if (mcPlatform.isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:0.17.3")
-
-        modImplementation("net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
-        modImplementation("com.terraformersmc:modmenu:${modMenuVersion.get(mcPlatform)}")
+        val modImpl = if (mcPlatform.isObfuscated) "modImplementation" else "implementation"
+        add(modImpl, "net.fabricmc:fabric-loader:0.17.3")
+        add(modImpl, "net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
+        add(modImpl, "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
+        add(modImpl, "com.terraformersmc:modmenu:${modMenuVersion.get(mcPlatform)}")
     } else if (mcPlatform.isNeoForge) {
         "neoForge"("net.neoforged:neoforge:${neoForgeVersion.get(mcPlatform)}")
-
         implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion.get(mcPlatform)}")
     } else if (mcPlatform.isForge) {
         "forge"("net.minecraftforge:forge:${forgeVersion.get(mcPlatform)}")
-
         implementation("thedarkcolour:kotlinforforge:${kotlinForForgeVersion.get(mcPlatform)}")
     }
 
@@ -197,22 +195,19 @@ dependencies {
     }
 }
 
-val accesWidener = if (mcPlatform.version >= 1_21_09) {
-    "1.21.9.resourcify"
-} else if (mcPlatform.minor == 21) {
-    "1.21.resourcify"
-} else {
-    "1.20.resourcify"
+val accessWidener = when {
+    mcPlatform.version >= 26_00_00 -> "26.1.resourcify"
+    mcPlatform.version >= 1_21_09 -> "1.21.9.resourcify"
+    mcPlatform.minor == 21 -> "1.21.resourcify"
+    else -> "1.20.resourcify"
 }
-
-val mixinPath = if (mcPlatform.version >= 1_21_11) {
-    "mixins.resourcify-1.21.11.json"
-} else {
-    "mixins.resourcify.json"
+val mixinPath = when {
+    mcPlatform.version >= 1_21_11 -> "mixins.resourcify-1.21.11.json"
+    else -> "mixins.resourcify.json"
 }
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/$accesWidener.accesswidener")
+    accessWidenerPath = rootProject.file("src/main/resources/$accessWidener.accesswidener")
 
     if (mcPlatform.isForge) forge {
         convertAccessWideners.set(true)
@@ -232,9 +227,19 @@ base.archivesName.set(
     }-${mcPlatform.loaderString})-$mod_version"
 )
 
+val outputJar = if (mcPlatform.isObfuscated) {
+    tasks.named<RemapJarTask>("remapJar").flatMap { it.archiveFile }
+} else {
+    tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
+}
+
 publishMods {
-    file.set(tasks.remapJar.get().archiveFile)
-    displayName.set("[${compatibleMcVersion.get(mcPlatform).getName()}-${mcPlatform.loaderString}] $mod_name $mod_version")
+    file.set(outputJar)
+    displayName.set(
+        "[${
+            compatibleMcVersion.get(mcPlatform).getName()
+        }-${mcPlatform.loaderString}] $mod_name $mod_version"
+    )
     version.set(mod_version)
     changelog.set(rootProject.file("changelog.md").readText())
     type.set(STABLE)
@@ -276,8 +281,8 @@ publishMods {
 }
 
 tasks {
-    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveClassifier.set("dev")
+    named<ShadowJar>("shadowJar") {
+        archiveClassifier.set(if (mcPlatform.isObfuscated) "dev" else "")
         configurations = listOf(shade, shadeModImplementation)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -288,16 +293,20 @@ tasks {
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
     }
-    remapJar {
-        input.set(shadowJar.get().archiveFile)
-        finalizedBy("copyJar")
-        if (mcPlatform.isNeoForge) {
-            atAccessWideners.add("$accesWidener.accesswidener")
+    if (mcPlatform.isObfuscated) {
+        named<RemapJarTask>("remapJar") {
+            input.set(named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
+            finalizedBy("copyJar")
+            if (mcPlatform.isNeoForge) {
+                atAccessWideners.add("$accessWidener.accesswidener")
+            }
         }
+    } else {
+        named("shadowJar") { finalizedBy("copyJar") }
     }
     register<Copy>("copyJar") {
         File("${project.rootDir}/jars").mkdir()
-        from(remapJar.get().archiveFile)
+        from(outputJar)
         into("${project.rootDir}/jars")
     }
     clean { delete("${project.rootDir}/jars") }
@@ -306,7 +315,7 @@ tasks {
             "id" to mod_id,
             "name" to mod_name,
             "version" to mod_version,
-            "aw" to accesWidener,
+            "aw" to accessWidener,
             "mixinPath" to mixinPath,
             "mcVersion" to compatibleMcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
             "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
