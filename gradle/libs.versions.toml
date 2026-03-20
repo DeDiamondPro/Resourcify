@@ -5,7 +5,7 @@ fabric_language_kotlin = "1.11.0+kotlin.2.0.0" # Use 2.0.0 here since it is the 
 
 # Build system
 arch_loom = "1.15.45"
-shadow = "8.1.1"
+shadow = "9.3.2"
 publishing = "0.8.3"
 
 # Markdown
@@ -32,7 +32,7 @@ kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 # Build system
 arch_loom = { id = "gg.essential.loom", version.ref = "arch_loom" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 publishing = { id = "me.modmuss50.mod-publish-plugin", version.ref = "publishing" }
 
 [bundles]

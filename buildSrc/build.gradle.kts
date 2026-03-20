@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2025 DeDiamondPro
+ * Copyright (C) 2025-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,4 +21,8 @@ plugins {
 
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(21)
 }

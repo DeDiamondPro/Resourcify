@@ -17,7 +17,7 @@
 
 package dev.dediamondpro.resourcify.util;
 
-//?if >=1.21.11{
+//? if >=1.21.11 {
 
 import com.mojang.blaze3d.textures.GpuSampler;
 

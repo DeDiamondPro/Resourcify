@@ -57,7 +57,7 @@ stonecutter {
         for (version in platforms) {
             vers(version, version.split('-')[0])
         }
-        vcsVersion = "1.21.11-fabric"
+        vcsVersion = "26.1-fabric"
     }
 }
 

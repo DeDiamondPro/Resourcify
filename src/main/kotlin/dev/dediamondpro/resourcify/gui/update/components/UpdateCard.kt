@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,7 @@ import net.minecraft.client.gui.screens.packs.PackSelectionScreen
 import java.awt.Color
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
+import java.util.function.Consumer
 
 
 class UpdateCard(
@@ -288,8 +289,10 @@ class UpdateCard(
                                         // Call the list change method
                                         //? if <1.21.9 {
                                         /*model.onListChanged.run()
-                                        *///?} else
-                                        model.onListChanged.accept(null)
+                                        *///?} else {
+                                        @Suppress("UNCHECKED_CAST")
+                                        (model.onListChanged as Consumer<PackSelectionModel.EntryBase?>).accept(null)
+                                        //?}
                                         break
                                     }
                                 }

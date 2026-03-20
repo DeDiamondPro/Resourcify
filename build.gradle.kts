@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,9 @@ import dev.dediamondpro.buildsource.Platform
 import dev.dediamondpro.buildsource.VersionDefinition
 import dev.dediamondpro.buildsource.VersionRange
 import net.fabricmc.loom.task.RemapJarTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -76,7 +79,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
-    "26.1" to "26.1-pre-2",
+    "26.1" to "26.1-rc-2",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -89,7 +92,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
-    "26.1" to VersionRange("26.1", "26.2", inclusive = false, name = "26.1")
+    "26.1" to VersionRange("26.1", "26.2", inclusive = false, name = "26.1", allowAll = true) // TODO: remove allow all for final release
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
@@ -169,7 +172,7 @@ dependencies {
 
     if (mcPlatform.isFabric) {
         val modImpl = if (mcPlatform.isObfuscated) "modImplementation" else "implementation"
-        add(modImpl, "net.fabricmc:fabric-loader:0.17.3")
+        add(modImpl, "net.fabricmc:fabric-loader:0.18.4")
         add(modImpl, "net.fabricmc:fabric-language-kotlin:${libs.versions.fabric.language.kotlin.get()}")
         add(modImpl, "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion.get(mcPlatform)}")
         add(modImpl, "com.terraformersmc:modmenu:${modMenuVersion.get(mcPlatform)}")
@@ -303,6 +306,7 @@ tasks {
         }
     } else {
         named("shadowJar") { finalizedBy("copyJar") }
+        named<Jar>("jar") { enabled = false }
     }
     register<Copy>("copyJar") {
         File("${project.rootDir}/jars").mkdir()
@@ -330,7 +334,13 @@ tasks {
         if (!mcPlatform.isForgeLike) exclude("pack.mcmeta")
         if (!mcPlatform.isForge && (!mcPlatform.isNeoForge || mcPlatform.version >= 12005)) exclude("META-INF/mods.toml")
         if (!mcPlatform.isNeoForge || mcPlatform.version < 12005) exclude("META-INF/neoforge.mods.toml")
-        if (mcPlatform.minor == 20) exclude("1.21.resourcify.accesswidener") else exclude("1.20.resourcify.accesswidener")
+        // Exclude all access wideners and mixin configs except the active ones
+        listOf("1.20.resourcify", "1.21.resourcify", "1.21.9.resourcify", "26.1.resourcify")
+            .filter { it != accessWidener }
+            .forEach { exclude("$it.accesswidener") }
+        listOf("mixins.resourcify.json", "mixins.resourcify-1.21.11.json")
+            .filter { it != mixinPath }
+            .forEach { exclude(it) }
     }
     withType<Jar> {
         from(rootProject.file("LICENSE"))
@@ -340,4 +350,11 @@ tasks {
 
 configure<JavaPluginExtension> {
     toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion.get(mcPlatform)))
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.fromTarget(javaVersion.get(mcPlatform)))
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
 }

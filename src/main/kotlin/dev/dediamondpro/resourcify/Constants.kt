@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,6 @@ import org.slf4j.LoggerFactory
 object Constants {
     const val NAME = /*$ mod_name*/ "Resourcify"
     const val ID = /*$ mod_id*/ "resourcify"
-    const val VERSION = /*$ mod_version*/ "1.8.0"
+    const val VERSION = /*$ mod_version*/ "1.8.1"
     val LOGGER: Logger = LoggerFactory.getLogger(NAME)
 }
