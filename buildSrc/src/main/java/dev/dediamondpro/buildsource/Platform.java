@@ -53,7 +53,10 @@ public class Platform {
     }
 
     public String getVersionString() {
-        return major + "." + minor + "." + patch;
+        if (patch != 0) {
+            return major + "." + minor + "." + patch;
+        }
+        return major + "." + minor;
     }
 
     public Loader getLoader() {
@@ -89,7 +92,10 @@ public class Platform {
         String[] versionSplit = nameSplit[0].split("\\.");
         int major = Integer.parseInt(versionSplit[0]);
         int minor = Integer.parseInt(versionSplit[1]);
-        int patch = Integer.parseInt(versionSplit[2]);
+        int patch = 0;
+        if (versionSplit.length > 2) {
+            patch = Integer.parseInt(versionSplit[2]);
+        }
         Loader loader = Loader.valueOf(nameSplit[1].toUpperCase());
         return new Platform(major, minor, patch, loader);
     }

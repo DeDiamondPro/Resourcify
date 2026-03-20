@@ -29,6 +29,9 @@ plugins {
 buildscript {
     // Set loom platform to correct loader
     extra["loom.platform"] = project.name.split('-')[1]
+    if (project.name[0] != '1') {
+        extra.set("fabric.loom.disableObfuscation", "true")
+    }
 }
 
 val mcPlatform = Platform.fromProject(project)
@@ -70,6 +73,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    "26.1" to "26.1-pre-2",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -82,9 +86,11 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
+    "26.1" to VersionRange("26.1", "26.2", inclusive = false, name = "26.1")
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
+    "26.1" to "25",
     default = "21",
 )
 val parchmentVersion = VersionDefinition(
@@ -102,6 +108,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.8" to "0.129.0+1.21.8",
     "1.21.10" to "0.136.0+1.21.10",
     "1.21.11" to "0.139.4+1.21.11",
+    "26.1" to "0.143.14+26.1",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -110,7 +117,8 @@ val modMenuVersion = VersionDefinition(
     "1.21.5" to "14.0.0",
     "1.21.8" to "15.0.0",
     "1.21.10" to "16.0.0-rc.1",
-    "1.21.11" to "17.0.0-alpha.1"
+    "1.21.11" to "17.0.0-alpha.1",
+    "26.1" to "18.0.0-alpha.6",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -143,19 +151,21 @@ val universalMcVersion = VersionDefinition(
     default = mcPlatform.versionString
 )
 val universalVersion = VersionDefinition(
-    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:446"
+    default = "${universalMcVersion.get(mcPlatform)}-${mcPlatform.loaderString}:466"
 )
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion.get(mcPlatform)}")
 
-    @Suppress("UnstableApiUsage")
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchmentVersion.getOrNull(mcPlatform)?.let {
-            parchment("org.parchmentmc.data:parchment-$it@zip")
-        }
-    })
+    if (mcPlatform.major == 1) {
+        @Suppress("UnstableApiUsage")
+        mappings(loom.layered {
+            officialMojangMappings()
+            parchmentVersion.getOrNull(mcPlatform)?.let {
+                parchment("org.parchmentmc.data:parchment-$it@zip")
+            }
+        })
+    }
 
     if (mcPlatform.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:0.17.3")

@@ -22,6 +22,7 @@ pluginManagement {
         maven("https://maven.fabricmc.net")
         maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
+        maven("https://repo.essential.gg/repository/maven-public/")
     }
     dependencyResolutionManagement.versionCatalogs.create("libs")
 }
@@ -46,6 +47,7 @@ val platforms = listOf(
     "1.21.8-fabric",
     "1.21.10-fabric",
     "1.21.11-fabric",
+//    "26.1-fabric",
 )
 
 stonecutter {
