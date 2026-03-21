@@ -67,9 +67,15 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
     override fun repositionElements() {
         super.repositionElements()
         val width = getTextWidth()
-        cancelButton?.width = width + 24
-        cancelButton?.x = this.width / 2 - width / 2 - 12
+        //? if <1.21.11 {
+        /*cancelButton?.x = this.width / 2 - width / 2 - 12
         cancelButton?.y = this.height / 2 + 20
+        cancelButton?.width = width + 24
+        *///?} else {
+        cancelButton?.x = this.width / 2 - width / 2
+        cancelButton?.y = this.height / 2 + getTextHeight() - 9 / 2 + 2
+        cancelButton?.width = width
+        //?}
     }
 
     override fun tick() {
@@ -111,6 +117,12 @@ class WorldDownloadingScreen(val parent: PaginatedScreen, val world: File, val u
         //?} else
         /*return this.font.width(this.textWidget)*/
     }
+
+    //? if >=1.21.11 {
+    private fun getTextHeight(): Int {
+        return this.textWidget!!.height
+    }
+    //?}
 
     override fun shouldCloseOnEsc(): Boolean {
         return false
