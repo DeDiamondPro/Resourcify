@@ -91,7 +91,7 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
-    "26.1" to VersionRange("26.1", "26.2", inclusive = false, name = "26.1")
+    "26.1" to VersionRange("26.1", "26.1", exclusiveUpperBound = "26.2", name = "26.1")
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",

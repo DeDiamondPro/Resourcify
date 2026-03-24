@@ -23,7 +23,7 @@ class VersionRange(
     private val name: String = "$startVersion-$endVersion",
     private val openEnd: Boolean = false,
     private val allowAll: Boolean = false, // Mostly used for pre releases and release candidates
-    private val inclusive: Boolean = true,
+    private val exclusiveUpperBound: String? = null, // Exclusive upper bound for loader range only, does not affect publishing
 ) {
     fun getName(): String {
         return name;
@@ -37,8 +37,8 @@ class VersionRange(
         if (allowAll) return "*"
         return buildString {
             append(">=$startVersion")
-            if (!openEnd && inclusive) append(" <=$endVersion")
-            else if (!openEnd) append(" <$endVersion")
+            if (!openEnd && exclusiveUpperBound != null) append(" <$exclusiveUpperBound")
+            else if (!openEnd) append(" <=$endVersion")
         }
     }
 
@@ -46,8 +46,8 @@ class VersionRange(
         if (allowAll) return "[1,)"
         return buildString {
             append("[$startVersion,")
-            if (!openEnd && inclusive) append("$endVersion]")
-            else if (!openEnd) append("$endVersion[")
+            if (!openEnd && exclusiveUpperBound != null) append("$exclusiveUpperBound[")
+            else if (!openEnd) append("$endVersion]")
             else append(")")
         }
     }
