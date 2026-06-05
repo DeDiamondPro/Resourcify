@@ -1,3 +1,20 @@
+/*
+ * This file is part of Resourcify
+ * Copyright (C) 2026 DeDiamondPro
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License Version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.dediamondpro.resourcify.gui.projectpage
 
 import dev.dediamondpro.resourcify.Constants
@@ -7,6 +24,7 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.world.WorldDownloadingScreen
 import dev.dediamondpro.resourcify.services.IVersion
 import dev.dediamondpro.resourcify.services.ProjectType
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthAnalytics
 import dev.dediamondpro.resourcify.util.DownloadManager
 import dev.dediamondpro.resourcify.util.Utils
 import dev.dediamondpro.resourcify.util.localize
@@ -97,7 +115,11 @@ class VersionWrapper(private val version: IVersion, private val type: ProjectTyp
             while (file.exists()) {
                 file = File(downloadFolder, Utils.incrementFileName(file.name))
             }
-            DownloadManager.download(file, version.getSha1(), url, type.shouldExtract) {
+            DownloadManager.download(
+                file, version.getSha1(),
+                url, type.shouldExtract,
+                ModrinthAnalytics.DownloadReason.STANDALONE
+            ) {
                 text?.setText("${ChatColor.BOLD}${localize("resourcify.version.installed")}")
                 installed = true
             }

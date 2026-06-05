@@ -32,6 +32,7 @@ import dev.dediamondpro.resourcify.gui.PaginatedScreen
 import dev.dediamondpro.resourcify.gui.data.Colors
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.mixins.PackScreenAccessor
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthAnalytics
 import dev.dediamondpro.resourcify.util.*
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
@@ -239,8 +240,8 @@ class UpdateCard(
                 downloadFile = File(file.parentFile, Utils.incrementFileName(downloadFile.name))
             }
             DownloadManager.download(
-                downloadFile,
-                newVersion.getSha1(), updateUrl
+                downloadFile, newVersion.getSha1(), updateUrl,
+                downloadReason = ModrinthAnalytics.DownloadReason.UPDATE
             ) {
                 try {
                     // Try to update the pack if it is currently selected, not critical if it fails

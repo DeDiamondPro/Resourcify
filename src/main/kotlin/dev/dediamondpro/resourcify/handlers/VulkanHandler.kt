@@ -21,17 +21,17 @@ import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.Screen
 
 //?if >=26.2 {
-import com.mojang.blaze3d.vulkan.VulkanBackend
+/*import com.mojang.blaze3d.vulkan.VulkanBackend
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.AlertScreen
 import net.minecraft.network.chat.Component
 
-//?}
+*///?}
 
 object VulkanHandler {
     inline fun runOrBlock(callable: () -> Unit) {
         //?if >=26.2 {
-        val mc = Minecraft.getInstance()
+        /*val mc = Minecraft.getInstance()
         if (mc.window.backend() is VulkanBackend) {
             val currentScreen = mc.gui.screen()
             mc.setScreenAndShow(
@@ -43,13 +43,13 @@ object VulkanHandler {
             )
             return
         }
-        //?}
+        *///?}
         callable.invoke()
     }
 
     inline fun createOrBlock(callable: () -> Screen): Screen {
         //?if >=26.2 {
-        val mc = Minecraft.getInstance()
+        /*val mc = Minecraft.getInstance()
         if (mc.window.backend() is VulkanBackend) {
             val currentScreen = mc.gui.screen()
             return AlertScreen(
@@ -58,7 +58,7 @@ object VulkanHandler {
                 Component.translatable("resourcify.no-vulkan.description")
             )
         }
-        //?}
+        *///?}
         return callable.invoke()
     }
 }

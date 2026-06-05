@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2024 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.modrinth.ModrinthAnalytics
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
@@ -39,9 +40,11 @@ object DownloadManager {
 
     fun download(
         file: File, sha512: String? = null, uri: URI,
-        extract: Boolean = false, callback: (() -> Unit)? = null,
+        extract: Boolean = false,
+        downloadReason: ModrinthAnalytics.DownloadReason? = null,
+        callback: (() -> Unit)? = null,
     ) {
-        queuedDownloads[uri] = QueuedDownload(file, sha512, extract, callback)
+        queuedDownloads[uri] = QueuedDownload(file, sha512, extract, callback, downloadReason)
         downloadNext()
     }
 
@@ -74,7 +77,17 @@ object DownloadManager {
             tempFile = File(tempFolder, queuedDownload.file.name + "-$i.tmp")
         }
         downloadsInProgress[url] = DownloadData(runAsync {
-            val con = url.toURL().setupConnection()
+            // Modrinth analytics
+            val headers = mutableMapOf<String, String>()
+            if (url.host == "cdn.modrinth.com") {
+                headers["modrinth-download-meta"] = ModrinthAnalytics(
+                    downloadReason = queuedDownload.downloadReason,
+                    gameVersion = Platform.getMcVersion(),
+                    loader = Platform.getLoader(),
+                ).toJson()
+            }
+
+            val con = url.toURL().setupConnection(headers)
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {
                 Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
@@ -172,6 +185,12 @@ object DownloadManager {
     }
 }
 
-private data class QueuedDownload(val file: File, val sha1: String?, val extract: Boolean, val callback: (() -> Unit)?)
+private data class QueuedDownload(
+    val file: File,
+    val sha1: String?,
+    val extract: Boolean,
+    val callback: (() -> Unit)?,
+    val downloadReason: ModrinthAnalytics.DownloadReason?
+)
 
 private data class DownloadData(val future: CompletableFuture<Void>, val file: File, var length: Int? = null)

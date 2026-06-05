@@ -28,10 +28,10 @@ import net.minecraft.network.chat.Component
 import java.util.function.Consumer
 
 //?if >=26.2 {
-import net.minecraft.client.gui.layouts.Layout
+/*import net.minecraft.client.gui.layouts.Layout
 import net.minecraft.client.gui.layouts.LinearLayout
 
-//?}
+*///?}
 
 class DownloadWorldTab : Tab {
     override fun getTabTitle(): Component {
@@ -51,12 +51,12 @@ class DownloadWorldTab : Tab {
     }
 
     //?if >=26.2 {
-    val layout: LinearLayout = LinearLayout.vertical()
+    /*val layout: LinearLayout = LinearLayout.vertical()
 
     override fun getLayout(): Layout {
         return layout
     }
-    //?}
+    *///?}
 
     fun onClick() {
         UScreen.displayScreen(BrowseScreen(ProjectType.WORLD, Platform.getFileInGameDir("saves")))

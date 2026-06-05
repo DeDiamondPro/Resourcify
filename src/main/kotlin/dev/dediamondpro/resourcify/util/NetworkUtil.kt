@@ -36,12 +36,15 @@ object NetworkUtil {
     private val cache = ConcurrentHashMap<URI, CacheObject>()
     private val currentlyFetching = ConcurrentHashMap<URI, CompletableFuture<ByteArray?>>()
 
-    fun setupConnection(url: URL): HttpsURLConnection {
+    fun setupConnection(url: URL, headers: Map<String, String> = emptyMap()): HttpsURLConnection {
         val con = url.openConnection() as HttpsURLConnection
         con.setRequestProperty(
             "User-Agent",
             "${Constants.NAME}/${Constants.VERSION} (${Platform.getMcVersion()}-${Platform.getLoader()})"
         )
+        for ((key, value) in headers) {
+            con.setRequestProperty(key, URLEncoder.encode(value, "UTF-8"))
+        }
         con.setRequestProperty("Accept-Encoding", "gzip, deflate")
         con.connectTimeout = 5000
         con.readTimeout = 5000
@@ -129,7 +132,8 @@ object NetworkUtil {
     }
 }
 
-fun URL.setupConnection(): HttpsURLConnection = NetworkUtil.setupConnection(this)
+fun URL.setupConnection(headers: Map<String, String> = emptyMap()): HttpsURLConnection =
+    NetworkUtil.setupConnection(this, headers)
 
 fun URLConnection.getEncodedInputStream(): InputStream? {
     return try {

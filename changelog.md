@@ -1,11 +1,12 @@
-## Resourcify 1.8.2
+## Resourcify 1.8.3
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://dediamondpro.dev/discord).
 
-- Port to 26.1 fabric
-- Fixed cancel button offset in screen when downloading a world.
+- Resourcify now contributes to Modrinth's analytics,
+  see [their article](https://modrinth.com/news/article/analytics-overhaul/) for more info.
+- Ported to 26.1.2 NeoForge
 
 ----------------------------------------------------------------------------------------------------
 
