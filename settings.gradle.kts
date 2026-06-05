@@ -22,13 +22,14 @@ pluginManagement {
         maven("https://maven.fabricmc.net")
         maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
+        maven("https://maven.dediamondpro.dev/releases")
         maven("https://repo.essential.gg/repository/maven-public/")
     }
     dependencyResolutionManagement.versionCatalogs.create("libs")
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7"
+    id("dev.kikugie.stonecutter") version "0.9.5"
 }
 
 val platforms = listOf(
@@ -55,7 +56,7 @@ stonecutter {
     kotlinController = true
     create(rootProject) {
         for (version in platforms) {
-            vers(version, version.split('-')[0])
+            version(version, version.split('-')[0])
         }
         vcsVersion = "26.1-fabric"
     }

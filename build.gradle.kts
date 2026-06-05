@@ -154,7 +154,7 @@ val universalVersion = VersionDefinition(
     "1.21.8" to "1.21.7",
     "1.21.10" to "1.21.9",
     default = mcPlatform.versionString
-).let { VersionDefinition(default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:466") }
+).let { VersionDefinition(default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:499") }
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion.get(mcPlatform)}")

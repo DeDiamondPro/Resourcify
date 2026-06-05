@@ -2,7 +2,7 @@
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
-the [Discord](https://discord.gg/XtAuqsJWby).
+the [Discord](https://dediamondpro.dev/discord).
 
 - Port to 26.1 fabric
 - Fixed cancel button offset in screen when downloading a world.
