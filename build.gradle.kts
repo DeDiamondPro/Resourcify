@@ -91,11 +91,11 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
-    "26.1" to VersionRange("26.1", "26.1", exclusiveUpperBound = "26.2", name = "26.1")
+    "26.1.2" to VersionRange("26.1", "26.1", exclusiveUpperBound = "26.2", name = "26.1")
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
-    "26.1" to "25",
+    "26.1.2" to "25",
     default = "21",
 )
 val parchmentVersion = VersionDefinition(
@@ -113,7 +113,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.8" to "0.129.0+1.21.8",
     "1.21.10" to "0.136.0+1.21.10",
     "1.21.11" to "0.139.4+1.21.11",
-    "26.1" to "0.143.14+26.1",
+    "26.1.2" to "0.150.0+26.1.2",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -123,13 +123,14 @@ val modMenuVersion = VersionDefinition(
     "1.21.8" to "15.0.0",
     "1.21.10" to "16.0.0-rc.1",
     "1.21.11" to "17.0.0-alpha.1",
-    "26.1" to "18.0.0-alpha.6",
+    "26.1.2" to "18.0.0-alpha.6",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
     "1.21.4" to "21.4.124",
     "1.21.5" to "21.5.95",
     "1.21.8" to "21.8.49",
+    "26.1.2" to "26.1.2.73"
 )
 val minimumNeoForgeVersion = VersionDefinition(
     // We need this version or higher on 1.21.4, on other versions we don't care
@@ -148,13 +149,20 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.4" to "5.7.0",
     "1.21.5" to "5.7.0",
     "1.21.8" to "5.9.0",
+    "26.1.2" to "6.2.0",
 )
 val universalVersion = VersionDefinition(
     "1.21.1" to "1.21",
     "1.21.8" to "1.21.7",
     "1.21.10" to "1.21.9",
+    "26.1.2" to "26.1",
     default = mcPlatform.versionString
-).let { VersionDefinition(default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:499") }
+).let {
+    VersionDefinition(
+        "26.1.2-neoforge" to "26.1-fabric:499",
+        default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:499"
+    )
+}
 
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion.get(mcPlatform)}")
@@ -288,6 +296,7 @@ tasks {
         configurations = listOf(shade, shadeModImplementation)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
+        if (!mcPlatform.isFabric) exclude("fabric.mod.json")
         mergeServiceFiles()
         relocate("gg.essential.universal", "dev.dediamondpro.resourcify.libs.universal")
         relocate("gg.essential.elementa", "dev.dediamondpro.resourcify.libs.elementa")

@@ -46,7 +46,7 @@ class VersionRange(
         if (allowAll) return "[1,)"
         return buildString {
             append("[$startVersion,")
-            if (!openEnd && exclusiveUpperBound != null) append("$exclusiveUpperBound[")
+            if (!openEnd && exclusiveUpperBound != null) append("$exclusiveUpperBound)")
             else if (!openEnd) append("$endVersion]")
             else append(")")
         }
