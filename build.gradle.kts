@@ -79,6 +79,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    "26.2" to "26.2-pre-4",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -91,11 +92,13 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.8" to VersionRange("1.21.6", "1.21.8", name = "1.21.8"),
     "1.21.10" to VersionRange("1.21.9", "1.21.10", name = "1.21.10"),
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
-    "26.1.2" to VersionRange("26.1", "26.1", exclusiveUpperBound = "26.2", name = "26.1")
+    "26.1.2" to VersionRange("26.1", "26.1.2", exclusiveUpperBound = "26.2", name = "26.1"),
+    "26.2" to VersionRange("26.2", "26.2", exclusiveUpperBound = "26.3", name = "26.2", allowAll = true),
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
     "26.1.2" to "25",
+    "26.2" to "25",
     default = "21",
 )
 val parchmentVersion = VersionDefinition(
@@ -114,6 +117,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.10" to "0.136.0+1.21.10",
     "1.21.11" to "0.139.4+1.21.11",
     "26.1.2" to "0.150.0+26.1.2",
+    "26.2" to "0.150.3+26.2",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -124,6 +128,7 @@ val modMenuVersion = VersionDefinition(
     "1.21.10" to "16.0.0-rc.1",
     "1.21.11" to "17.0.0-alpha.1",
     "26.1.2" to "18.0.0-alpha.6",
+    "26.2" to "20.0.0-alpha.1",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -160,6 +165,7 @@ val universalVersion = VersionDefinition(
 ).let {
     VersionDefinition(
         "26.1.2-neoforge" to "26.1-fabric:499",
+        "26.2" to "${it.get(mcPlatform)}-${mcPlatform.loaderString}:500+feature-mc-26.2-snapshot-7",
         default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:499"
     )
 }

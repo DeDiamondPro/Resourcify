@@ -92,6 +92,9 @@
   "resourcify.config.disable-gifs.title": "Disable GIF Rendering",
   "resourcify.config.disable-gifs.description": "Disable Resourcify's GIF rendering, this can help alleviate stuttering issues while loading images.",
 
+  "resourcify.no-vulkan.title": "Resourcify does not support Vulkan.",
+  "resourcify.no-vulkan.description": "Resourcify does currently not support the Vulkan rendering backend.\nThis is due to the libraries Resourcify uses internally, updating everything will take some time.\n\nFor now, please switch back to the OpenGL backend in video settings.",
+
   "resourcify.categories.adventure": "Adventure",
   "resourcify.categories.categories": "Categories",
   "resourcify.categories.cursed": "Cursed",

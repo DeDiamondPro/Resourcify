@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ val platforms = listOf(
     "1.21.11-fabric",
     "26.1.2-neoforge",
     "26.1.2-fabric",
+    "26.2-fabric",
 )
 
 stonecutter {

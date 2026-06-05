@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.gui.data.Icons
+import dev.dediamondpro.resourcify.handlers.VulkanHandler
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.Screen
 
@@ -33,10 +34,10 @@ object PackScreensAddition {
         val folder = type.getDirectory(screen)
         val buttons = mutableListOf<ImageButton>()
         buttons.add(ImageButton(screen, type.plusX, type.plusY, Icons.PLUS) {
-            UScreen.displayScreen(BrowseScreen(type, folder))
+            VulkanHandler.runOrBlock { UScreen.displayScreen(BrowseScreen(type, folder)) }
         })
         if (type.hasUpdateButton(folder)) buttons.add(ImageButton(screen, type.updateX, type.updateY, Icons.UPDATE) {
-            UScreen.displayScreen(UpdateGui(type, folder))
+            VulkanHandler.runOrBlock { UScreen.displayScreen(UpdateGui(type, folder)) }
         })
         return buttons
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify
 
 import dev.dediamondpro.resourcify.platform.ThemeReloadListener
 import dev.dediamondpro.resourcify.config.SettingsPage
+import dev.dediamondpro.resourcify.handlers.VulkanHandler
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer
@@ -47,11 +48,11 @@ object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
     init {
         //? if neoforge {
         /*LOADING_CONTEXT.registerExtensionPoint(IConfigScreenFactory::class.java) {
-            IConfigScreenFactory { _, _ -> SettingsPage() }
+            IConfigScreenFactory { _, _ -> VulkanHandler.createOrBlock { SettingsPage() } }
         }
         *///?} else if forge {
         /*LOADING_CONTEXT.registerExtensionPoint(ConfigScreenFactory::class.java) {
-            ConfigScreenFactory { _, _ -> SettingsPage() }
+            ConfigScreenFactory { _, _ -> VulkanHandler.createOrBlock { SettingsPage() } }
         }
         *///?}
 
