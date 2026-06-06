@@ -44,7 +44,6 @@ import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
 import java.awt.Color
 import java.io.File
-import java.net.URI
 import java.util.concurrent.CompletableFuture
 import kotlin.math.min
 
@@ -201,7 +200,7 @@ class ProjectScreen(
             height = 19.pixels()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
-            UDesktop.browse(URI(project.getBrowserUrl()))
+            UDesktop.browse(project.getBrowserUrl().toURI())
         } childOf navigationBox
         TextIcon(
             "${ChatColor.BOLD}${service.getName().localize()}",
