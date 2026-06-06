@@ -309,6 +309,10 @@ tasks {
         relocate("dev.dediamondpro.minemark", "dev.dediamondpro.resourcify.libs.minemark")
         relocate("org.commonmark", "dev.dediamondpro.resourcify.libs.commonmark")
         relocate("org.ccil.cowan.tagsoup", "dev.dediamondpro.resourcify.libs.tagsoup")
+        if (!mcPlatform.isObfuscated && mcPlatform.isNeoForge) {
+            dependsOn("generateAccessTransformer")
+            from(project.layout.buildDirectory.dir("generated/at"))
+        }
     }
     if (mcPlatform.isObfuscated) {
         named<RemapJarTask>("remapJar") {
