@@ -205,7 +205,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shadeModImplementation("gg.essential:elementa:DIAMOND-13") {
+    shadeModImplementation("gg.essential:elementa:DIAMOND-14") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this
@@ -220,10 +220,7 @@ val accessWidener = when {
     mcPlatform.minor == 21 -> "1.21.resourcify"
     else -> "1.20.resourcify"
 }
-val mixinPath = when {
-    mcPlatform.version >= 1_21_11 -> "mixins.resourcify-1.21.11.json"
-    else -> "mixins.resourcify.json"
-}
+val mixinPath = "mixins.resourcify.json"
 
 loom {
     accessWidenerPath = rootProject.file("src/main/resources/$accessWidener.accesswidener")
@@ -355,9 +352,6 @@ tasks {
         listOf("1.20.resourcify", "1.21.resourcify", "1.21.9.resourcify", "26.1.resourcify")
             .filter { it != accessWidener }
             .forEach { exclude("$it.accesswidener") }
-        listOf("mixins.resourcify.json", "mixins.resourcify-1.21.11.json")
-            .filter { it != mixinPath }
-            .forEach { exclude(it) }
     }
     withType<Jar> {
         from(rootProject.file("LICENSE"))
