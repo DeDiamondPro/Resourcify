@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024 DeDiamondPro
+ * Copyright (C) 2024-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,20 +23,28 @@ import com.google.gson.reflect.TypeToken
 import java.io.Reader
 
 object JsonUtil {
-    val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+    private val gson: Gson = GsonBuilder().create()
+    private val prettyGson: Gson = GsonBuilder().setPrettyPrinting().create()
+
+    fun getGson(prettyPrint: Boolean = false): Gson {
+        if (prettyPrint) {
+            return prettyGson
+        }
+        return gson
+    }
 }
 
 inline fun <reified T> Reader.fromJson(): T {
     val type = object : TypeToken<T>() {}.type
-    return JsonUtil.gson.fromJson(this, type)
+    return JsonUtil.getGson().fromJson(this, type)
 }
 
 inline fun <reified T> String.fromJson(): T {
     val type = object : TypeToken<T>() {}.type
-    return JsonUtil.gson.fromJson(this, type)
+    return JsonUtil.getGson().fromJson(this, type)
 }
 
-inline fun <reified T> T.toJson(): String {
+inline fun <reified T> T.toJson(prettyPrint: Boolean = false): String {
     val type = object : TypeToken<T>() {}.type
-    return JsonUtil.gson.toJson(this, type)
+    return JsonUtil.getGson(prettyPrint).toJson(this, type)
 }

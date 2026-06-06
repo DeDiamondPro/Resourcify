@@ -56,7 +56,7 @@ class Config {
         fun save(config: Config = instance) {
             try {
                 configFile.outputStream().bufferedWriter().use {
-                    it.write(config.toJson())
+                    it.write(config.toJson(prettyPrint = true))
                 }
             } catch (e: Exception) {
                 Constants.LOGGER.error("Failed to save Resourcify config to file.", e)

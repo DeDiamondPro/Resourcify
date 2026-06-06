@@ -43,7 +43,7 @@ object NetworkUtil {
             "${Constants.NAME}/${Constants.VERSION} (${Platform.getMcVersion()}-${Platform.getLoader()})"
         )
         for ((key, value) in headers) {
-            con.setRequestProperty(key, URLEncoder.encode(value, "UTF-8"))
+            con.setRequestProperty(key, value)
         }
         con.setRequestProperty("Accept-Encoding", "gzip, deflate")
         con.connectTimeout = 5000
