@@ -72,11 +72,15 @@ object DownloadManager {
         val queuedDownload = queuedDownloads.remove(url) ?: return
         tempFolder.mkdirs()
         var tempFile = File(tempFolder, queuedDownload.file.name + ".tmp")
-        val i = 0
+        var i = 0
         while (tempFile.exists()) {
-            tempFile = File(tempFolder, queuedDownload.file.name + "-$i.tmp")
+            tempFile = File(tempFolder, queuedDownload.file.name + "-${i++}.tmp")
         }
-        downloadsInProgress[url] = DownloadData(runAsync {
+
+        // Create data first, so we don't have race conditions trying to set the length
+        val downloadData = DownloadData(null, tempFile)
+        downloadsInProgress[url] = downloadData
+        downloadData.future = runAsync {
             // Modrinth analytics
             val headers = mutableMapOf<String, String>()
             if (url.host == "cdn.modrinth.com") {
@@ -88,7 +92,7 @@ object DownloadManager {
             }
 
             val con = url.toURL().setupConnection(headers)
-            downloadsInProgress[url]?.length = con.contentLength
+            downloadData.length = con.contentLength
             con.getEncodedInputStream().use {
                 Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
@@ -118,7 +122,7 @@ object DownloadManager {
             }
             downloadsInProgress.remove(url)
             downloadNext()
-        }, tempFile)
+        }
     }
 
     fun extractWorldZip(zipFile: File, dest: File) {
@@ -193,4 +197,4 @@ private data class QueuedDownload(
     val downloadReason: ModrinthAnalytics.DownloadReason?
 )
 
-private data class DownloadData(val future: CompletableFuture<Void>, val file: File, var length: Int? = null)
+private data class DownloadData(var future: CompletableFuture<Void>?, val file: File, var length: Int? = null)
