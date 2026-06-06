@@ -8,6 +8,7 @@ the [Discord](https://dediamondpro.dev/discord).
   see [their article](https://modrinth.com/news/article/analytics-overhaul/) for more info.
 - Ported to 1.21.11 and 26.1.2 NeoForge
 - Fixed issues with trying to open links with special characters.
+- Added a search debounce to prevent sending a lot of requests when typing fast
 - Updated a lot of dependencies
 
 ----------------------------------------------------------------------------------------------------

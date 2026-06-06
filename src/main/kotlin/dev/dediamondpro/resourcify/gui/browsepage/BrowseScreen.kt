@@ -112,6 +112,7 @@ class BrowseScreen(
     private var minecraftVersions: Map<String, String>? = null
     private var versionDropDown: DropDown? = null
     private var sortDropDown: DropDown? = null
+    private var searchDebounceTicks = 0
 
     init {
         sideBar()
@@ -335,7 +336,8 @@ class BrowseScreen(
             width = 100.percent()
             color = Colors.TEXT_PRIMARY.toConstraint()
         }.onUpdate {
-            loadPacks()
+            // 300ms debounce
+            searchDebounceTicks = 6
         } childOf searchBoxHitBox) as UITextInput
 
         // Settings button
@@ -416,6 +418,13 @@ class BrowseScreen(
                 if (clear) projectScrollable.scrollToTop(false)
                 fetchingFuture = null
             }
+        }
+    }
+
+    override fun onTick() {
+        super.onTick()
+        if (searchDebounceTicks > 0 && --searchDebounceTicks == 0) {
+            loadPacks()
         }
     }
 
