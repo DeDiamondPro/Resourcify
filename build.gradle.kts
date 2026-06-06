@@ -135,6 +135,7 @@ val neoForgeVersion = VersionDefinition(
     "1.21.4" to "21.4.124",
     "1.21.5" to "21.5.95",
     "1.21.8" to "21.8.49",
+    "1.21.11" to "21.11.42",
     "26.1.2" to "26.1.2.73"
 )
 val minimumNeoForgeVersion = VersionDefinition(
@@ -154,6 +155,7 @@ val kotlinForForgeVersion = VersionDefinition(
     "1.21.4" to "5.7.0",
     "1.21.5" to "5.7.0",
     "1.21.8" to "5.9.0",
+    "1.21.11" to "6.0.0",
     "26.1.2" to "6.2.0",
 )
 val universalVersion = VersionDefinition(
@@ -164,6 +166,7 @@ val universalVersion = VersionDefinition(
     default = mcPlatform.versionString
 ).let {
     VersionDefinition(
+        "1.21.11-neoforge" to "1.21.11-neoforge:499+DIAMOND-NEO",
         "26.1.2-neoforge" to "26.1-fabric:499",
         "26.2" to "${it.get(mcPlatform)}-${mcPlatform.loaderString}:500+feature-mc-26.2-snapshot-7",
         default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:499"
