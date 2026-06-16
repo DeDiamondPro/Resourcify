@@ -19,7 +19,6 @@ package dev.dediamondpro.resourcify
 
 import dev.dediamondpro.resourcify.platform.ThemeReloadListener
 import dev.dediamondpro.resourcify.config.SettingsPage
-import dev.dediamondpro.resourcify.handlers.VulkanHandler
 
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer
@@ -48,11 +47,11 @@ object Resourcify /*? if fabric {*/ : ClientModInitializer /*?}*/ {
     init {
         //? if neoforge {
         /*LOADING_CONTEXT.registerExtensionPoint(IConfigScreenFactory::class.java) {
-            IConfigScreenFactory { _, _ -> VulkanHandler.createOrBlock { SettingsPage() } }
+            IConfigScreenFactory { _, _ -> SettingsPage() }
         }
         *///?} else if forge {
         /*LOADING_CONTEXT.registerExtensionPoint(ConfigScreenFactory::class.java) {
-            ConfigScreenFactory { _, _ -> VulkanHandler.createOrBlock { SettingsPage() } }
+            ConfigScreenFactory { _, _ -> SettingsPage() }
         }
         *///?}
 

@@ -21,7 +21,6 @@ package dev.dediamondpro.resourcify.config
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi
-import dev.dediamondpro.resourcify.handlers.VulkanHandler
 import net.minecraft.client.gui.screens.Screen
 
 class ModMenuIntegration : ModMenuApi {
@@ -30,7 +29,7 @@ class ModMenuIntegration : ModMenuApi {
     }
 
     object SettingsFactory : ConfigScreenFactory<Screen?> {
-        override fun create(parent: Screen?): Screen? = VulkanHandler.createOrBlock { SettingsPage() }
+        override fun create(parent: Screen?): Screen = SettingsPage()
     }
 }
 

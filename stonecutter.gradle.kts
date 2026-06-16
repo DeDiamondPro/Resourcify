@@ -19,7 +19,7 @@ plugins {
     id("dev.kikugie.stonecutter")
     alias(libs.plugins.arch.loom) apply false
 }
-stonecutter active "26.1.2-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.2-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter tasks {
     val ordering = versionComparator.thenComparingInt {
@@ -27,6 +27,7 @@ stonecutter tasks {
         else if (it.metadata.project.endsWith("neoforge")) 1
         else 0
     }
+    order("publishMods", ordering)
     order("publishModrinth", ordering)
     order("publishCurseforge", ordering)
 }

@@ -12,9 +12,15 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public class CreateWorldScreenMixin {
     @ModifyArg(
             method = "init",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/tabs/TabNavigationBar$Builder;addTabs([Lnet/minecraft/client/gui/components/tabs/Tab;)Lnet/minecraft/client/gui/components/tabs/TabNavigationBar$Builder;")
+            at = @At(
+                    value = "INVOKE",
+                    //?if <26.2 {
+                    /*target = "Lnet/minecraft/client/gui/components/tabs/TabNavigationBar$Builder;addTabs([Lnet/minecraft/client/gui/components/tabs/Tab;)Lnet/minecraft/client/gui/components/tabs/TabNavigationBar$Builder;"
+                    *///?} else
+                    target = "Lnet/minecraft/client/gui/components/tabs/MenuTabBar$Builder;addTabs([Lnet/minecraft/client/gui/components/tabs/Tab;)Lnet/minecraft/client/gui/components/tabs/MenuTabBar$Builder;"
+            )
     )
-    public Tab[] addTab(Tab[] tabs) {
+    public Tab[] /*? <26.2 { */ /*addTab *//*?} else {*/ addTabs /*?}*/ (Tab[] tabs) {
         if (!Config.Companion.getInstance().getWorldsEnabled()) {
             return tabs;
         }

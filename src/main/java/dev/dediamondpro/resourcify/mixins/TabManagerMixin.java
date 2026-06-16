@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TabManager.class)
 public class TabManagerMixin {
 
-    @Inject(method = "setCurrentTab", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setCurrentTab*", at = @At("HEAD"), cancellable = true)
     public void onResourcifyWorldTab(Tab tab, boolean playClickSound, CallbackInfo ci) {
         // The tab opens a GUI, so we don't want it to be selected because then the GUI would open again after its closed
         if (tab instanceof DownloadWorldTab) {

@@ -22,7 +22,6 @@ import dev.dediamondpro.resourcify.gui.browsepage.BrowseScreen
 import dev.dediamondpro.resourcify.gui.update.UpdateGui
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.gui.data.Icons
-import dev.dediamondpro.resourcify.handlers.VulkanHandler
 import gg.essential.universal.UScreen
 import net.minecraft.client.gui.screens.Screen
 
@@ -34,10 +33,10 @@ object PackScreensAddition {
         val folder = type.getDirectory(screen)
         val buttons = mutableListOf<ImageButton>()
         buttons.add(ImageButton(screen, type.plusX, type.plusY, Icons.PLUS) {
-            VulkanHandler.runOrBlock { UScreen.displayScreen(BrowseScreen(type, folder)) }
+            UScreen.displayScreen(BrowseScreen(type, folder))
         })
         if (type.hasUpdateButton(folder)) buttons.add(ImageButton(screen, type.updateX, type.updateY, Icons.UPDATE) {
-            VulkanHandler.runOrBlock { UScreen.displayScreen(UpdateGui(type, folder)) }
+            UScreen.displayScreen(UpdateGui(type, folder))
         })
         return buttons
     }

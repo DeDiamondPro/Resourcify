@@ -23,6 +23,6 @@ import org.slf4j.LoggerFactory
 object Constants {
     const val NAME = /*$ mod_name*/ "Resourcify"
     const val ID = /*$ mod_id*/ "resourcify"
-    const val VERSION = /*$ mod_version*/ "1.8.3"
+    const val VERSION = /*$ mod_version*/ "1.8.4"
     val LOGGER: Logger = LoggerFactory.getLogger(NAME)
 }
