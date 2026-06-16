@@ -273,6 +273,9 @@ publishMods {
         } else if (mcPlatform.isForgeLike) {
             requires("kotlin-for-forge")
         }
+
+        clientRequired = true
+        serverRequired = false
     }
     modrinth {
         projectId.set("RLzHAoZe")
