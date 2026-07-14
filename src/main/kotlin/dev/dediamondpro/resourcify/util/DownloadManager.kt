@@ -17,6 +17,7 @@
 
 package dev.dediamondpro.resourcify.util
 
+import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 import java.net.URL
@@ -72,6 +73,9 @@ object DownloadManager {
         }
         downloadsInProgress[url] = DownloadData(runAsync {
             val con = url.setupConnection()
+            if (url.host == "edge.forgecdn.net") {
+                con.setRequestProperty("x-api-key", CurseForgeService.API_KEY)
+            }
             downloadsInProgress[url]?.length = con.contentLength
             con.getEncodedInputStream().use {
                 Files.copy(it!!, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
