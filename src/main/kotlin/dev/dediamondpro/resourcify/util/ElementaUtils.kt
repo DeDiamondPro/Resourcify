@@ -107,7 +107,7 @@ fun UIImage.Companion.ofBase64(
     }
     val image = UIImage(
         imageFuture,
-        loadingImage = if (loadingImage) ElementaUtils.elementaLoadingImage else EmptyImage
+        loadingImage = if (loadingImage) ElementaUtils.ElementLoadingImage else EmptyImage
     )
     if (!loadingImage) image.imageHeight = 0.5625f
     image.textureMinFilter = minFilter

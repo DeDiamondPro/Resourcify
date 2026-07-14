@@ -35,6 +35,16 @@ object Platform {
         return SharedConstants.getVersion().name
     }
 
+    fun getLoader(): String {
+        //#if FABRIC==1
+        //$$ return "fabric"
+        //#elseif FORGE==1
+        return "forge"
+        //#elseif NEOFORGE==1
+        //$$ return "neoforge"
+        //#endif
+    }
+
     fun getTranslateKey(screen: Screen): String {
         //#if MC < 11900
         val content = screen.title

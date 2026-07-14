@@ -34,8 +34,8 @@ object DefaultAdProvider : IAdProvider {
     private fun fetchAds() {
         if (ads != null && ads?.isCompletedExceptionally == false) return
         ads = supplyAsync {
-            "https://api.dediamondpro.dev/resourcify/ads".toURI()
-                .getJson<List<RemoteAd>>(useCache = false)
+            "https://api.dediamondpro.dev/resourcify/ads".toURL()
+                ?.getJson<List<RemoteAd>>(useCache = false)
                 ?: error("Failed to fetch ads.")
         }
     }

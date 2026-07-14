@@ -30,6 +30,7 @@ import dev.dediamondpro.resourcify.services.IService
 import dev.dediamondpro.resourcify.services.ProjectType
 import dev.dediamondpro.resourcify.services.ServiceRegistry
 import dev.dediamondpro.resourcify.util.localize
+import dev.dediamondpro.resourcify.util.ofBase64
 import dev.dediamondpro.resourcify.util.ofResourceCustom
 import dev.dediamondpro.resourcify.util.supplyAsync
 import dev.dediamondpro.resourcify.util.toURI

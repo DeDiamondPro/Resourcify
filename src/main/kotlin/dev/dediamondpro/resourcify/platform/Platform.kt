@@ -29,6 +29,16 @@ object Platform {
         return ForgeVersion.mcVersion
     }
 
+    fun getLoader(): String {
+        //#if FABRIC==1
+        //$$ return "fabric"
+        //#elseif FORGE==1
+        return "forge"
+        //#elseif NEOFORGE==1
+        //$$ return "neoforge"
+        //#endif
+    }
+
     fun getSelectedResourcePacks(): List<File> {
         return UMinecraft.getMinecraft().resourcePackRepository.repositoryEntries.mapNotNull {
             if (it.resourcePack !is AbstractResourcePack) return@mapNotNull null

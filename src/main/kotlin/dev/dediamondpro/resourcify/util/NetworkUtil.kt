@@ -18,6 +18,7 @@
 package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.ModInfo
+import dev.dediamondpro.resourcify.platform.Platform
 import gg.essential.universal.UMinecraft
 import java.awt.image.BufferedImage
 import java.io.InputStream
@@ -71,7 +72,10 @@ object NetworkUtil {
         //#if MC < 11700
         sslContext?.let { con.sslSocketFactory = it.socketFactory }
         //#endif
-        con.setRequestProperty("User-Agent", "${ModInfo.NAME}/${ModInfo.VERSION}")
+        con.setRequestProperty(
+            "User-Agent",
+            "${ModInfo.NAME}/${ModInfo.VERSION} (${Platform.getMcVersion()}-${Platform.getLoader()})"
+        )
         con.setRequestProperty("Accept-Encoding", "gzip, deflate")
         con.connectTimeout = 5000
         con.readTimeout = 5000

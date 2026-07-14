@@ -108,7 +108,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
             width = ChildBasedSizeConstraint(4f)
             height = 22.pixels()
         } childOf stopCloseBox
-        val waitButton = UIBlock(Colors.BUTTON_PRIMARY).constrain {
+        val waitButton = UIBlock(color = Color(27, 217, 106)).constrain {
             x = 0.pixels()
             y = 0.pixels()
             width = 150.pixels()
@@ -120,9 +120,9 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         UIText("resourcify.updates.wait_button".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            color = Colors.TEXT_PRIMARY.toConstraint()
+            color = Color.WHITE.toConstraint()
         } childOf waitButton
-        val forceCloseButton = UIBlock(Colors.BUTTON_SECONDARY).constrain {
+        val forceCloseButton = UIBlock(color = Color(135, 137, 153)).constrain {
             x = 0.pixels(true)
             y = 0.pixels()
             width = 150.pixels()
@@ -135,7 +135,7 @@ class UpdateGui(val type: ProjectType, private val folder: File) : PaginatedScre
         UIText("resourcify.updates.cancel_close_button".localize()).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            color = Colors.TEXT_PRIMARY.toConstraint()
+            color = Color.WHITE.toConstraint()
         } childOf forceCloseButton
         stopCloseBox.hide(true)
 
