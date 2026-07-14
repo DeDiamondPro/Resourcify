@@ -19,6 +19,7 @@ package dev.dediamondpro.resourcify.util
 
 import dev.dediamondpro.resourcify.Constants
 import dev.dediamondpro.resourcify.platform.Platform
+import dev.dediamondpro.resourcify.services.curseforge.CurseForgeService
 import dev.dediamondpro.resourcify.services.modrinth.ModrinthAnalytics
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipFile
@@ -89,6 +90,8 @@ object DownloadManager {
                     gameVersion = Platform.getMcVersion(),
                     loader = Platform.getLoader(),
                 ).toJson()
+            } else if (url.host == "edge.forgecdn.net") {
+                headers["x-api-key"] = CurseForgeService.API_KEY
             }
 
             val con = url.toURL().setupConnection(headers)

@@ -1,10 +1,11 @@
-## Resourcify 1.8.4
+## Resourcify 1.8.5
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://dediamondpro.dev/discord).
 
-- Ported Resourcify to 26.2 fabric!
+- Add authentication to CurseForge downloads, starting 16/06/2026 this will be a requirement to download any file from
+  CurseForge, **CurseForge downloads will not work without this update, therefore it is HIGHLY recommended you update**.
 
 ----------------------------------------------------------------------------------------------------
 
