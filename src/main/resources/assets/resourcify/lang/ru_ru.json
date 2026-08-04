@@ -30,7 +30,7 @@
   "resourcify.project.members": "Участники проекта:",
   "resourcify.project.dependencies": "Зависимости",
   "resourcify.project.required_dependency": "Требуемая зависимость",
-  "resourcify.project.optional_dependency": "Рекоменуемая зависимость",
+  "resourcify.project.optional_dependency": "Рекомендуемая зависимость",
 
   "resourcify.version.install": "Установить",
   "resourcify.version.install_version": "Установить %s",
@@ -55,6 +55,13 @@
   "resourcify.updates.changelog": "Список изменений",
   "resourcify.updates.source": "Источник:",
   "resourcify.updates.up-to-date": "Актуально",
+  "resourcify.updates.wait_button": "Подождать",
+  "resourcify.updates.cancel_close_button": "Отменить обновления и закрыть",
+
+  "resourcify.manual_download.title": "Resourcify не может загрузить этот проект автоматически.",
+  "resourcify.manual_download.description": "Нажмите кнопку ниже, чтобы перейти на страницу версии в вашем веб-браузере.\nПосле загрузки проекта в папку загрузок, Resourcify автоматически установит его.\n\nОтслеживаемая папка: \"%s\"",
+  "resourcify.manual_download.open": "Открыть страницу версии",
+  "resourcify.manual_download.cancel": "Отмена",
 
   "resourcify.world.download": "Скачать",
   "resourcify.world.downloading": "Идёт скачивание мира: %d%%",
@@ -65,6 +72,9 @@
   "resourcify.config.title": "Настройки Resourcify",
   "resourcify.config.source.title": "Источник по умолчанию",
   "resourcify.config.source.description": "Источник, который будет использован по умолчанию при открытии страницы просмотра.",
+  "resourcify.config.gui-scale.title": "Масштаб интерфейса",
+  "resourcify.config.gui-scale.description": "Масштаб интерфейса, который Resourcify будет использовать на страницах просмотра и проекта, вы можете ввести число.",
+  "resourcify.config.gui-scale.auto": "авто",
   "resourcify.config.thumbnail.title": "Полноразмерные миниатюры",
   "resourcify.config.thumbnail.description": "Использовать полноразмерные изображения в миниатюрах, когда это возможно, вместо изображений с более низким разрешением. Это может значительно замедлить загрузку галереи.",
   "resourcify.config.open_link.title": "Открывать ссылки в Resourcify",
