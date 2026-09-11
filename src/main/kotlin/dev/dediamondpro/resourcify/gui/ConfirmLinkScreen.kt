@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2024-2025 DeDiamondPro
+ * Copyright (C) 2024-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ class ConfirmLinkScreen(private val url: String, private val previousScreen: Scr
     ConfirmLinkScreen({ result ->
         if (result) UDesktop.browse(url.toURI())
         UScreen.displayScreen(previousScreen)
-    }, url, trusted) {
+    }, url /*?if >=26.3 { */ .toURI() /*?}*/, trusted) {
 
     override fun keyPressed(
         //? if <1.21.9 {

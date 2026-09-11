@@ -35,10 +35,10 @@ class VersionRange(
 
     fun getFabricRange(): String {
         if (allowAll) return "*"
+        if (exclusiveUpperBound != null) return "~$startVersion"
         return buildString {
             append(">=$startVersion")
-            if (!openEnd && exclusiveUpperBound != null) append(" <$exclusiveUpperBound")
-            else if (!openEnd) append(" <=$endVersion")
+            if (!openEnd) append(" <=$endVersion")
         }
     }
 

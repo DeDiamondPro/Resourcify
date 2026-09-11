@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2025 DeDiamondPro
+ * Copyright (C) 2025-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@ plugins {
     id("dev.kikugie.stonecutter")
     alias(libs.plugins.arch.loom) apply false
 }
-stonecutter active "26.2-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.3-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter tasks {
     val ordering = versionComparator.thenComparingInt {

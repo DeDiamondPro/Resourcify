@@ -9,7 +9,7 @@ shadow = "9.3.2"
 publishing = "0.8.3"
 
 # Markdown
-minemark = "1.4.0"
+minemark = "1.5.0"
 commonmark = "0.21.0"
 tagsoup = "1.2.1"
 

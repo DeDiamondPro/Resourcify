@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.renderer.ElementaExtractor
 import gg.essential.universal.UResolution
 
 class DropDown(
@@ -135,8 +135,8 @@ class DropDown(
         return this
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        super.draw(matrixStack)
+    override fun extractComponent(extractor: ElementaExtractor) {
+        super.extractComponent(extractor)
         canOpen = true
     }
 

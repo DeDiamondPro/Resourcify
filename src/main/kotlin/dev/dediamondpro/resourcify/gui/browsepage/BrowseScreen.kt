@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023-2025 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -425,15 +425,10 @@ class BrowseScreen(
         super.onTick()
         if (searchDebounceTicks > 0 && --searchDebounceTicks == 0) {
             loadPacks()
-        }
-    }
-
-    override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        if (projectScrollable.verticalOffset + projectScrollable.verticalOverhang < 150 && fetchingFuture == null &&
+        } else if (projectScrollable.verticalOffset + projectScrollable.verticalOverhang < 150 && fetchingFuture == null &&
             offset + 20 < totalHits
         ) {
             loadPacks(false)
         }
-        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
     }
 }

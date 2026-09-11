@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2025 DeDiamondPro
+ * Copyright (C) 2025-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,8 @@ import dev.dediamondpro.resourcify.util.supply
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.components.image.extractMcScale
+import gg.essential.elementa.renderer.ElementaExtractor
 import gg.essential.universal.UMinecraft
 import java.awt.Color
 import javax.imageio.ImageIO
@@ -31,6 +32,7 @@ import javax.imageio.ImageIO
 /*import net.minecraft.resources.ResourceLocation
 *///?} else
 import net.minecraft.resources.Identifier
+import kotlin.math.roundToInt
 
 class McImage(
     texture: /*? if <1.21.11 {*/ /*ResourceLocation *//*?} else {*/Identifier /*?}*/
@@ -38,7 +40,7 @@ class McImage(
     var backingImage: UIImage? = null
 
     init {
-        val resource = UMinecraft.getMinecraft().resourceManager.getResource(texture)?.orElse(null)
+        val resource = UMinecraft.getMinecraft()?.resourceManager?.getResource(texture)?.orElse(null)
         if (resource != null) {
             backingImage = UIImage(supply {
                 resource.open().use {
@@ -48,32 +50,27 @@ class McImage(
         }
     }
 
-    override fun drawImage(
-        matrixStack: UMatrixStack,
-        x: Double,
-        y: Double,
-        width: Double,
-        height: Double,
+    override fun extract(
+        extractor: ElementaExtractor,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
         color: Color
     ) {
-        backingImage?.drawImage(matrixStack, x, y, width, height, color)
+        backingImage?.extract(extractor, x, y, width, height, color)
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        beforeDrawCompat(matrixStack)
-
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
+    override fun extractComponent(extractor: ElementaExtractor) {
         val color = this.getColor()
-
         if (color.alpha == 0) {
-            return super.draw(matrixStack)
+            return
         }
 
-        this.drawImage(matrixStack, x, y, width, height, color)
-
-        super.draw(matrixStack)
+        val x = (this.getLeft() * extractor.guiScale).roundToInt()
+        val y = (this.getTop() * extractor.guiScale).roundToInt()
+        val width = (this.getWidth() * extractor.guiScale).roundToInt()
+        val height = (this.getHeight() * extractor.guiScale).roundToInt()
+        this.extract(extractor, x, y, width, height, color)
     }
 }

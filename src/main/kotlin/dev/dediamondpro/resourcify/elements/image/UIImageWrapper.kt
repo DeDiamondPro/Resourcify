@@ -18,8 +18,9 @@
 package dev.dediamondpro.resourcify.elements.image
 
 import gg.essential.elementa.components.UIImage
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.renderer.ElementaExtractor
 import java.awt.Color
+import kotlin.math.roundToInt
 
 class UIImageWrapper(val image: UIImage) : IUIImage() {
     override var imageWidth: Float
@@ -37,32 +38,27 @@ class UIImageWrapper(val image: UIImage) : IUIImage() {
         return image.isLoaded
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        beforeDrawCompat(matrixStack)
-
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
-        val color = this.getColor()
-
-        if (color.alpha == 0) {
-            return super.draw(matrixStack)
-        }
-
-        drawImage(matrixStack, x, y, width, height, color)
-
-        super.draw(matrixStack)
-    }
-
-    override fun drawImage(
-        matrixStack: UMatrixStack,
-        x: Double,
-        y: Double,
-        width: Double,
-        height: Double,
+    override fun extract(
+        extractor: ElementaExtractor,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
         color: Color
     ) {
-        image.drawImage(matrixStack, x, y, width, height, color)
+        image.extract(extractor, x, y, width, height, color)
+    }
+
+    override fun extractComponent(extractor: ElementaExtractor) {
+        val color = this.getColor()
+        if (color.alpha == 0) {
+            return
+        }
+
+        val x = (this.getLeft() * extractor.guiScale).roundToInt()
+        val y = (this.getTop() * extractor.guiScale).roundToInt()
+        val width = (this.getWidth() * extractor.guiScale).roundToInt()
+        val height = (this.getHeight() * extractor.guiScale).roundToInt()
+        this.extract(extractor, x, y, width, height, color)
     }
 }

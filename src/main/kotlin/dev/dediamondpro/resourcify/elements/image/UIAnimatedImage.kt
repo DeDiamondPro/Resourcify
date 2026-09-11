@@ -25,7 +25,7 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.components.image.DefaultFailureImage
 import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.renderer.ElementaExtractor
 import gg.essential.universal.UMinecraft
 import org.w3c.dom.Node
 import java.awt.Color
@@ -40,6 +40,7 @@ import javax.imageio.stream.ImageInputStream
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class UIAnimatedImage(
     private val framesFuture: CompletableFuture<List<Frame>>,
@@ -124,12 +125,12 @@ class UIAnimatedImage(
         }
     }
 
-    override fun drawImage(
-        matrixStack: UMatrixStack,
-        x: Double,
-        y: Double,
-        width: Double,
-        height: Double,
+    override fun extract(
+        extractor: ElementaExtractor,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
         color: Color
     ) {
         var frame = frames?.get(currentFrame)?.getIfLoaded()
@@ -143,7 +144,7 @@ class UIAnimatedImage(
 
         when {
             frame != null -> {
-                frame.drawImage(matrixStack, x, y, width, height, color)
+                frame.extract(extractor, x, y, width, height, color)
 
                 if (lastFrameTime != -1L) {
                     val now = UMinecraft.getTime()
@@ -161,29 +162,24 @@ class UIAnimatedImage(
             }
 
             framesFuture.isCompletedExceptionally -> {
-                failureImage.drawImageCompat(matrixStack, x, y, width, height, color)
+                failureImage.extract(extractor, x, y, width, height, color)
             }
 
-            else -> loadingImage.drawImageCompat(matrixStack, x, y, width, height, color)
+            else -> loadingImage.extract(extractor, x, y, width, height, color)
         }
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        beforeDrawCompat(matrixStack)
-
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
+    override fun extractComponent(extractor: ElementaExtractor) {
         val color = this.getColor()
-
         if (color.alpha == 0) {
-            return super.draw(matrixStack)
+            return
         }
 
-        this.drawImage(matrixStack, x, y, width, height, color)
-
-        super.draw(matrixStack)
+        val x = (this.getLeft() * extractor.guiScale).roundToInt()
+        val y = (this.getTop() * extractor.guiScale).roundToInt()
+        val width = (this.getWidth() * extractor.guiScale).roundToInt()
+        val height = (this.getHeight() * extractor.guiScale).roundToInt()
+        this.extract(extractor, x, y, width, height, color)
     }
 
     companion object {

@@ -79,6 +79,7 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
+    "26.3" to "26.3-rc-1",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -93,11 +94,13 @@ val compatibleMcVersion = VersionDefinition(
     "1.21.11" to VersionRange("1.21.11", "1.21.11", name = "1.21.11"),
     "26.1.2" to VersionRange("26.1", "26.1.2", exclusiveUpperBound = "26.2", name = "26.1"),
     "26.2" to VersionRange("26.2", "26.2", exclusiveUpperBound = "26.3", name = "26.2"),
+    "26.3" to VersionRange("26.3", "26.3", exclusiveUpperBound = "26.4", name = "26.3", allowAll = true), // TODO: remove allowAll
 )
 val javaVersion = VersionDefinition(
     "1.20.1" to "17",
     "26.1.2" to "25",
     "26.2" to "25",
+    "26.3" to "25",
     default = "21",
 )
 val parchmentVersion = VersionDefinition(
@@ -117,6 +120,7 @@ val fabricApiVersion = VersionDefinition(
     "1.21.11" to "0.139.4+1.21.11",
     "26.1.2" to "0.150.0+26.1.2",
     "26.2" to "0.152.1+26.2",
+    "26.3" to "0.160.3+26.3",
 )
 val modMenuVersion = VersionDefinition(
     "1.20.1" to "7.2.2",
@@ -124,10 +128,11 @@ val modMenuVersion = VersionDefinition(
     "1.21.4" to "13.0.2",
     "1.21.5" to "14.0.0",
     "1.21.8" to "15.0.0",
-    "1.21.10" to "16.0.0-rc.1",
-    "1.21.11" to "17.0.0-alpha.1",
-    "26.1.2" to "18.0.0-alpha.6",
-    "26.2" to "20.0.0-alpha.1",
+    "1.21.10" to "16.0.1",
+    "1.21.11" to "17.0.0",
+    "26.1.2" to "18.0.1",
+    "26.2" to "20.0.2",
+    "26.3" to "21.0.0-beta.1",
 )
 val neoForgeVersion = VersionDefinition(
     "1.21.1" to "21.1.95",
@@ -165,7 +170,7 @@ val universalVersion = VersionDefinition(
     default = mcPlatform.versionString
 ).let {
     VersionDefinition(
-        default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:505"
+        default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:530"
     )
 }
 
@@ -201,7 +206,7 @@ dependencies {
         isTransitive = false
     }
     // Always shade elementa since we use a custom version, relocate to avoid conflicts
-    shadeModImplementation("gg.essential:elementa:DIAMOND-14") {
+    shadeModImplementation("gg.essential:elementa:DIAMOND-15") {
         isTransitive = false
     }
     // Since elementa is relocated, and MineMark doesn't guarantee backwards compatibility, we need to shade this

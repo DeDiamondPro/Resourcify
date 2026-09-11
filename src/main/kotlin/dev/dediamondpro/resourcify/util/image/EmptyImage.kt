@@ -1,6 +1,6 @@
 /*
  * This file is part of Resourcify
- * Copyright (C) 2023 DeDiamondPro
+ * Copyright (C) 2023-2026 DeDiamondPro
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,17 +18,5 @@
 package dev.dediamondpro.resourcify.util.image
 
 import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.universal.UMatrixStack
-import java.awt.Color
 
-object EmptyImage : ImageProvider {
-    override fun drawImage(
-        matrixStack: UMatrixStack,
-        x: Double,
-        y: Double,
-        width: Double,
-        height: Double,
-        color: Color
-    ) {
-    }
-}
+object EmptyImage : ImageProvider

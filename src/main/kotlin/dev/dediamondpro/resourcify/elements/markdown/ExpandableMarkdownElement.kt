@@ -27,17 +27,17 @@ import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.elements.creators.ElementCreator
 import dev.dediamondpro.minemark.utils.MouseButton
 import dev.dediamondpro.resourcify.gui.data.Colors
-import gg.essential.elementa.components.UIBlock
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.renderer.ElementaExtractor
+import gg.essential.elementa.renderer.fillMcScaleXYWH
 import org.xml.sax.Attributes
 
 @Suppress("UnstableApiUsage")
 class ExpandableMarkdownElement(
     style: MarkdownStyle,
     layoutStyle: LayoutStyle,
-    parent: Element<MarkdownStyle, UMatrixStack>?,
+    parent: Element<MarkdownStyle, ElementaExtractor>?,
     qName: String, attributes: Attributes?
-) : ChildMovingElement<MarkdownStyle, UMatrixStack>(style, layoutStyle, parent, qName, attributes) {
+) : ChildMovingElement<MarkdownStyle, ElementaExtractor>(style, layoutStyle, parent, qName, attributes) {
     var open: Boolean = false
 
     init {
@@ -50,7 +50,16 @@ class ExpandableMarkdownElement(
         }
     }
 
-    override fun generateNewLayout(layoutData: LayoutData?, renderData: UMatrixStack?) {
+    override fun complete() {
+        // Fallback for no <summary> element
+        if (children.none { it is SummaryElement }) {
+            SummaryElement(style, layoutStyle, this, "summary", attributes).apply {
+                MarkdownTextComponent("Details", style, layoutStyle, this, "", attributes)
+            }
+        }
+    }
+
+    override fun generateNewLayout(layoutData: LayoutData?, renderData: ElementaExtractor?) {
         val summary = children.firstOrNull { it is SummaryElement } as? SummaryElement?
         summary?.generateLayoutInternal(layoutData, renderData)
         if (!open) return
@@ -63,7 +72,7 @@ class ExpandableMarkdownElement(
         mouseX: Float,
         mouseY: Float,
         viewPort: ViewPort?,
-        renderData: UMatrixStack
+        renderData: ElementaExtractor
     ) {
         val actualX = xOffset + extraXOffset
         val actualY = yOffset + extraYOffset
@@ -90,7 +99,7 @@ class ExpandableMarkdownElement(
     }
 
     override fun beforeDrawInternal(
-        xOffset: Float, yOffset: Float, mouseX: Float, mouseY: Float, renderData: UMatrixStack?
+        xOffset: Float, yOffset: Float, mouseX: Float, mouseY: Float, renderData: ElementaExtractor?
     ) {
         val actualX = xOffset + extraXOffset
         val actualY = yOffset + extraYOffset
@@ -118,12 +127,8 @@ class ExpandableMarkdownElement(
         children.forEach { if (it != summary) it.onMouseClickedInternal(button, actualMouseX, actualMouseY) }
     }
 
-    override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, matrixStack: UMatrixStack) {
-        UIBlock.drawBlockSized(
-            matrixStack, Colors.EXPANDABLE,
-            x.toDouble(), y.toDouble(),
-            markerWidth.toDouble(), totalHeight.toDouble()
-        )
+    override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, extractor: ElementaExtractor) {
+        extractor.fillMcScaleXYWH(x, y, markerWidth, totalHeight, Colors.EXPANDABLE)
     }
 
 
@@ -131,33 +136,33 @@ class ExpandableMarkdownElement(
         return MarkerType.BLOCK
     }
 
-    override fun getMarkerWidth(layoutData: LayoutData?, renderData: UMatrixStack?): Float {
+    override fun getMarkerWidth(layoutData: LayoutData?, renderData: ElementaExtractor?): Float {
         return 0f
     }
 
-    override fun getOutsidePadding(layoutData: LayoutData?, renderData: UMatrixStack?): Float {
+    override fun getOutsidePadding(layoutData: LayoutData?, renderData: ElementaExtractor?): Float {
         return 6f
     }
 
-    override fun getInsidePadding(layoutData: LayoutData?, renderData: UMatrixStack?): Float {
+    override fun getInsidePadding(layoutData: LayoutData?, renderData: ElementaExtractor?): Float {
         return 6f
     }
 
-    object ExpandableElementCreator : ElementCreator<MarkdownStyle, UMatrixStack> {
+    object ExpandableElementCreator : ElementCreator<MarkdownStyle, ElementaExtractor> {
         override fun createElement(
             style: MarkdownStyle,
             layoutStyle: LayoutStyle,
-            parent: Element<MarkdownStyle, UMatrixStack>,
+            parent: Element<MarkdownStyle, ElementaExtractor>,
             qName: String,
             attributes: Attributes
-        ): Element<MarkdownStyle, UMatrixStack> {
+        ): Element<MarkdownStyle, ElementaExtractor> {
             return ExpandableMarkdownElement(style, layoutStyle, parent, qName, attributes)
         }
 
         override fun appliesTo(
             style: MarkdownStyle?,
             layoutStyle: LayoutStyle,
-            parent: Element<MarkdownStyle, UMatrixStack>,
+            parent: Element<MarkdownStyle, ElementaExtractor>,
             qName: String,
             attributes: Attributes
         ): Boolean {

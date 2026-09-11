@@ -44,7 +44,7 @@ import dev.dediamondpro.resourcify.util.image.ImageURLUtils
 import dev.dediamondpro.resourcify.util.image.isPixelArt
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.renderer.ElementaExtractor
 import gg.essential.universal.UResolution
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TablesExtension
@@ -139,8 +139,8 @@ fun markdown(
 }
 
 object ElementaUtils {
-    val defaultMineMarkCore: MineMarkCore<MarkdownStyle, UMatrixStack> =
-        MineMarkCore.builder<MarkdownStyle, UMatrixStack>()
+    val defaultMineMarkCore: MineMarkCore<MarkdownStyle, ElementaExtractor> =
+        MineMarkCore.builder<MarkdownStyle, ElementaExtractor>()
             .addExtension(StrikethroughExtension.create())
             .addExtension(TablesExtension.create())
             //.addElementaExtensions()

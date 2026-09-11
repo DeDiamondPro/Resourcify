@@ -26,7 +26,8 @@ import dev.dediamondpro.minemark.utils.MouseButton
 import dev.dediamondpro.resourcify.elements.McImage
 import dev.dediamondpro.resourcify.gui.data.Icons
 import dev.dediamondpro.resourcify.util.Utils
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.components.image.extractMcScale
+import gg.essential.elementa.renderer.ElementaExtractor
 import org.xml.sax.Attributes
 import java.awt.Color
 
@@ -34,28 +35,28 @@ import java.awt.Color
 class SummaryElement(
     style: MarkdownStyle,
     layoutStyle: LayoutStyle,
-    parent: Element<MarkdownStyle, UMatrixStack>?,
+    parent: Element<MarkdownStyle, ElementaExtractor>?,
     qName: String, attributes: Attributes?
-) : ChildMovingElement<MarkdownStyle, UMatrixStack>(style, layoutStyle, parent, qName, attributes) {
+) : ChildMovingElement<MarkdownStyle, ElementaExtractor>(style, layoutStyle, parent, qName, attributes) {
     private val actualParent = parent as? ExpandableMarkdownElement
 
-    override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, matrixStack: UMatrixStack) {
+    override fun drawMarker(x: Float, y: Float, markerWidth: Float, totalHeight: Float, extractor: ElementaExtractor) {
         val isOpen = actualParent?.open == true
         val image = if (isOpen) openedImage else closedImage
-        val imageWidth = if (isOpen) 7.0 else 8.0
-        val imageHeight = if (isOpen) 8.0 else 7.0
-        val realY = y + totalHeight / 2.0 - imageHeight / 2.0
-        image.drawImage(
-            matrixStack, x.toDouble() + 1.0, realY + 1.0,
+        val imageWidth = if (isOpen) 7f else 8f
+        val imageHeight = if (isOpen) 8f else 7f
+        val realY = y + totalHeight / 2f - imageHeight / 2f
+        image.extractMcScale(
+            extractor, x + 1f, realY + 1f,
             imageWidth, imageHeight, iconShadowColor
         )
-        image.drawImage(
-            matrixStack, x.toDouble(), realY,
+        image.extractMcScale(
+            extractor, x, realY,
             imageWidth, imageHeight, iconColor
         )
     }
 
-    override fun getMarkerWidth(layoutData: LayoutData?, renderData: UMatrixStack?): Float {
+    override fun getMarkerWidth(layoutData: LayoutData?, renderData: ElementaExtractor?): Float {
         return 12f
     }
 

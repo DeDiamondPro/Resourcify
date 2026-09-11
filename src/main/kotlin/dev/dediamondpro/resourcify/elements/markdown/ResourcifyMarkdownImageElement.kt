@@ -22,7 +22,8 @@ import dev.dediamondpro.minemark.elementa.style.MarkdownStyle
 import dev.dediamondpro.minemark.elements.Element
 import dev.dediamondpro.minemark.elements.impl.ImageElement
 import dev.dediamondpro.resourcify.elements.image.IUIImage
-import gg.essential.universal.UMatrixStack
+import gg.essential.elementa.components.image.extractMcScale
+import gg.essential.elementa.renderer.ElementaExtractor
 import org.xml.sax.Attributes
 import java.awt.Color
 
@@ -30,24 +31,17 @@ import java.awt.Color
 class ResourcifyMarkdownImageElement(
     style: MarkdownStyle,
     layoutStyle: LayoutStyle,
-    parent: Element<MarkdownStyle, UMatrixStack>?,
+    parent: Element<MarkdownStyle, ElementaExtractor>?,
     qName: String, attributes: Attributes?
-) : ImageElement<MarkdownStyle, UMatrixStack, IUIImage>(style, layoutStyle, parent, qName, attributes) {
+) : ImageElement<MarkdownStyle, ElementaExtractor, IUIImage>(style, layoutStyle, parent, qName, attributes) {
     override fun drawImage(
         image: IUIImage,
         x: Float,
         y: Float,
         width: Float,
         height: Float,
-        matrixStack: UMatrixStack
+        extractor: ElementaExtractor
     ) {
-        image.drawImage(
-            matrixStack,
-            x.toDouble(),
-            y.toDouble(),
-            width.toDouble(),
-            height.toDouble(),
-            Color.WHITE
-        )
+        image.extractMcScale(extractor, x, y, width, height, Color.WHITE)
     }
 }
