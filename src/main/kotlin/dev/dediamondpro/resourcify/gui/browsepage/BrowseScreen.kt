@@ -42,7 +42,6 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.universal.UDesktop
-import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.gui.screens.Screen
 import java.awt.Color

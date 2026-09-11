@@ -37,6 +37,9 @@ abstract class PaginatedScreen(private val adaptScale: Boolean = true, private v
     private var defaultScale = -1
 
     init {
+        // Use new extract API on all MC versions
+        useElementaRenderer = true
+
         if (!replacingScreen) {
             currentScreen?.let { backScreens.add(it) }
             forwardScreens.clear()
