@@ -344,7 +344,11 @@ tasks {
             "aw" to accessWidener,
             "mixinPath" to mixinPath,
             "mcVersion" to compatibleMcVersion.get(mcPlatform).getLoaderRange(mcPlatform),
-            "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform)
+            "minNeoForgeVersion" to minimumNeoForgeVersion.get(mcPlatform),
+            "breaks" to if (mcPlatform.version < 260200) """,
+  "breaks": {
+    "vulkanmod": "*"
+  }""" else ""
         )
 
         properties.forEach { (k, v) -> inputs.property(k, v) }
