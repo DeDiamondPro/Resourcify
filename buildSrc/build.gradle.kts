@@ -26,3 +26,8 @@ repositories {
 kotlin {
     jvmToolchain(21)
 }
+
+dependencies {
+    implementation("org.ow2.asm:asm:9.7.1")
+    implementation("org.ow2.asm:asm-tree:9.7.1")
+}

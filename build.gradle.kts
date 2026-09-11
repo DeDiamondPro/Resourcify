@@ -19,6 +19,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.dediamondpro.buildsource.Platform
 import dev.dediamondpro.buildsource.VersionDefinition
 import dev.dediamondpro.buildsource.VersionRange
+import dev.dediamondpro.buildsource.VulkanCompatPatchTask
 import net.fabricmc.loom.task.RemapJarTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -330,10 +331,26 @@ tasks {
         named("shadowJar") { finalizedBy("copyJar") }
         named<Jar>("jar") { enabled = false }
     }
+    if (mcPlatform.isFabric) {
+        // VulkanMod renders the pre-rendered screen texture upright, so the GL compensation
+        // flip in the shaded universalcraft library has to be skipped while it is loaded.
+        register<VulkanCompatPatchTask>("applyVulkanCompatPatch") {
+            inputJar.set(outputJar)
+            patchEnabled.set(true)
+            failOnMiss.set(true)
+            outputs.upToDateWhen { false }
+        }
+        if (mcPlatform.isObfuscated) {
+            named<RemapJarTask>("remapJar") { finalizedBy("applyVulkanCompatPatch") }
+        } else {
+            named<ShadowJar>("shadowJar") { finalizedBy("applyVulkanCompatPatch") }
+        }
+    }
     register<Copy>("copyJar") {
         File("${project.rootDir}/jars").mkdir()
         from(outputJar)
         into("${project.rootDir}/jars")
+        if (mcPlatform.isFabric) dependsOn("applyVulkanCompatPatch")
     }
     clean { delete("${project.rootDir}/jars") }
     processResources {
