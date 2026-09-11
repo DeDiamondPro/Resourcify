@@ -322,21 +322,43 @@ class BrowseScreen(
             x = 6.pixels()
             y = CenterConstraint()
             height = 19.pixels()
-            width = 100.percent() - 111.pixels()
+            width = 100.percent() - 119.pixels()
         }.onMouseClick {
             if (it.mouseButton != 0) return@onMouseClick
             searchBox.grabWindowFocus()
         } childOf headerBox
+        val searchUnderline = UIBlock(Colors.TEXT_SECONDARY).constrain {
+            x = 0.pixels()
+            y = 0.pixels(alignOpposite = true)
+            width = 100.percent()
+            height = 1.pixels()
+        } childOf searchBoxHitBox
         searchBox = (UITextInput(
             "resourcify.browse.search".localize(type.displayName.localize()),
             cursorColor = Colors.TEXT_PRIMARY
         ).constrain {
             y = CenterConstraint()
-            width = 100.percent()
-            color = Colors.TEXT_PRIMARY.toConstraint()
+            width = 100.percent() - 16.pixels()
+            color = basicColorConstraint {
+                if (searchBox.getText().isEmpty()) Colors.TEXT_SECONDARY else Colors.TEXT_PRIMARY
+            }
         }.onUpdate {
             // 300ms debounce
             searchDebounceTicks = 6
+        }.onFocus {
+            searchUnderline.animate {
+                setColorAnimation(Animations.OUT_CUBIC, 0.2f, Colors.TEXT_PRIMARY.toConstraint())
+                setXAnimation(Animations.OUT_CUBIC, 0.2f, (-2).pixels())
+                setWidthAnimation(Animations.OUT_CUBIC, 0.2f, 100.percent() + 4.pixels())
+            }
+        }.onFocusLost {
+            searchUnderline.animate {
+                if (searchBox.getText().isEmpty()) {
+                    setColorAnimation(Animations.OUT_CUBIC, 0.2f, Colors.TEXT_SECONDARY.toConstraint())
+                }
+                setXAnimation(Animations.OUT_CUBIC, 0.2f, 0.pixels())
+                setWidthAnimation(Animations.OUT_CUBIC, 0.2f, 100.percent())
+            }
         } childOf searchBoxHitBox) as UITextInput
 
         // Settings button
