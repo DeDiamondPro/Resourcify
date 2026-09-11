@@ -24,6 +24,9 @@ class VersionRange(
     private val openEnd: Boolean = false,
     private val allowAll: Boolean = false, // Mostly used for pre releases and release candidates
     private val exclusiveUpperBound: String? = null, // Exclusive upper bound for loader range only, does not affect publishing
+    private val allowSnapshots: Boolean = false,
+    private val allowPreRelease: Boolean = false,
+    private val allowReleaseCandidate: Boolean = false,
 ) {
     fun getName(): String {
         return name;
@@ -35,9 +38,15 @@ class VersionRange(
 
     fun getFabricRange(): String {
         if (allowAll) return "*"
-        if (exclusiveUpperBound != null) return "~$startVersion"
+
+        var fabricStartVersion = startVersion
+        if (allowSnapshots) fabricStartVersion += "-"
+        else if (allowPreRelease) fabricStartVersion += "-pre"
+        else if (allowReleaseCandidate) fabricStartVersion += "-rc"
+
+        if (exclusiveUpperBound != null) return "~$fabricStartVersion"
         return buildString {
-            append(">=$startVersion")
+            append(">=$fabricStartVersion")
             if (!openEnd) append(" <=$endVersion")
         }
     }
