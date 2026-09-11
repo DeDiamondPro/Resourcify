@@ -1,11 +1,16 @@
-## Resourcify 1.8.5
+## Resourcify 1.8.6
 
 Please make sure to report any bugs and/or visual anomalies
 on [Resourcify's GitHub](https://github.com/DeDiamondPro/Resourcify/issues) or in
 the [Discord](https://dediamondpro.dev/discord).
 
-- Add authentication to CurseForge downloads, starting 16/06/2026 this will be a requirement to download any file from
-  CurseForge, **CurseForge downloads will not work without this update, therefore it is HIGHLY recommended you update**.
+- Ported to 26.3 Fabric
+- Ported to 26.2 NeoForge
+- Updated Russian translations - [amnesiaof](https://github.com/amnesiaof)
+  ([#107](https://github.com/DeDiamondPro/Resourcify/pull/107))
+- Updated MineMark, fixing some issues with missing spaces or extra newlines in list, and improving performance in
+  descriptions with (very) large text blocks
+- Added a small line under the search bar to make it clearer it is a search bar
 
 ----------------------------------------------------------------------------------------------------
 
