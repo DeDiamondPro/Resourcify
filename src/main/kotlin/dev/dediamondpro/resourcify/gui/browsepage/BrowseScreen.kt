@@ -338,7 +338,7 @@ class BrowseScreen(
             cursorColor = Colors.TEXT_PRIMARY
         ).constrain {
             y = CenterConstraint()
-            width = 100.percent() - 16.pixels()
+            width = 100.percent()
             color = basicColorConstraint {
                 if (searchBox.getText().isEmpty()) Colors.TEXT_SECONDARY else Colors.TEXT_PRIMARY
             }
