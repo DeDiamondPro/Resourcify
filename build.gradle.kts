@@ -79,7 +79,6 @@ val shadeModImplementation: Configuration by configurations.creating {
 
 // Version definitions
 val mcVersion = VersionDefinition( // Used for pre releases and release candidates
-    "26.3" to "26.3-rc-1",
     default = mcPlatform.versionString
 )
 val compatibleMcVersion = VersionDefinition(
@@ -172,8 +171,8 @@ val universalVersion = VersionDefinition(
     default = mcPlatform.versionString
 ).let {
     VersionDefinition(
-        "26.2-neoforge" to "26.2-fabric:530",
-        default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:530"
+        "26.2-neoforge" to "26.2-fabric:536",
+        default = "${it.get(mcPlatform)}-${mcPlatform.loaderString}:536"
     )
 }
 
