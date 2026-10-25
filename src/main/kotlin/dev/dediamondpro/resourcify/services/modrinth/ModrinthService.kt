@@ -55,7 +55,7 @@ object ModrinthService : IService {
                 when (type) {
                     ProjectType.DATA_PACK -> "[\"project_type:datapack\"]"
                     ProjectType.IRIS_SHADER -> "[\"project_type:shader\"],[\"categories=iris\"]"
-                    ProjectType.OPTIFINE_SHADER -> "[\"project_type:shader\"],[\"categories=optifine\"]"
+                    ProjectType.OPTIFINE_SHADER, ProjectType.VITRAIL_SHADER -> "[\"project_type:shader\"],[\"categories=optifine\"]"
                     else -> "[\"project_type:${type.getProjectType()}\"]"
                 }
             )
@@ -154,7 +154,7 @@ object ModrinthService : IService {
             val loader = when (type) {
                 ProjectType.RESOURCE_PACK -> "minecraft"
                 ProjectType.IRIS_SHADER -> "iris"
-                ProjectType.OPTIFINE_SHADER -> "optifine"
+                ProjectType.OPTIFINE_SHADER, ProjectType.VITRAIL_SHADER -> "optifine"
                 ProjectType.DATA_PACK -> "datapack"
                 else -> error("$type is not supported in updates")
             }
@@ -174,7 +174,7 @@ object ModrinthService : IService {
         ProjectType.RESOURCE_PACK -> "resourcepack"
         ProjectType.DATA_PACK -> "mod"
         ProjectType.IRIS_SHADER -> "shader"
-        ProjectType.OPTIFINE_SHADER -> "shader"
+        ProjectType.OPTIFINE_SHADER, ProjectType.VITRAIL_SHADER -> "shader"
         else -> null
     }
 
