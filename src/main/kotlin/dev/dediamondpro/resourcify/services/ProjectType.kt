@@ -47,6 +47,7 @@ enum class ProjectType(
     }),
     IRIS_SHADER("resourcify.type.shaders", { it / 2 + 134 }, { 6 }),
     OPTIFINE_SHADER("resourcify.type.shaders", plusX = { it - 30 }),
+    VITRAIL_SHADER("resourcify.type.shaders", { it - 24 }, { 6 }, { it - 48 }),
     WORLD("resourcify.type.world", { it / 2 + 134 }, { 22 }, hasUpdateButton = { false }, shouldExtract = true),
     // Used for when there is a link to a project, but we don't know what type it is
     UNKNOWN("");
@@ -55,7 +56,7 @@ enum class ProjectType(
         return when (this) {
             RESOURCE_PACK -> Config.instance.resourcePacksEnabled
             DATA_PACK -> Config.instance.dataPacksEnabled
-            IRIS_SHADER, OPTIFINE_SHADER -> Config.instance.shaderPacksEnabled
+            IRIS_SHADER, OPTIFINE_SHADER, VITRAIL_SHADER -> Config.instance.shaderPacksEnabled
             WORLD -> Config.instance.worldsEnabled
             UNKNOWN -> false
         }
@@ -67,14 +68,16 @@ enum class ProjectType(
             DATA_PACK -> (screen as PackScreenAccessor).directory.toFile()
             IRIS_SHADER -> Platform.getFileInGameDir("shaderpacks")
             OPTIFINE_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            VITRAIL_SHADER -> Platform.getFileInGameDir("shaderpacks")
             WORLD -> Platform.getFileInGameDir("saves")
             else -> error("Unknown project type: $this")
         }
     }
 
     fun getDirectoryFromCurrent(currentType: ProjectType, currentFolder: File?): File? {
-        // Treat both shader types as the same
-        if ((this == IRIS_SHADER && currentType == OPTIFINE_SHADER) || (this == OPTIFINE_SHADER && currentType == IRIS_SHADER)) {
+        // Treat all three shader types as the same
+        if (this in listOf(IRIS_SHADER, OPTIFINE_SHADER, VITRAIL_SHADER)
+            && currentType in listOf(IRIS_SHADER, OPTIFINE_SHADER, VITRAIL_SHADER)) {
             return currentFolder
         }
 
@@ -84,6 +87,7 @@ enum class ProjectType(
             RESOURCE_PACK -> Platform.getFileInGameDir("resourcepacks")
             IRIS_SHADER -> Platform.getFileInGameDir("shaderpacks")
             OPTIFINE_SHADER -> Platform.getFileInGameDir("shaderpacks")
+            VITRAIL_SHADER -> Platform.getFileInGameDir("shaderpacks")
             WORLD -> Platform.getFileInGameDir("saves")
             else -> null
         }
